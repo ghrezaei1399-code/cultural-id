@@ -212,6 +212,26 @@
             font-weight: bold;
         }
 
+        /* ===== LOGO ===== */
+        .logo-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo-main {
+            max-height: 90px;
+            width: auto;
+            display: block;
+            filter: drop-shadow(0 4px 12px rgba(26, 123, 158, 0.12));
+            transition: transform 0.3s ease;
+        }
+
+        .logo-main:hover {
+            transform: scale(1.03) rotate(-1deg);
+        }
+
         /* ===== CARD SAMPLE ===== */
         .card-sample {
             background: rgba(255, 255, 255, 0.6);
@@ -228,9 +248,10 @@
         body.dark .card-sample { background: rgba(30, 40, 50, 0.4); }
 
         .card-sample .card-logo {
-            max-height: 50px;
+            max-height: 65px;
             width: auto;
             margin-bottom: 0.4rem;
+            display: inline-block;
         }
 
         .card-sample .card-id {
@@ -448,7 +469,7 @@
 
         .slogan-box .slogan-text .line3 { font-size: 0.9rem; opacity: 0.5; font-weight: 300; }
 
-        /* ===== GALLERY IMPROVED ===== */
+        /* ===== GALLERY ===== */
         .achievement-section {
             margin-top: 2rem;
             padding: 1.5rem;
@@ -504,7 +525,7 @@
         .gallery-placeholder {
             width: 100%;
             aspect-ratio: 1 / 1;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
             border-radius: 16px;
             display: flex;
             flex-direction: column;
@@ -521,8 +542,9 @@
         .gallery-placeholder img {
             max-width: 60%;
             height: auto;
-            opacity: 0.3;
-            filter: grayscale(0.5);
+            opacity: 0.5;
+            filter: grayscale(0.3);
+            transition: opacity 0.3s;
         }
 
         .gallery-placeholder .gallery-label {
@@ -583,6 +605,7 @@
             .slogan-box .slogan-text .line1 { font-size: 0.9rem; }
             .gallery-grid { grid-template-columns: 1fr 1fr; }
             .top-bar { flex-direction: row; flex-wrap: wrap; }
+            .logo-main { max-height: 65px; }
         }
 
         @media (max-width: 480px) {
@@ -619,7 +642,9 @@
 
             <!-- باکس ۱: لوگو و مشخصات کارت -->
             <div class="box box-color-1">
-                <img src="assets/img/logo-fa.png" alt="شناسنامه فرهنگی جهانی" style="max-height:70px; width:auto; margin-bottom:0.3rem; filter:drop-shadow(0 4px 12px rgba(26,123,158,0.15));" />
+                <div class="logo-wrapper">
+                    <img src="assets/img/logo-fa.png" alt="شناسنامه فرهنگی جهانی" class="logo-main" />
+                </div>
                 <div class="box-title box-title-1">🪪 مشخصات کارت</div>
                 <p>
                     شناسنامه‌ی فرهنگی جهانی، یک هویت دیجیتال غیرمتمرکز است که بر اساس <strong>ارزش‌های فرهنگی</strong> شما ساخته می‌شود، نه نام، ملیت یا اطلاعات شخصی.
@@ -720,7 +745,6 @@
                     آثار فرهنگی منتخب از ۲۰۰ عضو اولیه‌ی جنبش «همراهان روشنایی»
                 </p>
                 <div class="gallery-grid" id="achievementGalleryFA">
-                    <!-- آیتم‌ها توسط JavaScript پر می‌شوند -->
                     <div class="gallery-item">
                         <div class="gallery-placeholder">
                             <img src="assets/img/logo-fa.png" alt="لوگو" />
@@ -744,7 +768,9 @@
 
             <!-- Box 1: Logo & Card Specs -->
             <div class="box box-color-2">
-                <img src="assets/img/logo-en.png" alt="Global Cultural ID" style="max-height:70px; width:auto; margin-bottom:0.3rem; filter:drop-shadow(0 4px 12px rgba(106,63,158,0.15));" />
+                <div class="logo-wrapper">
+                    <img src="assets/img/logo-en.png" alt="Global Cultural ID" class="logo-main" />
+                </div>
                 <div class="box-title box-title-2">🪪 Card Specifications</div>
                 <p>
                     The Global Cultural ID is a decentralized digital identity built on <strong>cultural values</strong>, not on name, nationality, or personal data.
