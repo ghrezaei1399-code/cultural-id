@@ -253,7 +253,7 @@
 
         body.dark .card-sample {
             background: rgba(30, 40, 50, 0.3);
-            border-color: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255, 0.05);
         }
 
         body.dark .card-sample:hover {
@@ -496,24 +496,22 @@
         .achievement-section {
             margin-top: 2rem;
             padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.08);
             border-radius: 32px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(4px);
             transition: all 0.3s ease;
+            background-size: 400% 400%;
+            animation: gradientMove 8s ease infinite;
         }
 
         .achievement-section:hover {
-            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
         }
 
         body.dark .achievement-section {
-            background: rgba(30, 40, 50, 0.1);
+            background: rgba(30, 40, 50, 0.3) !important;
             border-color: rgba(255,255,255,0.02);
-        }
-
-        body.dark .achievement-section:hover {
-            background: rgba(30, 40, 50, 0.15);
         }
 
         .achievement-section h2 {
@@ -786,7 +784,7 @@
             </div>
 
             <!-- ===== گالری فارسی ===== -->
-            <div class="achievement-section" id="gallery-fa">
+            <div class="achievement-section box-color-3" id="gallery-fa">
                 <h2>🏆 گالری دستاوردهای ۲۰۰ سفیر بنیان‌گذار</h2>
                 <p style="opacity:0.6; margin-bottom:1rem;">
                     آثار فرهنگی منتخب از ۲۰۰ عضو اولیه‌ی جنبش «همراهان روشنایی»
@@ -914,7 +912,7 @@
             </div>
 
             <!-- ===== گالری انگلیسی ===== -->
-            <div class="achievement-section" id="gallery-en">
+            <div class="achievement-section box-color-4" id="gallery-en">
                 <h2>🏆 Gallery of 200 Founding Ambassadors</h2>
                 <p style="opacity:0.6; margin-bottom:1rem;">
                     Selected cultural works from the first 200 members of the "Light Companions" movement
