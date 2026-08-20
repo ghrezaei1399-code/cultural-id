@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>دعوت از دوستان | شناسنامه فرهنگی جهانی</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
+            background: radial-gradient(circle at 20% 30%, #d4e8f5 0%, #b8d4e8 40%, #a0c4d8 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(16px);
+            border-radius: 60px;
+            padding: 1.5rem 2rem 1.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .back-module {
+            display: inline-block;
+            background: rgba(26, 75, 109, 0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #1a4b6d;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            border: 1px solid rgba(26, 75, 109, 0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .back-module:hover {
+            background: rgba(26, 75, 109, 0.25);
+            transform: translateX(-4px);
+        }
+
+        .referral-box {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(4px);
+            border-radius: 24px;
+            padding: 1.8rem 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .referral-box h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0b3b54;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid rgba(26,123,158,0.1);
+            padding-bottom: 0.4rem;
+        }
+
+        .referral-box .site-link {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 0.8rem 1.2rem;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0b3b54;
+            margin-bottom: 1rem;
+            border: 1px dashed rgba(26, 123, 158, 0.2);
+            word-break: break-all;
+        }
+
+        .referral-box .copy-btn {
+            background: linear-gradient(135deg, #1a7b9e, #6a3f9e);
+            background-size: 200% 200%;
+            animation: gradientMove 6s ease infinite;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            transition: 0.25s ease;
+            box-shadow: 0 4px 16px rgba(26,123,158,0.2);
+            margin-bottom: 0.8rem;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .referral-box .copy-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 24px rgba(26,123,158,0.3);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 0.8rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 0.8rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .stats .stat-item { text-align: center; }
+        .stats .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0b3b54;
+        }
+        .stats .stat-label {
+            font-size: 0.75rem;
+            opacity: 0.5;
+        }
+
+        .note {
+            font-size: 0.8rem;
+            opacity: 0.4;
+            text-align: center;
+            margin-top: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .referral-box { padding: 1.2rem 1rem; }
+            .stats { flex-direction: column; gap: 0.3rem; }
+        }
+
+        @font-face {
+            font-family: 'Vazir';
+            src: local('Vazir'), local('IRANSans');
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <a href="index.html" class="back-module">← بازگشت به صفحه‌ی اصلی</a>
+
+    <div class="referral-box">
+        <h2>📣 دعوت از دوستان</h2>
+
+        <p style="opacity:0.7; margin-bottom:0.8rem; font-size:0.95rem;">
+            لینک سایت را به اشتراک بگذارید و به جمع سفیران فرهنگی بپیوندید.
+        </p>
+
+        <div class="site-link">
+            🌐 https://cultural.id
+        </div>
+
+        <button class="copy-btn">📋 کپی لینک</button>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number">۰</div>
+                <div class="stat-label">دعوت‌های ارسال‌شده</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">۰</div>
+                <div class="stat-label">ثبت‌نام موفق</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">۰</div>
+                <div class="stat-label">ثبت‌نام ناموفق</div>
+            </div>
+        </div>
+
+        <div class="note">
+            ✦ آمار دعوت‌ها به‌صورت خودکار بر اساس آی‌پی ثبت‌نام‌ها محاسبه می‌شود ✦
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>پشت کارت | شناسنامه فرهنگی جهانی</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
+            background: #eef4f8;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        .card-back {
+            max-width: 380px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(6px);
+            border-radius: 24px;
+            padding: 1.5rem 1.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.02);
+        }
+
+        .card-back h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #0b3b54;
+            border-bottom: 2px solid rgba(26, 123, 158, 0.1);
+            padding-bottom: 0.3rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .card-back .value-item {
+            display: flex;
+            align-items: baseline;
+            gap: 0.4rem;
+            font-size: 0.85rem;
+            line-height: 2;
+            opacity: 0.8;
+            border-bottom: 1px dashed rgba(0, 0, 0, 0.03);
+            padding: 0.1rem 0;
+        }
+
+        .card-back .value-item strong {
+            color: #0b3b54;
+            min-width: 80px;
+            font-weight: 700;
+        }
+
+        .card-back .slogan-back {
+            margin-top: 0.8rem;
+            padding-top: 0.6rem;
+            border-top: 1px dashed rgba(0, 0, 0, 0.05);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #1a4b6d;
+            text-align: center;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 480px) {
+            .card-back { padding: 1rem 1.2rem; }
+            .card-back .value-item { font-size: 0.75rem; flex-wrap: wrap; }
+            .card-back .value-item strong { min-width: 60px; }
+        }
+
+        @font-face {
+            font-family: 'Vazir';
+            src: local('Vazir'), local('IRANSans');
+        }
+    </style>
+</head>
+<body>
+<div class="card-back">
+    <h3>📋 اطلاعات فرهنگی</h3>
+    <div class="value-item"><strong>ارزش‌های بومی:</strong> احترام به طبیعت، همبستگی قبیله‌ای</div>
+    <div class="value-item"><strong>دانش فردی:</strong> برنامه‌نویسی، فلسفه، موسیقی سنتی</div>
+    <div class="value-item"><strong>همکاری جمعی:</strong> تجربه‌ی کار تیمی در پروژه‌های فرهنگی</div>
+    <div class="value-item"><strong>تنوع فرهنگی:</strong> علاقه به یادگیری زبان‌ها و آیین‌های مختلف</div>
+    <div class="value-item"><strong>صلح پایدار جهانی:</strong> باور به گفت‌وگوی تمدن‌ها</div>
+    <div class="value-item"><strong>محو خشونت:</strong> ترویج فرهنگ مدارا و پرهیز از تعصب</div>
+    <div class="value-item"><strong>اتحاد فرهنگی:</strong> تلاش برای ایجاد پل‌های فرهنگی میان ملل</div>
+    <div class="slogan-back">✦ شما یک سفیرِ فرهنگی هستید. لینک سایت را به اشتراک بگذارید. ✦</div>
+</div>
+</body>
+</html>

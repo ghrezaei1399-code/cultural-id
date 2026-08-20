@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>ثبت‌نام | شناسنامه فرهنگی جهانی</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
+            background: radial-gradient(circle at 20% 30%, #d4e8f5 0%, #b8d4e8 40%, #a0c4d8 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(16px);
+            border-radius: 60px;
+            padding: 1.5rem 2rem 1.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .back-module {
+            display: inline-block;
+            background: rgba(26, 75, 109, 0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #1a4b6d;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            border: 1px solid rgba(26, 75, 109, 0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .back-module:hover {
+            background: rgba(26, 75, 109, 0.25);
+            transform: translateX(-4px);
+        }
+
+        .form-box {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(4px);
+            border-radius: 24px;
+            padding: 1.8rem 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .form-box h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0b3b54;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid rgba(26,123,158,0.1);
+            padding-bottom: 0.4rem;
+        }
+
+        .form-group { margin-bottom: 1.2rem; }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #0b3b54;
+            margin-bottom: 0.3rem;
+        }
+
+        .form-group textarea,
+        .form-group input[type="text"],
+        .form-group select {
+            width: 100%;
+            padding: 0.6rem 1rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.5);
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: 0.2s;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .form-group textarea:focus,
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #1a7b9e;
+            outline: none;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .form-group .hint {
+            font-size: 0.7rem;
+            opacity: 0.5;
+            margin-top: 0.2rem;
+        }
+
+        .btn-submit {
+            display: inline-block;
+            background: linear-gradient(135deg, #1a7b9e, #6a3f9e);
+            background-size: 200% 200%;
+            animation: gradientMove 6s ease infinite;
+            color: white;
+            padding: 0.8rem 2.5rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: 0.25s ease;
+            box-shadow: 0 4px 16px rgba(26,123,158,0.2);
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .btn-submit:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 24px rgba(26,123,158,0.3);
+        }
+
+        .note {
+            font-size: 0.8rem;
+            opacity: 0.5;
+            text-align: center;
+            margin-top: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .form-box { padding: 1.2rem 1rem; }
+        }
+
+        @font-face {
+            font-family: 'Vazir';
+            src: local('Vazir'), local('IRANSans');
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <a href="index.html" class="back-module">← بازگشت به صفحه‌ی اصلی</a>
+
+    <div class="form-box">
+        <h2>📝 ثبت‌نام و دریافت شناسنامه</h2>
+
+        <div class="form-group">
+            <label>🧭 ارزش‌های بومی</label>
+            <textarea placeholder="ارزش‌های بومی خود را بنویسید..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>📚 دانش فردی</label>
+            <textarea placeholder="دانش و تخصص‌های فردی خود را بنویسید..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>🤝 همکاری جمعی</label>
+            <textarea placeholder="تجربیات و علاقه‌مندی‌های خود در زمینه‌ی همکاری جمعی را بنویسید..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>🌍 تنوع فرهنگی</label>
+            <textarea placeholder="نگاه و تجربه‌ی شما درباره‌ی تنوع فرهنگی..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>🕊️ صلح پایدار جهانی</label>
+            <textarea placeholder="ایده‌ها و دیدگاه‌های شما برای صلح پایدار جهانی..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>🚫 محو خشونت</label>
+            <textarea placeholder="راه‌کارها و نظرات شما برای محو خشونت..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>🤝 اتحاد فرهنگی</label>
+            <textarea placeholder="دیدگاه شما درباره‌ی اتحاد فرهنگی..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>📬 راه ارتباطی (اختیاری)</label>
+            <select>
+                <option value="email">ایمیل</option>
+                <option value="linkedin">لینکدین</option>
+                <option value="website">وب‌سایت</option>
+                <option value="phone">تلفن</option>
+                <option value="telegram">تلگرام</option>
+                <option value="whatsapp">واتس‌اپ</option>
+            </select>
+            <input type="text" placeholder="مقدار را وارد کنید (مثلاً ایمیل)" style="margin-top:0.3rem; width:100%; padding:0.5rem 1rem; border-radius:16px; border:1px solid rgba(255,255,255,0.4); background:rgba(255,255,255,0.5); font-family:inherit;" />
+            <div class="hint">* این بخش کاملاً اختیاری است و فقط برای ارتباط شما با دیگران استفاده می‌شود.</div>
+        </div>
+
+        <button class="btn-submit">🎯 دریافت شناسنامه</button>
+        <div class="note">هیچ داده‌ی هویتی (نام، ملیت، کد ملی) ذخیره نمی‌شود.</div>
+    </div>
+
+</div>
+</body>
+</html>
