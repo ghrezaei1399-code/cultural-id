@@ -218,6 +218,7 @@
             justify-content: center;
             align-items: center;
             margin-bottom: 0.5rem;
+            width: 100%;
         }
 
         .logo-main {
@@ -247,11 +248,18 @@
 
         body.dark .card-sample { background: rgba(30, 40, 50, 0.4); }
 
+        .card-sample .card-logo-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 0.4rem;
+        }
+
         .card-sample .card-logo {
             max-height: 65px;
             width: auto;
-            margin-bottom: 0.4rem;
-            display: inline-block;
+            display: block;
         }
 
         .card-sample .card-id {
@@ -606,6 +614,7 @@
             .gallery-grid { grid-template-columns: 1fr 1fr; }
             .top-bar { flex-direction: row; flex-wrap: wrap; }
             .logo-main { max-height: 65px; }
+            .card-sample .card-logo { max-height: 50px; }
         }
 
         @media (max-width: 480px) {
@@ -691,7 +700,9 @@
             <div class="box box-color-6">
                 <div class="box-title box-title-2">🪪 نمونه کارت</div>
                 <div class="card-sample">
-                    <img src="assets/img/logo-fa.png" alt="لوگو" class="card-logo" />
+                    <div class="card-logo-wrapper">
+                        <img src="assets/img/logo-fa.png" alt="لوگو" class="card-logo" />
+                    </div>
                     <div class="card-id">CIM-۱۲۳۴-۵۶۷۸-الف</div>
                     <div class="card-id-parts">
                         CIM • ۱۲۳۴ • ۵۶۷۸ • <span class="highlight">الف</span>
@@ -817,7 +828,9 @@
             <div class="box box-color-6">
                 <div class="box-title box-title-3">🪪 Sample Card</div>
                 <div class="card-sample">
-                    <img src="assets/img/logo-en.png" alt="Logo" class="card-logo" />
+                    <div class="card-logo-wrapper">
+                        <img src="assets/img/logo-en.png" alt="Logo" class="card-logo" />
+                    </div>
                     <div class="card-id">CIM-1234-5678-A</div>
                     <div class="card-id-parts">
                         CIM • 1234 • 5678 • <span class="highlight">A</span>
