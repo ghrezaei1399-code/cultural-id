@@ -18,7 +18,6 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            transition: background 0.3s, color 0.3s;
         }
 
         /* ===== لایه‌ی اضافی حذف شد ===== */
@@ -26,18 +25,12 @@
         .container {
             max-width: 1100px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(12px);
+            background: transparent; /* کاملاً شفاف */
+            backdrop-filter: blur(2px); /* فقط کمی محو برای خوانایی */
             border-radius: 60px;
             padding: 2rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: background 0.3s, border-color 0.3s;
-        }
-
-        body.dark .container {
-            background: rgba(0, 0, 0, 0.3);
-            border-color: rgba(255, 255, 255, 0.05);
+            box-shadow: none;
+            border: none;
         }
 
         /* ===== TOP BAR ===== */
@@ -53,30 +46,31 @@
         .date-display {
             font-size: 0.9rem;
             font-weight: 600;
-            color: #0b3b54;
-            opacity: 0.8;
-            background: rgba(255,255,255,0.2);
+            color: #fff;
+            background: rgba(0,0,0,0.3);
             padding: 0.2rem 1rem;
             border-radius: 30px;
+            backdrop-filter: blur(4px);
         }
 
         body.dark .date-display { color: #b8d4e8; }
 
         .theme-toggle {
-            background: rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.2);
             border: 1px solid rgba(255,255,255,0.1);
             font-size: 1.5rem;
             cursor: pointer;
             padding: 0.2rem 0.8rem;
             border-radius: 40px;
             transition: 0.3s;
-            color: #0b3b54;
+            color: #fff;
+            backdrop-filter: blur(4px);
         }
 
         body.dark .theme-toggle { color: #f9e79f; }
         .theme-toggle:hover {
             transform: scale(1.1);
-            background: rgba(255,255,255,0.3);
+            background: rgba(0,0,0,0.3);
         }
 
         .lang-switch {
@@ -86,86 +80,82 @@
 
         .lang-switch a {
             display: inline-block;
-            background: rgba(255,255,255,0.15);
+            background: rgba(0,0,0,0.2);
             padding: 0.3rem 1.5rem;
             border-radius: 40px;
             text-decoration: none;
-            color: #0b3b54;
+            color: #fff;
             font-weight: 600;
             font-size: 0.9rem;
             transition: 0.2s;
             border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(4px);
         }
 
-        .lang-switch a:hover { background: rgba(255,255,255,0.25); }
-        body.dark .lang-switch a { color: #b8d4e8; background: rgba(255,255,255,0.05); }
-        body.dark .lang-switch a:hover { background: rgba(255,255,255,0.1); }
+        .lang-switch a:hover { background: rgba(0,0,0,0.3); }
+        body.dark .lang-switch a { color: #b8d4e8; }
 
         .back-module {
             display: inline-block;
-            background: rgba(255,255,255,0.15);
+            background: rgba(0,0,0,0.2);
             padding: 0.4rem 1.5rem;
             border-radius: 40px;
             text-decoration: none;
-            color: #0b3b54;
+            color: #fff;
             font-weight: 600;
             font-size: 0.9rem;
             transition: 0.2s;
             border: 1px solid rgba(255,255,255,0.05);
             margin-bottom: 1.5rem;
+            backdrop-filter: blur(4px);
         }
 
-        body.dark .back-module {
-            color: #b8d4e8;
-            background: rgba(255,255,255,0.05);
-        }
+        body.dark .back-module { color: #b8d4e8; }
 
         .back-module:hover {
-            background: rgba(255,255,255,0.25);
+            background: rgba(0,0,0,0.3);
             transform: translateX(-4px);
         }
 
-        /* ===== INFO BOXES ===== */
+        /* ===== INFO BOXES (کاملاً شفاف با افکت شیشه‌ای) ===== */
         .info-box {
             border-radius: 28px;
             padding: 1.8rem 2rem;
+            background: rgba(255, 255, 255, 0.08); /* بسیار شفاف */
+            backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
             margin-bottom: 1.5rem;
-            backdrop-filter: blur(4px);
         }
 
         .info-box:hover {
             transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.15);
         }
 
-        /* رنگ‌های باکس‌ها با فونت‌های تیره برای خوانایی */
-        .box-goals { background: rgba(255, 215, 0, 0.2); border-color: rgba(255, 215, 0, 0.25); }
-        .box-goals .box-title { color: #8a6d0b; }
-        .box-goals p, .box-goals ul { color: #2a1a00; }
-        .box-goals ul li::before { color: #8a6d0b; }
+        /* رنگ‌های ملایم برای تیترها و متن‌ها */
+        .box-goals .box-title { color: #f9e79f; }
+        .box-goals p, .box-goals ul { color: #fff; }
+        .box-goals ul li::before { color: #f9e79f; }
 
-        .box-principles { background: rgba(100, 200, 255, 0.2); border-color: rgba(100, 200, 255, 0.25); }
-        .box-principles .box-title { color: #0a4a5a; }
-        .box-principles p, .box-principles .principle-item .title { color: #001a2a; }
-        .box-principles .principle-item .desc { color: #0a2a3a; }
+        .box-principles .box-title { color: #7ddfe8; }
+        .box-principles p, .box-principles .principle-item .title { color: #fff; }
+        .box-principles .principle-item .desc { color: #d0d8e0; }
 
-        .box-radio { background: rgba(200, 150, 255, 0.2); border-color: rgba(200, 150, 255, 0.25); }
-        .box-radio .box-title { color: #4a0a5a; }
-        .box-radio p, .box-radio ul { color: #1a002a; }
-        .box-radio ul li::before { color: #4a0a5a; }
+        .box-radio .box-title { color: #d4a0e8; }
+        .box-radio p, .box-radio ul { color: #fff; }
+        .box-radio ul li::before { color: #d4a0e8; }
 
-        body.dark .box-goals { background: rgba(255, 215, 0, 0.08); }
-        body.dark .box-goals p, body.dark .box-goals ul { color: #c8b888; }
+        body.dark .info-box {
+            background: rgba(0, 0, 0, 0.2);
+            border-color: rgba(255,255,255,0.05);
+        }
 
-        body.dark .box-principles { background: rgba(100, 200, 255, 0.08); }
-        body.dark .box-principles p, body.dark .box-principles .principle-item .title { color: #88b8c8; }
-        body.dark .box-principles .principle-item .desc { color: #6898a8; }
-
-        body.dark .box-radio { background: rgba(200, 150, 255, 0.08); }
-        body.dark .box-radio p, body.dark .box-radio ul { color: #b888c8; }
+        body.dark .info-box:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
 
         .box-title {
             font-size: 1.2rem;
@@ -174,7 +164,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            border-bottom: 2px solid rgba(255,255,255,0.1);
+            border-bottom: 2px solid rgba(255,255,255,0.05);
             padding-bottom: 0.4rem;
         }
 
@@ -182,6 +172,7 @@
             font-size: 0.95rem;
             line-height: 2;
             opacity: 0.9;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
         .info-box ul {
@@ -190,6 +181,7 @@
             font-size: 0.95rem;
             opacity: 0.9;
             margin-top: 0.5rem;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
         .info-box ul li::before {
@@ -205,7 +197,7 @@
         }
 
         .principle-item {
-            background: rgba(255,255,255,0.08);
+            background: rgba(0,0,0,0.15);
             border-radius: 16px;
             padding: 0.8rem 1rem;
             border: 1px solid rgba(255,255,255,0.05);
@@ -213,16 +205,16 @@
         }
 
         .principle-item:hover {
-            background: rgba(255,255,255,0.15);
+            background: rgba(0,0,0,0.25);
             transform: translateY(-2px);
         }
 
         .principle-item .icon { font-size: 1.2rem; margin-left: 0.3rem; }
-        .principle-item .title { font-weight: 700; font-size: 0.9rem; }
-        .principle-item .desc { font-size: 0.75rem; opacity: 0.6; }
+        .principle-item .title { font-weight: 700; font-size: 0.9rem; color: #fff; }
+        .principle-item .desc { font-size: 0.75rem; opacity: 0.7; color: #d0d8e0; }
 
-        body.dark .principle-item { background: rgba(0,0,0,0.15); }
-        body.dark .principle-item:hover { background: rgba(0,0,0,0.25); }
+        body.dark .principle-item { background: rgba(0,0,0,0.2); }
+        body.dark .principle-item:hover { background: rgba(0,0,0,0.3); }
 
         .radio-showcase {
             display: flex;
@@ -232,7 +224,7 @@
         }
 
         .radio-item {
-            background: rgba(255,255,255,0.08);
+            background: rgba(0,0,0,0.15);
             border-radius: 16px;
             padding: 0.8rem 1rem;
             flex: 1;
@@ -243,7 +235,7 @@
         }
 
         .radio-item:hover {
-            background: rgba(255,255,255,0.15);
+            background: rgba(0,0,0,0.25);
             transform: translateY(-3px);
         }
 
@@ -255,15 +247,14 @@
             flex-direction: column;
             align-items: center;
             gap: 0.3rem;
-            color: #0a2a3a;
+            color: #fff;
         }
 
         .radio-item .radio-icon { font-size: 2rem; }
-        .radio-item .radio-label { opacity: 0.7; }
+        .radio-item .radio-label { opacity: 0.8; }
 
-        body.dark .radio-item { background: rgba(0,0,0,0.15); }
-        body.dark .radio-item:hover { background: rgba(0,0,0,0.25); }
-        body.dark .radio-item a { color: #b8d4e8; }
+        body.dark .radio-item { background: rgba(0,0,0,0.2); }
+        body.dark .radio-item:hover { background: rgba(0,0,0,0.3); }
 
         .poster-links {
             display: flex;
@@ -273,13 +264,13 @@
         }
 
         .poster-link {
-            background: rgba(255,255,255,0.08);
+            background: rgba(0,0,0,0.15);
             border-radius: 12px;
             padding: 0.5rem 1rem;
             border: 1px solid rgba(255,255,255,0.05);
             transition: 0.2s;
             text-decoration: none;
-            color: #0a2a3a;
+            color: #fff;
             font-size: 0.8rem;
             font-weight: 600;
             display: flex;
@@ -288,12 +279,11 @@
         }
 
         .poster-link:hover {
-            background: rgba(255,255,255,0.15);
+            background: rgba(0,0,0,0.25);
             transform: translateY(-2px);
         }
 
         body.dark .poster-link { color: #b8d4e8; }
-        body.dark .poster-link:hover { background: rgba(255,255,255,0.05); }
 
         @media (max-width: 768px) {
             .container { padding: 1rem; border-radius: 40px; }
