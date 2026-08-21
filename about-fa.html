@@ -21,27 +21,13 @@
             background-attachment: fixed;
         }
 
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            z-index: -1;
-            transition: 0.3s;
-        }
-
-        body.dark::before {
-            background: rgba(0, 0, 0, 0.5);
-        }
+        /* ===== لایه‌ی اضافی حذف شد ===== */
 
         .container {
             max-width: 1100px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
             border-radius: 60px;
             padding: 2rem;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
@@ -50,7 +36,7 @@
         }
 
         body.dark .container {
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.15);
             border-color: rgba(255, 255, 255, 0.05);
         }
 
@@ -143,7 +129,7 @@
             transform: translateX(-4px);
         }
 
-        /* ===== INFO BOXES WITH COLORS ===== */
+        /* ===== INFO BOXES ===== */
         .info-box {
             border-radius: 28px;
             padding: 1.8rem 2rem;
@@ -151,7 +137,7 @@
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
             margin-bottom: 1.5rem;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(4px);
         }
 
         .info-box:hover {
@@ -159,31 +145,30 @@
             box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
         }
 
-        /* رنگ‌های متفاوت برای هر باکس */
         .box-goals { background: rgba(255, 215, 0, 0.15); border-color: rgba(255, 215, 0, 0.2); }
         .box-goals .box-title { color: #b8860b; }
-        .box-goals p, .box-goals ul { color: #5a4a1a; }
+        .box-goals p, .box-goals ul { color: #3a2a0a; }
         .box-goals ul li::before { color: #b8860b; }
 
         .box-principles { background: rgba(100, 200, 255, 0.15); border-color: rgba(100, 200, 255, 0.2); }
         .box-principles .box-title { color: #0b6b8a; }
-        .box-principles p, .box-principles .principle-item .title { color: #0a3a4a; }
-        .box-principles .principle-item .desc { color: #1a4a5a; }
+        .box-principles p, .box-principles .principle-item .title { color: #0a2a3a; }
+        .box-principles .principle-item .desc { color: #1a3a4a; }
 
         .box-radio { background: rgba(200, 150, 255, 0.15); border-color: rgba(200, 150, 255, 0.2); }
         .box-radio .box-title { color: #6a1b8a; }
-        .box-radio p, .box-radio ul { color: #3a1a4a; }
+        .box-radio p, .box-radio ul { color: #2a0a3a; }
         .box-radio ul li::before { color: #6a1b8a; }
 
         body.dark .box-goals { background: rgba(255, 215, 0, 0.08); }
-        body.dark .box-goals p, body.dark .box-goals ul { color: #d4c8a0; }
+        body.dark .box-goals p, body.dark .box-goals ul { color: #c8b888; }
 
         body.dark .box-principles { background: rgba(100, 200, 255, 0.08); }
-        body.dark .box-principles p, body.dark .box-principles .principle-item .title { color: #a0c8d4; }
-        body.dark .box-principles .principle-item .desc { color: #80a8b4; }
+        body.dark .box-principles p, body.dark .box-principles .principle-item .title { color: #88b8c8; }
+        body.dark .box-principles .principle-item .desc { color: #6898a8; }
 
         body.dark .box-radio { background: rgba(200, 150, 255, 0.08); }
-        body.dark .box-radio p, body.dark .box-radio ul { color: #c8a0d4; }
+        body.dark .box-radio p, body.dark .box-radio ul { color: #b888c8; }
 
         .box-title {
             font-size: 1.2rem;
@@ -199,14 +184,14 @@
         .info-box p {
             font-size: 0.95rem;
             line-height: 2;
-            opacity: 0.8;
+            opacity: 0.85;
         }
 
         .info-box ul {
             list-style: none;
             line-height: 2.4;
             font-size: 0.95rem;
-            opacity: 0.8;
+            opacity: 0.85;
             margin-top: 0.5rem;
         }
 
@@ -215,7 +200,6 @@
             font-weight: bold;
         }
 
-        /* ===== PRINCIPLES GRID ===== */
         .principles-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -240,10 +224,9 @@
         .principle-item .title { font-weight: 700; font-size: 0.9rem; }
         .principle-item .desc { font-size: 0.75rem; opacity: 0.6; }
 
-        body.dark .principle-item { background: rgba(0,0,0,0.2); }
-        body.dark .principle-item:hover { background: rgba(0,0,0,0.3); }
+        body.dark .principle-item { background: rgba(0,0,0,0.15); }
+        body.dark .principle-item:hover { background: rgba(0,0,0,0.25); }
 
-        /* ===== RADIO SHOWCASE ===== */
         .radio-showcase {
             display: flex;
             flex-wrap: wrap;
@@ -275,6 +258,7 @@
             flex-direction: column;
             align-items: center;
             gap: 0.3rem;
+            color: #1a4b6d;
         }
 
         .radio-item .radio-icon { font-size: 2rem; }
@@ -282,8 +266,8 @@
 
         body.dark .radio-item { background: rgba(0,0,0,0.15); }
         body.dark .radio-item:hover { background: rgba(0,0,0,0.25); }
+        body.dark .radio-item a { color: #b8d4e8; }
 
-        /* ===== POSTER LINKS ===== */
         .poster-links {
             display: flex;
             flex-wrap: wrap;
@@ -314,7 +298,6 @@
         body.dark .poster-link { color: #b8d4e8; }
         body.dark .poster-link:hover { background: rgba(255,255,255,0.05); }
 
-        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .container { padding: 1rem; border-radius: 40px; }
             .info-box { padding: 1.2rem 1.2rem; }
@@ -345,7 +328,7 @@
 
     <a href="index.html" class="back-module">← بازگشت به صفحه‌ی اصلی</a>
 
-    <!-- ===== SECTION 1: GOALS ===== -->
+    <!-- ===== GOALS ===== -->
     <div class="info-box box-goals">
         <div class="box-title">🎯 اهداف پروژه</div>
         <p>
@@ -361,7 +344,7 @@
         </ul>
     </div>
 
-    <!-- ===== SECTION 2: PRINCIPLES ===== -->
+    <!-- ===== PRINCIPLES ===== -->
     <div class="info-box box-principles">
         <div class="box-title">⚖️ اصول بنیادین</div>
         <p style="margin-bottom:0.8rem; opacity:0.7;">
@@ -406,7 +389,7 @@
         </div>
     </div>
 
-    <!-- ===== SECTION 3: RADIO-TV ===== -->
+    <!-- ===== RADIO-TV ===== -->
     <div class="info-box box-radio">
         <div class="box-title">📡 رادیوتلویزیون هوشمند همگانی</div>
         <p>
@@ -457,14 +440,12 @@
 </div>
 
 <script>
-    // ===== DATE =====
     (function() {
         const now = new Date();
         const opts = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
         document.getElementById('dateDisplay').textContent = '📅 ' + now.toLocaleDateString('fa-IR', opts);
     })();
 
-    // ===== THEME TOGGLE =====
     (function() {
         const toggle = document.getElementById('themeToggle');
         const body = document.body;
