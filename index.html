@@ -24,20 +24,26 @@
         .container {
             max-width: 1200px;
             width: 100%;
-            background: transparent;
+            background: rgba(255, 255, 255, 0.02);
             backdrop-filter: blur(2px);
             border-radius: 60px;
             padding: 1.5rem 2rem 1.5rem;
-            box-shadow: none;
-            border: none;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.02);
         }
 
-        /* ===== TOP BAR ===== */
+        /* ===== HEADER ===== */
+        .header {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.5rem;
             flex-wrap: wrap;
             gap: 0.5rem;
         }
@@ -45,36 +51,73 @@
         .date-display {
             font-size: 0.9rem;
             font-weight: 600;
-            color: #1a2a4a;
-            background: rgba(255,255,255,0.15);
+            color: #0a1a2a;
+            background: rgba(255,255,255,0.05);
             padding: 0.2rem 1rem;
             border-radius: 30px;
-            backdrop-filter: blur(4px);
+            text-shadow: 0 2px 8px rgba(255,255,255,0.1);
         }
 
         body.dark .date-display { color: #b8d4e8; background: rgba(0,0,0,0.2); }
 
         .theme-toggle {
-            background: rgba(255,255,255,0.15);
-            border: 1px solid rgba(0,0,0,0.05);
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(0,0,0,0.02);
             font-size: 1.5rem;
             cursor: pointer;
             padding: 0.2rem 0.8rem;
             border-radius: 40px;
             transition: 0.3s;
-            color: #1a2a4a;
+            color: #0a1a2a;
         }
 
         body.dark .theme-toggle { color: #f9e79f; background: rgba(0,0,0,0.2); }
-        .theme-toggle:hover {
-            transform: scale(1.1);
-            background: rgba(255,255,255,0.25);
+        .theme-toggle:hover { transform: scale(1.1); background: rgba(255,255,255,0.1); }
+
+        .logos-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1.2rem;
+            flex-wrap: wrap;
         }
+
+        .logo-main {
+            max-height: 90px;
+            width: auto;
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.02));
+            transition: transform 0.3s ease;
+        }
+
+        .logo-main:hover { transform: scale(1.03); }
+
+        .site-name {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #0a1a2a;
+            text-shadow: 0 2px 12px rgba(255,255,255,0.1);
+            text-align: center;
+            line-height: 1.2;
+            background: rgba(255,255,255,0.02);
+            padding: 0.2rem 1.2rem;
+            border-radius: 40px;
+            border: 1px solid rgba(255,255,255,0.02);
+        }
+
+        .site-name .en {
+            font-size: 0.8rem;
+            font-weight: 400;
+            opacity: 0.7;
+            display: block;
+            color: #1a2a3a;
+        }
+
+        body.dark .site-name { color: #d0c8e8; background: rgba(0,0,0,0.02); }
+        body.dark .site-name .en { color: #b8b0c8; }
 
         /* ===== LANGUAGE SWITCHER ===== */
         .lang-bar {
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(8px);
+            background: rgba(255,255,255,0.02);
             border-radius: 60px;
             padding: 0.4rem 1rem;
             margin-bottom: 1.2rem;
@@ -92,69 +135,24 @@
             text-decoration: none;
             font-size: 0.8rem;
             font-weight: 600;
-            color: #1a2a4a;
+            color: #0a1a2a;
             border: 1px solid transparent;
             transition: all 0.25s ease;
         }
 
         .lang-bar a:hover, .lang-bar a.active {
-            background: rgba(255,255,255,0.1);
-            color: #0a1a3a;
-            border-color: rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.05);
+            color: #1a2a4a;
+            border-color: rgba(255,255,255,0.02);
         }
 
         body.dark .lang-bar a { color: #b8d4e8; }
         body.dark .lang-bar a:hover, body.dark .lang-bar a.active { color: #f9e79f; }
 
-        /* ===== LOGOS & SITE NAME ===== */
-        .logos-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1.2rem;
-            margin-bottom: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .logo-main {
-            max-height: 65px;
-            width: auto;
-            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.05));
-            transition: transform 0.3s ease;
-        }
-
-        .logo-main:hover { transform: scale(1.03); }
-
-        .site-name {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #1a2a4a;
-            text-shadow: 0 2px 12px rgba(255,255,255,0.2);
-            text-align: center;
-            line-height: 1.2;
-            background: rgba(255,255,255,0.02);
-            padding: 0.2rem 1.2rem;
-            border-radius: 40px;
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255,255,255,0.02);
-        }
-
-        .site-name .en {
-            font-size: 0.8rem;
-            font-weight: 400;
-            opacity: 0.7;
-            display: block;
-            color: #3a2a4a;
-        }
-
-        body.dark .site-name { color: #d0c8e8; background: rgba(0,0,0,0.02); }
-        body.dark .site-name .en { color: #b8b0c8; }
-
         /* ===== SLOGAN SCROLLER ===== */
         .slogan-scroller {
             overflow: hidden;
             background: rgba(255,255,255,0.02);
-            backdrop-filter: blur(4px);
             border-radius: 40px;
             padding: 0.25rem 0;
             margin-bottom: 1rem;
@@ -173,8 +171,8 @@
         .slogan-track span {
             font-size: 0.9rem;
             font-weight: 600;
-            color: #1a2a4a;
-            text-shadow: 0 1px 8px rgba(255,255,255,0.1);
+            color: #0a1a2a;
+            text-shadow: 0 1px 8px rgba(255,255,255,0.05);
             padding: 0 1rem;
             opacity: 0.8;
         }
@@ -204,20 +202,16 @@
             border: 1px solid rgba(255, 255, 255, 0.02);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.02);
             transition: all 0.25s ease;
-            backdrop-filter: blur(6px);
-            background: rgba(255, 255, 255, 0.0);
+            background: rgba(255, 255, 255, 0.02);
         }
 
         .box:hover {
             transform: translateY(-4px);
             box-shadow: 0 12px 32px rgba(0, 0, 0, 0.04);
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(255, 255, 255, 0.05);
         }
 
-        body.dark .box {
-            background: rgba(0, 0, 0, 0.02);
-            border-color: rgba(255,255,255,0.02);
-        }
+        body.dark .box { background: rgba(0, 0, 0, 0.02); border-color: rgba(255,255,255,0.02); }
         body.dark .box:hover { background: rgba(0,0,0,0.05); }
 
         .box-title {
@@ -229,45 +223,29 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            color: #1a2a4a;
-            text-shadow: 0 2px 8px rgba(255,255,255,0.1);
+            color: #0a1a2a;
+            text-shadow: 0 2px 8px rgba(255,255,255,0.05);
         }
 
         body.dark .box-title { color: #b8d4e8; border-bottom-color: rgba(255,255,255,0.02); }
 
-        .box p {
+        .box p, .box ul {
             font-size: 0.9rem;
             line-height: 1.8;
             opacity: 0.9;
-            color: #3a1a2a;
-            text-shadow: 0 2px 8px rgba(255,255,255,0.05);
+            color: #0a1a2a;
+            text-shadow: 0 2px 8px rgba(255,255,255,0.02);
         }
 
-        body.dark .box p { color: #d0c8c0; }
+        body.dark .box p, body.dark .box ul { color: #d0c8c0; }
 
-        .box ul {
-            list-style: none;
-            line-height: 2.2;
-            font-size: 0.9rem;
-            opacity: 0.9;
-            color: #3a1a2a;
-            text-shadow: 0 2px 8px rgba(255,255,255,0.05);
-        }
-
-        body.dark .box ul { color: #d0c8c0; }
-
-        .box ul li::before {
-            content: "✦ ";
-            font-weight: bold;
-            color: #4a2a1a;
-        }
-
+        .box ul { list-style: none; line-height: 2.2; }
+        .box ul li::before { content: "✦ "; font-weight: bold; color: #2a1a1a; }
         body.dark .box ul li::before { color: #f9e79f; }
 
         /* ===== CARD SAMPLE ===== */
         .card-sample {
-            background: rgba(255,255,255,0.0);
-            backdrop-filter: blur(8px);
+            background: rgba(255,255,255,0.02);
             border-radius: 24px;
             padding: 1rem 1.2rem;
             text-align: center;
@@ -275,10 +253,7 @@
             transition: all 0.3s ease;
         }
 
-        .card-sample:hover {
-            transform: translateY(-4px);
-            background: rgba(255,255,255,0.02);
-        }
+        .card-sample:hover { transform: translateY(-4px); background: rgba(255,255,255,0.05); }
 
         .card-sample .card-logo { max-height: 50px; width: auto; display: block; margin: 0 auto 0.3rem; }
         .card-sample .card-id {
@@ -289,10 +264,9 @@
             border-radius: 40px;
             display: inline-block;
             direction: ltr;
-            color: #1a2a4a;
+            color: #0a1a2a;
             border: 1px solid rgba(255,255,255,0.02);
         }
-
         body.dark .card-sample .card-id { color: #b8d4e8; }
 
         .card-sample .card-id-parts {
@@ -300,9 +274,8 @@
             opacity: 0.6;
             direction: ltr;
             margin: 0.1rem 0;
-            color: #3a1a2a;
+            color: #0a1a2a;
         }
-
         body.dark .card-sample .card-id-parts { color: #d0c8c0; }
 
         .card-sample .card-id-parts .highlight {
@@ -319,10 +292,9 @@
             border-radius: 30px;
             font-size: 0.5rem;
             background: rgba(255,255,255,0.02);
-            color: #3a1a2a;
+            color: #0a1a2a;
             border: 1px solid rgba(255,255,255,0.02);
         }
-
         body.dark .card-sample .card-values .v-tag { color: #d0c8c0; }
 
         .card-sample .card-qr {
@@ -331,9 +303,8 @@
             margin-top: 0.2rem;
             border-top: 1px dashed rgba(0,0,0,0.02);
             padding-top: 0.2rem;
-            color: #3a1a2a;
+            color: #0a1a2a;
         }
-
         body.dark .card-sample .card-qr { color: #d0c8c0; border-top-color: rgba(255,255,255,0.02); }
 
         /* ===== PRINCIPLES ===== */
@@ -347,12 +318,11 @@
             padding: 0.2rem 1rem;
             font-size: 0.65rem;
             border: 1px solid rgba(255,255,255,0.02);
-            color: #3a1a2a;
+            color: #0a1a2a;
         }
-
         body.dark .principles { color: #d0c8c0; }
 
-        /* ===== MODULES ===== */
+        /* ===== MAIN MODULES ===== */
         .modules {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -365,20 +335,18 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: rgba(255,255,255,0.0);
-            backdrop-filter: blur(8px);
+            background: rgba(255,255,255,0.02);
             border: 1px solid rgba(255,255,255,0.02);
             border-radius: 24px;
             padding: 0.8rem 0.4rem;
             text-decoration: none;
-            color: #1a2a4a;
+            color: #0a1a2a;
             transition: 0.25s;
             text-align: center;
         }
 
         body.dark .module-btn { color: #b8d4e8; }
-
-        .module-btn:hover { background: rgba(255,255,255,0.02); transform: translateY(-3px); }
+        .module-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-3px); }
         .module-btn .icon { font-size: 1.4rem; margin-bottom: 0.1rem; }
         .module-btn .label { font-weight: 700; font-size: 0.8rem; }
         .module-btn .desc { font-size: 0.6rem; opacity: 0.6; }
@@ -388,8 +356,7 @@
         .btn {
             display: inline-block;
             background: rgba(255,255,255,0.02);
-            backdrop-filter: blur(4px);
-            color: #1a2a4a;
+            color: #0a1a2a;
             padding: 0.5rem 2rem;
             border-radius: 60px;
             font-weight: 700;
@@ -398,9 +365,7 @@
             transition: 0.3s;
             border: 1px solid rgba(255,255,255,0.02);
         }
-
         body.dark .btn { color: #b8d4e8; }
-
         .btn:hover { background: rgba(255,255,255,0.05); transform: scale(1.02); }
 
         /* ===== GALLERY ===== */
@@ -408,19 +373,17 @@
             margin-top: 1.2rem;
             padding: 1rem;
             border-radius: 24px;
-            background: rgba(255,255,255,0.0);
-            backdrop-filter: blur(4px);
+            background: rgba(255,255,255,0.02);
             border: 1px solid rgba(255,255,255,0.02);
         }
 
         .achievement-section h2 {
             font-size: 1rem;
             font-weight: 700;
-            color: #1a2a4a;
+            color: #0a1a2a;
             margin-bottom: 0.2rem;
             text-shadow: 0 2px 8px rgba(255,255,255,0.05);
         }
-
         body.dark .achievement-section h2 { color: #b8d4e8; }
 
         .gallery-grid {
@@ -431,16 +394,14 @@
         }
 
         .gallery-item {
-            background: rgba(255,255,255,0.0);
-            backdrop-filter: blur(4px);
+            background: rgba(255,255,255,0.02);
             border-radius: 18px;
             padding: 0.6rem;
             border: 1px solid rgba(255,255,255,0.02);
             transition: 0.3s;
             text-align: center;
         }
-
-        .gallery-item:hover { transform: translateY(-3px); background: rgba(255,255,255,0.02); }
+        .gallery-item:hover { transform: translateY(-3px); background: rgba(255,255,255,0.05); }
 
         .gallery-placeholder {
             width: 100%;
@@ -453,28 +414,20 @@
             justify-content: center;
             border: 1px dashed rgba(0,0,0,0.02);
         }
-
         .gallery-placeholder img { max-width: 50%; height: auto; opacity: 0.3; }
-        .gallery-placeholder .gallery-label { font-size: 0.55rem; opacity: 0.5; color: #3a1a2a; }
-
+        .gallery-placeholder .gallery-label { font-size: 0.55rem; opacity: 0.5; color: #0a1a2a; }
         body.dark .gallery-placeholder .gallery-label { color: #d0c8c0; }
 
-        .gallery-title {
-            display: block;
-            font-weight: 700;
-            font-size: 0.7rem;
-            color: #1a2a4a;
-        }
-
+        .gallery-title { display: block; font-weight: 700; font-size: 0.7rem; color: #0a1a2a; }
         body.dark .gallery-title { color: #b8d4e8; }
 
-        .gallery-author { display: block; font-size: 0.55rem; opacity: 0.5; color: #3a1a2a; }
+        .gallery-author { display: block; font-size: 0.55rem; opacity: 0.5; color: #0a1a2a; }
         body.dark .gallery-author { color: #d0c8c0; }
 
         .btn-upload {
             display: inline-block;
             background: rgba(255,255,255,0.02);
-            color: #1a2a4a;
+            color: #0a1a2a;
             padding: 0.2rem 1.2rem;
             border-radius: 40px;
             text-decoration: none;
@@ -483,11 +436,10 @@
             transition: 0.3s;
             border: 1px solid rgba(255,255,255,0.02);
         }
-
         .btn-upload:hover { transform: scale(1.02); background: rgba(255,255,255,0.05); }
         body.dark .btn-upload { color: #b8d4e8; }
 
-        /* ===== BOTTOM SECTION: MORE INFO + RADIO-TV ===== */
+        /* ===== BOTTOM MODULES ===== */
         .bottom-modules {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -495,52 +447,41 @@
             margin-top: 1.5rem;
         }
 
-        @media (max-width: 768px) {
-            .bottom-modules { grid-template-columns: 1fr; gap: 1rem; }
-        }
+        @media (max-width: 768px) { .bottom-modules { grid-template-columns: 1fr; gap: 1rem; } }
 
         .bottom-module {
             text-align: center;
             padding: 1.2rem;
             border-radius: 32px;
-            background: rgba(255,255,255,0.0);
-            backdrop-filter: blur(4px);
+            background: rgba(255,255,255,0.02);
             border: 1px solid rgba(255,255,255,0.02);
             transition: 0.3s;
         }
-
-        .bottom-module:hover {
-            background: rgba(255,255,255,0.02);
-            transform: translateY(-3px);
-        }
-
+        .bottom-module:hover { background: rgba(255,255,255,0.05); transform: translateY(-3px); }
         body.dark .bottom-module { background: rgba(0,0,0,0.02); }
         body.dark .bottom-module:hover { background: rgba(0,0,0,0.05); }
 
         .bottom-module h3 {
             font-size: 1.1rem;
             font-weight: 700;
-            color: #1a2a4a;
+            color: #0a1a2a;
             margin-bottom: 0.3rem;
         }
-
         body.dark .bottom-module h3 { color: #b8d4e8; }
 
         .bottom-module p {
             opacity: 0.7;
             max-width: 500px;
             margin: 0 auto 0.8rem;
-            color: #3a1a2a;
+            color: #0a1a2a;
             font-size: 0.9rem;
         }
-
         body.dark .bottom-module p { color: #d0c8c0; }
 
         .btn-bottom {
             display: inline-block;
             background: rgba(255,255,255,0.02);
-            backdrop-filter: blur(4px);
-            color: #1a2a4a;
+            color: #0a1a2a;
             padding: 0.5rem 2rem;
             border-radius: 60px;
             font-weight: 700;
@@ -549,9 +490,7 @@
             transition: 0.3s;
             border: 1px solid rgba(255,255,255,0.02);
         }
-
         body.dark .btn-bottom { color: #b8d4e8; }
-
         .btn-bottom:hover { background: rgba(255,255,255,0.05); transform: scale(1.02); }
 
         /* ===== RESPONSIVE ===== */
@@ -565,7 +504,7 @@
             .lang-bar a { font-size: 0.65rem; padding: 0.1rem 0.5rem; }
             .box { padding: 1rem 1rem; }
             .slogan-track span { font-size: 0.75rem; }
-            .logo-main { max-height: 45px; }
+            .logo-main { max-height: 65px; }
             .gallery-grid { grid-template-columns: 1fr 1fr; }
             .modules { grid-template-columns: 1fr 1fr; }
         }
@@ -575,6 +514,7 @@
             .modules { grid-template-columns: 1fr; }
             .split { gap: 1.5rem; }
             .bottom-modules { grid-template-columns: 1fr; }
+            .logo-main { max-height: 55px; }
         }
 
         @font-face {
@@ -586,26 +526,27 @@
 <body>
 <div class="container">
 
-    <!-- ===== TOP BAR ===== -->
-    <div class="top-bar">
-        <div class="date-display" id="dateDisplay">📅 جمعه ۲۰ مرداد ۱۴۰۵</div>
-        <button class="theme-toggle" id="themeToggle">🌙</button>
+    <!-- ===== HEADER ===== -->
+    <div class="header">
+        <div class="top-bar">
+            <div class="date-display" id="dateDisplay">📅 جمعه ۲۰ مرداد ۱۴۰۵</div>
+            <button class="theme-toggle" id="themeToggle">🌙</button>
+        </div>
+
+        <div class="logos-container">
+            <img src="assets/logo-fa.png" alt="شناسنامه فرهنگی جهانی" class="logo-main" />
+            <span class="site-name">
+                کارت جهانی هویت هوشمند فرهنگی
+                <span class="en">Global Smart Cultural Identity Card</span>
+            </span>
+            <img src="assets/logo-en.png" alt="Global Cultural ID" class="logo-main" />
+        </div>
     </div>
 
     <!-- ===== LANGUAGE SWITCHER ===== -->
     <div class="lang-bar">
         <a href="#" class="active">فارسی</a>
         <a href="#">English</a>
-    </div>
-
-    <!-- ===== LOGOS & SITE NAME ===== -->
-    <div class="logos-container">
-        <img src="assets/logo-fa.png" alt="شناسنامه فرهنگی جهانی" class="logo-main" />
-        <span class="site-name">
-            کارت جهانی هویت هوشمند فرهنگی
-            <span class="en">Global Smart Cultural Identity Card</span>
-        </span>
-        <img src="assets/logo-en.png" alt="Global Cultural ID" class="logo-main" />
     </div>
 
     <!-- ===== SLOGAN SCROLLER ===== -->
@@ -682,6 +623,7 @@
                 </div>
             </div>
 
+            <!-- ===== FA MODULES ===== -->
             <div class="modules">
                 <a href="register-fa.html" class="module-btn">
                     <span class="icon">📝</span>
@@ -693,7 +635,7 @@
                     <span class="label">ویرایش اطلاعات</span>
                     <span class="desc">فقط یک بار امکان تغییر دارد</span>
                 </a>
-                <a href="request-fa.html" class="module-btn">
+                <a href="request-fa.html?type=connection" class="module-btn">
                     <span class="icon">🤝</span>
                     <span class="label">ارتباط با هم‌فکران</span>
                     <span class="desc">ثبت درخواست برای ادمین</span>
@@ -703,13 +645,20 @@
                     <span class="label">دعوت از دوستان</span>
                     <span class="desc">سفیر فرهنگی شوید و شبکه‌سازی کنید</span>
                 </a>
+                <a href="request-fa.html?type=delete" class="module-btn" style="border-color: rgba(200, 50, 50, 0.1);">
+                    <span class="icon">🚪</span>
+                    <span class="label">انصراف از عضویت</span>
+                    <span class="desc">درخواست حذف حساب کاربری</span>
+                </a>
             </div>
 
+            <!-- ===== CTA ===== -->
             <div class="cta-area">
-                <a href="#" class="btn">🎯 دریافت شناسنامه</a>
-                <div style="margin-top:0.2rem; font-size:0.6rem; opacity:0.6; color:#3a1a2a;">بدون اطلاعات شخصی • کاملاً ناشناس • ۳ دقیقه</div>
+                <a href="card-fa.html" class="btn">🎯 دریافت شناسنامه</a>
+                <div style="margin-top:0.2rem; font-size:0.6rem; opacity:0.6; color:#0a1a2a;">بدون اطلاعات شخصی • کاملاً ناشناس • ۳ دقیقه</div>
             </div>
 
+            <!-- ===== GALLERY ===== -->
             <div class="achievement-section">
                 <h2>🏆 گالری دستاوردهای ۲۰۰ سفیر</h2>
                 <div class="gallery-grid">
@@ -787,40 +736,42 @@
                 </div>
             </div>
 
-            <!-- ===== MODULES ===== -->
-<div class="modules">
-    <a href="register-fa.html" class="module-btn">
-        <span class="icon">📝</span>
-        <span class="label">ثبت‌نام و دریافت شناسنامه</span>
-        <span class="desc">پر کردن فرم ۷ ارزش فرهنگی</span>
-    </a>
-    <a href="edit-fa.html" class="module-btn">
-        <span class="icon">✏️</span>
-        <span class="label">ویرایش اطلاعات</span>
-        <span class="desc">فقط یک بار امکان تغییر دارد</span>
-    </a>
-    <a href="request-fa.html?type=connection" class="module-btn">
-        <span class="icon">🤝</span>
-        <span class="label">ارتباط با هم‌فکران</span>
-        <span class="desc">ثبت درخواست برای ادمین</span>
-    </a>
-    <a href="referral-fa.html" class="module-btn">
-        <span class="icon">📣</span>
-        <span class="label">دعوت از دوستان</span>
-        <span class="desc">سفیر فرهنگی شوید و شبکه‌سازی کنید</span>
-    </a>
-    <a href="request-fa.html?type=delete" class="module-btn" style="border-color: rgba(200, 50, 50, 0.1);">
-        <span class="icon">🚪</span>
-        <span class="label">انصراف از عضویت</span>
-        <span class="desc">درخواست حذف حساب کاربری</span>
-    </a>
-</div>
-
-            <div class="cta-area">
-                <a href="#" class="btn">🎯 Get Your ID</a>
-                <div style="margin-top:0.2rem; font-size:0.6rem; opacity:0.6; color:#3a1a2a;">No personal info • Completely anonymous • 3 minutes</div>
+            <!-- ===== EN MODULES ===== -->
+            <div class="modules">
+                <a href="register-en.html" class="module-btn">
+                    <span class="icon">📝</span>
+                    <span class="label">Register & Get ID</span>
+                    <span class="desc">Fill in the 7 cultural values form</span>
+                </a>
+                <a href="edit-en.html" class="module-btn">
+                    <span class="icon">✏️</span>
+                    <span class="label">Edit Information</span>
+                    <span class="desc">Only one-time change allowed</span>
+                </a>
+                <a href="request-en.html?type=connection" class="module-btn">
+                    <span class="icon">🤝</span>
+                    <span class="label">Connect with Reformers</span>
+                    <span class="desc">Submit request to admin</span>
+                </a>
+                <a href="referral-en.html" class="module-btn">
+                    <span class="icon">📣</span>
+                    <span class="label">Invite Friends</span>
+                    <span class="desc">Become a cultural ambassador and network</span>
+                </a>
+                <a href="request-en.html?type=delete" class="module-btn" style="border-color: rgba(200, 50, 50, 0.1);">
+                    <span class="icon">🚪</span>
+                    <span class="label">Cancel Membership</span>
+                    <span class="desc">Request account deletion</span>
+                </a>
             </div>
 
+            <!-- ===== CTA ===== -->
+            <div class="cta-area">
+                <a href="card-en.html" class="btn">🎯 Get Your ID</a>
+                <div style="margin-top:0.2rem; font-size:0.6rem; opacity:0.6; color:#0a1a2a;">No personal info • Completely anonymous • 3 minutes</div>
+            </div>
+
+            <!-- ===== GALLERY ===== -->
             <div class="achievement-section">
                 <h2>🏆 Gallery of 200 Ambassadors</h2>
                 <div class="gallery-grid">
@@ -843,14 +794,11 @@
 
     <!-- ===== BOTTOM MODULES ===== -->
     <div class="bottom-modules">
-        <!-- More Info -->
         <div class="bottom-module">
             <h3>📖 درباره پروژه</h3>
-            <p>اهداف، اصول بنیادین و فلسفه‌ی غیرمتمرکز کارت جهانی هویت هوشمند فرهنگی</p>
+            <p>اهداف، اصول بنیادین و فلسفه‌ی غیرمتمرکز</p>
             <a href="about-fa.html" class="btn-bottom">بیشتر بدانید</a>
         </div>
-
-        <!-- Radio-TV -->
         <div class="bottom-module">
             <h3>📡 رادیوتلویزیون هوشمند</h3>
             <p>شبکه‌های فرهنگی خود را بسازید و محتوای گروهی خود را منتشر کنید</p>
