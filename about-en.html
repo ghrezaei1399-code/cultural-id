@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Learn More | Global Cultural ID</title>
+    <title>Learn More | Global Smart Cultural Identity Card</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -78,6 +78,28 @@
             background: rgba(255,255,255,0.25);
         }
 
+        .lang-switch {
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .lang-switch a {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            padding: 0.3rem 1.5rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #1a4b6d;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .lang-switch a:hover { background: rgba(255,255,255,0.25); }
+        body.dark .lang-switch a { color: #b8d4e8; background: rgba(255,255,255,0.05); }
+        body.dark .lang-switch a:hover { background: rgba(255,255,255,0.1); }
+
         .back-module {
             display: inline-block;
             background: rgba(255,255,255,0.15);
@@ -103,7 +125,7 @@
         }
 
         .info-box {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(12px);
             border-radius: 28px;
             padding: 1.8rem 2rem;
@@ -116,7 +138,7 @@
         .info-box:hover {
             transform: translateY(-4px);
             box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.25);
         }
 
         body.dark .info-box {
@@ -167,40 +189,68 @@
 
         body.dark .info-box ul li::before { color: #7ddfa0; }
 
-        .lang-switch {
-            text-align: center;
-            margin: 1rem 0;
+        .principles-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            margin-top: 0.5rem;
         }
 
-        .lang-switch a {
-            display: inline-block;
-            background: rgba(255,255,255,0.15);
-            padding: 0.3rem 1.5rem;
-            border-radius: 40px;
-            text-decoration: none;
-            color: #1a4b6d;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: 0.2s;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .lang-switch a:hover {
-            background: rgba(255,255,255,0.25);
-        }
-
-        body.dark .lang-switch a {
-            color: #b8d4e8;
+        .principle-item {
             background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 0.8rem 1rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: 0.2s;
         }
 
-        body.dark .lang-switch a:hover {
+        .principle-item:hover {
             background: rgba(255,255,255,0.1);
         }
 
+        .principle-item .icon { font-size: 1.2rem; margin-right: 0.3rem; }
+        .principle-item .title { font-weight: 700; font-size: 0.9rem; color: #0b3b54; }
+        .principle-item .desc { font-size: 0.75rem; opacity: 0.6; }
+
+        body.dark .principle-item .title { color: #b8d4e8; }
+
+        .radio-showcase {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .radio-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 1rem 1.2rem;
+            flex: 1;
+            min-width: 140px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: 0.2s;
+        }
+
+        .radio-item:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-3px);
+        }
+
+        .radio-item a {
+            text-decoration: none;
+            color: #1a7b9e;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        body.dark .radio-item a { color: #7ddfa0; }
+
         @media (max-width: 768px) {
-            .container { padding: 1.5rem 1rem; }
+            .container { padding: 1rem; }
             .info-box { padding: 1.2rem 1.2rem; }
+            .principles-grid { grid-template-columns: 1fr; }
+            .radio-item { min-width: 100%; }
         }
 
         @font-face {
@@ -224,9 +274,9 @@
     <a href="index.html" class="back-module">← Back to Home</a>
 
     <div class="info-box">
-        <h2>🎯 Goals of the ID</h2>
+        <h2>🎯 Project Goals</h2>
         <p>
-            This initiative is designed to create a <strong>decentralized cultural identity</strong> for every individual, without requiring personal information.
+            This project is designed to create a <strong>decentralized and voluntary cultural identity</strong> for every individual, without requiring personal information.
             We aim to build a network of <strong>cultural reformers</strong> who can preserve their cultural identity and values
             without relying on specific institutions, and connect with like-minded people around the world.
         </p>
@@ -239,36 +289,75 @@
     </div>
 
     <div class="info-box">
-        <h2>⚠️ Cultural Threats</h2>
-        <p>
-            Today, local and indigenous cultures face serious threats. <strong>Cultural imperialism</strong>,
-            <strong>intellectual numbing</strong> by identity-less media, and <strong>AI misuse</strong>
-            to manipulate collective identity and memory are among these threats.
+        <h2>⚖️ Fundamental Principles</h2>
+        <p style="margin-bottom:0.8rem;">
+            These unchangeable principles form the core of the project. No one, not even the founder, can alter them.
         </p>
-        <ul>
-            <li>Imposing foreign values on local communities</li>
-            <li>Mass production of numbing, identity-less content</li>
-            <li>Replacing human decision-making with AI</li>
-            <li>Dividing and polarizing societies</li>
-        </ul>
+        <div class="principles-grid">
+            <div class="principle-item">
+                <span class="icon">🔄</span>
+                <div class="title">No Permanent Ownership</div>
+                <div class="desc">Founder steps down after 10,000 members</div>
+            </div>
+            <div class="principle-item">
+                <span class="icon">🌐</span>
+                <div class="title">Transition to Decentralization</div>
+                <div class="desc">Temporary management, architecture for handover</div>
+            </div>
+            <div class="principle-item">
+                <span class="icon">🔒</span>
+                <div class="title">Privacy-First</div>
+                <div class="desc">No identifying data is collected</div>
+            </div>
+            <div class="principle-item">
+                <span class="icon">✅</span>
+                <div class="title">Voluntary Participation</div>
+                <div class="desc">All activities are optional</div>
+            </div>
+            <div class="principle-item">
+                <span class="icon">🤝</span>
+                <div class="title">Non-Discrimination</div>
+                <div class="desc">No culture is superior to another</div>
+            </div>
+            <div class="principle-item">
+                <span class="icon">📋</span>
+                <div class="title">Replicability</div>
+                <div class="desc">Any group can launch their own version</div>
+            </div>
+            <div class="principle-item" style="grid-column: 1 / -1;">
+                <span class="icon">🔍</span>
+                <div class="title">Transparency</div>
+                <div class="desc">Code is open, but user data remains private</div>
+            </div>
+        </div>
     </div>
 
     <div class="info-box">
-        <h2>🌐 Local Networks</h2>
+        <h2>📡 Public Smart Radio-Television</h2>
         <p>
-            This project is built on <strong>decentralization</strong> and <strong>handing over control to users</strong>.
-            Every group of 50 cultural reformers can form a <strong>local network</strong> and define
-            their own indicators, rules, and communication channels.
+            After forming cultural groups (at least 5 people with shared indicators), the group can launch a dedicated <strong>Smart Radio-Television</strong> channel.
+            This platform serves as a tool for <strong>networking, producing, and sharing cultural content</strong>.
         </p>
         <ul>
-            <li>Every 50-member group forms a local "cultural hub"</li>
-            <li>Successors and group leaders are chosen by members</li>
-            <li>Gradual transfer of control to top reformers</li>
-            <li>Possibility of forming regional and global networks</li>
+            <li>Publish text, audio, images, and video</li>
+            <li>Each group has a dedicated channel</li>
+            <li>Content is produced and managed by the group itself</li>
+            <li>AI suggests content, but does not make human decisions</li>
         </ul>
-        <p style="margin-top:0.8rem; font-style:italic; opacity:0.6;">
-            ✦ Final goal: removal of the initial founder after reaching 10,000 members, giving full control to the community itself
-        </p>
+        <div style="margin-top:1rem;">
+            <p style="font-weight:600; opacity:0.7; font-size:0.9rem;">🔹 Live Examples:</p>
+            <div class="radio-showcase">
+                <div class="radio-item">
+                    <a href="https://ghrezaei1399-code.github.io/kanoon/" target="_blank">📻 Kanoon Foundation</a>
+                </div>
+                <div class="radio-item">
+                    <a href="https://ghrezaei1399-code.github.io/entesharat/" target="_blank">📚 Kimia Publications</a>
+                </div>
+                <div class="radio-item">
+                    <a href="https://cassrango.github.io/casrango/" target="_blank">🌍 Social Responsibility Association</a>
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>
@@ -276,9 +365,8 @@
 <script>
     (function() {
         const now = new Date();
-        const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
-        const englishDate = now.toLocaleDateString('en-US', options);
-        document.getElementById('dateDisplay').textContent = '📅 ' + englishDate;
+        const opts = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+        document.getElementById('dateDisplay').textContent = '📅 ' + now.toLocaleDateString('en-US', opts);
     })();
 
     (function() {
