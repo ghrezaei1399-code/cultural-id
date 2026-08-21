@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>کارت هویت فرهنگی جهانی | Global Cultural ID</title>
+    <title>کارت جهانی هویت هوشمند فرهنگی | Global Smart Cultural ID</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -14,54 +14,111 @@
             justify-content: center;
             align-items: center;
             padding: 2rem 1rem;
-            transition: background 0.3s, color 0.3s;
             background-image: url('assets/نماد صلح.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.35);
-            z-index: -1;
-            transition: 0.3s;
-        }
-
-        body.dark::before {
-            background: rgba(0, 0, 0, 0.5);
+            transition: background 0.3s, color 0.3s;
         }
 
         .container {
             max-width: 1200px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(6px);
+            background: transparent;
+            backdrop-filter: blur(2px);
             border-radius: 60px;
             padding: 1.5rem 2rem 1.5rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: none;
+            border: none;
         }
 
-        /* ===== HEADER WITH SITE NAME ===== */
-        .header {
+        /* ===== TOP BAR ===== */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .date-display {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #3a0a2a;
+            background: rgba(255,255,255,0.2);
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+            backdrop-filter: blur(4px);
+        }
+
+        body.dark .date-display { color: #f0d8e8; background: rgba(0,0,0,0.2); }
+
+        .theme-toggle {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(0,0,0,0.05);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            transition: 0.3s;
+            color: #4a0a5a;
+        }
+
+        body.dark .theme-toggle { color: #f9e79f; background: rgba(0,0,0,0.2); }
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* ===== LANGUAGE SWITCHER ===== */
+        .lang-bar {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(8px);
+            border-radius: 60px;
+            padding: 0.4rem 1rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .lang-bar a {
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            background: rgba(255,255,255,0.05);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #4a0a5a;
+            border: 1px solid transparent;
+            transition: all 0.25s ease;
+        }
+
+        .lang-bar a:hover, .lang-bar a.active {
+            background: rgba(255,255,255,0.15);
+            color: #2a0a3a;
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        body.dark .lang-bar a { color: #e8d0f0; }
+        body.dark .lang-bar a:hover, body.dark .lang-bar a.active { color: #f9e79f; }
+
+        /* ===== LOGOS ===== */
+        .logos-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 0.8rem;
+            gap: 1rem;
             margin-bottom: 0.3rem;
             flex-wrap: wrap;
         }
 
         .logo-main {
-            max-height: 55px;
+            max-height: 65px;
             width: auto;
-            display: block;
             filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
             transition: transform 0.3s ease;
         }
@@ -71,30 +128,30 @@
         .site-name {
             font-size: 0.85rem;
             font-weight: 700;
-            color: #0b3b54;
+            color: #3a0a2a;
             text-shadow: 0 2px 12px rgba(255,255,255,0.3);
             text-align: center;
             line-height: 1.3;
-            background: rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.15);
             padding: 0.2rem 1rem;
             border-radius: 40px;
             backdrop-filter: blur(4px);
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
         .site-name .en { font-size: 0.65rem; opacity: 0.7; display: block; }
 
-        body.dark .site-name { color: #b8d4e8; background: rgba(0,0,0,0.2); }
+        body.dark .site-name { color: #e8d0f0; background: rgba(0,0,0,0.15); }
 
-        /* ===== SLOGAN SCROLLER (نوار باریک و متحرک) ===== */
+        /* ===== SLOGAN SCROLLER ===== */
         .slogan-scroller {
             overflow: hidden;
-            background: rgba(0, 0, 0, 0.08);
+            background: rgba(255,255,255,0.05);
             backdrop-filter: blur(4px);
             border-radius: 40px;
             padding: 0.25rem 0;
             margin-bottom: 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255,255,255,0.05);
             position: relative;
         }
 
@@ -109,70 +166,20 @@
         .slogan-track span {
             font-size: 0.9rem;
             font-weight: 600;
-            color: #0b3b54;
-            text-shadow: 0 1px 8px rgba(255,255,255,0.3);
+            color: #3a0a2a;
+            text-shadow: 0 1px 8px rgba(255,255,255,0.2);
             padding: 0 1rem;
             opacity: 0.8;
         }
 
-        body.dark .slogan-track span { color: #b8d4e8; }
+        body.dark .slogan-track span { color: #e8d0f0; }
 
         @keyframes scrollSlogan {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
         }
 
-        /* ===== TOOLBAR ===== */
-        .toolbar {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 0.4rem;
-            padding: 0.3rem 1rem;
-            margin-bottom: 1.2rem;
-            border-radius: 60px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .toolbar-item {
-            display: flex;
-            align-items: center;
-            gap: 0.2rem;
-            padding: 0.15rem 0.6rem;
-            border-radius: 40px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.02);
-            color: #0b3b54;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: 0.2s;
-            cursor: pointer;
-        }
-
-        .toolbar-item:hover { background: rgba(255,255,255,0.1); transform: scale(1.02); }
-        .toolbar-item .icon { font-size: 1rem; }
-
-        .lang-link {
-            color: #0b3b54;
-            text-decoration: none;
-            padding: 0.1rem 0.4rem;
-            border-radius: 30px;
-            transition: 0.2s;
-        }
-
-        .lang-link:hover, .lang-link.active {
-            background: rgba(26, 123, 158, 0.15);
-            color: #1a4b6d;
-        }
-
-        body.dark .toolbar-item { color: #b8d4e8; }
-        body.dark .lang-link { color: #b8d4e8; }
-
-        /* ===== SPLIT ===== */
+        /* ===== SPLIT LAYOUT ===== */
         .split {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -183,94 +190,90 @@
         @media (max-width: 768px) { .split { grid-template-columns: 1fr; gap: 2rem; } }
         .half { display: flex; flex-direction: column; gap: 1.5rem; }
 
-        /* ===== BOXES WITH COLORS ===== */
+        /* ===== BOXES ===== */
         .box {
             border-radius: 28px;
-            padding: 1.4rem 1.6rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+            padding: 1.6rem 1.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.02);
             transition: all 0.25s ease;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(6px);
+            background: rgba(255, 255, 255, 0.0);
         }
 
-        .box:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.06); }
+        .box:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.04);
+            background: rgba(255, 255, 255, 0.02);
+        }
 
-        /* رنگ‌های اصلی باکس‌ها و فونت‌های همرنگ */
-        .box-1 { background: rgba(255, 215, 0, 0.15); border-color: rgba(255, 215, 0, 0.2); }
-        .box-1 .box-title { color: #b8860b; }
-        .box-1 p, .box-1 ul { color: #5a4a1a; }
-        .box-1 ul li::before { color: #b8860b; }
-
-        .box-2 { background: rgba(100, 200, 255, 0.15); border-color: rgba(100, 200, 255, 0.2); }
-        .box-2 .box-title { color: #0b6b8a; }
-        .box-2 p, .box-2 ul { color: #0a3a4a; }
-        .box-2 ul li::before { color: #0b6b8a; }
-
-        .box-3 { background: rgba(200, 150, 255, 0.15); border-color: rgba(200, 150, 255, 0.2); }
-        .box-3 .box-title { color: #6a1b8a; }
-        .box-3 p, .box-3 ul { color: #3a1a4a; }
-        .box-3 ul li::before { color: #6a1b8a; }
-
-        .box-4 { background: rgba(100, 255, 200, 0.15); border-color: rgba(100, 255, 200, 0.2); }
-        .box-4 .box-title { color: #0b8a6a; }
-        .box-4 p, .box-4 ul { color: #0a4a3a; }
-        .box-4 ul li::before { color: #0b8a6a; }
-
-        body.dark .box-1 { background: rgba(255, 215, 0, 0.08); }
-        body.dark .box-2 { background: rgba(100, 200, 255, 0.08); }
-        body.dark .box-3 { background: rgba(200, 150, 255, 0.08); }
-        body.dark .box-4 { background: rgba(100, 255, 200, 0.08); }
-
-        body.dark .box-1 p, body.dark .box-1 ul { color: #d4c8a0; }
-        body.dark .box-2 p, body.dark .box-2 ul { color: #a0c8d4; }
-        body.dark .box-3 p, body.dark .box-3 ul { color: #c8a0d4; }
-        body.dark .box-4 p, body.dark .box-4 ul { color: #a0d4c8; }
+        body.dark .box {
+            background: rgba(0, 0, 0, 0.02);
+            border-color: rgba(255,255,255,0.02);
+        }
+        body.dark .box:hover { background: rgba(0,0,0,0.05); }
 
         .box-title {
-            font-size: 1.05rem;
+            font-size: 1.1rem;
             font-weight: 700;
-            margin-bottom: 0.4rem;
+            margin-bottom: 0.6rem;
             padding-bottom: 0.2rem;
-            border-bottom: 2px solid rgba(255,255,255,0.05);
+            border-bottom: 2px solid rgba(0,0,0,0.03);
             display: flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.5rem;
+            color: #4a0a5a;
+            text-shadow: 0 2px 8px rgba(255,255,255,0.2);
         }
 
-        .box p { font-size: 0.9rem; line-height: 1.8; }
-        .box ul { list-style: none; font-size: 0.9rem; line-height: 2.2; }
-        .box ul li::before { content: "✦ "; font-weight: bold; }
+        body.dark .box-title { color: #e8d0f0; border-bottom-color: rgba(255,255,255,0.02); }
 
-        /* ===== PRINCIPLES ===== */
-        .principles {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 0.2rem 0.8rem;
-            background: rgba(255,255,255,0.05);
-            border-radius: 40px;
-            padding: 0.2rem 1rem;
-            font-size: 0.65rem;
-            border: 1px solid rgba(255,255,255,0.03);
-            color: #1a2a3a;
+        .box p {
+            font-size: 0.9rem;
+            line-height: 1.8;
+            opacity: 0.9;
+            color: #3a1a2a;
+            text-shadow: 0 2px 8px rgba(255,255,255,0.1);
         }
 
-        body.dark .principles { color: #b8d4e8; }
+        body.dark .box p { color: #e0d0c8; }
+
+        .box ul {
+            list-style: none;
+            line-height: 2.2;
+            font-size: 0.9rem;
+            opacity: 0.9;
+            color: #3a1a2a;
+            text-shadow: 0 2px 8px rgba(255,255,255,0.1);
+        }
+
+        body.dark .box ul { color: #e0d0c8; }
+
+        .box ul li::before {
+            content: "✦ ";
+            font-weight: bold;
+            color: #7a1a1a;
+        }
+
+        body.dark .box ul li::before { color: #f9e79f; }
 
         /* ===== CARD SAMPLE ===== */
         .card-sample {
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(4px);
-            border-radius: 20px;
-            padding: 0.8rem 1rem;
+            background: rgba(255,255,255,0.0);
+            backdrop-filter: blur(8px);
+            border-radius: 24px;
+            padding: 1rem 1.2rem;
             text-align: center;
             border: 1px solid rgba(255,255,255,0.02);
-            transition: 0.3s;
+            transition: all 0.3s ease;
         }
 
-        .card-sample:hover { transform: translateY(-3px); background: rgba(255,255,255,0.1); }
+        .card-sample:hover {
+            transform: translateY(-4px);
+            background: rgba(255,255,255,0.02);
+        }
 
-        .card-sample .card-logo { max-height: 50px; width: auto; display: block; margin: 0 auto 0.2rem; }
+        .card-sample .card-logo { max-height: 50px; width: auto; display: block; margin: 0 auto 0.3rem; }
         .card-sample .card-id {
             font-size: 0.85rem;
             font-weight: 700;
@@ -279,19 +282,21 @@
             border-radius: 40px;
             display: inline-block;
             direction: ltr;
-            color: #0b3b54;
-            border: 1px solid rgba(255,255,255,0.03);
+            color: #3a0a2a;
+            border: 1px solid rgba(255,255,255,0.02);
         }
 
-        body.dark .card-sample .card-id { color: #b8d4e8; }
+        body.dark .card-sample .card-id { color: #e8d0f0; }
 
         .card-sample .card-id-parts {
             font-size: 0.5rem;
             opacity: 0.6;
             direction: ltr;
             margin: 0.1rem 0;
-            color: #1a2a3a;
+            color: #3a1a2a;
         }
+
+        body.dark .card-sample .card-id-parts { color: #e0d0c8; }
 
         .card-sample .card-id-parts .highlight {
             background: #f9e79f;
@@ -306,21 +311,39 @@
             padding: 0.05rem 0.5rem;
             border-radius: 30px;
             font-size: 0.5rem;
-            background: rgba(255,255,255,0.05);
-            color: #1a2a3a;
+            background: rgba(255,255,255,0.02);
+            color: #3a1a2a;
             border: 1px solid rgba(255,255,255,0.02);
         }
 
-        body.dark .card-sample .card-values .v-tag { color: #b8d4e8; }
+        body.dark .card-sample .card-values .v-tag { color: #e0d0c8; }
 
         .card-sample .card-qr {
             font-size: 0.4rem;
             opacity: 0.4;
             margin-top: 0.2rem;
-            border-top: 1px dashed rgba(0,0,0,0.03);
+            border-top: 1px dashed rgba(0,0,0,0.02);
             padding-top: 0.2rem;
-            color: #1a2a3a;
+            color: #3a1a2a;
         }
+
+        body.dark .card-sample .card-qr { color: #e0d0c8; border-top-color: rgba(255,255,255,0.02); }
+
+        /* ===== PRINCIPLES ===== */
+        .principles {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.2rem 0.8rem;
+            background: rgba(255,255,255,0.02);
+            border-radius: 40px;
+            padding: 0.2rem 1rem;
+            font-size: 0.65rem;
+            border: 1px solid rgba(255,255,255,0.02);
+            color: #3a1a2a;
+        }
+
+        body.dark .principles { color: #e0d0c8; }
 
         /* ===== MODULES ===== */
         .modules {
@@ -335,20 +358,20 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: rgba(255,255,255,0.03);
-            backdrop-filter: blur(4px);
+            background: rgba(255,255,255,0.0);
+            backdrop-filter: blur(8px);
             border: 1px solid rgba(255,255,255,0.02);
             border-radius: 24px;
             padding: 0.8rem 0.4rem;
             text-decoration: none;
-            color: #0b3b54;
+            color: #3a0a2a;
             transition: 0.25s;
             text-align: center;
         }
 
-        body.dark .module-btn { color: #b8d4e8; }
+        body.dark .module-btn { color: #e8d0f0; }
 
-        .module-btn:hover { background: rgba(255,255,255,0.06); transform: translateY(-3px); }
+        .module-btn:hover { background: rgba(255,255,255,0.02); transform: translateY(-3px); }
         .module-btn .icon { font-size: 1.4rem; margin-bottom: 0.1rem; }
         .module-btn .label { font-weight: 700; font-size: 0.8rem; }
         .module-btn .desc { font-size: 0.6rem; opacity: 0.6; }
@@ -357,25 +380,28 @@
         .cta-area { text-align: center; margin: 0.6rem 0; }
         .btn {
             display: inline-block;
-            background: linear-gradient(135deg, rgba(26,123,158,0.5), rgba(106,63,158,0.5));
-            color: #fff;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(4px);
+            color: #3a0a2a;
             padding: 0.5rem 2rem;
             border-radius: 60px;
             font-weight: 700;
             font-size: 0.9rem;
             text-decoration: none;
             transition: 0.3s;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.02);
         }
 
-        .btn:hover { transform: scale(1.02); }
+        body.dark .btn { color: #e8d0f0; }
+
+        .btn:hover { background: rgba(255,255,255,0.02); transform: scale(1.02); }
 
         /* ===== GALLERY ===== */
         .achievement-section {
             margin-top: 1.2rem;
             padding: 1rem;
             border-radius: 24px;
-            background: rgba(255,255,255,0.02);
+            background: rgba(255,255,255,0.0);
             backdrop-filter: blur(4px);
             border: 1px solid rgba(255,255,255,0.02);
         }
@@ -383,11 +409,12 @@
         .achievement-section h2 {
             font-size: 1rem;
             font-weight: 700;
-            color: #0b3b54;
+            color: #3a0a2a;
             margin-bottom: 0.2rem;
+            text-shadow: 0 2px 8px rgba(255,255,255,0.1);
         }
 
-        body.dark .achievement-section h2 { color: #b8d4e8; }
+        body.dark .achievement-section h2 { color: #e8d0f0; }
 
         .gallery-grid {
             display: grid;
@@ -397,7 +424,7 @@
         }
 
         .gallery-item {
-            background: rgba(255,255,255,0.02);
+            background: rgba(255,255,255,0.0);
             backdrop-filter: blur(4px);
             border-radius: 18px;
             padding: 0.6rem;
@@ -406,7 +433,7 @@
             text-align: center;
         }
 
-        .gallery-item:hover { transform: translateY(-3px); background: rgba(255,255,255,0.05); }
+        .gallery-item:hover { transform: translateY(-3px); background: rgba(255,255,255,0.02); }
 
         .gallery-placeholder {
             width: 100%;
@@ -421,23 +448,26 @@
         }
 
         .gallery-placeholder img { max-width: 50%; height: auto; opacity: 0.3; }
-        .gallery-placeholder .gallery-label { font-size: 0.55rem; opacity: 0.5; color: #1a2a3a; }
+        .gallery-placeholder .gallery-label { font-size: 0.55rem; opacity: 0.5; color: #3a1a2a; }
+
+        body.dark .gallery-placeholder .gallery-label { color: #e0d0c8; }
 
         .gallery-title {
             display: block;
             font-weight: 700;
             font-size: 0.7rem;
-            color: #0b3b54;
+            color: #3a0a2a;
         }
 
-        body.dark .gallery-title { color: #b8d4e8; }
+        body.dark .gallery-title { color: #e8d0f0; }
 
-        .gallery-author { display: block; font-size: 0.55rem; opacity: 0.5; color: #1a2a3a; }
+        .gallery-author { display: block; font-size: 0.55rem; opacity: 0.5; color: #3a1a2a; }
+        body.dark .gallery-author { color: #e0d0c8; }
 
         .btn-upload {
             display: inline-block;
-            background: rgba(26,123,158,0.3);
-            color: #0b3b54;
+            background: rgba(255,255,255,0.02);
+            color: #3a0a2a;
             padding: 0.2rem 1.2rem;
             border-radius: 40px;
             text-decoration: none;
@@ -447,26 +477,108 @@
             border: 1px solid rgba(255,255,255,0.02);
         }
 
-        .btn-upload:hover { transform: scale(1.02); background: rgba(26,123,158,0.4); }
-        body.dark .btn-upload { color: #b8d4e8; }
+        .btn-upload:hover { transform: scale(1.02); background: rgba(255,255,255,0.05); }
+        body.dark .btn-upload { color: #e8d0f0; }
+
+        /* ===== MORE INFO ===== */
+        .more-info-section {
+            text-align: center;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .btn-more {
+            display: inline-block;
+            background: rgba(255,255,255,0.02);
+            backdrop-filter: blur(4px);
+            color: #3a0a2a;
+            padding: 0.6rem 2.5rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.02);
+        }
+
+        body.dark .btn-more { color: #e8d0f0; }
+
+        .btn-more:hover { background: rgba(255,255,255,0.05); transform: scale(1.02); }
+
+        .more-info-section p {
+            margin-top: 0.3rem;
+            font-size: 0.75rem;
+            opacity: 0.6;
+            color: #3a1a2a;
+        }
+
+        body.dark .more-info-section p { color: #e0d0c8; }
+
+        /* ===== RADIO-TV MODULE ===== */
+        .radio-tv-module {
+            text-align: center;
+            margin: 1.5rem 0;
+            padding: 1.2rem;
+            border-radius: 32px;
+            background: rgba(255,255,255,0.0);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.02);
+        }
+
+        .radio-tv-module h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #4a0a5a;
+            margin-bottom: 0.3rem;
+        }
+
+        body.dark .radio-tv-module h3 { color: #e8d0f0; }
+
+        .radio-tv-module p {
+            opacity: 0.7;
+            max-width: 600px;
+            margin: 0 auto 0.8rem;
+            color: #3a1a2a;
+        }
+
+        body.dark .radio-tv-module p { color: #e0d0c8; }
+
+        .btn-radio {
+            display: inline-block;
+            background: rgba(255,255,255,0.02);
+            backdrop-filter: blur(4px);
+            color: #3a0a2a;
+            padding: 0.5rem 2rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.02);
+        }
+
+        body.dark .btn-radio { color: #e8d0f0; }
+
+        .btn-radio:hover { background: rgba(255,255,255,0.05); transform: scale(1.02); }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             body { padding: 1rem; }
             .container { padding: 1rem; border-radius: 40px; }
-            .header { flex-direction: column; gap: 0.3rem; }
+            .logos-container { flex-direction: column; gap: 0.3rem; }
             .site-name { font-size: 0.7rem; padding: 0.1rem 0.6rem; }
-            .toolbar { padding: 0.2rem 0.6rem; gap: 0.2rem; }
-            .toolbar-item { font-size: 0.65rem; padding: 0.1rem 0.4rem; }
+            .lang-bar { padding: 0.3rem 0.6rem; gap: 0.2rem; }
+            .lang-bar a { font-size: 0.65rem; padding: 0.1rem 0.5rem; }
             .box { padding: 1rem 1rem; }
             .slogan-track span { font-size: 0.75rem; }
             .logo-main { max-height: 45px; }
             .gallery-grid { grid-template-columns: 1fr 1fr; }
+            .modules { grid-template-columns: 1fr 1fr; }
         }
 
         @media (max-width: 480px) {
             .gallery-grid { grid-template-columns: 1fr; }
             .modules { grid-template-columns: 1fr; }
+            .split { gap: 1.5rem; }
         }
 
         @font-face {
@@ -478,12 +590,24 @@
 <body>
 <div class="container">
 
-    <!-- ===== HEADER ===== -->
-    <div class="header">
+    <!-- ===== TOP BAR ===== -->
+    <div class="top-bar">
+        <div class="date-display" id="dateDisplay">📅 جمعه ۲۰ مرداد ۱۴۰۵</div>
+        <button class="theme-toggle" id="themeToggle">🌙</button>
+    </div>
+
+    <!-- ===== LANGUAGE SWITCHER ===== -->
+    <div class="lang-bar">
+        <a href="#" class="active">فارسی</a>
+        <a href="#">English</a>
+    </div>
+
+    <!-- ===== LOGOS & SITE NAME ===== -->
+    <div class="logos-container">
         <img src="assets/logo-fa.png" alt="شناسنامه فرهنگی جهانی" class="logo-main" />
         <span class="site-name">
-            کارت هویت فرهنگی جهانی
-            <span class="en">Global Cultural ID</span>
+            کارت جهانی هویت هوشمند فرهنگی
+            <span class="en">Global Smart Cultural ID</span>
         </span>
         <img src="assets/logo-en.png" alt="Global Cultural ID" class="logo-main" />
     </div>
@@ -500,36 +624,15 @@
         </div>
     </div>
 
-    <!-- ===== TOOLBAR ===== -->
-    <div class="toolbar">
-        <div class="toolbar-item">
-            <span class="icon">🌐</span>
-            <a href="#" class="lang-link active" id="langFa">فارسی</a>
-            <span style="opacity:0.3;">|</span>
-            <a href="#" class="lang-link" id="langEn">English</a>
-        </div>
-        <div class="toolbar-item" id="themeToggle">
-            <span class="icon">🌙</span>
-            <span>تم</span>
-        </div>
-        <div class="toolbar-item">
-            <span class="icon">📅</span>
-            <span id="dateDisplay">جمعه ۲۰ مرداد ۱۴۰۵</span>
-        </div>
-        <a href="#" class="toolbar-item" id="moreInfoLink" style="text-decoration:none;">
-            <span class="icon">📖</span>
-            <span>بیشتر بدانید</span>
-        </a>
-    </div>
-
-    <!-- ===== SPLIT ===== -->
+    <!-- ===== SPLIT LAYOUT ===== -->
     <div class="split">
 
         <!-- ===== FA ===== -->
         <div class="half">
-            <div class="box box-1">
+            <!-- BOX 1 -->
+            <div class="box">
                 <div class="box-title">🪪 مشخصات کارت</div>
-                <p>شناسنامه‌ی فرهنگی جهانی، یک هویت دیجیتال غیرمتمرکز است که بر اساس <strong>ارزش‌های فرهنگی</strong> شما ساخته می‌شود، نه نام، ملیت یا اطلاعات شخصی.</p>
+                <p>کارت جهانی هویت هوشمند فرهنگی، یک هویت دیجیتال غیرمتمرکز است که بر اساس <strong>ارزش‌های فرهنگی</strong> شما ساخته می‌شود، نه نام، ملیت یا اطلاعات شخصی.</p>
                 <ul>
                     <li>ثبت ۷ ارزش فرهنگی به انتخاب شما</li>
                     <li>کد منحصربه‌فرد با بخش اختیاری (۵ کاراکتر دلخواه)</li>
@@ -538,7 +641,8 @@
                 </ul>
             </div>
 
-            <div class="box box-2">
+            <!-- BOX 2 -->
+            <div class="box">
                 <div class="box-title">🎯 اهداف کارت</div>
                 <ul>
                     <li>ایجاد شبکه‌ای از مصلحان فرهنگی بدون مرز</li>
@@ -556,7 +660,8 @@
                 </div>
             </div>
 
-            <div class="box box-3">
+            <!-- BOX 3 -->
+            <div class="box">
                 <div class="box-title">⭐ مزایای داشتن کارت</div>
                 <ul>
                     <li>عضویت در جنبش جهانی حفظ تنوع فرهنگی ملل</li>
@@ -566,7 +671,8 @@
                 </ul>
             </div>
 
-            <div class="box box-4">
+            <!-- BOX 4: CARD -->
+            <div class="box">
                 <div class="box-title">🪪 نمونه کارت</div>
                 <div class="card-sample">
                     <img src="assets/logo-fa.png" alt="لوگو" class="card-logo" />
@@ -584,6 +690,7 @@
                 </div>
             </div>
 
+            <!-- MODULES -->
             <div class="modules">
                 <a href="register-fa.html" class="module-btn">
                     <span class="icon">📝</span>
@@ -607,11 +714,13 @@
                 </a>
             </div>
 
+            <!-- CTA -->
             <div class="cta-area">
                 <a href="#" class="btn">🎯 دریافت شناسنامه</a>
-                <div style="margin-top:0.2rem; font-size:0.6rem; opacity:0.6; color:#1a2a3a;">بدون اطلاعات شخصی • کاملاً ناشناس • ۳ دقیقه</div>
+                <div style="margin-top:0.2rem; font-size:0.6rem; opacity:0.6; color:#3a1a2a;">بدون اطلاعات شخصی • کاملاً ناشناس • ۳ دقیقه</div>
             </div>
 
+            <!-- GALLERY -->
             <div class="achievement-section">
                 <h2>🏆 گالری دستاوردهای ۲۰۰ سفیر</h2>
                 <div class="gallery-grid">
@@ -632,9 +741,10 @@
 
         <!-- ===== EN ===== -->
         <div class="half">
-            <div class="box box-1">
+            <!-- BOX 1 -->
+            <div class="box">
                 <div class="box-title">🪪 Card Specifications</div>
-                <p>The Global Cultural ID is a decentralized digital identity built on <strong>cultural values</strong>, not on name, nationality, or personal data.</p>
+                <p>The Global Smart Cultural ID is a decentralized digital identity built on <strong>cultural values</strong>, not on name, nationality, or personal data.</p>
                 <ul>
                     <li>Register 7 cultural values of your choice</li>
                     <li>Unique ID with optional 5‑character code</li>
@@ -643,7 +753,8 @@
                 </ul>
             </div>
 
-            <div class="box box-2">
+            <!-- BOX 2 -->
+            <div class="box">
                 <div class="box-title">🎯 Goals of the Card</div>
                 <ul>
                     <li>Build a borderless network of cultural reformers</li>
@@ -661,7 +772,8 @@
                 </div>
             </div>
 
-            <div class="box box-3">
+            <!-- BOX 3 -->
+            <div class="box">
                 <div class="box-title">⭐ Benefits of Having an ID</div>
                 <ul>
                     <li>Membership in the global movement to preserve cultural diversity of nations</li>
@@ -671,7 +783,8 @@
                 </ul>
             </div>
 
-            <div class="box box-4">
+            <!-- BOX 4: CARD -->
+            <div class="box">
                 <div class="box-title">🪪 Sample Card</div>
                 <div class="card-sample">
                     <img src="assets/logo-en.png" alt="Logo" class="card-logo" />
@@ -689,6 +802,7 @@
                 </div>
             </div>
 
+            <!-- MODULES -->
             <div class="modules">
                 <a href="register-en.html" class="module-btn">
                     <span class="icon">📝</span>
@@ -712,11 +826,13 @@
                 </a>
             </div>
 
+            <!-- CTA -->
             <div class="cta-area">
                 <a href="#" class="btn">🎯 Get Your ID</a>
-                <div style="margin-top:0.2rem; font-size:0.6rem; opacity:0.6; color:#1a2a3a;">No personal info • Completely anonymous • 3 minutes</div>
+                <div style="margin-top:0.2rem; font-size:0.6rem; opacity:0.6; color:#3a1a2a;">No personal info • Completely anonymous • 3 minutes</div>
             </div>
 
+            <!-- GALLERY -->
             <div class="achievement-section">
                 <h2>🏆 Gallery of 200 Ambassadors</h2>
                 <div class="gallery-grid">
@@ -736,6 +852,20 @@
         </div>
 
     </div>
+
+    <!-- ===== RADIO-TV MODULE ===== -->
+    <div class="radio-tv-module">
+        <h3>📡 رادیوتلویزیون هوشمند همگانی</h3>
+        <p>شبکه‌های فرهنگی خود را بسازید و محتوای گروهی خود را منتشر کنید.<br>هر گروه (حداقل ۵ نفر) می‌تواند کانال اختصاصی خود را راه‌اندازی کند.</p>
+        <a href="about-fa.html" class="btn-radio">🎬 بیشتر بدانید</a>
+    </div>
+
+    <!-- ===== MORE INFO ===== -->
+    <div class="more-info-section">
+        <a href="about-fa.html" class="btn-more">📖 بیشتر بدانید</a>
+        <p>اهداف، اصول بنیادین و معرفی رادیوتلویزیون هوشمند</p>
+    </div>
+
 </div>
 
 <script>
@@ -752,54 +882,18 @@
         const body = document.body;
         if (localStorage.getItem('theme') === 'dark') {
             body.classList.add('dark');
-            toggle.querySelector('span:first-child').textContent = '☀️';
-            toggle.querySelector('span:last-child').textContent = 'روشن';
+            toggle.textContent = '☀️';
         }
         toggle.addEventListener('click', function() {
             body.classList.toggle('dark');
             if (body.classList.contains('dark')) {
-                toggle.querySelector('span:first-child').textContent = '☀️';
-                toggle.querySelector('span:last-child').textContent = 'روشن';
+                toggle.textContent = '☀️';
                 localStorage.setItem('theme', 'dark');
             } else {
-                toggle.querySelector('span:first-child').textContent = '🌙';
-                toggle.querySelector('span:last-child').textContent = 'تم';
+                toggle.textContent = '🌙';
                 localStorage.setItem('theme', 'light');
             }
         });
-    })();
-
-    // ===== SMART MORE INFO =====
-    (function() {
-        const link = document.getElementById('moreInfoLink');
-        const langFa = document.getElementById('langFa');
-        const langEn = document.getElementById('langEn');
-
-        function update() {
-            if (langFa.classList.contains('active')) {
-                link.href = 'about-fa.html';
-                link.querySelector('span:last-child').textContent = 'بیشتر بدانید';
-            } else {
-                link.href = 'about-en.html';
-                link.querySelector('span:last-child').textContent = 'Learn More';
-            }
-        }
-
-        langFa.addEventListener('click', function(e) {
-            e.preventDefault();
-            langFa.classList.add('active');
-            langEn.classList.remove('active');
-            update();
-        });
-
-        langEn.addEventListener('click', function(e) {
-            e.preventDefault();
-            langEn.classList.add('active');
-            langFa.classList.remove('active');
-            update();
-        });
-
-        update();
     })();
 </script>
 </body>
