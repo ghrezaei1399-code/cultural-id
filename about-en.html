@@ -9,29 +9,43 @@
 
         body {
             font-family: 'Segoe UI', 'Vazir', 'IRANSans', sans-serif;
-            background: radial-gradient(circle at 20% 30%, #d4e8f5 0%, #b8d4e8 40%, #a0c4d8 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 2rem 1rem;
             transition: background 0.3s, color 0.3s;
+            background-image: url('assets/azadi.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
         }
 
-        body.dark {
-            background: radial-gradient(circle at 20% 30%, #1a2a3a 0%, #0f1a2a 40%, #0a0f1a 100%);
-            color: #d0d8e0;
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            z-index: -1;
+            transition: 0.3s;
+        }
+
+        body.dark::before {
+            background: rgba(0, 0, 0, 0.5);
         }
 
         .container {
             max-width: 1100px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
             border-radius: 60px;
             padding: 2rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             transition: background 0.3s, border-color 0.3s;
         }
 
@@ -52,24 +66,26 @@
         .date-display {
             font-size: 0.9rem;
             font-weight: 600;
-            color: #0b3b54;
-            opacity: 0.7;
+            color: #fff;
+            opacity: 0.9;
             background: rgba(255,255,255,0.15);
             padding: 0.2rem 1rem;
             border-radius: 30px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
         body.dark .date-display { color: #b8d4e8; }
 
         .theme-toggle {
             background: rgba(255,255,255,0.15);
-            border: none;
+            border: 1px solid rgba(255,255,255,0.1);
             font-size: 1.5rem;
             cursor: pointer;
             padding: 0.2rem 0.8rem;
             border-radius: 40px;
             transition: 0.3s;
-            color: #0b3b54;
+            color: #fff;
+            backdrop-filter: blur(4px);
         }
 
         body.dark .theme-toggle { color: #f9e79f; }
@@ -89,11 +105,12 @@
             padding: 0.3rem 1.5rem;
             border-radius: 40px;
             text-decoration: none;
-            color: #1a4b6d;
+            color: #fff;
             font-weight: 600;
             font-size: 0.9rem;
             transition: 0.2s;
             border: 1px solid rgba(255,255,255,0.1);
+            text-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .lang-switch a:hover { background: rgba(255,255,255,0.25); }
@@ -106,12 +123,13 @@
             padding: 0.4rem 1.5rem;
             border-radius: 40px;
             text-decoration: none;
-            color: #1a4b6d;
+            color: #fff;
             font-weight: 600;
             font-size: 0.9rem;
             transition: 0.2s;
             border: 1px solid rgba(255,255,255,0.05);
             margin-bottom: 1.5rem;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         body.dark .back-module {
@@ -125,46 +143,54 @@
         }
 
         .info-box {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(12px);
             border-radius: 28px;
             padding: 1.8rem 2rem;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
             margin-bottom: 1.5rem;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.02);
+            backdrop-filter: blur(8px);
         }
 
         .info-box:hover {
             transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
-            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
         }
 
-        body.dark .info-box {
-            background: rgba(30, 40, 50, 0.3);
-            border-color: rgba(255,255,255,0.05);
-        }
+        .box-goals { background: rgba(255, 215, 0, 0.15); border-color: rgba(255, 215, 0, 0.2); }
+        .box-goals .box-title { color: #b8860b; }
+        .box-goals p, .box-goals ul { color: #5a4a1a; }
+        .box-goals ul li::before { color: #b8860b; }
 
-        body.dark .info-box:hover {
-            background: rgba(40, 50, 60, 0.4);
-        }
+        .box-principles { background: rgba(100, 200, 255, 0.15); border-color: rgba(100, 200, 255, 0.2); }
+        .box-principles .box-title { color: #0b6b8a; }
+        .box-principles p, .box-principles .principle-item .title { color: #0a3a4a; }
+        .box-principles .principle-item .desc { color: #1a4a5a; }
 
-        .info-box h2 {
+        .box-radio { background: rgba(200, 150, 255, 0.15); border-color: rgba(200, 150, 255, 0.2); }
+        .box-radio .box-title { color: #6a1b8a; }
+        .box-radio p, .box-radio ul { color: #3a1a4a; }
+        .box-radio ul li::before { color: #6a1b8a; }
+
+        body.dark .box-goals { background: rgba(255, 215, 0, 0.08); }
+        body.dark .box-goals p, body.dark .box-goals ul { color: #d4c8a0; }
+
+        body.dark .box-principles { background: rgba(100, 200, 255, 0.08); }
+        body.dark .box-principles p, body.dark .box-principles .principle-item .title { color: #a0c8d4; }
+        body.dark .box-principles .principle-item .desc { color: #80a8b4; }
+
+        body.dark .box-radio { background: rgba(200, 150, 255, 0.08); }
+        body.dark .box-radio p, body.dark .box-radio ul { color: #c8a0d4; }
+
+        .box-title {
             font-size: 1.2rem;
             font-weight: 700;
-            color: #0b3b54;
             margin-bottom: 0.8rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            border-bottom: 2px solid rgba(26, 123, 158, 0.1);
+            border-bottom: 2px solid rgba(255,255,255,0.1);
             padding-bottom: 0.4rem;
-        }
-
-        body.dark .info-box h2 {
-            color: #b8d4e8;
-            border-bottom-color: rgba(255,255,255,0.05);
         }
 
         .info-box p {
@@ -184,10 +210,7 @@
         .info-box ul li::before {
             content: "✦ ";
             font-weight: bold;
-            color: #1a7b9e;
         }
-
-        body.dark .info-box ul li::before { color: #7ddfa0; }
 
         .principles-grid {
             display: grid;
@@ -197,7 +220,7 @@
         }
 
         .principle-item {
-            background: rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.08);
             border-radius: 16px;
             padding: 0.8rem 1rem;
             border: 1px solid rgba(255,255,255,0.05);
@@ -205,14 +228,16 @@
         }
 
         .principle-item:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-2px);
         }
 
         .principle-item .icon { font-size: 1.2rem; margin-right: 0.3rem; }
-        .principle-item .title { font-weight: 700; font-size: 0.9rem; color: #0b3b54; }
+        .principle-item .title { font-weight: 700; font-size: 0.9rem; }
         .principle-item .desc { font-size: 0.75rem; opacity: 0.6; }
 
-        body.dark .principle-item .title { color: #b8d4e8; }
+        body.dark .principle-item { background: rgba(0,0,0,0.2); }
+        body.dark .principle-item:hover { background: rgba(0,0,0,0.3); }
 
         .radio-showcase {
             display: flex;
@@ -222,9 +247,9 @@
         }
 
         .radio-item {
-            background: rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.08);
             border-radius: 16px;
-            padding: 1rem 1.2rem;
+            padding: 0.8rem 1rem;
             flex: 1;
             min-width: 140px;
             text-align: center;
@@ -233,24 +258,62 @@
         }
 
         .radio-item:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.15);
             transform: translateY(-3px);
         }
 
         .radio-item a {
             text-decoration: none;
-            color: #1a7b9e;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
         }
 
-        body.dark .radio-item a { color: #7ddfa0; }
+        .radio-item .radio-icon { font-size: 2rem; }
+        .radio-item .radio-label { opacity: 0.7; }
+
+        body.dark .radio-item { background: rgba(0,0,0,0.15); }
+        body.dark .radio-item:hover { background: rgba(0,0,0,0.25); }
+
+        .poster-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .poster-link {
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 0.5rem 1rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: 0.2s;
+            text-decoration: none;
+            color: #0b3b54;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .poster-link:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-2px);
+        }
+
+        body.dark .poster-link { color: #b8d4e8; }
+        body.dark .poster-link:hover { background: rgba(255,255,255,0.05); }
 
         @media (max-width: 768px) {
-            .container { padding: 1rem; }
+            .container { padding: 1rem; border-radius: 40px; }
             .info-box { padding: 1.2rem 1.2rem; }
             .principles-grid { grid-template-columns: 1fr; }
             .radio-item { min-width: 100%; }
+            .poster-links { flex-direction: column; }
         }
 
         @font-face {
@@ -273,8 +336,9 @@
 
     <a href="index.html" class="back-module">← Back to Home</a>
 
-    <div class="info-box">
-        <h2>🎯 Project Goals</h2>
+    <!-- ===== GOALS ===== -->
+    <div class="info-box box-goals">
+        <div class="box-title">🎯 Project Goals</div>
         <p>
             This project is designed to create a <strong>decentralized and voluntary cultural identity</strong> for every individual, without requiring personal information.
             We aim to build a network of <strong>cultural reformers</strong> who can preserve their cultural identity and values
@@ -288,9 +352,10 @@
         </ul>
     </div>
 
-    <div class="info-box">
-        <h2>⚖️ Fundamental Principles</h2>
-        <p style="margin-bottom:0.8rem;">
+    <!-- ===== PRINCIPLES ===== -->
+    <div class="info-box box-principles">
+        <div class="box-title">⚖️ Fundamental Principles</div>
+        <p style="margin-bottom:0.8rem; opacity:0.7;">
             These unchangeable principles form the core of the project. No one, not even the founder, can alter them.
         </p>
         <div class="principles-grid">
@@ -332,8 +397,9 @@
         </div>
     </div>
 
-    <div class="info-box">
-        <h2>📡 Public Smart Radio-Television</h2>
+    <!-- ===== RADIO-TV ===== -->
+    <div class="info-box box-radio">
+        <div class="box-title">📡 Public Smart Radio-Television</div>
         <p>
             After forming cultural groups (at least 5 people with shared indicators), the group can launch a dedicated <strong>Smart Radio-Television</strong> channel.
             This platform serves as a tool for <strong>networking, producing, and sharing cultural content</strong>.
@@ -344,17 +410,36 @@
             <li>Content is produced and managed by the group itself</li>
             <li>AI suggests content, but does not make human decisions</li>
         </ul>
+
+        <div style="margin-top:1.2rem;">
+            <p style="font-weight:600; opacity:0.7; font-size:0.9rem;">🔹 Sample Posters:</p>
+            <div class="poster-links">
+                <a href="assets/Retirees Society.png" target="_blank" class="poster-link">📘 Retirees Society</a>
+                <a href="assets/PRINGTIN.png" target="_blank" class="poster-link">📙 Publications</a>
+                <a href="assets/NGO.png" target="_blank" class="poster-link">📗 NGOs</a>
+            </div>
+        </div>
+
         <div style="margin-top:1rem;">
             <p style="font-weight:600; opacity:0.7; font-size:0.9rem;">🔹 Live Examples:</p>
             <div class="radio-showcase">
                 <div class="radio-item">
-                    <a href="https://ghrezaei1399-code.github.io/kanoon/" target="_blank">📻 Kanoon Foundation</a>
+                    <a href="https://ghrezaei1399-code.github.io/kanoon/" target="_blank">
+                        <span class="radio-icon">📻</span>
+                        <span class="radio-label">Kanoon Foundation</span>
+                    </a>
                 </div>
                 <div class="radio-item">
-                    <a href="https://ghrezaei1399-code.github.io/entesharat/" target="_blank">📚 Kimia Publications</a>
+                    <a href="https://ghrezaei1399-code.github.io/entesharat/" target="_blank">
+                        <span class="radio-icon">📚</span>
+                        <span class="radio-label">Kimia Publications</span>
+                    </a>
                 </div>
                 <div class="radio-item">
-                    <a href="https://cassrango.github.io/casrango/" target="_blank">🌍 Social Responsibility Association</a>
+                    <a href="https://cassrango.github.io/casrango/" target="_blank">
+                        <span class="radio-icon">🌍</span>
+                        <span class="radio-label">Social Responsibility Association</span>
+                    </a>
                 </div>
             </div>
         </div>
