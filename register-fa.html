@@ -3,74 +3,81 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>ثبت‌نام | شناسنامه فرهنگی جهانی</title>
+    <title>ثبت‌نام | کارت جهانی هویت هوشمند فرهنگی</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
-            background: radial-gradient(circle at 20% 30%, #d4e8f5 0%, #b8d4e8 40%, #a0c4d8 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 2rem 1rem;
+            background-image: url('assets/نماد صلح.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 800px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(16px);
             border-radius: 60px;
-            padding: 1.5rem 2rem 1.5rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 2.5rem 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.06);
         }
 
         .back-module {
             display: inline-block;
-            background: rgba(26, 75, 109, 0.15);
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(4px);
             padding: 0.4rem 1.5rem;
             border-radius: 40px;
             text-decoration: none;
-            color: #1a4b6d;
+            color: #1a2a4a;
             font-weight: 600;
             font-size: 0.9rem;
             transition: 0.2s;
-            border: 1px solid rgba(26, 75, 109, 0.1);
+            border: 1px solid rgba(255,255,255,0.02);
             margin-bottom: 1.5rem;
         }
 
         .back-module:hover {
-            background: rgba(26, 75, 109, 0.25);
+            background: rgba(255,255,255,0.1);
             transform: translateX(-4px);
         }
 
         .form-box {
-            background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(4px);
-            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(8px);
+            border-radius: 32px;
             padding: 1.8rem 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.02);
         }
 
         .form-box h2 {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             font-weight: 700;
-            color: #0b3b54;
-            margin-bottom: 1rem;
-            border-bottom: 2px solid rgba(26,123,158,0.1);
+            color: #1a2a4a;
+            margin-bottom: 0.8rem;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.02);
             padding-bottom: 0.4rem;
+            text-align: center;
         }
 
-        .form-group { margin-bottom: 1.2rem; }
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
 
         .form-group label {
             display: block;
             font-weight: 600;
             font-size: 0.95rem;
-            color: #0b3b54;
+            color: #1a2a4a;
             margin-bottom: 0.3rem;
         }
 
@@ -80,56 +87,50 @@
             width: 100%;
             padding: 0.6rem 1rem;
             border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.02);
             font-size: 0.95rem;
             font-family: inherit;
             transition: 0.2s;
             resize: vertical;
             min-height: 60px;
+            color: #1a2a4a;
         }
 
         .form-group textarea:focus,
         .form-group input:focus,
         .form-group select:focus {
-            border-color: #1a7b9e;
+            border-color: rgba(26, 42, 74, 0.2);
             outline: none;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .form-group .hint {
             font-size: 0.7rem;
             opacity: 0.5;
             margin-top: 0.2rem;
+            color: #3a2a3a;
         }
 
         .btn-submit {
             display: inline-block;
-            background: linear-gradient(135deg, #1a7b9e, #6a3f9e);
-            background-size: 200% 200%;
-            animation: gradientMove 6s ease infinite;
-            color: white;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(4px);
+            color: #1a2a4a;
             padding: 0.8rem 2.5rem;
             border-radius: 60px;
             font-weight: 700;
             font-size: 1rem;
-            border: none;
+            border: 1px solid rgba(255, 255, 255, 0.02);
             cursor: pointer;
             transition: 0.25s ease;
-            box-shadow: 0 4px 16px rgba(26,123,158,0.2);
             width: 100%;
             margin-top: 0.5rem;
         }
 
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
         .btn-submit:hover {
+            background: rgba(255, 255, 255, 0.1);
             transform: scale(1.02);
-            box-shadow: 0 8px 24px rgba(26,123,158,0.3);
         }
 
         .note {
@@ -137,11 +138,13 @@
             opacity: 0.5;
             text-align: center;
             margin-top: 0.8rem;
+            color: #3a2a3a;
         }
 
         @media (max-width: 768px) {
-            .container { padding: 1rem; }
+            .container { padding: 1.5rem 1rem; }
             .form-box { padding: 1.2rem 1rem; }
+            .form-box h2 { font-size: 1.2rem; }
         }
 
         @font-face {
@@ -203,7 +206,7 @@
                 <option value="telegram">تلگرام</option>
                 <option value="whatsapp">واتس‌اپ</option>
             </select>
-            <input type="text" placeholder="مقدار را وارد کنید (مثلاً ایمیل)" style="margin-top:0.3rem; width:100%; padding:0.5rem 1rem; border-radius:16px; border:1px solid rgba(255,255,255,0.4); background:rgba(255,255,255,0.5); font-family:inherit;" />
+            <input type="text" placeholder="مقدار را وارد کنید (مثلاً ایمیل)" style="margin-top:0.3rem; width:100%; padding:0.5rem 1rem; border-radius:16px; border:1px solid rgba(255,255,255,0.05); background:rgba(255,255,255,0.02); font-family:inherit;" />
             <div class="hint">* این بخش کاملاً اختیاری است و فقط برای ارتباط شما با دیگران استفاده می‌شود.</div>
         </div>
 
