@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>بیشتر بدانید | شناسنامه فرهنگی جهانی</title>
+    <title>بیشتر بدانید | کارت جهانی هویت هوشمند فرهنگی</title>
     <style>
-        /* ===== RESET & BASE ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
@@ -41,7 +40,6 @@
             border-color: rgba(255, 255, 255, 0.05);
         }
 
-        /* ===== TOP BAR ===== */
         .top-bar {
             display: flex;
             justify-content: space-between;
@@ -80,6 +78,28 @@
             background: rgba(255,255,255,0.25);
         }
 
+        .lang-switch {
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .lang-switch a {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            padding: 0.3rem 1.5rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #1a4b6d;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .lang-switch a:hover { background: rgba(255,255,255,0.25); }
+        body.dark .lang-switch a { color: #b8d4e8; background: rgba(255,255,255,0.05); }
+        body.dark .lang-switch a:hover { background: rgba(255,255,255,0.1); }
+
         .back-module {
             display: inline-block;
             background: rgba(255,255,255,0.15);
@@ -105,7 +125,7 @@
         }
 
         .info-box {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(12px);
             border-radius: 28px;
             padding: 1.8rem 2rem;
@@ -118,7 +138,7 @@
         .info-box:hover {
             transform: translateY(-4px);
             box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.25);
         }
 
         body.dark .info-box {
@@ -169,40 +189,68 @@
 
         body.dark .info-box ul li::before { color: #7ddfa0; }
 
-        .lang-switch {
-            text-align: center;
-            margin: 1rem 0;
+        .principles-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            margin-top: 0.5rem;
         }
 
-        .lang-switch a {
-            display: inline-block;
-            background: rgba(255,255,255,0.15);
-            padding: 0.3rem 1.5rem;
-            border-radius: 40px;
-            text-decoration: none;
-            color: #1a4b6d;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: 0.2s;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .lang-switch a:hover {
-            background: rgba(255,255,255,0.25);
-        }
-
-        body.dark .lang-switch a {
-            color: #b8d4e8;
+        .principle-item {
             background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 0.8rem 1rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: 0.2s;
         }
 
-        body.dark .lang-switch a:hover {
+        .principle-item:hover {
             background: rgba(255,255,255,0.1);
         }
 
+        .principle-item .icon { font-size: 1.2rem; margin-left: 0.3rem; }
+        .principle-item .title { font-weight: 700; font-size: 0.9rem; color: #0b3b54; }
+        .principle-item .desc { font-size: 0.75rem; opacity: 0.6; }
+
+        body.dark .principle-item .title { color: #b8d4e8; }
+
+        .radio-showcase {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .radio-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 1rem 1.2rem;
+            flex: 1;
+            min-width: 140px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: 0.2s;
+        }
+
+        .radio-item:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-3px);
+        }
+
+        .radio-item a {
+            text-decoration: none;
+            color: #1a7b9e;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        body.dark .radio-item a { color: #7ddfa0; }
+
         @media (max-width: 768px) {
-            .container { padding: 1.5rem 1rem; }
+            .container { padding: 1rem; }
             .info-box { padding: 1.2rem 1.2rem; }
+            .principles-grid { grid-template-columns: 1fr; }
+            .radio-item { min-width: 100%; }
         }
 
         @font-face {
@@ -227,11 +275,11 @@
 
     <a href="index.html" class="back-module">← بازگشت به صفحه‌ی اصلی</a>
 
-    <!-- ===== CONTENT ===== -->
+    <!-- ===== SECTION 1: GOALS ===== -->
     <div class="info-box">
-        <h2>🎯 اهداف شناسنامه</h2>
+        <h2>🎯 اهداف پروژه</h2>
         <p>
-            این طرح با هدف ایجاد یک <strong>هویت فرهنگی غیرمتمرکز</strong> برای هر انسان، بدون نیاز به اطلاعات شخصی، طراحی شده است.
+            این پروژه با هدف ایجاد یک <strong>هویت فرهنگی غیرمتمرکز و انتخابی</strong> برای هر انسان، بدون نیاز به اطلاعات شخصی، طراحی شده است.
             ما به دنبال ساختن شبکه‌ای از <strong>مصلحان فرهنگی</strong> هستیم که بتوانند بدون وابستگی به نهادهای خاص،
             هویت و ارزش‌های فرهنگی خود را حفظ کرده و با دیگر هم‌فکران خود در سراسر جهان ارتباط برقرار کنند.
         </p>
@@ -243,49 +291,91 @@
         </ul>
     </div>
 
+    <!-- ===== SECTION 2: PRINCIPLES ===== -->
     <div class="info-box">
-        <h2>⚠️ آسیب‌های فرهنگی</h2>
-        <p>
-            امروزه فرهنگ‌های بومی و محلی با تهدیدات جدی روبرو هستند. <strong>امپریالیسم فرهنگی</strong>،
-            <strong>تخدیر فکری</strong> توسط رسانه‌های بی‌هویت، و <strong>سوءاستفاده از هوش مصنوعی</strong>
-            برای دستکاری هویت و حافظه‌ی جمعی، از جمله این تهدیدات هستند.
+        <h2>⚖️ اصول بنیادین</h2>
+        <p style="margin-bottom:0.8rem;">
+            این اصول، هسته‌ی غیرقابل تغییر پروژه هستند و هیچ‌کس (حتی بنیان‌گذار) نمی‌تواند آنها را تغییر دهد.
         </p>
-        <ul>
-            <li>تحمیل ارزش‌های بیگانه به جوامع محلی</li>
-            <li>تولید انبوه محتوای بی‌هویت و تخدیرکننده</li>
-            <li>جایگزینی هوش مصنوعی به جای تصمیم‌گیری انسانی</li>
-            <li>تقسیم‌بندی و قطبی‌سازی جوامع</li>
-        </ul>
+        <div class="principles-grid">
+            <div class="principle-item">
+                <span class="icon">🔄</span>
+                <div class="title">عدم مالکیت دائمی</div>
+                <div class="desc">بنیان‌گذار پس از ۱۰۰۰۰ عضو کنار می‌رود</div>
+            </div>
+            <div class="principle-item">
+                <span class="icon">🌐</span>
+                <div class="title">گذار به غیرمتمرکز</div>
+                <div class="desc">مدیریت موقت، معماری برای واگذاری</div>
+            </div>
+            <div class="principle-item">
+                <span class="icon">🔒</span>
+                <div class="title">حریم‌خصوصی محور</div>
+                <div class="desc">هیچ داده‌ی شناسایی‌کننده‌ای دریافت نمی‌شود</div>
+            </div>
+            <div class="principle-item">
+                <span class="icon">✅</span>
+                <div class="title">اختیاری بودن</div>
+                <div class="desc">همه‌ی فعالیت‌ها داوطلبانه است</div>
+            </div>
+            <div class="principle-item">
+                <span class="icon">🤝</span>
+                <div class="title">عدم تبعیض</div>
+                <div class="desc">هیچ فرهنگی بر دیگری برتری ندارد</div>
+            </div>
+            <div class="principle-item">
+                <span class="icon">📋</span>
+                <div class="title">قابلیت تکثیر</div>
+                <div class="desc">هر گروهی می‌تواند نسخه‌ی خود را راه‌اندازی کند</div>
+            </div>
+            <div class="principle-item" style="grid-column: 1 / -1;">
+                <span class="icon">🔍</span>
+                <div class="title">شفافیت</div>
+                <div class="desc">کدها باز هستند، اما داده‌های کاربران عمومی نیستند</div>
+            </div>
+        </div>
     </div>
 
+    <!-- ===== SECTION 3: RADIO-TV ===== -->
     <div class="info-box">
-        <h2>🌐 شبکه‌های محلی</h2>
+        <h2>📡 رادیوتلویزیون هوشمند همگانی</h2>
         <p>
-            این پروژه بر اساس <strong>غیرمتمرکزسازی</strong> و <strong>واگذاری کنترل به خودِ کاربران</strong> طراحی شده است.
-            هر گروه ۵۰ نفره از مصلحان فرهنگی، می‌توانند یک <strong>شبکه‌ی محلی</strong> تشکیل دهند و
-            برای خود شاخص‌ها، قوانین و راه‌های ارتباطی تعریف کنند.
+            پس از تشکیل گروه‌های فرهنگی (حداقل ۵ نفر با شاخص‌های مشترک)، گروه می‌تواند یک <strong>رادیوتلویزیون هوشمند</strong> اختصاصی راه‌اندازی کند.
+            این پلتفرم، ابزاری برای <strong>شبکه‌سازی، تولید و انتشار محتوای فرهنگی</strong> گروه‌های شکل‌گرفته است.
         </p>
         <ul>
-            <li>هر گروه ۵۰ نفره، یک «هسته‌ی فرهنگی» محلی</li>
-            <li>انتخاب جانشین و مدیر گروه توسط خودِ اعضا</li>
-            <li>واگذاری تدریجی کنترل به مصلحان برتر</li>
-            <li>امکان تشکیل شبکه‌های منطقه‌ای و جهانی</li>
+            <li>انتشار متن، صوت، تصویر و ویدئو</li>
+            <li>هر گروه یک کانال اختصاصی دارد</li>
+            <li>محتوا توسط خود گروه تولید و مدیریت می‌شود</li>
+            <li>هوش مصنوعی برای پیشنهاد محتوا، اما نه برای تصمیم‌گیری انسانی</li>
         </ul>
-        <p style="margin-top:0.8rem; font-style:italic; opacity:0.6;">
-            ✦ هدف نهایی: حذف بانی اولیه پس از رسیدن به ۱۰۰۰۰ عضو و سپردن کامل کنترل به خودِ جامعه
-        </p>
+        <div style="margin-top:1rem;">
+            <p style="font-weight:600; opacity:0.7; font-size:0.9rem;">🔹 نمونه‌های اجرایی:</p>
+            <div class="radio-showcase">
+                <div class="radio-item">
+                    <a href="https://ghrezaei1399-code.github.io/kanoon/" target="_blank">📻 کانون پیشکسوتان</a>
+                </div>
+                <div class="radio-item">
+                    <a href="https://ghrezaei1399-code.github.io/entesharat/" target="_blank">📚 انتشارات کیمیا</a>
+                </div>
+                <div class="radio-item">
+                    <a href="https://cassrango.github.io/casrango/" target="_blank">🌍 انجمن مسئولیت اجتماعی</a>
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>
 
 <script>
+    // ===== DATE =====
     (function() {
         const now = new Date();
-        const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
-        const persianDate = now.toLocaleDateString('fa-IR', options);
-        document.getElementById('dateDisplay').textContent = '📅 ' + persianDate;
+        const opts = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+        document.getElementById('dateDisplay').textContent = '📅 ' + now.toLocaleDateString('fa-IR', opts);
     })();
 
+    // ===== THEME TOGGLE =====
     (function() {
         const toggle = document.getElementById('themeToggle');
         const body = document.body;
