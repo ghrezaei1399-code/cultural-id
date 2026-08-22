@@ -14,31 +14,39 @@
             justify-content: center;
             align-items: center;
             padding: 2rem 1rem;
-            background-image: url('assets/نماد صلح.jpg');
+            background-image: url('assets/pisa.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
+            color: #0a0a1a;
+        }
+
+        body.dark {
+            color: #f0f0f0;
         }
 
         .container {
             max-width: 700px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
             border-radius: 48px;
             padding: 2.5rem 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1);
         }
 
         h1 {
             font-size: 1.8rem;
             font-weight: 800;
-            color: #0a0a1a;
+            color: #1a1a2a;
             text-align: center;
             margin-bottom: 0.3rem;
-            text-shadow: 0 2px 12px rgba(255,255,255,0.1);
+        }
+
+        body.dark h1 {
+            color: #f9e79f;
         }
 
         .subtitle {
@@ -47,13 +55,18 @@
             color: #2a2a3a;
             opacity: 0.8;
             margin-bottom: 2rem;
-            border-bottom: 2px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
             padding-bottom: 1rem;
         }
 
+        body.dark .subtitle {
+            color: #d0d0e0;
+            border-bottom-color: rgba(255,255,255,0.05);
+        }
+
         .warning-box {
-            background: rgba(255, 200, 50, 0.15);
-            border: 1px solid rgba(255, 200, 50, 0.2);
+            background: rgba(255, 200, 50, 0.1);
+            border: 1px solid rgba(255, 200, 50, 0.1);
             border-radius: 16px;
             padding: 0.8rem 1.2rem;
             margin-bottom: 1.8rem;
@@ -62,8 +75,17 @@
             color: #5a4a0a;
         }
 
+        body.dark .warning-box {
+            color: #f9e79f;
+            background: rgba(255, 200, 50, 0.05);
+        }
+
         .warning-box strong {
             color: #8a2a0a;
+        }
+
+        body.dark .warning-box strong {
+            color: #f9e79f;
         }
 
         .form-group {
@@ -74,8 +96,12 @@
             display: block;
             font-weight: 700;
             font-size: 0.9rem;
-            color: #0a0a1a;
+            color: #1a1a2a;
             margin-bottom: 0.3rem;
+        }
+
+        body.dark .form-group label {
+            color: #f0f0f0;
         }
 
         .form-group input,
@@ -84,9 +110,8 @@
             width: 100%;
             padding: 0.8rem 1rem;
             border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(4px);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.1);
             font-family: inherit;
             font-size: 0.95rem;
             color: #0a0a1a;
@@ -94,18 +119,37 @@
             outline: none;
         }
 
+        body.dark .form-group input,
+        body.dark .form-group select,
+        body.dark .form-group textarea {
+            background: rgba(255, 255, 255, 0.05);
+            color: #f0f0f0;
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
-            border-color: rgba(255, 255, 255, 0.4);
-            background: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.05);
+            border-color: rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        body.dark .form-group input:focus,
+        body.dark .form-group select:focus,
+        body.dark .form-group textarea:focus {
+            border-color: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
         }
 
         .form-group input::placeholder,
         .form-group textarea::placeholder {
             color: #4a4a5a;
             opacity: 0.5;
+        }
+
+        body.dark .form-group input::placeholder,
+        body.dark .form-group textarea::placeholder {
+            color: #a0a0b0;
         }
 
         .form-row {
@@ -143,33 +187,45 @@
         }
 
         .btn-primary {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(0, 0, 0, 0.03);
             color: #0a0a1a;
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
+
+        body.dark .btn-primary {
+            background: rgba(255, 255, 255, 0.05);
+            color: #f9e79f;
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
         .btn-primary:hover {
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(0, 0, 0, 0.06);
             transform: scale(1.02);
         }
 
-        .btn-secondary {
-            background: rgba(200, 50, 50, 0.1);
-            color: #6a1a1a;
-            border: 1px solid rgba(200, 50, 50, 0.15);
-        }
-        .btn-secondary:hover {
-            background: rgba(200, 50, 50, 0.15);
-            transform: scale(1.02);
+        body.dark .btn-primary:hover {
+            background: rgba(255, 255, 255, 0.08);
         }
 
         .btn-back {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(0, 0, 0, 0.02);
             color: #3a3a4a;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.02);
         }
+
+        body.dark .btn-back {
+            background: rgba(255, 255, 255, 0.02);
+            color: #a0a0b0;
+            border-color: rgba(255, 255, 255, 0.02);
+        }
+
         .btn-back:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.04);
             transform: scale(1.02);
+        }
+
+        body.dark .btn-back:hover {
+            background: rgba(255, 255, 255, 0.04);
         }
 
         .note {
@@ -178,8 +234,37 @@
             opacity: 0.5;
             margin-top: 1.5rem;
             color: #0a0a1a;
-            border-top: 1px solid rgba(255,255,255,0.05);
+            border-top: 1px solid rgba(0,0,0,0.02);
             padding-top: 1rem;
+        }
+
+        body.dark .note {
+            color: #d0d0e0;
+            border-top-color: rgba(255,255,255,0.02);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(0,0,0,0.02);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.3rem 0.8rem;
+            border-radius: 40px;
+            transition: 0.3s;
+            color: #0a0a1a;
+        }
+
+        body.dark .theme-toggle {
+            color: #f9e79f;
+            background: rgba(0,0,0,0.1);
+            border-color: rgba(255,255,255,0.02);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
         }
 
         @font-face {
@@ -189,6 +274,8 @@
     </style>
 </head>
 <body>
+    <button class="theme-toggle" id="themeToggle">🌙</button>
+
     <div class="container">
         <h1>✏️ Edit Information</h1>
         <div class="subtitle">Global Smart Cultural Identity Card</div>
@@ -256,5 +343,26 @@
             ⚡ This edit is allowed only once. After confirmation, it cannot be undone.
         </div>
     </div>
+
+    <script>
+        (function() {
+            const toggle = document.getElementById('themeToggle');
+            const body = document.body;
+            if (localStorage.getItem('theme') === 'dark') {
+                body.classList.add('dark');
+                toggle.textContent = '☀️';
+            }
+            toggle.addEventListener('click', function() {
+                body.classList.toggle('dark');
+                if (body.classList.contains('dark')) {
+                    toggle.textContent = '☀️';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    toggle.textContent = '🌙';
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+        })();
+    </script>
 </body>
 </html>
