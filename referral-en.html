@@ -3,238 +3,219 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Invite Friends | Global Cultural ID</title>
+    <title>Invite Friends | Global Smart Cultural ID</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', 'Vazir', 'IRANSans', sans-serif;
-            background: radial-gradient(circle at 20% 30%, #d4e8f5 0%, #b8d4e8 40%, #a0c4d8 100%);
+            font-family: 'Segoe UI', 'Vazir', sans-serif;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 2rem 1rem;
-            transition: background 0.3s, color 0.3s;
-        }
-
-        body.dark {
-            background: radial-gradient(circle at 20% 30%, #1a2a3a 0%, #0f1a2a 40%, #0a0f1a 100%);
-            color: #d0d8e0;
+            background-image: url('assets/نماد صلح.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 700px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.12);
             backdrop-filter: blur(16px);
-            border-radius: 60px;
-            padding: 1.5rem 2rem 1.5rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: background 0.3s, border-color 0.3s;
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 48px;
+            padding: 2.5rem 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
         }
 
-        body.dark .container {
-            background: rgba(0, 0, 0, 0.3);
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .date-display {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #0b3b54;
-            opacity: 0.7;
-            background: rgba(255,255,255,0.15);
-            padding: 0.2rem 1rem;
-            border-radius: 30px;
-        }
-
-        body.dark .date-display { color: #b8d4e8; }
-
-        .theme-toggle {
-            background: rgba(255,255,255,0.15);
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0.2rem 0.8rem;
-            border-radius: 40px;
-            transition: 0.3s;
-            color: #0b3b54;
-        }
-
-        body.dark .theme-toggle { color: #f9e79f; }
-        .theme-toggle:hover {
-            transform: scale(1.1);
-            background: rgba(255,255,255,0.25);
-        }
-
-        .lang-switch {
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #0a0a1a;
             text-align: center;
-            margin: 1rem 0;
+            margin-bottom: 0.3rem;
+            text-shadow: 0 2px 12px rgba(255,255,255,0.1);
         }
 
-        .lang-switch a {
-            display: inline-block;
-            background: rgba(255,255,255,0.15);
-            padding: 0.3rem 1.5rem;
-            border-radius: 40px;
-            text-decoration: none;
-            color: #1a4b6d;
-            font-weight: 600;
+        .subtitle {
+            text-align: center;
             font-size: 0.9rem;
-            transition: 0.2s;
-            border: 1px solid rgba(255,255,255,0.1);
+            color: #2a2a3a;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+            padding-bottom: 1rem;
         }
 
-        .lang-switch a:hover { background: rgba(255,255,255,0.25); }
-        body.dark .lang-switch a { color: #b8d4e8; background: rgba(255,255,255,0.05); }
-        body.dark .lang-switch a:hover { background: rgba(255,255,255,0.1); }
-
-        .back-module {
-            display: inline-block;
-            background: rgba(26, 75, 109, 0.15);
-            padding: 0.4rem 1.5rem;
-            border-radius: 40px;
-            text-decoration: none;
-            color: #1a4b6d;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: 0.2s;
-            border: 1px solid rgba(26, 75, 109, 0.1);
-            margin-bottom: 1.5rem;
-        }
-
-        body.dark .back-module {
-            background: rgba(255,255,255,0.05);
-            color: #b8d4e8;
-            border-color: rgba(255,255,255,0.05);
-        }
-
-        .back-module:hover {
-            background: rgba(26, 75, 109, 0.25);
-            transform: translateX(-4px);
-        }
-
-        body.dark .back-module:hover { background: rgba(255,255,255,0.1); }
-
-        .referral-box {
-            background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(4px);
-            border-radius: 24px;
-            padding: 1.8rem 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-        }
-
-        body.dark .referral-box {
-            background: rgba(30, 40, 50, 0.4);
-            border-color: rgba(255,255,255,0.05);
-        }
-
-        .referral-box h2 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #0b3b54;
-            margin-bottom: 1rem;
-            border-bottom: 2px solid rgba(26,123,158,0.1);
-            padding-bottom: 0.4rem;
-        }
-
-        body.dark .referral-box h2 { color: #b8d4e8; border-bottom-color: rgba(255,255,255,0.05); }
-
-        .referral-box .site-link {
-            background: rgba(255, 255, 255, 0.2);
+        .ambassador-box {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.2);
             border-radius: 16px;
-            padding: 0.8rem 1.2rem;
+            padding: 1rem 1.2rem;
+            margin-bottom: 1.8rem;
             text-align: center;
+        }
+
+        .ambassador-box strong {
+            color: #8a7a0a;
             font-size: 1.1rem;
-            font-weight: 700;
-            color: #0b3b54;
-            margin-bottom: 1rem;
-            border: 1px dashed rgba(26, 123, 158, 0.2);
-            word-break: break-all;
         }
 
-        body.dark .referral-box .site-link {
-            color: #b8d4e8;
-            border-color: rgba(255,255,255,0.05);
+        .referral-code {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            border: 2px dashed rgba(255,255,255,0.1);
         }
 
-        .referral-box .copy-btn {
-            background: linear-gradient(135deg, #1a7b9e, #6a3f9e);
-            background-size: 200% 200%;
-            animation: gradientMove 6s ease infinite;
-            color: white;
-            padding: 0.5rem 1.5rem;
-            border-radius: 60px;
+        .referral-code .code {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 4px;
+            color: #0a0a1a;
+            direction: ltr;
+            background: rgba(255,255,255,0.05);
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            display: inline-block;
+            font-family: monospace;
+        }
+
+        .referral-code .label {
+            font-size: 0.8rem;
+            opacity: 0.6;
+            margin-top: 0.3rem;
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
             font-weight: 700;
             font-size: 0.9rem;
-            border: none;
-            cursor: pointer;
-            transition: 0.25s ease;
-            box-shadow: 0 4px 16px rgba(26,123,158,0.2);
-            margin-bottom: 0.8rem;
+            color: #0a0a1a;
+            margin-bottom: 0.3rem;
         }
 
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(4px);
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: #0a0a1a;
+            transition: all 0.3s ease;
+            outline: none;
         }
 
-        .referral-box .copy-btn:hover {
-            transform: scale(1.02);
-            box-shadow: 0 8px 24px rgba(26,123,158,0.3);
+        .form-group input:focus {
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.05);
         }
 
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            padding: 0.8rem 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 0.8rem;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        body.dark .stats { border-top-color: rgba(255,255,255,0.05); }
-
-        .stats .stat-item { text-align: center; }
-        .stats .stat-number {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #0b3b54;
-        }
-
-        body.dark .stats .stat-number { color: #b8d4e8; }
-
-        .stats .stat-label {
-            font-size: 0.75rem;
+        .form-group input::placeholder {
+            color: #4a4a5a;
             opacity: 0.5;
         }
 
-        .note {
-            font-size: 0.8rem;
-            opacity: 0.4;
-            text-align: center;
-            margin-top: 0.8rem;
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
         }
 
-        body.dark .note { opacity: 0.3; }
+        .btn {
+            flex: 1;
+            padding: 0.8rem 1.5rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 140px;
+        }
 
-        @media (max-width: 768px) {
-            .container { padding: 1rem; }
-            .referral-box { padding: 1.2rem 1rem; }
-            .stats { flex-direction: column; gap: 0.3rem; }
+        .btn-primary {
+            background: rgba(255, 255, 255, 0.15);
+            color: #0a0a1a;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .btn-primary:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.02);
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.05);
+            color: #3a3a4a;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.02);
+        }
+
+        .btn-copy {
+            background: rgba(0, 150, 255, 0.1);
+            color: #0a3a6a;
+            border: 1px solid rgba(0, 150, 255, 0.15);
+            flex: 0.5;
+        }
+        .btn-copy:hover {
+            background: rgba(0, 150, 255, 0.15);
+            transform: scale(1.02);
+        }
+
+        .note {
+            text-align: center;
+            font-size: 0.75rem;
+            opacity: 0.5;
+            margin-top: 1.5rem;
+            color: #0a0a1a;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 1rem;
+        }
+
+        .share-icons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .share-icons a {
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.05);
+            text-decoration: none;
+            color: #0a0a1a;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: 0.3s;
+        }
+
+        .share-icons a:hover {
+            background: rgba(255,255,255,0.1);
+            transform: scale(1.05);
         }
 
         @font-face {
@@ -244,83 +225,41 @@
     </style>
 </head>
 <body>
-<div class="container">
+    <div class="container">
+        <h1>📣 Invite Friends</h1>
+        <div class="subtitle">Become a Cultural Ambassador & Network</div>
 
-    <!-- ===== TOP BAR ===== -->
-    <div class="top-bar">
-        <div class="date-display" id="dateDisplay">📅 Friday, August 20, 2026</div>
-        <button class="theme-toggle" id="themeToggle">🌙</button>
-    </div>
-
-    <!-- ===== LANGUAGE SWITCH ===== -->
-    <div class="lang-switch">
-        <a href="referral-fa.html">🇮🇷 فارسی</a>
-    </div>
-
-    <a href="index.html" class="back-module">← Back to Home</a>
-
-    <!-- ===== REFERRAL FORM ===== -->
-    <div class="referral-box">
-        <h2>📣 Invite Friends</h2>
-
-        <p style="opacity:0.7; margin-bottom:0.8rem; font-size:0.95rem;">
-            Share the site link and join the cultural ambassadors network.
-        </p>
-
-        <div class="site-link">
-            🌐 https://cultural.id
+        <div class="ambassador-box">
+            🏅 <strong>You are a Cultural Ambassador!</strong><br />
+            Invite your friends to join the global movement.
         </div>
 
-        <button class="copy-btn">📋 Copy Link</button>
+        <div class="referral-code">
+            <span class="code">CIM-REF-12345</span>
+            <span class="label">Your Unique Referral Code</span>
+            <button class="btn btn-copy" style="margin-top:0.5rem; flex:0; display:inline-block; padding:0.3rem 1.2rem;">📋 Copy</button>
+        </div>
 
-        <div class="stats">
-            <div class="stat-item">
-                <div class="stat-number">۰</div>
-                <div class="stat-label">Total Invites</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">۰</div>
-                <div class="stat-label">Successful Signups</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">۰</div>
-                <div class="stat-label">Failed Signups</div>
-            </div>
+        <div class="form-group">
+            <label>Friend's Email or Phone</label>
+            <input type="text" placeholder="example@email.com or 0912XXXXXXX" />
+        </div>
+
+        <div class="share-icons">
+            <a href="#">📱 WhatsApp</a>
+            <a href="#">📧 Email</a>
+            <a href="#">📱 Telegram</a>
+            <a href="#">🔗 Copy Link</a>
+        </div>
+
+        <div class="btn-group">
+            <button type="submit" class="btn btn-primary">📨 Send Invite</button>
+            <a href="index.html" class="btn btn-back">↩ Back</a>
         </div>
 
         <div class="note">
-            ✦ Referral statistics are automatically calculated based on signup IPs ✦
+            🌍 Every invitation is a step toward global cultural unity
         </div>
     </div>
-
-</div>
-
-<script>
-    (function() {
-        const now = new Date();
-        const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
-        const englishDate = now.toLocaleDateString('en-US', options);
-        document.getElementById('dateDisplay').textContent = '📅 ' + englishDate;
-    })();
-
-    (function() {
-        const toggle = document.getElementById('themeToggle');
-        const body = document.body;
-        if (localStorage.getItem('theme') === 'dark') {
-            body.classList.add('dark');
-            toggle.textContent = '☀️';
-        }
-        toggle.addEventListener('click', function() {
-            body.classList.toggle('dark');
-            if (body.classList.contains('dark')) {
-                toggle.textContent = '☀️';
-                localStorage.setItem('theme', 'dark');
-            } else {
-                toggle.textContent = '🌙';
-                localStorage.setItem('theme', 'light');
-            }
-        });
-    })();
-</script>
 </body>
 </html>
