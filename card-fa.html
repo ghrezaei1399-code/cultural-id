@@ -6,7 +6,6 @@
     <title>کارت هویت فرهنگی</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
             min-height: 100vh;
@@ -20,23 +19,17 @@
             background-attachment: fixed;
             color: #1a0a0a;
         }
-
-        body.dark {
-            color: #f0e8e0;
-        }
-
+        body.dark { color: #f0e8e0; }
         .container {
             max-width: 700px;
             width: 100%;
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(0px);
-            -webkit-backdrop-filter: blur(0px);
             border-radius: 48px;
             padding: 2.5rem 2rem;
             border: 1px solid rgba(255, 255, 255, 0.02);
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1);
         }
-
         h1 {
             font-size: 1.8rem;
             font-weight: 800;
@@ -44,11 +37,7 @@
             text-align: center;
             margin-bottom: 0.3rem;
         }
-
-        body.dark h1 {
-            color: #f9e79f;
-        }
-
+        body.dark h1 { color: #f9e79f; }
         .subtitle {
             text-align: center;
             font-size: 0.9rem;
@@ -58,12 +47,7 @@
             border-bottom: 1px solid rgba(30, 10, 0, 0.05);
             padding-bottom: 1rem;
         }
-
-        body.dark .subtitle {
-            color: #d0c0b0;
-            border-bottom-color: rgba(255, 255, 255, 0.02);
-        }
-
+        body.dark .subtitle { color: #d0c0b0; border-bottom-color: rgba(255, 255, 255, 0.02); }
         .card {
             background: rgba(255, 255, 255, 0.02);
             border-radius: 24px;
@@ -71,28 +55,19 @@
             border: 1px solid rgba(30, 10, 0, 0.02);
             text-align: center;
         }
-
-        body.dark .card {
-            border-color: rgba(255, 255, 255, 0.02);
-        }
-
+        body.dark .card { border-color: rgba(255, 255, 255, 0.02); }
         .card-logo {
             max-height: 60px;
             width: auto;
             margin-bottom: 1rem;
         }
-
         .card-title {
             font-size: 1.2rem;
             font-weight: 800;
             color: #2a1a0a;
             margin-bottom: 0.5rem;
         }
-
-        body.dark .card-title {
-            color: #f9e79f;
-        }
-
+        body.dark .card-title { color: #f9e79f; }
         .card-code {
             font-size: 1.4rem;
             font-weight: 700;
@@ -106,29 +81,19 @@
             color: #2a1a0a;
             border: 1px solid rgba(30, 10, 0, 0.02);
         }
-
-        body.dark .card-code {
-            color: #f9e79f;
-            border-color: rgba(255, 255, 255, 0.02);
-        }
-
+        body.dark .card-code { color: #f9e79f; border-color: rgba(255, 255, 255, 0.02); }
         .card-optional {
             font-size: 0.9rem;
             opacity: 0.7;
             margin: 0.3rem 0;
             color: #4a2a1a;
         }
-
-        body.dark .card-optional {
-            color: #b0a090;
-        }
-
+        body.dark .card-optional { color: #b0a090; }
         .card-values {
             text-align: right;
             margin: 1.5rem 0;
             padding: 0 1rem;
         }
-
         .card-values .value-item {
             display: flex;
             align-items: baseline;
@@ -138,22 +103,13 @@
             font-size: 0.85rem;
             color: #2a1a0a;
         }
-
-        body.dark .card-values .value-item {
-            color: #e8d8c8;
-            border-bottom-color: rgba(255, 255, 255, 0.02);
-        }
-
+        body.dark .card-values .value-item { color: #e8d8c8; border-bottom-color: rgba(255, 255, 255, 0.02); }
         .card-values .value-number {
             font-weight: 700;
             color: #4a2a1a;
             min-width: 24px;
         }
-
-        body.dark .card-values .value-number {
-            color: #f9e79f;
-        }
-
+        body.dark .card-values .value-number { color: #f9e79f; }
         .card-qr {
             margin: 1rem auto;
             padding: 0.5rem;
@@ -161,12 +117,7 @@
             display: inline-block;
             border-radius: 8px;
         }
-
-        .card-qr canvas {
-            display: block;
-            margin: 0 auto;
-        }
-
+        .card-qr canvas { display: block; margin: 0 auto; }
         .card-footer {
             margin-top: 1.5rem;
             font-size: 0.7rem;
@@ -175,19 +126,13 @@
             border-top: 1px solid rgba(30, 10, 0, 0.02);
             padding-top: 1rem;
         }
-
-        body.dark .card-footer {
-            color: #b0a090;
-            border-top-color: rgba(255, 255, 255, 0.02);
-        }
-
+        body.dark .card-footer { color: #b0a090; border-top-color: rgba(255, 255, 255, 0.02); }
         .btn-group {
             display: flex;
             gap: 1rem;
             margin-top: 1.5rem;
             flex-wrap: wrap;
         }
-
         .btn {
             flex: 1;
             padding: 0.8rem 1.5rem;
@@ -201,49 +146,22 @@
             transition: all 0.3s ease;
             min-width: 140px;
         }
-
         .btn-primary {
             background: rgba(60, 30, 10, 0.02);
             color: #2a1a0a;
             border: 1px solid rgba(60, 30, 10, 0.02);
         }
-
-        body.dark .btn-primary {
-            background: rgba(255, 255, 255, 0.02);
-            color: #f9e79f;
-            border-color: rgba(255, 255, 255, 0.02);
-        }
-
-        .btn-primary:hover {
-            background: rgba(60, 30, 10, 0.04);
-            transform: scale(1.02);
-        }
-
-        body.dark .btn-primary:hover {
-            background: rgba(255, 255, 255, 0.04);
-        }
-
+        body.dark .btn-primary { background: rgba(255, 255, 255, 0.02); color: #f9e79f; border-color: rgba(255, 255, 255, 0.02); }
+        .btn-primary:hover { background: rgba(60, 30, 10, 0.04); transform: scale(1.02); }
+        body.dark .btn-primary:hover { background: rgba(255, 255, 255, 0.04); }
         .btn-secondary {
             background: rgba(60, 30, 10, 0.01);
             color: #3a2a1a;
             border: 1px solid rgba(60, 30, 10, 0.01);
         }
-
-        body.dark .btn-secondary {
-            background: rgba(255, 255, 255, 0.01);
-            color: #a09080;
-            border-color: rgba(255, 255, 255, 0.01);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(60, 30, 10, 0.03);
-            transform: scale(1.02);
-        }
-
-        body.dark .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.03);
-        }
-
+        body.dark .btn-secondary { background: rgba(255, 255, 255, 0.01); color: #a09080; border-color: rgba(255, 255, 255, 0.01); }
+        .btn-secondary:hover { background: rgba(60, 30, 10, 0.03); transform: scale(1.02); }
+        body.dark .btn-secondary:hover { background: rgba(255, 255, 255, 0.03); }
         .theme-toggle {
             position: fixed;
             top: 1rem;
@@ -257,31 +175,39 @@
             transition: 0.3s;
             color: #1a0a0a;
         }
-
-        body.dark .theme-toggle {
-            color: #f9e79f;
-            background: rgba(0, 0, 0, 0.05);
-            border-color: rgba(255, 255, 255, 0.02);
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-
+        body.dark .theme-toggle { color: #f9e79f; background: rgba(0, 0, 0, 0.05); border-color: rgba(255, 255, 255, 0.02); }
+        .theme-toggle:hover { transform: scale(1.1); }
         @font-face {
             font-family: 'Vazir';
             src: local('Vazir'), local('IRANSans');
         }
-
-        .hidden {
-            display: none;
-        }
-
+        .hidden { display: none; }
         .loading {
             text-align: center;
             padding: 2rem;
             opacity: 0.6;
         }
+        .message-box {
+            display: none;
+            padding: 1rem;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .message-box.error {
+            display: block;
+            background: rgba(200, 50, 50, 0.05);
+            border: 1px solid rgba(200, 50, 50, 0.05);
+            color: #5a0a0a;
+        }
+        body.dark .message-box.error { color: #b08080; background: rgba(200, 50, 50, 0.01); border-color: rgba(200, 50, 50, 0.01); }
+        .message-box.success {
+            display: block;
+            background: rgba(50, 200, 50, 0.05);
+            border: 1px solid rgba(50, 200, 50, 0.05);
+            color: #0a5a0a;
+        }
+        body.dark .message-box.success { color: #80b080; background: rgba(50, 200, 50, 0.01); border-color: rgba(50, 200, 50, 0.01); }
     </style>
 </head>
 <body>
@@ -291,7 +217,9 @@
         <h1>🪪 کارت جهانی هویت هوشمند فرهنگی</h1>
         <div class="subtitle">شناسنامه‌ی فرهنگی شما</div>
 
-        <div id="loading" class="loading">در حال بارگذاری...</div>
+        <div id="messageBox" class="message-box"></div>
+
+        <div id="loading" class="loading">⏳ در حال بارگذاری کارت...</div>
 
         <div id="cardContainer" class="hidden">
             <div class="card">
@@ -300,13 +228,9 @@
                 <div class="card-code" id="cardCode">CIM-XXXX-XXXX-X</div>
                 <div class="card-optional" id="cardOptional">کد اختیاری: ---</div>
 
-                <div class="card-values" id="cardValues">
-                    <!-- مقدارها توسط جاوااسکریپت پر می‌شوند -->
-                </div>
+                <div class="card-values" id="cardValues"></div>
 
-                <div class="card-qr" id="qrContainer">
-                    <!-- QR Code توسط جاوااسکریپت ساخته می‌شود -->
-                </div>
+                <div class="card-qr" id="qrContainer"></div>
 
                 <div class="card-footer">
                     🌍 تنوع فرهنگی حفظ شود؛ انسان‌ها خودشان اشتراکات فرهنگی‌شان را پیدا کنند.
@@ -321,6 +245,7 @@
     </div>
 
     <script>
+        // ===== تم =====
         (function() {
             const toggle = document.getElementById('themeToggle');
             const body = document.body;
@@ -340,14 +265,25 @@
             });
         })();
 
-        // تابع ساده برای تولید QR Code (شبیه‌سازی)
+        // ===== نمایش پیام =====
+        function showMessage(text, type) {
+            const box = document.getElementById('messageBox');
+            box.textContent = text;
+            box.className = 'message-box ' + type;
+            box.style.display = 'block';
+        }
+
+        function hideMessage() {
+            const box = document.getElementById('messageBox');
+            box.style.display = 'none';
+            box.className = 'message-box';
+        }
+
+        // ===== تولید QR Code =====
         function generateQRCode(text, containerId) {
             const container = document.getElementById(containerId);
             container.innerHTML = '';
-            
-            // اگر کتابخانه QR Code در دسترس نیست، یک جایگزین ساده نمایش بده
             try {
-                // اگر کتابخانه QRCode در دسترس باشد از آن استفاده می‌کنیم
                 if (typeof QRCode !== 'undefined') {
                     new QRCode(container, {
                         text: text,
@@ -358,121 +294,163 @@
                         correctLevel: QRCode.CorrectLevel.H
                     });
                 } else {
-                    // Fallback ساده
                     const fallback = document.createElement('div');
-                    fallback.style.cssText = `
-                        padding: 1rem;
-                        background: white;
-                        border-radius: 8px;
-                        display: inline-block;
-                        font-size: 0.7rem;
-                        color: #1a0a0a;
-                        direction: ltr;
-                    `;
+                    fallback.style.cssText = `padding:1rem; background:white; border-radius:8px; display:inline-block; font-size:0.7rem; color:#1a0a0a; direction:ltr;`;
                     fallback.textContent = `📱 کد: ${text}`;
                     container.appendChild(fallback);
                 }
             } catch(e) {
                 const fallback = document.createElement('div');
-                fallback.style.cssText = `
-                    padding: 1rem;
-                    background: white;
-                    border-radius: 8px;
-                    display: inline-block;
-                    font-size: 0.7rem;
-                    color: #1a0a0a;
-                    direction: ltr;
-                `;
+                fallback.style.cssText = `padding:1rem; background:white; border-radius:8px; display:inline-block; font-size:0.7rem; color:#1a0a0a; direction:ltr;`;
                 fallback.textContent = `📱 کد: ${text}`;
                 container.appendChild(fallback);
             }
         }
 
-        // بارگذاری اطلاعات
-        (function() {
-            const loading = document.getElementById('loading');
-            const cardContainer = document.getElementById('cardContainer');
+        // ===== خواندن از مخزن با استفاده از GitHub API =====
+        async function loadFromRepository(cardCode) {
+            const REPO_OWNER = 'ghrezaei1399-code';
+            const REPO_NAME = 'cultural-id';
+            const FILE_PATH = `data/active/${cardCode}.json`;
 
-            // دریافت کد از URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const code = urlParams.get('code');
-
-            // اگر کد در URL نبود، از localStorage بخوان
-            let cardData = null;
-            let cardCode = code || localStorage.getItem('culturalCardCode');
-
-            if (cardCode) {
-                const storedData = localStorage.getItem('culturalCardData');
-                if (storedData) {
-                    try {
-                        cardData = JSON.parse(storedData);
-                        if (cardData.cardCode !== cardCode) {
-                            // اگر کدها مطابقت نداشت، باز هم نمایش بده
-                            cardData.cardCode = cardCode;
-                        }
-                    } catch(e) {
-                        cardData = null;
-                    }
-                }
-            }
-
-            if (!cardData) {
-                // داده‌های پیش‌فرض برای نمایش
-                cardData = {
-                    cardCode: cardCode || 'CIM-1234-5678-A',
-                    optionalCode: 'الف-ب-ج-د-ه',
-                    values: [
-                        'صلح‌دوستی و همبستگی',
-                        'دانش بومی و مهارت‌های سنتی',
-                        'همکاری جمعی و مشارکت',
-                        'احترام به تنوع فرهنگی',
-                        'گفت‌وگو و حل تعارض',
-                        'کاهش تعصب و ترویج مدارا',
-                        'پل‌های ارتباطی میان فرهنگ‌ها'
-                    ],
-                    registrationDate: new Date().toISOString()
-                };
-            }
-
-            // نمایش اطلاعات روی کارت
-            document.getElementById('cardCode').textContent = cardData.cardCode;
-            document.getElementById('cardOptional').textContent = cardData.optionalCode ? 
-                `کد اختیاری: ${cardData.optionalCode}` : 'کد اختیاری: ---';
-
-            const valuesContainer = document.getElementById('cardValues');
-            valuesContainer.innerHTML = '';
-            const valueLabels = [
-                'ارزش‌های بومی',
-                'دانش فردی',
-                'همکاری جمعی',
-                'تنوع فرهنگی',
-                'صلح پایدار جهانی',
-                'محو خشونت',
-                'اتحاد فرهنگی'
-            ];
-
-            cardData.values.forEach((value, index) => {
-                if (value && value.trim()) {
-                    const div = document.createElement('div');
-                    div.className = 'value-item';
-                    div.innerHTML = `
-                        <span class="value-number">${index + 1}.</span>
-                        <span>${value}</span>
-                    `;
-                    valuesContainer.appendChild(div);
+            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
+            const response = await fetch(url, {
+                headers: {
+                    'Accept': 'application/vnd.github.v3+json'
                 }
             });
 
-            // تولید QR Code
-            generateQRCode(cardData.cardCode, 'qrContainer');
+            if (!response.ok) {
+                if (response.status === 404) {
+                    throw new Error('کارت با این کد یافت نشد.');
+                }
+                const errorData = await response.json();
+                throw new Error(`خطا در خواندن فایل: ${errorData.message || 'ناشناخته'}`);
+            }
 
-            // مخفی کردن لودینگ و نمایش کارت
-            loading.classList.add('hidden');
-            cardContainer.classList.remove('hidden');
+            const data = await response.json();
+            const content = JSON.parse(atob(data.content));
+            return content;
+        }
+
+        // ===== بارگذاری کارت =====
+        (async function() {
+            const loading = document.getElementById('loading');
+            const cardContainer = document.getElementById('cardContainer');
+            hideMessage();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const codeFromUrl = urlParams.get('code');
+
+            let cardCode = codeFromUrl || localStorage.getItem('culturalCardCode');
+
+            if (!cardCode) {
+                loading.classList.add('hidden');
+                showMessage('❌ کد کارت یافت نشد. لطفاً از طریق ثبت‌نام اقدام کنید.', 'error');
+                return;
+            }
+
+            try {
+                let cardData = await loadFromRepository(cardCode);
+
+                document.getElementById('cardCode').textContent = cardData.cardCode;
+                document.getElementById('cardOptional').textContent = cardData.optionalCode ? 
+                    `کد اختیاری: ${cardData.optionalCode}` : 'کد اختیاری: ---';
+
+                const valuesContainer = document.getElementById('cardValues');
+                valuesContainer.innerHTML = '';
+                const valueLabels = [
+                    'ارزش‌های بومی',
+                    'دانش فردی',
+                    'همکاری جمعی',
+                    'تنوع فرهنگی',
+                    'صلح پایدار جهانی',
+                    'محو خشونت',
+                    'اتحاد فرهنگی'
+                ];
+
+                if (cardData.values && Array.isArray(cardData.values)) {
+                    cardData.values.forEach((value, index) => {
+                        if (value && value.trim()) {
+                            const div = document.createElement('div');
+                            div.className = 'value-item';
+                            div.innerHTML = `
+                                <span class="value-number">${index + 1}.</span>
+                                <span>${value}</span>
+                            `;
+                            valuesContainer.appendChild(div);
+                        }
+                    });
+                } else {
+                    const stored = localStorage.getItem('culturalCardData');
+                    if (stored) {
+                        const localData = JSON.parse(stored);
+                        if (localData.values) {
+                            localData.values.forEach((value, index) => {
+                                if (value && value.trim()) {
+                                    const div = document.createElement('div');
+                                    div.className = 'value-item';
+                                    div.innerHTML = `
+                                        <span class="value-number">${index + 1}.</span>
+                                        <span>${value}</span>
+                                    `;
+                                    valuesContainer.appendChild(div);
+                                }
+                            });
+                        }
+                    }
+                }
+
+                generateQRCode(cardData.cardCode, 'qrContainer');
+
+                loading.classList.add('hidden');
+                cardContainer.classList.remove('hidden');
+
+                localStorage.setItem('culturalCardData', JSON.stringify(cardData));
+                localStorage.setItem('culturalCardCode', cardData.cardCode);
+
+            } catch (error) {
+                console.error('Error loading card:', error);
+                
+                const stored = localStorage.getItem('culturalCardData');
+                if (stored) {
+                    try {
+                        const cardData = JSON.parse(stored);
+                        document.getElementById('cardCode').textContent = cardData.cardCode || cardCode;
+                        document.getElementById('cardOptional').textContent = cardData.optionalCode ? 
+                            `کد اختیاری: ${cardData.optionalCode}` : 'کد اختیاری: ---';
+
+                        const valuesContainer = document.getElementById('cardValues');
+                        valuesContainer.innerHTML = '';
+                        if (cardData.values) {
+                            cardData.values.forEach((value, index) => {
+                                if (value && value.trim()) {
+                                    const div = document.createElement('div');
+                                    div.className = 'value-item';
+                                    div.innerHTML = `
+                                        <span class="value-number">${index + 1}.</span>
+                                        <span>${value}</span>
+                                    `;
+                                    valuesContainer.appendChild(div);
+                                }
+                            });
+                        }
+                        generateQRCode(cardData.cardCode || cardCode, 'qrContainer');
+                        loading.classList.add('hidden');
+                        cardContainer.classList.remove('hidden');
+                        showMessage('⚠️ اطلاعات از حافظه موقت نمایش داده شد. اتصال به مخزن برقرار نیست.', 'success');
+                    } catch(e2) {
+                        loading.classList.add('hidden');
+                        showMessage(`❌ خطا: ${error.message}`, 'error');
+                    }
+                } else {
+                    loading.classList.add('hidden');
+                    showMessage(`❌ خطا: ${error.message}`, 'error');
+                }
+            }
         })();
     </script>
 
-    <!-- کتابخانه QR Code از CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </body>
 </html>
