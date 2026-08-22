@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Edit Information | Global Smart Cultural ID</title>
+    <title>Cultural ID Card</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: 'Segoe UI', 'Vazir', sans-serif;
             min-height: 100vh;
@@ -20,23 +19,17 @@
             background-attachment: fixed;
             color: #1a0a0a;
         }
-
-        body.dark {
-            color: #f0e8e0;
-        }
-
+        body.dark { color: #f0e8e0; }
         .container {
             max-width: 700px;
             width: 100%;
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(0px);
-            -webkit-backdrop-filter: blur(0px);
             border-radius: 48px;
             padding: 2.5rem 2rem;
             border: 1px solid rgba(255, 255, 255, 0.02);
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1);
         }
-
         h1 {
             font-size: 1.8rem;
             font-weight: 800;
@@ -44,11 +37,7 @@
             text-align: center;
             margin-bottom: 0.3rem;
         }
-
-        body.dark h1 {
-            color: #f9e79f;
-        }
-
+        body.dark h1 { color: #f9e79f; }
         .subtitle {
             text-align: center;
             font-size: 0.9rem;
@@ -58,120 +47,92 @@
             border-bottom: 1px solid rgba(30, 10, 0, 0.05);
             padding-bottom: 1rem;
         }
-
-        body.dark .subtitle {
-            color: #d0c0b0;
-            border-bottom-color: rgba(255, 255, 255, 0.02);
-        }
-
-        .warning-box {
-            background: rgba(180, 80, 30, 0.02);
-            border: 1px solid rgba(180, 80, 30, 0.02);
-            border-radius: 16px;
-            padding: 0.8rem 1.2rem;
-            margin-bottom: 1.8rem;
-            text-align: center;
-            font-size: 0.85rem;
-            color: #5a2a0a;
-        }
-
-        body.dark .warning-box {
-            color: #f9e79f;
-            background: rgba(255, 200, 50, 0.02);
-        }
-
-        .warning-box strong {
-            color: #8a2a0a;
-        }
-
-        body.dark .warning-box strong {
-            color: #f9e79f;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: 700;
-            font-size: 0.9rem;
-            color: #2a1a0a;
-            margin-bottom: 0.3rem;
-        }
-
-        body.dark .form-group label {
-            color: #e8d8c8;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            border-radius: 16px;
+        body.dark .subtitle { color: #d0c0b0; border-bottom-color: rgba(255, 255, 255, 0.02); }
+        .card {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 24px;
+            padding: 2rem;
             border: 1px solid rgba(30, 10, 0, 0.02);
+            text-align: center;
+        }
+        body.dark .card { border-color: rgba(255, 255, 255, 0.02); }
+        .card-logo {
+            max-height: 60px;
+            width: auto;
+            margin-bottom: 1rem;
+        }
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #2a1a0a;
+            margin-bottom: 0.5rem;
+        }
+        body.dark .card-title { color: #f9e79f; }
+        .card-code {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 2px;
             background: rgba(255, 255, 255, 0.02);
-            font-family: inherit;
-            font-size: 0.95rem;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            display: inline-block;
+            margin: 0.5rem 0;
+            direction: ltr;
+            color: #2a1a0a;
+            border: 1px solid rgba(30, 10, 0, 0.02);
+        }
+        body.dark .card-code { color: #f9e79f; border-color: rgba(255, 255, 255, 0.02); }
+        .card-optional {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin: 0.3rem 0;
+            color: #4a2a1a;
+        }
+        body.dark .card-optional { color: #b0a090; }
+        .card-values {
+            text-align: left;
+            margin: 1.5rem 0;
+            padding: 0 1rem;
+        }
+        .card-values .value-item {
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+            padding: 0.3rem 0;
+            border-bottom: 1px solid rgba(30, 10, 0, 0.02);
+            font-size: 0.85rem;
+            color: #2a1a0a;
+        }
+        body.dark .card-values .value-item { color: #e8d8c8; border-bottom-color: rgba(255, 255, 255, 0.02); }
+        .card-values .value-number {
+            font-weight: 700;
+            color: #4a2a1a;
+            min-width: 24px;
+        }
+        body.dark .card-values .value-number { color: #f9e79f; }
+        .card-qr {
+            margin: 1rem auto;
+            padding: 0.5rem;
+            background: white;
+            display: inline-block;
+            border-radius: 8px;
+        }
+        .card-qr canvas { display: block; margin: 0 auto; }
+        .card-footer {
+            margin-top: 1.5rem;
+            font-size: 0.7rem;
+            opacity: 0.4;
             color: #1a0a0a;
-            transition: all 0.3s ease;
-            outline: none;
+            border-top: 1px solid rgba(30, 10, 0, 0.02);
+            padding-top: 1rem;
         }
-
-        body.dark .form-group input,
-        body.dark .form-group select,
-        body.dark .form-group textarea {
-            background: rgba(255, 255, 255, 0.02);
-            color: #e8d8c8;
-            border-color: rgba(255, 255, 255, 0.02);
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            border-color: rgba(60, 30, 10, 0.05);
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        body.dark .form-group input:focus,
-        body.dark .form-group select:focus,
-        body.dark .form-group textarea:focus {
-            border-color: rgba(255, 255, 255, 0.05);
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        .form-group input::placeholder,
-        .form-group textarea::placeholder {
-            color: #4a3a2a;
-            opacity: 0.5;
-        }
-
-        body.dark .form-group input::placeholder,
-        body.dark .form-group textarea::placeholder {
-            color: #908070;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        @media (max-width: 600px) {
-            .form-row {
-                grid-template-columns: 1fr;
-                gap: 0.5rem;
-            }
-        }
-
+        body.dark .card-footer { color: #b0a090; border-top-color: rgba(255, 255, 255, 0.02); }
         .btn-group {
             display: flex;
             gap: 1rem;
             margin-top: 1.5rem;
             flex-wrap: wrap;
         }
-
         .btn {
             flex: 1;
             padding: 0.8rem 1.5rem;
@@ -185,90 +146,22 @@
             transition: all 0.3s ease;
             min-width: 140px;
         }
-
         .btn-primary {
             background: rgba(60, 30, 10, 0.02);
             color: #2a1a0a;
             border: 1px solid rgba(60, 30, 10, 0.02);
         }
-
-        body.dark .btn-primary {
-            background: rgba(255, 255, 255, 0.02);
-            color: #f9e79f;
-            border-color: rgba(255, 255, 255, 0.02);
-        }
-
-        .btn-primary:hover {
-            background: rgba(60, 30, 10, 0.04);
-            transform: scale(1.02);
-        }
-
-        body.dark .btn-primary:hover {
-            background: rgba(255, 255, 255, 0.04);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .btn-back {
+        body.dark .btn-primary { background: rgba(255, 255, 255, 0.02); color: #f9e79f; border-color: rgba(255, 255, 255, 0.02); }
+        .btn-primary:hover { background: rgba(60, 30, 10, 0.04); transform: scale(1.02); }
+        body.dark .btn-primary:hover { background: rgba(255, 255, 255, 0.04); }
+        .btn-secondary {
             background: rgba(60, 30, 10, 0.01);
             color: #3a2a1a;
             border: 1px solid rgba(60, 30, 10, 0.01);
         }
-
-        body.dark .btn-back {
-            background: rgba(255, 255, 255, 0.01);
-            color: #a09080;
-            border-color: rgba(255, 255, 255, 0.01);
-        }
-
-        .btn-back:hover {
-            background: rgba(60, 30, 10, 0.03);
-            transform: scale(1.02);
-        }
-
-        body.dark .btn-back:hover {
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        .note {
-            text-align: center;
-            font-size: 0.75rem;
-            opacity: 0.5;
-            margin-top: 1.5rem;
-            color: #1a0a0a;
-            border-top: 1px solid rgba(30, 10, 0, 0.02);
-            padding-top: 1rem;
-        }
-
-        body.dark .note {
-            color: #b0a090;
-            border-top-color: rgba(255, 255, 255, 0.02);
-        }
-
-        .success-message {
-            display: none;
-            background: rgba(50, 200, 50, 0.02);
-            border: 1px solid rgba(50, 200, 50, 0.02);
-            border-radius: 16px;
-            padding: 1rem;
-            text-align: center;
-            margin-top: 1.5rem;
-            color: #0a5a0a;
-        }
-
-        body.dark .success-message {
-            color: #80b080;
-            background: rgba(50, 200, 50, 0.01);
-            border-color: rgba(50, 200, 50, 0.01);
-        }
-
-        .success-message.show {
-            display: block;
-        }
-
+        body.dark .btn-secondary { background: rgba(255, 255, 255, 0.01); color: #a09080; border-color: rgba(255, 255, 255, 0.01); }
+        .btn-secondary:hover { background: rgba(60, 30, 10, 0.03); transform: scale(1.02); }
+        body.dark .btn-secondary:hover { background: rgba(255, 255, 255, 0.03); }
         .theme-toggle {
             position: fixed;
             top: 1rem;
@@ -282,99 +175,77 @@
             transition: 0.3s;
             color: #1a0a0a;
         }
-
-        body.dark .theme-toggle {
-            color: #f9e79f;
-            background: rgba(0, 0, 0, 0.05);
-            border-color: rgba(255, 255, 255, 0.02);
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-
+        body.dark .theme-toggle { color: #f9e79f; background: rgba(0, 0, 0, 0.05); border-color: rgba(255, 255, 255, 0.02); }
+        .theme-toggle:hover { transform: scale(1.1); }
         @font-face {
             font-family: 'Vazir';
             src: local('Vazir'), local('IRANSans');
         }
+        .hidden { display: none; }
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            opacity: 0.6;
+        }
+        .message-box {
+            display: none;
+            padding: 1rem;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .message-box.error {
+            display: block;
+            background: rgba(200, 50, 50, 0.05);
+            border: 1px solid rgba(200, 50, 50, 0.05);
+            color: #5a0a0a;
+        }
+        body.dark .message-box.error { color: #b08080; background: rgba(200, 50, 50, 0.01); border-color: rgba(200, 50, 50, 0.01); }
+        .message-box.success {
+            display: block;
+            background: rgba(50, 200, 50, 0.05);
+            border: 1px solid rgba(50, 200, 50, 0.05);
+            color: #0a5a0a;
+        }
+        body.dark .message-box.success { color: #80b080; background: rgba(50, 200, 50, 0.01); border-color: rgba(50, 200, 50, 0.01); }
     </style>
 </head>
 <body>
     <button class="theme-toggle" id="themeToggle">🌙</button>
 
     <div class="container">
-        <h1>✏️ Edit Information</h1>
-        <div class="subtitle">Global Smart Cultural Identity Card</div>
+        <h1>🪪 Global Smart Cultural ID Card</h1>
+        <div class="subtitle">Your Cultural Identity</div>
 
-        <div class="warning-box">
-            ⚠️ <strong>Important:</strong> You can edit your information <strong>only once</strong>. Please enter carefully.
+        <div id="messageBox" class="message-box"></div>
+
+        <div id="loading" class="loading">⏳ Loading card...</div>
+
+        <div id="cardContainer" class="hidden">
+            <div class="card">
+                <img src="assets/logo-en.png" alt="Logo" class="card-logo" />
+                <div class="card-title">Global Smart Cultural Identity Card</div>
+                <div class="card-code" id="cardCode">CIM-XXXX-XXXX-X</div>
+                <div class="card-optional" id="cardOptional">Optional Code: ---</div>
+
+                <div class="card-values" id="cardValues"></div>
+
+                <div class="card-qr" id="qrContainer"></div>
+
+                <div class="card-footer">
+                    🌍 Cultural diversity preserved; people find their own cultural commonalities.
+                </div>
+            </div>
         </div>
 
-        <form id="editForm">
-            <div class="form-group">
-                <label>Card Code (Unchangeable)</label>
-                <input type="text" value="CIM-1234-5678-A" disabled style="opacity:0.5;" />
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Cultural Value 1</label>
-                    <input type="text" placeholder="e.g. Peacefulness" required />
-                </div>
-                <div class="form-group">
-                    <label>Cultural Value 2</label>
-                    <input type="text" placeholder="e.g. Respect for Diversity" required />
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Cultural Value 3</label>
-                    <input type="text" placeholder="e.g. Collective Collaboration" required />
-                </div>
-                <div class="form-group">
-                    <label>Cultural Value 4</label>
-                    <input type="text" placeholder="e.g. Knowledge-Driven" required />
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Cultural Value 5</label>
-                    <input type="text" placeholder="e.g. Justice" required />
-                </div>
-                <div class="form-group">
-                    <label>Cultural Value 6</label>
-                    <input type="text" placeholder="e.g. Kindness" required />
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Cultural Value 7</label>
-                <input type="text" placeholder="e.g. Responsibility" required />
-            </div>
-
-            <div class="form-group">
-                <label>Optional Section (5 custom characters)</label>
-                <input type="text" maxlength="5" placeholder="e.g. A-B-C-D-E" />
-            </div>
-
-            <div class="btn-group">
-                <button type="submit" class="btn btn-primary" id="submitBtn">💾 Save Changes</button>
-                <a href="index.html" class="btn btn-back">↩ Back to Home</a>
-            </div>
-        </form>
-
-        <div class="success-message" id="successMessage">
-            ✅ Changes saved successfully.
-        </div>
-
-        <div class="note">
-            ⚡ This edit is allowed only once. After confirmation, it cannot be undone.
+        <div class="btn-group">
+            <a href="index.html" class="btn btn-secondary">↩ Back to Home</a>
+            <a href="card-back-en.html" class="btn btn-primary">🔍 Back of Card</a>
         </div>
     </div>
 
     <script>
+        // ===== Theme =====
         (function() {
             const toggle = document.getElementById('themeToggle');
             const body = document.body;
@@ -394,12 +265,192 @@
             });
         })();
 
-        document.getElementById('editForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            document.getElementById('successMessage').classList.add('show');
-            document.getElementById('submitBtn').disabled = true;
-            document.getElementById('submitBtn').textContent = '✅ Saved';
-        });
+        // ===== Show Message =====
+        function showMessage(text, type) {
+            const box = document.getElementById('messageBox');
+            box.textContent = text;
+            box.className = 'message-box ' + type;
+            box.style.display = 'block';
+        }
+
+        function hideMessage() {
+            const box = document.getElementById('messageBox');
+            box.style.display = 'none';
+            box.className = 'message-box';
+        }
+
+        // ===== Generate QR Code =====
+        function generateQRCode(text, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            try {
+                if (typeof QRCode !== 'undefined') {
+                    new QRCode(container, {
+                        text: text,
+                        width: 120,
+                        height: 120,
+                        colorDark: '#1a0a0a',
+                        colorLight: '#ffffff',
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                } else {
+                    const fallback = document.createElement('div');
+                    fallback.style.cssText = `padding:1rem; background:white; border-radius:8px; display:inline-block; font-size:0.7rem; color:#1a0a0a; direction:ltr;`;
+                    fallback.textContent = `📱 Code: ${text}`;
+                    container.appendChild(fallback);
+                }
+            } catch(e) {
+                const fallback = document.createElement('div');
+                fallback.style.cssText = `padding:1rem; background:white; border-radius:8px; display:inline-block; font-size:0.7rem; color:#1a0a0a; direction:ltr;`;
+                fallback.textContent = `📱 Code: ${text}`;
+                container.appendChild(fallback);
+            }
+        }
+
+        // ===== Read from Repository using GitHub API =====
+        async function loadFromRepository(cardCode) {
+            const REPO_OWNER = 'ghrezaei1399-code';
+            const REPO_NAME = 'cultural-id';
+            const FILE_PATH = `data/active/${cardCode}.json`;
+
+            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
+            const response = await fetch(url, {
+                headers: {
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+
+            if (!response.ok) {
+                if (response.status === 404) {
+                    throw new Error('Card with this code was not found.');
+                }
+                const errorData = await response.json();
+                throw new Error(`Error reading file: ${errorData.message || 'Unknown'}`);
+            }
+
+            const data = await response.json();
+            const content = JSON.parse(atob(data.content));
+            return content;
+        }
+
+        // ===== Load Card =====
+        (async function() {
+            const loading = document.getElementById('loading');
+            const cardContainer = document.getElementById('cardContainer');
+            hideMessage();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const codeFromUrl = urlParams.get('code');
+
+            let cardCode = codeFromUrl || localStorage.getItem('culturalCardCode');
+
+            if (!cardCode) {
+                loading.classList.add('hidden');
+                showMessage('❌ Card code not found. Please register first.', 'error');
+                return;
+            }
+
+            try {
+                let cardData = await loadFromRepository(cardCode);
+
+                document.getElementById('cardCode').textContent = cardData.cardCode;
+                document.getElementById('cardOptional').textContent = cardData.optionalCode ? 
+                    `Optional Code: ${cardData.optionalCode}` : 'Optional Code: ---';
+
+                const valuesContainer = document.getElementById('cardValues');
+                valuesContainer.innerHTML = '';
+                const valueLabels = [
+                    'Indigenous Values',
+                    'Individual Knowledge',
+                    'Collective Collaboration',
+                    'Cultural Diversity',
+                    'Global Peace',
+                    'Eliminating Violence',
+                    'Cultural Unity'
+                ];
+
+                if (cardData.values && Array.isArray(cardData.values)) {
+                    cardData.values.forEach((value, index) => {
+                        if (value && value.trim()) {
+                            const div = document.createElement('div');
+                            div.className = 'value-item';
+                            div.innerHTML = `
+                                <span class="value-number">${index + 1}.</span>
+                                <span>${value}</span>
+                            `;
+                            valuesContainer.appendChild(div);
+                        }
+                    });
+                } else {
+                    const stored = localStorage.getItem('culturalCardData');
+                    if (stored) {
+                        const localData = JSON.parse(stored);
+                        if (localData.values) {
+                            localData.values.forEach((value, index) => {
+                                if (value && value.trim()) {
+                                    const div = document.createElement('div');
+                                    div.className = 'value-item';
+                                    div.innerHTML = `
+                                        <span class="value-number">${index + 1}.</span>
+                                        <span>${value}</span>
+                                    `;
+                                    valuesContainer.appendChild(div);
+                                }
+                            });
+                        }
+                    }
+                }
+
+                generateQRCode(cardData.cardCode, 'qrContainer');
+
+                loading.classList.add('hidden');
+                cardContainer.classList.remove('hidden');
+
+                localStorage.setItem('culturalCardData', JSON.stringify(cardData));
+                localStorage.setItem('culturalCardCode', cardData.cardCode);
+
+            } catch (error) {
+                console.error('Error loading card:', error);
+                
+                const stored = localStorage.getItem('culturalCardData');
+                if (stored) {
+                    try {
+                        const cardData = JSON.parse(stored);
+                        document.getElementById('cardCode').textContent = cardData.cardCode || cardCode;
+                        document.getElementById('cardOptional').textContent = cardData.optionalCode ? 
+                            `Optional Code: ${cardData.optionalCode}` : 'Optional Code: ---';
+
+                        const valuesContainer = document.getElementById('cardValues');
+                        valuesContainer.innerHTML = '';
+                        if (cardData.values) {
+                            cardData.values.forEach((value, index) => {
+                                if (value && value.trim()) {
+                                    const div = document.createElement('div');
+                                    div.className = 'value-item';
+                                    div.innerHTML = `
+                                        <span class="value-number">${index + 1}.</span>
+                                        <span>${value}</span>
+                                    `;
+                                    valuesContainer.appendChild(div);
+                                }
+                            });
+                        }
+                        generateQRCode(cardData.cardCode || cardCode, 'qrContainer');
+                        loading.classList.add('hidden');
+                        cardContainer.classList.remove('hidden');
+                        showMessage('⚠️ Data loaded from local storage. Repository connection not available.', 'success');
+                    } catch(e2) {
+                        loading.classList.add('hidden');
+                        showMessage(`❌ Error: ${error.message}`, 'error');
+                    }
+                } else {
+                    loading.classList.add('hidden');
+                    showMessage(`❌ Error: ${error.message}`, 'error');
+                }
+            }
+        })();
     </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </body>
 </html>
