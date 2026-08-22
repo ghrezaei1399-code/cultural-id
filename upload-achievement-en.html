@@ -14,31 +14,39 @@
             justify-content: center;
             align-items: center;
             padding: 2rem 1rem;
-            background-image: url('assets/نماد صلح.jpg');
+            background-image: url('assets/pisa.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
+            color: #0a0a1a;
+        }
+
+        body.dark {
+            color: #f0f0f0;
         }
 
         .container {
             max-width: 700px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
             border-radius: 48px;
             padding: 2.5rem 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1);
         }
 
         h1 {
             font-size: 1.8rem;
             font-weight: 800;
-            color: #0a0a1a;
+            color: #1a1a2a;
             text-align: center;
             margin-bottom: 0.3rem;
-            text-shadow: 0 2px 12px rgba(255,255,255,0.1);
+        }
+
+        body.dark h1 {
+            color: #f9e79f;
         }
 
         .subtitle {
@@ -47,24 +55,38 @@
             color: #2a2a3a;
             opacity: 0.8;
             margin-bottom: 2rem;
-            border-bottom: 2px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
             padding-bottom: 1rem;
         }
 
+        body.dark .subtitle {
+            color: #d0d0e0;
+            border-bottom-color: rgba(255,255,255,0.05);
+        }
+
         .upload-zone {
-            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border: 2px dashed rgba(0, 0, 0, 0.05);
             border-radius: 24px;
             padding: 2.5rem 1.5rem;
             text-align: center;
             margin-bottom: 1.5rem;
             transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.02);
             cursor: pointer;
         }
 
+        body.dark .upload-zone {
+            border-color: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
         .upload-zone:hover {
-            border-color: rgba(255, 255, 255, 0.4);
-            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        body.dark .upload-zone:hover {
+            border-color: rgba(255, 255, 255, 0.1);
         }
 
         .upload-zone .icon {
@@ -77,6 +99,10 @@
             font-size: 0.9rem;
             color: #2a2a3a;
             opacity: 0.7;
+        }
+
+        body.dark .upload-zone p {
+            color: #d0d0e0;
         }
 
         .upload-zone .small {
@@ -93,8 +119,12 @@
             display: block;
             font-weight: 700;
             font-size: 0.9rem;
-            color: #0a0a1a;
+            color: #1a1a2a;
             margin-bottom: 0.3rem;
+        }
+
+        body.dark .form-group label {
+            color: #f0f0f0;
         }
 
         .form-group input,
@@ -102,9 +132,8 @@
             width: 100%;
             padding: 0.8rem 1rem;
             border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(4px);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.1);
             font-family: inherit;
             font-size: 0.95rem;
             color: #0a0a1a;
@@ -112,11 +141,23 @@
             outline: none;
         }
 
+        body.dark .form-group input,
+        body.dark .form-group textarea {
+            background: rgba(255, 255, 255, 0.05);
+            color: #f0f0f0;
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
         .form-group input:focus,
         .form-group textarea:focus {
-            border-color: rgba(255, 255, 255, 0.4);
-            background: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.05);
+            border-color: rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        body.dark .form-group input:focus,
+        body.dark .form-group textarea:focus {
+            border-color: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
         }
 
         .form-group textarea {
@@ -128,6 +169,11 @@
         .form-group textarea::placeholder {
             color: #4a4a5a;
             opacity: 0.5;
+        }
+
+        body.dark .form-group input::placeholder,
+        body.dark .form-group textarea::placeholder {
+            color: #a0a0b0;
         }
 
         .btn-group {
@@ -152,23 +198,45 @@
         }
 
         .btn-primary {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(0, 0, 0, 0.03);
             color: #0a0a1a;
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
+
+        body.dark .btn-primary {
+            background: rgba(255, 255, 255, 0.05);
+            color: #f9e79f;
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
         .btn-primary:hover {
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(0, 0, 0, 0.06);
             transform: scale(1.02);
         }
 
-        .btn-back {
-            background: rgba(255, 255, 255, 0.05);
-            color: #3a3a4a;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+        body.dark .btn-primary:hover {
+            background: rgba(255, 255, 255, 0.08);
         }
+
+        .btn-back {
+            background: rgba(0, 0, 0, 0.02);
+            color: #3a3a4a;
+            border: 1px solid rgba(0, 0, 0, 0.02);
+        }
+
+        body.dark .btn-back {
+            background: rgba(255, 255, 255, 0.02);
+            color: #a0a0b0;
+            border-color: rgba(255, 255, 255, 0.02);
+        }
+
         .btn-back:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.04);
             transform: scale(1.02);
+        }
+
+        body.dark .btn-back:hover {
+            background: rgba(255, 255, 255, 0.04);
         }
 
         .note {
@@ -177,8 +245,58 @@
             opacity: 0.5;
             margin-top: 1.5rem;
             color: #0a0a1a;
-            border-top: 1px solid rgba(255,255,255,0.05);
+            border-top: 1px solid rgba(0,0,0,0.02);
             padding-top: 1rem;
+        }
+
+        body.dark .note {
+            color: #d0d0e0;
+            border-top-color: rgba(255,255,255,0.02);
+        }
+
+        .success-message {
+            display: none;
+            background: rgba(50, 200, 50, 0.05);
+            border: 1px solid rgba(50, 200, 50, 0.05);
+            border-radius: 16px;
+            padding: 1rem;
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #0a6a0a;
+        }
+
+        body.dark .success-message {
+            color: #80d080;
+            background: rgba(50, 200, 50, 0.02);
+            border-color: rgba(50, 200, 50, 0.02);
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(0,0,0,0.02);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.3rem 0.8rem;
+            border-radius: 40px;
+            transition: 0.3s;
+            color: #0a0a1a;
+        }
+
+        body.dark .theme-toggle {
+            color: #f9e79f;
+            background: rgba(0,0,0,0.1);
+            border-color: rgba(255,255,255,0.02);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
         }
 
         @font-face {
@@ -188,40 +306,80 @@
     </style>
 </head>
 <body>
+    <button class="theme-toggle" id="themeToggle">🌙</button>
+
     <div class="container">
         <h1>📤 Upload Achievement</h1>
         <div class="subtitle">Gallery of First 200 Ambassadors</div>
 
-        <div class="upload-zone">
+        <div class="upload-zone" id="uploadZone">
             <span class="icon">📁</span>
             <p>Drag & drop your file here</p>
             <p class="small">or click to select</p>
             <p class="small" style="margin-top:0.5rem; opacity:0.3;">Allowed formats: JPG, PNG, MP4, PDF (Max 10MB)</p>
         </div>
 
-        <div class="form-group">
-            <label>Title</label>
-            <input type="text" placeholder="e.g. Peace Painting" />
-        </div>
+        <form id="uploadForm">
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="title" placeholder="e.g. Peace Painting" required />
+            </div>
 
-        <div class="form-group">
-            <label>Description</label>
-            <textarea placeholder="Describe your achievement..."></textarea>
-        </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="description" placeholder="Describe your achievement..."></textarea>
+            </div>
 
-        <div class="form-group">
-            <label>Category</label>
-            <input type="text" placeholder="e.g. Art, Science, Culture" />
-        </div>
+            <div class="form-group">
+                <label>Category</label>
+                <input type="text" id="category" placeholder="e.g. Art, Science, Culture" />
+            </div>
 
-        <div class="btn-group">
-            <button type="submit" class="btn btn-primary">📤 Upload</button>
-            <a href="index.html" class="btn btn-back">↩ Back</a>
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary" id="submitBtn">📤 Upload</button>
+                <a href="index.html" class="btn btn-back">↩ Back</a>
+            </div>
+        </form>
+
+        <div class="success-message" id="successMessage">
+            ✅ Your file has been forwarded to the admin and will be displayed upon approval.
         </div>
 
         <div class="note">
             🏆 Only first 200 ambassadors can upload. Featured works will appear in the main gallery.
         </div>
     </div>
+
+    <script>
+        (function() {
+            const toggle = document.getElementById('themeToggle');
+            const body = document.body;
+            if (localStorage.getItem('theme') === 'dark') {
+                body.classList.add('dark');
+                toggle.textContent = '☀️';
+            }
+            toggle.addEventListener('click', function() {
+                body.classList.toggle('dark');
+                if (body.classList.contains('dark')) {
+                    toggle.textContent = '☀️';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    toggle.textContent = '🌙';
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+        })();
+
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.getElementById('successMessage').classList.add('show');
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').textContent = '✅ Sent';
+        });
+
+        document.getElementById('uploadZone').addEventListener('click', function() {
+            alert('Please select your file using the form above.');
+        });
+    </script>
 </body>
 </html>
