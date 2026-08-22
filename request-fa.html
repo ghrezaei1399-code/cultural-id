@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>درخواست | کارت جهانی هویت هوشمند فرهنگی</title>
+    <title>درخواست ارتباط | کارت جهانی هویت هوشمند فرهنگی</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
             min-height: 100vh;
@@ -14,152 +13,213 @@
             justify-content: center;
             align-items: center;
             padding: 2rem 1rem;
-            background-image: url('assets/acropolis.jpg');
+            background-image: url('assets/pisa.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
+            color: #1a0a0a;
         }
-
+        body.dark { color: #f0e8e0; }
         .container {
-            max-width: 800px;
+            max-width: 700px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(0px);
-            border-radius: 60px;
+            border-radius: 48px;
             padding: 2.5rem 2rem;
             border: 1px solid rgba(255, 255, 255, 0.02);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.02);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1);
         }
-
-        .back-module {
-            display: inline-block;
-            background: rgba(255,255,255,0.02);
-            padding: 0.4rem 1.5rem;
-            border-radius: 40px;
-            text-decoration: none;
-            color: #0a1a2a;
-            font-weight: 600;
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #2a1a0a;
+            text-align: center;
+            margin-bottom: 0.3rem;
+        }
+        body.dark h1 { color: #f9e79f; }
+        .subtitle {
+            text-align: center;
             font-size: 0.9rem;
-            transition: 0.2s;
-            border: 1px solid rgba(255,255,255,0.02);
+            color: #4a2a1a;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(30, 10, 0, 0.05);
+            padding-bottom: 1rem;
+        }
+        body.dark .subtitle { color: #d0c0b0; border-bottom-color: rgba(255, 255, 255, 0.02); }
+        .form-group {
             margin-bottom: 1.5rem;
         }
-
-        .back-module:hover {
-            background: rgba(255,255,255,0.05);
-            transform: translateX(-4px);
-        }
-
-        .request-box {
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(0px);
-            border-radius: 32px;
-            padding: 1.8rem 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.02);
-        }
-
-        .request-box h2 {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #0a1a2a;
-            margin-bottom: 0.8rem;
-            border-bottom: 2px solid rgba(0, 0, 0, 0.02);
-            padding-bottom: 0.4rem;
-            text-align: center;
-            text-shadow: 0 2px 8px rgba(255,255,255,0.1);
-        }
-
-        .form-group {
-            margin-bottom: 1.2rem;
-        }
-
         .form-group label {
             display: block;
-            font-weight: 600;
-            font-size: 0.95rem;
-            color: #0a1a2a;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #2a1a0a;
             margin-bottom: 0.3rem;
-            text-shadow: 0 2px 8px rgba(255,255,255,0.05);
         }
-
+        body.dark .form-group label { color: #e8d8c8; }
         .form-group input,
         .form-group textarea,
         .form-group select {
             width: 100%;
-            padding: 0.6rem 1rem;
+            padding: 0.8rem 1rem;
             border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(30, 10, 0, 0.02);
             background: rgba(255, 255, 255, 0.02);
-            font-size: 0.95rem;
             font-family: inherit;
-            transition: 0.2s;
-            resize: vertical;
-            color: #0a1a2a;
+            font-size: 0.95rem;
+            color: #1a0a0a;
+            transition: all 0.3s ease;
+            outline: none;
         }
-
+        body.dark .form-group input,
+        body.dark .form-group textarea,
+        body.dark .form-group select {
+            background: rgba(255, 255, 255, 0.02);
+            color: #e8d8c8;
+            border-color: rgba(255, 255, 255, 0.02);
+        }
         .form-group input:focus,
         .form-group textarea:focus,
         .form-group select:focus {
-            border-color: rgba(26, 42, 74, 0.2);
-            outline: none;
-            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(60, 30, 10, 0.05);
+            background: rgba(255, 255, 255, 0.03);
         }
-
-        .btn-submit {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.02);
-            color: #0a1a2a;
-            padding: 0.8rem 2.5rem;
+        body.dark .form-group input:focus,
+        body.dark .form-group textarea:focus,
+        body.dark .form-group select:focus {
+            border-color: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #4a3a2a;
+            opacity: 0.5;
+        }
+        body.dark .form-group input::placeholder,
+        body.dark .form-group textarea::placeholder {
+            color: #908070;
+        }
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .btn {
+            flex: 1;
+            padding: 0.8rem 1.5rem;
             border-radius: 60px;
             font-weight: 700;
             font-size: 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.02);
-            cursor: pointer;
-            transition: 0.25s ease;
-            width: 100%;
-            margin-top: 0.5rem;
-            text-align: center;
             text-decoration: none;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 140px;
         }
-
-        .btn-submit:hover {
-            background: rgba(255, 255, 255, 0.05);
+        .btn-primary {
+            background: rgba(60, 30, 10, 0.02);
+            color: #2a1a0a;
+            border: 1px solid rgba(60, 30, 10, 0.02);
+        }
+        body.dark .btn-primary {
+            background: rgba(255, 255, 255, 0.02);
+            color: #f9e79f;
+            border-color: rgba(255, 255, 255, 0.02);
+        }
+        .btn-primary:hover {
+            background: rgba(60, 30, 10, 0.04);
             transform: scale(1.02);
         }
-
-        .btn-delete {
-            border-color: rgba(200, 50, 50, 0.15);
-            color: #5a1a1a;
+        body.dark .btn-primary:hover {
+            background: rgba(255, 255, 255, 0.04);
         }
-
-        .btn-delete:hover {
-            background: rgba(200, 50, 50, 0.05);
-        }
-
-        .note {
-            font-size: 0.8rem;
+        .btn-primary:disabled {
             opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-secondary {
+            background: rgba(60, 30, 10, 0.01);
+            color: #3a2a1a;
+            border: 1px solid rgba(60, 30, 10, 0.01);
+        }
+        body.dark .btn-secondary {
+            background: rgba(255, 255, 255, 0.01);
+            color: #a09080;
+            border-color: rgba(255, 255, 255, 0.01);
+        }
+        .btn-secondary:hover {
+            background: rgba(60, 30, 10, 0.03);
+            transform: scale(1.02);
+        }
+        body.dark .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .note {
             text-align: center;
-            margin-top: 0.8rem;
-            color: #0a1a2a;
+            font-size: 0.75rem;
+            opacity: 0.5;
+            margin-top: 1.5rem;
+            color: #1a0a0a;
+            border-top: 1px solid rgba(30, 10, 0, 0.02);
+            padding-top: 1rem;
         }
-
-        .warning {
+        body.dark .note { color: #b0a090; border-top-color: rgba(255, 255, 255, 0.02); }
+        .message-box {
+            display: none;
+            padding: 1rem;
+            border-radius: 16px;
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        .message-box.success {
+            display: block;
+            background: rgba(50, 200, 50, 0.05);
+            border: 1px solid rgba(50, 200, 50, 0.05);
+            color: #0a5a0a;
+        }
+        body.dark .message-box.success {
+            color: #80b080;
+            background: rgba(50, 200, 50, 0.01);
+            border-color: rgba(50, 200, 50, 0.01);
+        }
+        .message-box.error {
+            display: block;
             background: rgba(200, 50, 50, 0.05);
-            border-right: 4px solid #7a1a1a;
-            padding: 0.8rem 1rem;
-            border-radius: 12px;
-            margin-bottom: 1.2rem;
-            font-size: 0.85rem;
-            color: #5a1a1a;
+            border: 1px solid rgba(200, 50, 50, 0.05);
+            color: #5a0a0a;
         }
-
-        @media (max-width: 768px) {
-            .container { padding: 1.5rem 1rem; }
-            .request-box { padding: 1.2rem 1rem; }
-            .request-box h2 { font-size: 1.2rem; }
+        body.dark .message-box.error {
+            color: #b08080;
+            background: rgba(200, 50, 50, 0.01);
+            border-color: rgba(200, 50, 50, 0.01);
         }
-
+        .theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(30, 10, 0, 0.02);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.3rem 0.8rem;
+            border-radius: 40px;
+            transition: 0.3s;
+            color: #1a0a0a;
+        }
+        body.dark .theme-toggle {
+            color: #f9e79f;
+            background: rgba(0, 0, 0, 0.05);
+            border-color: rgba(255, 255, 255, 0.02);
+        }
+        .theme-toggle:hover { transform: scale(1.1); }
         @font-face {
             font-family: 'Vazir';
             src: local('Vazir'), local('IRANSans');
@@ -167,109 +227,155 @@
     </style>
 </head>
 <body>
-<div class="container">
+    <button class="theme-toggle" id="themeToggle">🌙</button>
 
-    <a href="index.html" class="back-module">← بازگشت به صفحه‌ی اصلی</a>
+    <div class="container">
+        <h1>🤝 درخواست ارتباط با هم‌فکران</h1>
+        <div class="subtitle">ارتباط با دیگران بر اساس ارزش‌های فرهنگی مشترک</div>
 
-    <div class="request-box">
-        <h2 id="requestTitle">🤝 درخواست ارتباط با هم‌فکران</h2>
+        <div id="messageBox" class="message-box"></div>
 
-        <div class="warning" id="deleteWarning" style="display:none;">
-            ⚠️ توجه: با ثبت این درخواست، حساب کاربری شما پس از تأیید ادمین، به‌کلی حذف خواهد شد. این اقدام قابل بازگشت نیست.
+        <form id="requestForm">
+            <div class="form-group">
+                <label>کد کارت شما</label>
+                <input type="text" id="cardCode" placeholder="مثلاً: CIM-1234-5678-A" required />
+            </div>
+
+            <div class="form-group">
+                <label>نوع درخواست</label>
+                <select id="requestType" required>
+                    <option value="">انتخاب کنید...</option>
+                    <option value="connection">ارتباط با هم‌فکران</option>
+                    <option value="delete">انصراف از عضویت</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>توضیحات درخواست</label>
+                <textarea id="description" placeholder="توضیح دهید که چه نوع ارتباطی یا چه دلیلی برای انصراف دارید..."></textarea>
+            </div>
+
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary" id="submitBtn">📨 ارسال درخواست</button>
+                <a href="index.html" class="btn btn-secondary">↩ بازگشت</a>
+            </div>
+        </form>
+
+        <div class="note">
+            🔒 درخواست شما به ادمین ارسال می‌شود و پس از بررسی، نتیجه به شما اعلام خواهد شد.
         </div>
-
-        <p style="opacity:0.7; margin-bottom:1.2rem; color:#0a1a2a;" id="requestDesc">
-            برای ثبت درخواست، کد خود را وارد کنید. ادمین پس از بررسی، نتیجه را به شما اعلام خواهد کرد.
-        </p>
-
-        <div class="form-group">
-            <label>🔑 کد شناسنامه</label>
-            <input type="text" id="userCode" placeholder="مثال: CIM-1234-5678-الف" />
-        </div>
-
-        <div class="form-group" id="reasonGroup">
-            <label>📝 دلیل درخواست (اختیاری)</label>
-            <textarea id="reasonText" rows="2" placeholder="در صورت تمایل، دلیل خود را بنویسید..."></textarea>
-        </div>
-
-        <a href="#" class="btn-submit" id="submitBtn">📨 ارسال درخواست</a>
-        <div class="note">✦ درخواست شما توسط ادمین بررسی می‌شود و نتیجه از طریق ایمیل به شما اعلام می‌گردد ✦</div>
     </div>
 
-</div>
-
-<script>
-    // ===== تشخیص نوع درخواست از URL =====
-    (function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const type = urlParams.get('type');
-
-        const title = document.getElementById('requestTitle');
-        const desc = document.getElementById('requestDesc');
-        const warning = document.getElementById('deleteWarning');
-        const reasonGroup = document.getElementById('reasonGroup');
-        const submitBtn = document.getElementById('submitBtn');
-
-        if (type === 'delete') {
-            title.textContent = '🚪 درخواست انصراف از عضویت';
-            desc.textContent = 'برای ثبت درخواست حذف حساب کاربری، کد خود را وارد کنید.';
-            warning.style.display = 'block';
-            submitBtn.textContent = '🚪 ارسال درخواست انصراف';
-            submitBtn.classList.add('btn-delete');
-            submitBtn.href = '#';
-        } else {
-            title.textContent = '🤝 درخواست ارتباط با هم‌فکران';
-            desc.textContent = 'برای ثبت درخواست ارتباط با هم‌فکران، کد خود را وارد کنید.';
-            submitBtn.textContent = '📨 ارسال درخواست';
-            submitBtn.classList.remove('btn-delete');
-            submitBtn.href = '#';
-        }
-    })();
-
-    // ===== مدیریت ارسال درخواست =====
-    (function() {
-        const submitBtn = document.getElementById('submitBtn');
-        const userCode = document.getElementById('userCode');
-        const reasonText = document.getElementById('reasonText');
-
-        submitBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-
-            const code = userCode.value.trim();
-            if (!code) {
-                alert('لطفاً کد شناسنامه خود را وارد کنید.');
-                return;
+    <script>
+        // ===== Theme =====
+        (function() {
+            const toggle = document.getElementById('themeToggle');
+            const body = document.body;
+            if (localStorage.getItem('theme') === 'dark') {
+                body.classList.add('dark');
+                toggle.textContent = '☀️';
             }
-
-            const urlParams = new URLSearchParams(window.location.search);
-            const type = urlParams.get('type') || 'connection';
-
-            // ساخت پیام برای ادمین
-            let message = `درخواست جدید:\n`;
-            message += `نوع: ${type === 'delete' ? 'انصراف از عضویت' : 'ارتباط با هم‌فکران'}\n`;
-            message += `کد کاربر: ${code}\n`;
-            if (reasonText.value.trim()) {
-                message += `دلیل: ${reasonText.value.trim()}\n`;
-            }
-
-            // ذخیره در localStorage برای شبیه‌سازی ارسال به ادمین
-            const requests = JSON.parse(localStorage.getItem('requests') || '[]');
-            requests.push({
-                type: type,
-                code: code,
-                reason: reasonText.value.trim(),
-                date: new Date().toISOString(),
-                status: 'pending'
+            toggle.addEventListener('click', function() {
+                body.classList.toggle('dark');
+                if (body.classList.contains('dark')) {
+                    toggle.textContent = '☀️';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    toggle.textContent = '🌙';
+                    localStorage.setItem('theme', 'light');
+                }
             });
-            localStorage.setItem('requests', JSON.stringify(requests));
+        })();
 
-            alert('✅ درخواست شما با موفقیت ثبت شد.\nادمین ظرف ۴۸ ساعت آینده بررسی و نتیجه را به شما اعلام خواهد کرد.');
+        // ===== Show Message =====
+        function showMessage(text, type) {
+            const box = document.getElementById('messageBox');
+            box.textContent = text;
+            box.className = 'message-box ' + type;
+            box.style.display = 'block';
+        }
 
-            // پاک کردن فرم
-            userCode.value = '';
-            if (reasonText) reasonText.value = '';
+        function hideMessage() {
+            const box = document.getElementById('messageBox');
+            box.style.display = 'none';
+            box.className = 'message-box';
+        }
+
+        // ===== Save Request to Repository =====
+        async function saveRequest(requestData) {
+            const GITHUB_TOKEN = process.env.GH_TOKEN;
+            const REPO_OWNER = 'ghrezaei1399-code';
+            const REPO_NAME = 'cultural-id';
+            const FILE_NAME = `request-${Date.now()}.json`;
+            const FILE_PATH = `data/requests/${FILE_NAME}`;
+            const COMMIT_MESSAGE = `درخواست جدید: ${requestData.cardCode}`;
+
+            const content = JSON.stringify(requestData, null, 2);
+
+            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${GITHUB_TOKEN}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: COMMIT_MESSAGE,
+                    content: btoa(unescape(encodeURIComponent(content)))
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`خطا در ارسال درخواست: ${errorData.message || 'ناشناخته'}`);
+            }
+
+            return await response.json();
+        }
+
+        // ===== Form Submission =====
+        document.getElementById('requestForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            hideMessage();
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ در حال ارسال...';
+
+            try {
+                const cardCode = document.getElementById('cardCode').value.trim();
+                const requestType = document.getElementById('requestType').value;
+                const description = document.getElementById('description').value.trim();
+
+                if (!cardCode) {
+                    throw new Error('لطفاً کد کارت خود را وارد کنید.');
+                }
+
+                if (!requestType) {
+                    throw new Error('لطفاً نوع درخواست را انتخاب کنید.');
+                }
+
+                const requestData = {
+                    cardCode: cardCode,
+                    type: requestType,
+                    description: description,
+                    requestDate: new Date().toISOString(),
+                    status: 'pending'
+                };
+
+                await saveRequest(requestData);
+
+                showMessage('✅ درخواست شما با موفقیت به ادمین ارسال شد.', 'success');
+                submitBtn.textContent = '✅ ارسال شد';
+
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage(`❌ خطا: ${error.message}`, 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '📨 ارسال درخواست';
+            }
         });
-    })();
-</script>
+    </script>
 </body>
 </html>
