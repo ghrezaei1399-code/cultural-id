@@ -6,7 +6,6 @@
     <title>آپلود دستاورد | کارت جهانی هویت هوشمند فرهنگی</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
             min-height: 100vh;
@@ -20,23 +19,17 @@
             background-attachment: fixed;
             color: #1a0a0a;
         }
-
-        body.dark {
-            color: #f0e8e0;
-        }
-
+        body.dark { color: #f0e8e0; }
         .container {
             max-width: 700px;
             width: 100%;
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(0px);
-            -webkit-backdrop-filter: blur(0px);
             border-radius: 48px;
             padding: 2.5rem 2rem;
             border: 1px solid rgba(255, 255, 255, 0.02);
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1);
         }
-
         h1 {
             font-size: 1.8rem;
             font-weight: 800;
@@ -44,11 +37,7 @@
             text-align: center;
             margin-bottom: 0.3rem;
         }
-
-        body.dark h1 {
-            color: #f9e79f;
-        }
-
+        body.dark h1 { color: #f9e79f; }
         .subtitle {
             text-align: center;
             font-size: 0.9rem;
@@ -58,63 +47,10 @@
             border-bottom: 1px solid rgba(30, 10, 0, 0.05);
             padding-bottom: 1rem;
         }
-
-        body.dark .subtitle {
-            color: #d0c0b0;
-            border-bottom-color: rgba(255, 255, 255, 0.02);
-        }
-
-        .upload-zone {
-            border: 2px dashed rgba(60, 30, 10, 0.02);
-            border-radius: 24px;
-            padding: 2.5rem 1.5rem;
-            text-align: center;
-            margin-bottom: 1.5rem;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.01);
-            cursor: pointer;
-        }
-
-        body.dark .upload-zone {
-            border-color: rgba(255, 255, 255, 0.02);
-            background: rgba(255, 255, 255, 0.01);
-        }
-
-        .upload-zone:hover {
-            border-color: rgba(60, 30, 10, 0.05);
-            background: rgba(255, 255, 255, 0.02);
-        }
-
-        body.dark .upload-zone:hover {
-            border-color: rgba(255, 255, 255, 0.05);
-        }
-
-        .upload-zone .icon {
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-
-        .upload-zone p {
-            font-size: 0.9rem;
-            color: #4a2a1a;
-            opacity: 0.7;
-        }
-
-        body.dark .upload-zone p {
-            color: #d0c0b0;
-        }
-
-        .upload-zone .small {
-            font-size: 0.75rem;
-            opacity: 0.4;
-            margin-top: 0.3rem;
-        }
-
+        body.dark .subtitle { color: #d0c0b0; border-bottom-color: rgba(255, 255, 255, 0.02); }
         .form-group {
             margin-bottom: 1.5rem;
         }
-
         .form-group label {
             display: block;
             font-weight: 700;
@@ -122,11 +58,7 @@
             color: #2a1a0a;
             margin-bottom: 0.3rem;
         }
-
-        body.dark .form-group label {
-            color: #e8d8c8;
-        }
-
+        body.dark .form-group label { color: #e8d8c8; }
         .form-group input,
         .form-group textarea {
             width: 100%;
@@ -140,49 +72,55 @@
             transition: all 0.3s ease;
             outline: none;
         }
-
         body.dark .form-group input,
         body.dark .form-group textarea {
             background: rgba(255, 255, 255, 0.02);
             color: #e8d8c8;
             border-color: rgba(255, 255, 255, 0.02);
         }
-
         .form-group input:focus,
         .form-group textarea:focus {
             border-color: rgba(60, 30, 10, 0.05);
             background: rgba(255, 255, 255, 0.03);
         }
-
         body.dark .form-group input:focus,
         body.dark .form-group textarea:focus {
             border-color: rgba(255, 255, 255, 0.05);
             background: rgba(255, 255, 255, 0.03);
         }
-
         .form-group textarea {
-            min-height: 120px;
+            min-height: 100px;
             resize: vertical;
         }
-
         .form-group input::placeholder,
         .form-group textarea::placeholder {
             color: #4a3a2a;
             opacity: 0.5;
         }
-
         body.dark .form-group input::placeholder,
         body.dark .form-group textarea::placeholder {
             color: #908070;
         }
-
+        .upload-zone {
+            border: 2px dashed rgba(60, 30, 10, 0.02);
+            border-radius: 16px;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        body.dark .upload-zone { border-color: rgba(255, 255, 255, 0.02); }
+        .upload-zone:hover { background: rgba(255, 255, 255, 0.01); }
+        .upload-zone .icon { font-size: 2.5rem; display: block; margin-bottom: 0.3rem; }
+        .upload-zone p { font-size: 0.85rem; opacity: 0.6; }
+        .upload-zone .small { font-size: 0.7rem; opacity: 0.3; margin-top: 0.2rem; }
         .btn-group {
             display: flex;
             gap: 1rem;
             margin-top: 1.5rem;
             flex-wrap: wrap;
         }
-
         .btn {
             flex: 1;
             padding: 0.8rem 1.5rem;
@@ -196,54 +134,44 @@
             transition: all 0.3s ease;
             min-width: 140px;
         }
-
         .btn-primary {
             background: rgba(60, 30, 10, 0.02);
             color: #2a1a0a;
             border: 1px solid rgba(60, 30, 10, 0.02);
         }
-
         body.dark .btn-primary {
             background: rgba(255, 255, 255, 0.02);
             color: #f9e79f;
             border-color: rgba(255, 255, 255, 0.02);
         }
-
         .btn-primary:hover {
             background: rgba(60, 30, 10, 0.04);
             transform: scale(1.02);
         }
-
         body.dark .btn-primary:hover {
             background: rgba(255, 255, 255, 0.04);
         }
-
         .btn-primary:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
-
-        .btn-back {
+        .btn-secondary {
             background: rgba(60, 30, 10, 0.01);
             color: #3a2a1a;
             border: 1px solid rgba(60, 30, 10, 0.01);
         }
-
-        body.dark .btn-back {
+        body.dark .btn-secondary {
             background: rgba(255, 255, 255, 0.01);
             color: #a09080;
             border-color: rgba(255, 255, 255, 0.01);
         }
-
-        .btn-back:hover {
+        .btn-secondary:hover {
             background: rgba(60, 30, 10, 0.03);
             transform: scale(1.02);
         }
-
-        body.dark .btn-back:hover {
+        body.dark .btn-secondary:hover {
             background: rgba(255, 255, 255, 0.03);
         }
-
         .note {
             text-align: center;
             font-size: 0.75rem;
@@ -253,33 +181,36 @@
             border-top: 1px solid rgba(30, 10, 0, 0.02);
             padding-top: 1rem;
         }
-
-        body.dark .note {
-            color: #b0a090;
-            border-top-color: rgba(255, 255, 255, 0.02);
-        }
-
-        .success-message {
+        body.dark .note { color: #b0a090; border-top-color: rgba(255, 255, 255, 0.02); }
+        .message-box {
             display: none;
-            background: rgba(50, 200, 50, 0.02);
-            border: 1px solid rgba(50, 200, 50, 0.02);
-            border-radius: 16px;
             padding: 1rem;
+            border-radius: 16px;
             text-align: center;
             margin-top: 1.5rem;
+        }
+        .message-box.success {
+            display: block;
+            background: rgba(50, 200, 50, 0.05);
+            border: 1px solid rgba(50, 200, 50, 0.05);
             color: #0a5a0a;
         }
-
-        body.dark .success-message {
+        body.dark .message-box.success {
             color: #80b080;
             background: rgba(50, 200, 50, 0.01);
             border-color: rgba(50, 200, 50, 0.01);
         }
-
-        .success-message.show {
+        .message-box.error {
             display: block;
+            background: rgba(200, 50, 50, 0.05);
+            border: 1px solid rgba(200, 50, 50, 0.05);
+            color: #5a0a0a;
         }
-
+        body.dark .message-box.error {
+            color: #b08080;
+            background: rgba(200, 50, 50, 0.01);
+            border-color: rgba(200, 50, 50, 0.01);
+        }
         .theme-toggle {
             position: fixed;
             top: 1rem;
@@ -293,21 +224,18 @@
             transition: 0.3s;
             color: #1a0a0a;
         }
-
         body.dark .theme-toggle {
             color: #f9e79f;
             background: rgba(0, 0, 0, 0.05);
             border-color: rgba(255, 255, 255, 0.02);
         }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-
+        .theme-toggle:hover { transform: scale(1.1); }
         @font-face {
             font-family: 'Vazir';
             src: local('Vazir'), local('IRANSans');
         }
+        .hidden { display: none; }
+        .file-name { font-size: 0.8rem; opacity: 0.6; margin-top: 0.3rem; display: block; }
     </style>
 </head>
 <body>
@@ -317,11 +245,14 @@
         <h1>📤 آپلود دستاورد</h1>
         <div class="subtitle">گالری دستاوردهای ۲۰۰ سفیر اول</div>
 
+        <div id="messageBox" class="message-box"></div>
+
         <div class="upload-zone" id="uploadZone">
             <span class="icon">📁</span>
             <p>فایل خود را اینجا بکشید و رها کنید</p>
             <p class="small">یا کلیک کنید تا انتخاب کنید</p>
-            <p class="small" style="margin-top:0.5rem; opacity:0.3;">فرمت‌های مجاز: JPG, PNG, MP4, PDF (حداکثر ۱۰ مگابایت)</p>
+            <p class="small" style="margin-top:0.5rem;">فرمت‌های مجاز: JPG, PNG, MP4, PDF (حداکثر ۱۰ مگابایت)</p>
+            <span class="file-name" id="fileName"></span>
         </div>
 
         <form id="uploadForm">
@@ -342,22 +273,17 @@
 
             <div class="btn-group">
                 <button type="submit" class="btn btn-primary" id="submitBtn">📤 آپلود</button>
-                <a href="index.html" class="btn btn-back">↩ بازگشت به صفحه اصلی</a>
+                <a href="index.html" class="btn btn-secondary">↩ بازگشت</a>
             </div>
         </form>
 
-        <div class="success-message" id="successMessage">
-            ✅ فایل شما به ادمین ارجاع شد و در صورت تأیید در بخش نمایش دستاوردها قرار می‌گیرد.
-        </div>
-
         <div class="note">
             🏆 فقط ۲۰۰ سفیر اول امکان آپلود دارند. آثار برتر در گالری اصلی نمایش داده می‌شوند.
-            <br />
-            (این بخش به زودی راه‌اندازی می‌شود)
         </div>
     </div>
 
     <script>
+        // ===== Theme =====
         (function() {
             const toggle = document.getElementById('themeToggle');
             const body = document.body;
@@ -377,15 +303,184 @@
             });
         })();
 
-        document.getElementById('uploadForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            document.getElementById('successMessage').classList.add('show');
-            document.getElementById('submitBtn').disabled = true;
-            document.getElementById('submitBtn').textContent = '✅ ارسال شد';
+        // ===== Show Message =====
+        function showMessage(text, type) {
+            const box = document.getElementById('messageBox');
+            box.textContent = text;
+            box.className = 'message-box ' + type;
+            box.style.display = 'block';
+        }
+
+        function hideMessage() {
+            const box = document.getElementById('messageBox');
+            box.style.display = 'none';
+            box.className = 'message-box';
+        }
+
+        // ===== Save to Repository =====
+        async function saveToRepository(data) {
+            const GITHUB_TOKEN = process.env.GH_TOKEN;
+            const REPO_OWNER = 'ghrezaei1399-code';
+            const REPO_NAME = 'cultural-id';
+            const FILE_PATH = `data/active/${data.cardCode}.json`;
+            const COMMIT_MESSAGE = `آپلود دستاورد: ${data.cardCode}`;
+
+            const content = JSON.stringify(data, null, 2);
+
+            const checkUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
+            const checkResponse = await fetch(checkUrl, {
+                headers: {
+                    'Authorization': `token ${GITHUB_TOKEN}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+
+            if (checkResponse.status === 200) {
+                const existingData = await checkResponse.json();
+                const sha = existingData.sha;
+                const updateResponse = await fetch(checkUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: COMMIT_MESSAGE,
+                        content: btoa(unescape(encodeURIComponent(content))),
+                        sha: sha
+                    })
+                });
+                if (!updateResponse.ok) {
+                    const errorData = await updateResponse.json();
+                    throw new Error(`خطا در به‌روزرسانی فایل: ${errorData.message || 'ناشناخته'}`);
+                }
+                return await updateResponse.json();
+            }
+
+            const createResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${GITHUB_TOKEN}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: COMMIT_MESSAGE,
+                    content: btoa(unescape(encodeURIComponent(content)))
+                })
+            });
+
+            if (!createResponse.ok) {
+                const errorData = await createResponse.json();
+                throw new Error(`خطا در ایجاد فایل: ${errorData.message || 'ناشناخته'}`);
+            }
+
+            return await createResponse.json();
+        }
+
+        // ===== Read from Repository =====
+        async function loadFromRepository(cardCode) {
+            const REPO_OWNER = 'ghrezaei1399-code';
+            const REPO_NAME = 'cultural-id';
+            const FILE_PATH = `data/active/${cardCode}.json`;
+
+            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
+            const response = await fetch(url, {
+                headers: {
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+
+            if (!response.ok) {
+                if (response.status === 404) {
+                    throw new Error('کارت با این کد یافت نشد.');
+                }
+                const errorData = await response.json();
+                throw new Error(`خطا در خواندن فایل: ${errorData.message || 'ناشناخته'}`);
+            }
+
+            const data = await response.json();
+            const content = JSON.parse(atob(data.content));
+            return content;
+        }
+
+        // ===== Upload Zone =====
+        document.getElementById('uploadZone').addEventListener('click', function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.jpg,.jpeg,.png,.mp4,.pdf';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    document.getElementById('fileName').textContent = `✅ ${file.name}`;
+                    document.getElementById('uploadZone').dataset.fileName = file.name;
+                }
+            };
+            input.click();
         });
 
-        document.getElementById('uploadZone').addEventListener('click', function() {
-            alert('لطفاً فایل خود را از طریق فرم انتخاب کنید. (این بخش به زودی راه‌اندازی می‌شود)');
+        // ===== Form Submission =====
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            hideMessage();
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ در حال ارسال...';
+
+            try {
+                const title = document.getElementById('title').value.trim();
+                const description = document.getElementById('description').value.trim();
+                const category = document.getElementById('category').value.trim();
+                const fileName = document.getElementById('uploadZone').dataset.fileName;
+
+                if (!title) {
+                    throw new Error('لطفاً عنوان اثر را وارد کنید.');
+                }
+
+                if (!fileName) {
+                    throw new Error('لطفاً یک فایل انتخاب کنید.');
+                }
+
+                const cardCode = localStorage.getItem('culturalCardCode');
+                if (!cardCode) {
+                    throw new Error('کد کارت یافت نشد. لطفاً ابتدا ثبت‌نام کنید.');
+                }
+
+                // خواندن اطلاعات کاربر
+                const userData = await loadFromRepository(cardCode);
+
+                // افزودن دستاورد جدید
+                const achievement = {
+                    title: title,
+                    description: description,
+                    category: category,
+                    fileName: fileName,
+                    uploadDate: new Date().toISOString(),
+                    status: 'pending' // منتظر تایید ادمین
+                };
+
+                if (!userData.achievements) {
+                    userData.achievements = [];
+                }
+                userData.achievements.push(achievement);
+
+                // ذخیره در مخزن
+                await saveToRepository(userData);
+
+                // ذخیره در localStorage
+                localStorage.setItem('culturalCardData', JSON.stringify(userData));
+
+                showMessage('✅ فایل شما به ادمین ارجاع شد و در صورت تأیید در بخش نمایش دستاوردها قرار می‌گیرد.', 'success');
+                submitBtn.textContent = '✅ ارسال شد';
+
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage(`❌ خطا: ${error.message}`, 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '📤 آپلود';
+            }
         });
     </script>
 </body>
