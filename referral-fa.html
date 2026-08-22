@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>دعوت از دوستان | کارت جهانی هویت هوشمند فرهنگی</title>
+    <title>ثبت‌نام | کارت جهانی هویت هوشمند فرهنگی</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -64,54 +64,6 @@
             border-bottom-color: rgba(255, 255, 255, 0.02);
         }
 
-        .ambassador-box {
-            background: rgba(180, 80, 30, 0.02);
-            border: 1px solid rgba(180, 80, 30, 0.02);
-            border-radius: 16px;
-            padding: 1rem 1.2rem;
-            margin-bottom: 1.8rem;
-            text-align: center;
-            color: #2a1a0a;
-        }
-
-        body.dark .ambassador-box {
-            color: #f9e79f;
-            background: rgba(255, 215, 0, 0.01);
-        }
-
-        .ambassador-box strong {
-            color: #6a2a0a;
-            font-size: 1.1rem;
-        }
-
-        body.dark .ambassador-box strong {
-            color: #f9e79f;
-        }
-
-        .logo-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        .logo-container img {
-            max-height: 60px;
-            width: auto;
-        }
-
-        .logo-container span {
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: #2a1a0a;
-        }
-
-        body.dark .logo-container span {
-            color: #f9e79f;
-        }
-
         .form-group {
             margin-bottom: 1.5rem;
         }
@@ -128,7 +80,9 @@
             color: #e8d8c8;
         }
 
-        .form-group input {
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
             width: 100%;
             padding: 0.8rem 1rem;
             border-radius: 16px;
@@ -141,28 +95,41 @@
             outline: none;
         }
 
-        body.dark .form-group input {
+        body.dark .form-group input,
+        body.dark .form-group textarea,
+        body.dark .form-group select {
             background: rgba(255, 255, 255, 0.02);
             color: #e8d8c8;
             border-color: rgba(255, 255, 255, 0.02);
         }
 
-        .form-group input:focus {
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
             border-color: rgba(60, 30, 10, 0.05);
             background: rgba(255, 255, 255, 0.03);
         }
 
-        body.dark .form-group input:focus {
+        body.dark .form-group input:focus,
+        body.dark .form-group textarea:focus,
+        body.dark .form-group select:focus {
             border-color: rgba(255, 255, 255, 0.05);
             background: rgba(255, 255, 255, 0.03);
         }
 
-        .form-group input::placeholder {
+        .form-group textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
             color: #4a3a2a;
             opacity: 0.5;
         }
 
-        body.dark .form-group input::placeholder {
+        body.dark .form-group input::placeholder,
+        body.dark .form-group textarea::placeholder {
             color: #908070;
         }
 
@@ -213,24 +180,24 @@
             cursor: not-allowed;
         }
 
-        .btn-back {
+        .btn-secondary {
             background: rgba(60, 30, 10, 0.01);
             color: #3a2a1a;
             border: 1px solid rgba(60, 30, 10, 0.01);
         }
 
-        body.dark .btn-back {
+        body.dark .btn-secondary {
             background: rgba(255, 255, 255, 0.01);
             color: #a09080;
             border-color: rgba(255, 255, 255, 0.01);
         }
 
-        .btn-back:hover {
+        .btn-secondary:hover {
             background: rgba(60, 30, 10, 0.03);
             transform: scale(1.02);
         }
 
-        body.dark .btn-back:hover {
+        body.dark .btn-secondary:hover {
             background: rgba(255, 255, 255, 0.03);
         }
 
@@ -270,41 +237,6 @@
             display: block;
         }
 
-        .share-icons {
-            display: flex;
-            justify-content: center;
-            gap: 0.8rem;
-            margin-top: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .share-icons a {
-            padding: 0.4rem 1.2rem;
-            border-radius: 40px;
-            background: rgba(60, 30, 10, 0.01);
-            border: 1px solid rgba(60, 30, 10, 0.01);
-            text-decoration: none;
-            color: #2a1a0a;
-            font-weight: 600;
-            font-size: 0.85rem;
-            transition: 0.3s;
-        }
-
-        body.dark .share-icons a {
-            color: #e8d8c8;
-            background: rgba(255, 255, 255, 0.01);
-            border-color: rgba(255, 255, 255, 0.01);
-        }
-
-        .share-icons a:hover {
-            background: rgba(60, 30, 10, 0.03);
-            transform: scale(1.03);
-        }
-
-        body.dark .share-icons a:hover {
-            background: rgba(255, 255, 255, 0.03);
-        }
-
         .theme-toggle {
             position: fixed;
             top: 1rem;
@@ -329,6 +261,30 @@
             transform: scale(1.1);
         }
 
+        .value-item {
+            background: rgba(255, 255, 255, 0.01);
+            border-radius: 12px;
+            padding: 0.8rem;
+            margin-bottom: 0.8rem;
+            border: 1px solid rgba(30, 10, 0, 0.02);
+        }
+
+        body.dark .value-item {
+            border-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .value-item .value-title {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #2a1a0a;
+            margin-bottom: 0.3rem;
+            display: block;
+        }
+
+        body.dark .value-item .value-title {
+            color: #e8d8c8;
+        }
+
         @font-face {
             font-family: 'Vazir';
             src: local('Vazir'), local('IRANSans');
@@ -339,44 +295,64 @@
     <button class="theme-toggle" id="themeToggle">🌙</button>
 
     <div class="container">
-        <h1>📣 دعوت از دوستان</h1>
-        <div class="subtitle">سفیر فرهنگی شوید و شبکه‌سازی کنید</div>
+        <h1>📝 ثبت‌نام و دریافت شناسنامه</h1>
+        <div class="subtitle">کارت جهانی هویت هوشمند فرهنگی</div>
 
-        <div class="ambassador-box">
-            🏅 <strong>شما یک سفیر فرهنگی هستید!</strong><br />
-            با دعوت از دوستان خود به جنبش جهانی بپیوندید.
-        </div>
-
-        <div class="logo-container">
-            <img src="assets/logo-fa.png" alt="لوگوی پروژه" />
-            <span>کارت جهانی هویت هوشمند فرهنگی</span>
-        </div>
-
-        <form id="referralForm">
-            <div class="form-group">
-                <label>ایمیل یا شماره موبایل دوست</label>
-                <input type="text" id="contact" placeholder="example@email.com یا ۰۹۱۲XXXXXXX" required />
+        <form id="registerForm">
+            <!-- ۷ ارزش فرهنگی -->
+            <div class="value-item">
+                <label class="value-title">۱. ارزش‌های بومی</label>
+                <input type="text" id="v1" placeholder="مثلاً: صلح‌دوستی، مهمان‌نوازی" required />
             </div>
 
-            <div class="share-icons">
-                <a href="#">📱 واتساپ</a>
-                <a href="#">📧 ایمیل</a>
-                <a href="#">📱 تلگرام</a>
-                <a href="#">🔗 کپی لینک</a>
+            <div class="value-item">
+                <label class="value-title">۲. دانش فردی</label>
+                <input type="text" id="v2" placeholder="مثلاً: دانش بومی، مهارت‌های سنتی" required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">۳. همکاری جمعی</label>
+                <input type="text" id="v3" placeholder="مثلاً: کار گروهی، مشارکت اجتماعی" required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">۴. تنوع فرهنگی</label>
+                <input type="text" id="v4" placeholder="مثلاً: احترام به فرهنگ‌های مختلف" required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">۵. صلح پایدار جهانی</label>
+                <input type="text" id="v5" placeholder="مثلاً: گفت‌وگو، حل تعارض" required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">۶. محو خشونت</label>
+                <input type="text" id="v6" placeholder="مثلاً: کاهش تعصب، ترویج مدارا" required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">۷. اتحاد فرهنگی</label>
+                <input type="text" id="v7" placeholder="مثلاً: پل‌های ارتباطی میان فرهنگ‌ها" required />
+            </div>
+
+            <div class="form-group">
+                <label>کد اختیاری (۵ کاراکتر دلخواه)</label>
+                <input type="text" id="optionalCode" maxlength="5" placeholder="مثلاً: الف-ب-ج-د-ه" />
+                <small style="opacity:0.5; font-size:0.7rem;">اختیاری - می‌توانید خالی بگذارید</small>
             </div>
 
             <div class="btn-group">
-                <button type="submit" class="btn btn-primary" id="submitBtn">📨 ارسال دعوت</button>
-                <a href="index.html" class="btn btn-back">↩ بازگشت به صفحه اصلی</a>
+                <button type="submit" class="btn btn-primary" id="submitBtn">🎯 دریافت شناسنامه</button>
+                <a href="index.html" class="btn btn-secondary">↩ بازگشت</a>
             </div>
         </form>
 
         <div class="success-message" id="successMessage">
-            ✅ دعوت‌نامه با موفقیت ارسال شد.
+            ✅ اطلاعات شما با موفقیت ثبت شد. در حال انتقال به کارت...
         </div>
 
         <div class="note">
-            🌍 هر دعوت، یک قدم به سوی اتحاد فرهنگی جهانی
+            بدون اطلاعات شخصی • کاملاً ناشناس • ۳ دقیقه
         </div>
     </div>
 
@@ -400,11 +376,51 @@
             });
         })();
 
-        document.getElementById('referralForm').addEventListener('submit', function(e) {
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
             e.preventDefault();
+
+            const values = [
+                document.getElementById('v1').value,
+                document.getElementById('v2').value,
+                document.getElementById('v3').value,
+                document.getElementById('v4').value,
+                document.getElementById('v5').value,
+                document.getElementById('v6').value,
+                document.getElementById('v7').value
+            ];
+
+            const optionalCode = document.getElementById('optionalCode').value || '';
+
+            // تولید کد منحصربه‌فرد
+            const randomPart1 = Math.floor(1000 + Math.random() * 9000);
+            const randomPart2 = Math.floor(1000 + Math.random() * 9000);
+            const randomChar = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+            const cardCode = `CIM-${randomPart1}-${randomPart2}-${randomChar}`;
+
+            // ساخت داده‌های کاربر
+            const userData = {
+                cardCode: cardCode,
+                optionalCode: optionalCode,
+                values: values,
+                registrationDate: new Date().toISOString(),
+                status: 'active',
+                referrals: 0,
+                achievements: []
+            };
+
+            // ذخیره در localStorage (برای شبیه‌سازی)
+            localStorage.setItem('culturalCardData', JSON.stringify(userData));
+            localStorage.setItem('culturalCardCode', cardCode);
+
+            // نمایش پیام موفقیت
             document.getElementById('successMessage').classList.add('show');
             document.getElementById('submitBtn').disabled = true;
-            document.getElementById('submitBtn').textContent = '✅ ارسال شد';
+            document.getElementById('submitBtn').textContent = '✅ ثبت شد';
+
+            // هدایت به صفحه کارت پس از ۱ ثانیه
+            setTimeout(function() {
+                window.location.href = `card-fa.html?code=${cardCode}`;
+            }, 1500);
         });
     </script>
 </body>
