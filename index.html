@@ -21,7 +21,6 @@
             transition: background 0.3s, color 0.3s;
         }
 
-        /* حالت روشن (پیش‌فرض) */
         body {
             color: #0a0a1a;
         }
@@ -44,7 +43,6 @@
             border-color: rgba(255, 255, 255, 0.05);
         }
 
-        /* ===== HEADER ===== */
         .header {
             display: flex;
             flex-direction: column;
@@ -134,7 +132,6 @@
             color: #c8c0d8;
         }
 
-        /* ===== LANGUAGE SWITCHER ===== */
         .lang-bar {
             background: rgba(255,255,255,0.05);
             border-radius: 60px;
@@ -171,7 +168,6 @@
             border-color: rgba(255,255,255,0.05);
         }
 
-        /* ===== SLOGAN SCROLLER ===== */
         .slogan-scroller {
             overflow: hidden;
             background: rgba(255,255,255,0.05);
@@ -204,7 +200,6 @@
             100% { transform: translateX(-50%); }
         }
 
-        /* ===== SPLIT LAYOUT ===== */
         .split {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -214,7 +209,6 @@
         @media (max-width: 768px) { .split { grid-template-columns: 1fr; gap: 2rem; } }
         .half { display: flex; flex-direction: column; gap: 1.5rem; }
 
-        /* ===== BOXES ===== */
         .box {
             border-radius: 28px;
             padding: 1.6rem 1.8rem;
@@ -268,7 +262,6 @@
         .box ul li::before { content: "✦ "; font-weight: bold; color: #0a0a1a; }
         body.dark .box ul li::before { color: #f9e79f; }
 
-        /* ===== CARD SAMPLE ===== */
         .card-sample {
             background: rgba(255,255,255,0.05);
             border-radius: 24px;
@@ -342,7 +335,6 @@
             border-top-color: rgba(255,255,255,0.03);
         }
 
-        /* ===== PRINCIPLES ===== */
         .principles {
             display: flex;
             flex-wrap: wrap;
@@ -360,7 +352,6 @@
             background: rgba(0,0,0,0.1);
         }
 
-        /* ===== MAIN MODULES ===== */
         .modules {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -392,7 +383,6 @@
         .module-btn .desc { font-size: 0.6rem; opacity: 0.6; }
         body.dark .module-btn .desc { opacity: 0.7; }
 
-        /* ===== CTA ===== */
         .cta-area { text-align: center; margin: 0.6rem 0; }
         .btn {
             display: inline-block;
@@ -421,7 +411,6 @@
             color: #b8b0c8;
         }
 
-        /* ===== GALLERY ===== */
         .achievement-section {
             margin-top: 1.2rem;
             padding: 1rem;
@@ -507,7 +496,7 @@
         }
         body.dark .btn-upload:hover { background: rgba(255,255,255,0.05); }
 
-        /* ===== BOTTOM MODULES (ترتیب صحیح: فارسی در ستون اول، انگلیسی در ستون دوم) ===== */
+        /* ===== بخش پایین - دو ستونی ===== */
         .bottom-modules-wrapper {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -515,7 +504,10 @@
             margin-top: 1.5rem;
         }
         @media (max-width: 768px) {
-            .bottom-modules-wrapper { grid-template-columns: 1fr; gap: 1rem; }
+            .bottom-modules-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
         }
 
         .bottom-module {
@@ -584,7 +576,6 @@
         .btn-bottom:hover { background: rgba(255,255,255,0.12); transform: scale(1.02); }
         body.dark .btn-bottom:hover { background: rgba(255,255,255,0.05); }
 
-        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             body { padding: 1rem; }
             .container { padding: 1rem; border-radius: 40px; }
@@ -615,7 +606,6 @@
 <body>
 <div class="container">
 
-    <!-- ===== HEADER ===== -->
     <div class="header">
         <div class="top-bar">
             <div class="date-display" id="dateDisplay">📅 جمعه ۲۰ مرداد ۱۴۰۵</div>
@@ -632,13 +622,11 @@
         </div>
     </div>
 
-    <!-- ===== LANGUAGE SWITCHER ===== -->
     <div class="lang-bar">
         <a href="#" class="active">فارسی</a>
         <a href="#">English</a>
     </div>
 
-    <!-- ===== SLOGAN SCROLLER ===== -->
     <div class="slogan-scroller">
         <div class="slogan-track">
             <span>✦ فرهنگ ما، ارتباط ما، آینده‌ی مشترک ما ✦</span>
@@ -650,10 +638,8 @@
         </div>
     </div>
 
-    <!-- ===== SPLIT LAYOUT ===== -->
     <div class="split">
 
-        <!-- ===== FA (RIGHT) ===== -->
         <div class="half">
             <div class="box">
                 <div class="box-title">🪪 مشخصات کارت</div>
@@ -763,7 +749,6 @@
             </div>
         </div>
 
-        <!-- ===== EN (LEFT) ===== -->
         <div class="half">
             <div class="box">
                 <div class="box-title">🪪 Card Specifications</div>
@@ -875,9 +860,9 @@
 
     </div>
 
-    <!-- ===== BOTTOM MODULES (ترتیب درست: فارسی در ستون اول، انگلیسی در ستون دوم) ===== -->
+    <!-- ===== بخش پایین - دو ستونی (فارسی در سمت راست، انگلیسی در سمت چپ) ===== -->
     <div class="bottom-modules-wrapper">
-        <!-- فارسی (ستون اول – سمت راست در RTL) -->
+        <!-- فارسی (سمت راست) -->
         <div class="bottom-module">
             <h3>📖 درباره پروژه</h3>
             <p>اهداف، اصول بنیادین و فلسفه‌ی غیرمتمرکز</p>
@@ -889,7 +874,7 @@
             <a href="about-fa.html#radio-tv" class="btn-bottom">مشاهده نمونه‌ها</a>
         </div>
 
-        <!-- انگلیسی (ستون دوم – سمت چپ در RTL) -->
+        <!-- انگلیسی (سمت چپ) -->
         <div class="bottom-module">
             <h3>📖 About Project</h3>
             <p>Goals, principles & decentralized philosophy</p>
@@ -905,14 +890,12 @@
 </div>
 
 <script>
-    // ===== DATE =====
     (function() {
         const now = new Date();
         const opts = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
         document.getElementById('dateDisplay').textContent = '📅 ' + now.toLocaleDateString('fa-IR', opts);
     })();
 
-    // ===== THEME TOGGLE =====
     (function() {
         const toggle = document.getElementById('themeToggle');
         const body = document.body;
