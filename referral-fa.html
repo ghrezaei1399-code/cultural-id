@@ -3,139 +3,219 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>دعوت از دوستان | شناسنامه فرهنگی جهانی</title>
+    <title>دعوت از دوستان | کارت جهانی هویت هوشمند فرهنگی</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
-            background: radial-gradient(circle at 20% 30%, #d4e8f5 0%, #b8d4e8 40%, #a0c4d8 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 2rem 1rem;
+            background-image: url('assets/نماد صلح.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 700px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.12);
             backdrop-filter: blur(16px);
-            border-radius: 60px;
-            padding: 1.5rem 2rem 1.5rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 48px;
+            padding: 2.5rem 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
         }
 
-        .back-module {
-            display: inline-block;
-            background: rgba(26, 75, 109, 0.15);
-            padding: 0.4rem 1.5rem;
-            border-radius: 40px;
-            text-decoration: none;
-            color: #1a4b6d;
-            font-weight: 600;
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #0a0a1a;
+            text-align: center;
+            margin-bottom: 0.3rem;
+            text-shadow: 0 2px 12px rgba(255,255,255,0.1);
+        }
+
+        .subtitle {
+            text-align: center;
             font-size: 0.9rem;
-            transition: 0.2s;
-            border: 1px solid rgba(26, 75, 109, 0.1);
+            color: #2a2a3a;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+            padding-bottom: 1rem;
+        }
+
+        .ambassador-box {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 16px;
+            padding: 1rem 1.2rem;
+            margin-bottom: 1.8rem;
+            text-align: center;
+        }
+
+        .ambassador-box strong {
+            color: #8a7a0a;
+            font-size: 1.1rem;
+        }
+
+        .referral-code {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            border: 2px dashed rgba(255,255,255,0.1);
+        }
+
+        .referral-code .code {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 4px;
+            color: #0a0a1a;
+            direction: ltr;
+            background: rgba(255,255,255,0.05);
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            display: inline-block;
+            font-family: monospace;
+        }
+
+        .referral-code .label {
+            font-size: 0.8rem;
+            opacity: 0.6;
+            margin-top: 0.3rem;
+            display: block;
+        }
+
+        .form-group {
             margin-bottom: 1.5rem;
         }
 
-        .back-module:hover {
-            background: rgba(26, 75, 109, 0.25);
-            transform: translateX(-4px);
-        }
-
-        .referral-box {
-            background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(4px);
-            border-radius: 24px;
-            padding: 1.8rem 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-        }
-
-        .referral-box h2 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #0b3b54;
-            margin-bottom: 1rem;
-            border-bottom: 2px solid rgba(26,123,158,0.1);
-            padding-bottom: 0.4rem;
-        }
-
-        .referral-box .site-link {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 16px;
-            padding: 0.8rem 1.2rem;
-            text-align: center;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #0b3b54;
-            margin-bottom: 1rem;
-            border: 1px dashed rgba(26, 123, 158, 0.2);
-            word-break: break-all;
-        }
-
-        .referral-box .copy-btn {
-            background: linear-gradient(135deg, #1a7b9e, #6a3f9e);
-            background-size: 200% 200%;
-            animation: gradientMove 6s ease infinite;
-            color: white;
-            padding: 0.5rem 1.5rem;
-            border-radius: 60px;
+        .form-group label {
+            display: block;
             font-weight: 700;
             font-size: 0.9rem;
-            border: none;
-            cursor: pointer;
-            transition: 0.25s ease;
-            box-shadow: 0 4px 16px rgba(26,123,158,0.2);
-            margin-bottom: 0.8rem;
+            color: #0a0a1a;
+            margin-bottom: 0.3rem;
         }
 
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(4px);
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: #0a0a1a;
+            transition: all 0.3s ease;
+            outline: none;
         }
 
-        .referral-box .copy-btn:hover {
-            transform: scale(1.02);
-            box-shadow: 0 8px 24px rgba(26,123,158,0.3);
+        .form-group input:focus {
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.05);
         }
 
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            padding: 0.8rem 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 0.8rem;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .stats .stat-item { text-align: center; }
-        .stats .stat-number {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #0b3b54;
-        }
-        .stats .stat-label {
-            font-size: 0.75rem;
+        .form-group input::placeholder {
+            color: #4a4a5a;
             opacity: 0.5;
         }
 
-        .note {
-            font-size: 0.8rem;
-            opacity: 0.4;
-            text-align: center;
-            margin-top: 0.8rem;
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
         }
 
-        @media (max-width: 768px) {
-            .container { padding: 1rem; }
-            .referral-box { padding: 1.2rem 1rem; }
-            .stats { flex-direction: column; gap: 0.3rem; }
+        .btn {
+            flex: 1;
+            padding: 0.8rem 1.5rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 140px;
+        }
+
+        .btn-primary {
+            background: rgba(255, 255, 255, 0.15);
+            color: #0a0a1a;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .btn-primary:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.02);
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.05);
+            color: #3a3a4a;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.02);
+        }
+
+        .btn-copy {
+            background: rgba(0, 150, 255, 0.1);
+            color: #0a3a6a;
+            border: 1px solid rgba(0, 150, 255, 0.15);
+            flex: 0.5;
+        }
+        .btn-copy:hover {
+            background: rgba(0, 150, 255, 0.15);
+            transform: scale(1.02);
+        }
+
+        .note {
+            text-align: center;
+            font-size: 0.75rem;
+            opacity: 0.5;
+            margin-top: 1.5rem;
+            color: #0a0a1a;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 1rem;
+        }
+
+        .share-icons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .share-icons a {
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.05);
+            text-decoration: none;
+            color: #0a0a1a;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: 0.3s;
+        }
+
+        .share-icons a:hover {
+            background: rgba(255,255,255,0.1);
+            transform: scale(1.05);
         }
 
         @font-face {
@@ -145,43 +225,41 @@
     </style>
 </head>
 <body>
-<div class="container">
+    <div class="container">
+        <h1>📣 دعوت از دوستان</h1>
+        <div class="subtitle">سفیر فرهنگی شوید و شبکه‌سازی کنید</div>
 
-    <a href="index.html" class="back-module">← بازگشت به صفحه‌ی اصلی</a>
-
-    <div class="referral-box">
-        <h2>📣 دعوت از دوستان</h2>
-
-        <p style="opacity:0.7; margin-bottom:0.8rem; font-size:0.95rem;">
-            لینک سایت را به اشتراک بگذارید و به جمع سفیران فرهنگی بپیوندید.
-        </p>
-
-        <div class="site-link">
-            🌐 https://cultural.id
+        <div class="ambassador-box">
+            🏅 <strong>شما یک سفیر فرهنگی هستید!</strong><br />
+            با دعوت از دوستان خود به جنبش جهانی بپیوندید.
         </div>
 
-        <button class="copy-btn">📋 کپی لینک</button>
+        <div class="referral-code">
+            <span class="code">CIM-REF-۱۲۳۴۵</span>
+            <span class="label">کد دعوت اختصاصی شما</span>
+            <button class="btn btn-copy" style="margin-top:0.5rem; flex:0; display:inline-block; padding:0.3rem 1.2rem;">📋 کپی</button>
+        </div>
 
-        <div class="stats">
-            <div class="stat-item">
-                <div class="stat-number">۰</div>
-                <div class="stat-label">دعوت‌های ارسال‌شده</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">۰</div>
-                <div class="stat-label">ثبت‌نام موفق</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">۰</div>
-                <div class="stat-label">ثبت‌نام ناموفق</div>
-            </div>
+        <div class="form-group">
+            <label>ایمیل یا شماره موبایل دوست</label>
+            <input type="text" placeholder="example@email.com یا ۰۹۱۲XXXXXXX" />
+        </div>
+
+        <div class="share-icons">
+            <a href="#">📱 واتساپ</a>
+            <a href="#">📧 ایمیل</a>
+            <a href="#">📱 تلگرام</a>
+            <a href="#">🔗 کپی لینک</a>
+        </div>
+
+        <div class="btn-group">
+            <button type="submit" class="btn btn-primary">📨 ارسال دعوت</button>
+            <a href="index.html" class="btn btn-back">↩ بازگشت</a>
         </div>
 
         <div class="note">
-            ✦ آمار دعوت‌ها به‌صورت خودکار بر اساس آی‌پی ثبت‌نام‌ها محاسبه می‌شود ✦
+            🌍 هر دعوت، یک قدم به سوی اتحاد فرهنگی جهانی
         </div>
     </div>
-
-</div>
 </body>
 </html>
