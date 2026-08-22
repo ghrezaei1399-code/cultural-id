@@ -3,574 +3,255 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>داشبورد ادمین | شناسنامه فرهنگی جهانی</title>
+    <title>داشبورد ادمین | کارت جهانی هویت هوشمند فرهنگی</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
-            background: radial-gradient(circle at 20% 30%, #d4e8f5 0%, #b8d4e8 40%, #a0c4d8 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 2rem 1rem;
-            transition: background 0.3s, color 0.3s;
-        }
-
-        body.dark {
-            background: radial-gradient(circle at 20% 30%, #1a2a3a 0%, #0f1a2a 40%, #0a0f1a 100%);
-            color: #d0d8e0;
+            background-image: url('assets/نماد صلح.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1000px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.12);
             backdrop-filter: blur(16px);
-            border-radius: 60px;
-            padding: 1.5rem 2rem 1.5rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: background 0.3s, border-color 0.3s;
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 48px;
+            padding: 2.5rem 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
         }
 
-        body.dark .container {
-            background: rgba(0, 0, 0, 0.3);
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid rgba(26, 123, 158, 0.1);
-            padding-bottom: 0.8rem;
-        }
-
-        .header h1 {
+        h1 {
             font-size: 1.8rem;
-            color: #0b3b54;
+            font-weight: 800;
+            color: #0a0a1a;
+            text-align: center;
+            margin-bottom: 0.3rem;
+            text-shadow: 0 2px 12px rgba(255,255,255,0.1);
         }
 
-        body.dark .header h1 { color: #b8d4e8; }
-
-        .header .admin-badge {
-            background: rgba(26, 75, 109, 0.15);
-            padding: 0.3rem 1.2rem;
-            border-radius: 40px;
-            font-size: 0.8rem;
-            color: #1a4b6d;
+        .subtitle {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #2a2a3a;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+            padding-bottom: 1rem;
         }
 
-        body.dark .header .admin-badge {
-            background: rgba(255,255,255,0.05);
-            color: #b8d4e8;
-        }
-
-        /* ===== STATS ===== */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 1rem;
             margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .stat-card {
-            background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(4px);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 20px;
-            padding: 0.8rem 1rem;
+            padding: 1.2rem;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: 0.3s;
         }
 
-        body.dark .stat-card {
-            background: rgba(30, 40, 50, 0.4);
-            border-color: rgba(255,255,255,0.05);
+        .stat-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-3px);
         }
 
         .stat-card .number {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: #0b3b54;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #0a0a1a;
+            display: block;
         }
-
-        body.dark .stat-card .number { color: #b8d4e8; }
 
         .stat-card .label {
-            font-size: 0.65rem;
+            font-size: 0.75rem;
             opacity: 0.6;
+            color: #2a2a3a;
         }
 
-        /* ===== PROGRESS ===== */
-        .progress-container {
-            margin-bottom: 1.5rem;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 40px;
-            padding: 0.3rem 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            flex-wrap: wrap;
-        }
-
-        body.dark .progress-container { background: rgba(30, 40, 50, 0.3); }
-
-        .progress-bar {
-            flex: 1;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            overflow: hidden;
-            min-width: 100px;
-        }
-
-        .progress-bar .fill {
-            height: 100%;
-            width: 43%;
-            background: linear-gradient(90deg, #1a7b9e, #6a3f9e);
-            border-radius: 10px;
-            animation: gradientMove 3s ease infinite;
-            background-size: 200% 100%;
-        }
-
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .progress-text {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #0b3b54;
-            white-space: nowrap;
-        }
-
-        body.dark .progress-text { color: #b8d4e8; }
-
-        /* ===== COUNTRY STATS ===== */
-        .country-section {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 1rem;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 40px;
-            padding: 0.5rem 1.5rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        body.dark .country-section { background: rgba(30, 40, 50, 0.3); }
-
-        .country-section label {
-            font-weight: 600;
-            color: #0b3b54;
-            font-size: 0.9rem;
-        }
-
-        body.dark .country-section label { color: #b8d4e8; }
-
-        .country-section select {
-            padding: 0.3rem 1rem;
-            border-radius: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.3);
-            font-family: inherit;
-            font-size: 0.85rem;
-            color: #0b3b54;
-            cursor: pointer;
-            min-width: 150px;
-        }
-
-        body.dark .country-section select {
-            background: rgba(30, 40, 50, 0.3);
-            color: #b8d4e8;
-            border-color: rgba(255,255,255,0.05);
-        }
-
-        .country-section select:focus {
-            outline: none;
-            border-color: #1a7b9e;
-        }
-
-        .country-section .result {
-            font-size: 0.9rem;
-            opacity: 0.7;
-        }
-
-        .country-section .result strong {
-            color: #0b3b54;
-            opacity: 1;
-        }
-
-        body.dark .country-section .result strong { color: #b8d4e8; }
-
-        /* ===== SECTIONS ===== */
-        .section {
-            background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(4px);
-            border-radius: 24px;
-            padding: 1.2rem 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            margin-bottom: 1.5rem;
-        }
-
-        body.dark .section {
-            background: rgba(30, 40, 50, 0.4);
-            border-color: rgba(255,255,255,0.05);
-        }
-
-        .section h2 {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #0b3b54;
-            margin-bottom: 0.8rem;
-            border-bottom: 2px solid rgba(26, 123, 158, 0.1);
-            padding-bottom: 0.3rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        body.dark .section h2 { color: #b8d4e8; border-bottom-color: rgba(255,255,255,0.05); }
-
-        .section h2 .badge {
-            font-size: 0.7rem;
-            background: rgba(26, 75, 109, 0.1);
-            padding: 0.1rem 0.8rem;
-            border-radius: 30px;
-            font-weight: 400;
-            opacity: 0.6;
-        }
-
-        body.dark .section h2 .badge {
-            background: rgba(255,255,255,0.05);
-            color: #b8d4e8;
-        }
-
-        /* ===== TABLES ===== */
-        .table-wrap { overflow-x: auto; }
-
-        table {
+        .admin-table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .admin-table th {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.8rem 0.5rem;
+            text-align: center;
             font-size: 0.8rem;
-        }
-
-        th {
-            text-align: right;
-            padding: 0.4rem 0.6rem;
-            background: rgba(255, 255, 255, 0.2);
-            color: #0b3b54;
             font-weight: 700;
-            white-space: nowrap;
+            color: #0a0a1a;
+            border-bottom: 2px solid rgba(255,255,255,0.05);
         }
 
-        body.dark th {
-            background: rgba(30, 40, 50, 0.3);
-            color: #b8d4e8;
+        .admin-table td {
+            padding: 0.7rem 0.5rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #1a1a2a;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
         }
 
-        td {
-            padding: 0.4rem 0.6rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            opacity: 0.8;
+        .admin-table tr:hover td {
+            background: rgba(255, 255, 255, 0.03);
         }
 
-        body.dark td { border-bottom-color: rgba(255,255,255,0.05); }
-
-        /* ===== STATUS ===== */
-        .status-pending {
-            background: rgba(255, 200, 0, 0.15);
-            color: #7d6608;
-            padding: 0.1rem 0.6rem;
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
             border-radius: 30px;
-            font-size: 0.65rem;
-        }
-
-        body.dark .status-pending {
-            background: rgba(255,200,0,0.05);
-            color: #f9e79f;
-        }
-
-        .status-approved {
-            background: rgba(0, 200, 100, 0.15);
-            color: #1a6b4b;
-            padding: 0.1rem 0.6rem;
-            border-radius: 30px;
-            font-size: 0.65rem;
-        }
-
-        body.dark .status-approved {
-            background: rgba(0,200,100,0.05);
-            color: #7ddfa0;
-        }
-
-        .status-rejected {
-            background: rgba(200, 0, 0, 0.1);
-            color: #7a2e3a;
-            padding: 0.1rem 0.6rem;
-            border-radius: 30px;
-            font-size: 0.65rem;
-        }
-
-        body.dark .status-rejected {
-            background: rgba(200,0,0,0.05);
-            color: #e8a0a0;
-        }
-
-        /* ===== BUTTONS ===== */
-        .btn-sm {
-            background: rgba(26, 75, 109, 0.15);
-            border: none;
-            padding: 0.2rem 0.7rem;
-            border-radius: 30px;
-            font-size: 0.65rem;
-            cursor: pointer;
-            transition: 0.2s;
-            color: #1a4b6d;
+            font-size: 0.7rem;
             font-weight: 600;
-            font-family: inherit;
-            white-space: nowrap;
         }
 
-        body.dark .btn-sm {
-            background: rgba(255,255,255,0.05);
-            color: #b8d4e8;
+        .badge-pending {
+            background: rgba(255, 200, 50, 0.15);
+            color: #8a7a0a;
+            border: 1px solid rgba(255, 200, 50, 0.1);
         }
 
-        .btn-sm:hover { background: rgba(26, 75, 109, 0.25); }
-        body.dark .btn-sm:hover { background: rgba(255,255,255,0.1); }
+        .badge-approved {
+            background: rgba(50, 200, 50, 0.1);
+            color: #0a6a0a;
+            border: 1px solid rgba(50, 200, 50, 0.1);
+        }
+
+        .badge-rejected {
+            background: rgba(200, 50, 50, 0.1);
+            color: #6a1a1a;
+            border: 1px solid rgba(200, 50, 50, 0.1);
+        }
+
+        .btn-small {
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0 0.2rem;
+        }
+
+        .btn-small:hover {
+            transform: scale(1.05);
+        }
 
         .btn-approve {
-            background: rgba(0, 200, 100, 0.15);
-            color: #1a6b4b;
+            background: rgba(50, 200, 50, 0.1);
+            color: #0a6a0a;
+            border: 1px solid rgba(50, 200, 50, 0.1);
         }
-        body.dark .btn-approve {
-            background: rgba(0,200,100,0.05);
-            color: #7ddfa0;
+        .btn-approve:hover {
+            background: rgba(50, 200, 50, 0.15);
         }
-
-        .btn-approve:hover { background: rgba(0, 200, 100, 0.25); }
-        body.dark .btn-approve:hover { background: rgba(0,200,100,0.1); }
 
         .btn-reject {
-            background: rgba(200, 0, 0, 0.1);
-            color: #7a2e3a;
+            background: rgba(200, 50, 50, 0.1);
+            color: #6a1a1a;
+            border: 1px solid rgba(200, 50, 50, 0.1);
         }
-        body.dark .btn-reject {
-            background: rgba(200,0,0,0.05);
-            color: #e8a0a0;
-        }
-
-        .btn-reject:hover { background: rgba(200, 0, 0, 0.2); }
-        body.dark .btn-reject:hover { background: rgba(200,0,0,0.1); }
-
-        .btn-warn {
-            background: rgba(255, 200, 0, 0.15);
-            color: #7d6608;
-        }
-        body.dark .btn-warn {
-            background: rgba(255,200,0,0.05);
-            color: #f9e79f;
+        .btn-reject:hover {
+            background: rgba(200, 50, 50, 0.15);
         }
 
-        .btn-warn:hover { background: rgba(255, 200, 0, 0.25); }
-        body.dark .btn-warn:hover { background: rgba(255,200,0,0.1); }
-
-        /* ===== FILTER BAR ===== */
-        .filter-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 0.8rem;
+        .btn-back {
+            background: rgba(255, 255, 255, 0.05);
+            color: #3a3a4a;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        .filter-bar input,
-        .filter-bar select {
-            padding: 0.3rem 0.8rem;
-            border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.2);
-            font-family: inherit;
-            font-size: 0.8rem;
-            color: #0b3b54;
-            min-width: 120px;
-        }
-
-        body.dark .filter-bar input,
-        body.dark .filter-bar select {
-            background: rgba(30, 40, 50, 0.3);
-            color: #b8d4e8;
-            border-color: rgba(255,255,255,0.05);
-        }
-
-        .filter-bar input:focus,
-        .filter-bar select:focus {
-            outline: none;
-            border-color: #1a7b9e;
-        }
-
-        /* ===== PAGINATION ===== */
-        .pagination {
-            display: flex;
-            gap: 0.3rem;
-            justify-content: center;
-            margin-top: 0.8rem;
-            flex-wrap: wrap;
-        }
-
-        .pagination button {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.7rem;
-            color: #0b3b54;
-            font-family: inherit;
-        }
-
-        body.dark .pagination button {
-            background: rgba(30, 40, 50, 0.3);
-            color: #b8d4e8;
-        }
-
-        .pagination button.active {
-            background: #1a7b9e;
-            color: white;
-            border-color: #1a7b9e;
-        }
-
-        body.dark .pagination button.active {
-            background: #1a7b9e;
-            color: white;
-        }
-
-        .pagination button:hover:not(.active) {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        body.dark .pagination button:hover:not(.active) {
-            background: rgba(255,255,255,0.05);
-        }
-
-        /* ===== MESSAGE SECTION ===== */
-        .msg-section {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.8rem;
-            align-items: center;
-        }
-
-        .msg-section select,
-        .msg-section input {
-            flex: 1;
-            min-width: 120px;
-            padding: 0.4rem 1rem;
-            border-radius: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            background: rgba(255, 255, 255, 0.3);
-            font-family: inherit;
-            font-size: 0.8rem;
-            color: #0b3b54;
-        }
-
-        body.dark .msg-section select,
-        body.dark .msg-section input {
-            background: rgba(30, 40, 50, 0.3);
-            color: #b8d4e8;
-            border-color: rgba(255,255,255,0.05);
-        }
-
-        .msg-section .btn-send {
-            padding: 0.4rem 1.5rem;
-            background: linear-gradient(135deg, #1a7b9e, #6a3f9e);
-            color: white;
-            border: none;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 0.8rem;
-            cursor: pointer;
-            font-family: inherit;
-            transition: 0.2s;
-        }
-
-        .msg-section .btn-send:hover {
-            transform: scale(1.02);
-            box-shadow: 0 4px 16px rgba(26,123,158,0.2);
-        }
-
-        /* ===== REPORT CARDS ===== */
-        .report-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 0.8rem;
-        }
-
-        .report-card {
-            background: rgba(255, 255, 255, 0.15);
+        .table-container {
+            overflow-x: auto;
             border-radius: 16px;
-            padding: 0.8rem 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.5rem;
         }
 
-        body.dark .report-card { background: rgba(30, 40, 50, 0.2); }
+        .admin-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
 
-        .report-card .report-title {
+        .admin-actions .btn {
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
             font-weight: 700;
-            color: #0b3b54;
             font-size: 0.85rem;
-        }
-
-        body.dark .report-card .report-title { color: #b8d4e8; }
-
-        .report-card .report-number {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1a7b9e;
-        }
-
-        body.dark .report-card .report-number { color: #7ddfa0; }
-
-        .report-card .report-number.danger { color: #7a2e3a; }
-        body.dark .report-card .report-number.danger { color: #e8a0a0; }
-
-        /* ===== BACK LINK ===== */
-        .back-link {
-            display: inline-block;
-            margin-top: 1rem;
-            color: #1a4b6d;
             text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            opacity: 0.6;
-            transition: 0.2s;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
         }
 
-        body.dark .back-link { color: #b8d4e8; }
+        .admin-actions .btn:hover {
+            transform: scale(1.02);
+        }
 
-        .back-link:hover { opacity: 1; }
+        .btn-primary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #0a0a1a;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .btn-primary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
 
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 768px) {
-            .container { padding: 1rem; }
-            .stats-grid { grid-template-columns: 1fr 1fr; }
-            .section { padding: 1rem 1rem; }
-            table { font-size: 0.6rem; }
-            th, td { padding: 0.2rem 0.3rem; }
-            .country-section { flex-direction: column; align-items: stretch; gap: 0.5rem; }
-            .header h1 { font-size: 1.3rem; }
-            .filter-bar input,
-            .filter-bar select { min-width: 80px; font-size: 0.7rem; }
-            .msg-section { flex-direction: column; }
-            .msg-section select,
-            .msg-section input { min-width: 100%; }
+        .btn-danger {
+            background: rgba(200, 50, 50, 0.1);
+            color: #6a1a1a;
+            border: 1px solid rgba(200, 50, 50, 0.05);
+        }
+        .btn-danger:hover {
+            background: rgba(200, 50, 50, 0.15);
+        }
+
+        .note {
+            text-align: center;
+            font-size: 0.75rem;
+            opacity: 0.5;
+            margin-top: 1.5rem;
+            color: #0a0a1a;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 1rem;
         }
 
         @font-face {
@@ -580,200 +261,91 @@
     </style>
 </head>
 <body>
-<div class="container">
-
-    <!-- ===== HEADER ===== -->
-    <div class="header">
+    <div class="container">
         <h1>🛡️ داشبورد ادمین</h1>
-        <span class="admin-badge">🔐 دسترسی محدود</span>
-    </div>
+        <div class="subtitle">مدیریت کارت‌های جهانی هویت هوشمند فرهنگی</div>
 
-    <!-- ===== STATS ===== -->
-    <div class="stats-grid">
-        <div class="stat-card"><div class="number">۴٬۳۲۵</div><div class="label">کل کاربران</div></div>
-        <div class="stat-card"><div class="number">۸</div><div class="label">درخواست‌های pending</div></div>
-        <div class="stat-card"><div class="number">۳۴</div><div class="label">دعوت‌های موفق</div></div>
-        <div class="stat-card"><div class="number">۱۲</div><div class="label">دعوت‌های ناموفق</div></div>
-        <div class="stat-card"><div class="number">۴</div><div class="label">درخواست اصلاح</div></div>
-        <div class="stat-card"><div class="number">۴۲</div><div class="label">کاربر غیرفعال</div></div>
-    </div>
-
-    <!-- ===== PROGRESS ===== -->
-    <div class="progress-container">
-        <span class="progress-text">🎯 هدف ۱۰٬۰۰۰ عضو</span>
-        <div class="progress-bar"><div class="fill" style="width:43%;"></div></div>
-        <span class="progress-text">۴۳٪</span>
-    </div>
-
-    <!-- ===== COUNTRY STATS ===== -->
-    <div class="country-section">
-        <label for="countrySelect">🌍 آمار اعضا بر اساس کشور:</label>
-        <select id="countrySelect">
-            <option value="all">همه کشورها</option>
-            <option value="ایران">ایران</option>
-            <option value="ترکیه">ترکیه</option>
-            <option value="پاکستان">پاکستان</option>
-            <option value="گرجستان">گرجستان</option>
-            <option value="آذربایجان">آذربایجان</option>
-            <option value="سایر">سایر</option>
-        </select>
-        <span class="result" id="countryResult">تعداد اعضا: <strong>۴٬۳۲۵</strong></span>
-    </div>
-
-    <!-- ===== 1. CONNECTION REQUESTS ===== -->
-    <div class="section">
-        <h2>📨 درخواست‌های ارتباط با هم‌فکران <span class="badge">۸ مورد</span></h2>
-        <div class="filter-bar">
-            <input type="text" placeholder="جستجوی کد..." />
-            <select><option>همه سطوح</option><option>سطح ۱</option><option>سطح ۲</option><option>سطح ۳</option></select>
-            <select><option>همه وضعیت‌ها</option><option>در انتظار</option><option>تأییدشده</option><option>ردشده</option></select>
-        </div>
-        <div class="table-wrap">
-            <table>
-                <thead><tr><th>کد</th><th>سطح</th><th>امتیاز</th><th>وضعیت</th><th>عملیات</th></tr></thead>
-                <tbody id="requestsTable">
-                    <tr>
-                        <td>CIM-1234-5678-الف</td><td>۲</td><td>۷۰</td>
-                        <td><span class="status-pending">⏳ در انتظار</span></td>
-                        <td><button class="btn-sm btn-approve">✅ تأیید</button> <button class="btn-sm btn-reject">❌ رد</button></td>
-                    </tr>
-                    <tr>
-                        <td>CIM-9876-5432-ب</td><td>۱</td><td>۴۵</td>
-                        <td><span class="status-approved">✅ تأییدشده</span></td>
-                        <td><button class="btn-sm">📧 ارسال ایمیل</button></td>
-                    </tr>
-                    <tr>
-                        <td>CIM-4567-8901-ج</td><td>۳</td><td>۹۰</td>
-                        <td><span class="status-pending">⏳ در انتظار</span></td>
-                        <td><button class="btn-sm btn-approve">✅ تأیید</button> <button class="btn-sm btn-reject">❌ رد</button></td>
-                    </tr>
-                    <tr><td colspan="5" style="opacity:0.3; text-align:center;">... و ۵ مورد دیگر</td></tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="pagination">
-            <button class="active">۱</button><button>۲</button><button>۳</button>
-        </div>
-    </div>
-
-    <!-- ===== 2. EDIT REQUESTS ===== -->
-    <div class="section">
-        <h2>✏️ درخواست‌های اصلاح اطلاعات <span class="badge">۴ مورد</span></h2>
-        <div class="table-wrap">
-            <table>
-                <thead><tr><th>کد</th><th>تاریخ</th><th>دلیل</th><th>عملیات</th></tr></thead>
-                <tbody>
-                    <tr>
-                        <td>CIM-1111-2222-د</td><td>۲۰۲۶-۰۸-۲۱</td><td>تغییر ارزش‌های فرهنگی</td>
-                        <td><button class="btn-sm btn-approve">✅ تأیید</button> <button class="btn-sm btn-reject">❌ رد</button></td>
-                    </tr>
-                    <tr>
-                        <td>CIM-3333-4444-ه</td><td>۲۰۲۶-۰۸-۲۰</td><td>اصلاح اشتباه تایپی</td>
-                        <td><button class="btn-sm btn-approve">✅ تأیید</button> <button class="btn-sm btn-reject">❌ رد</button></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="pagination"><button class="active">۱</button><button>۲</button></div>
-    </div>
-
-    <!-- ===== 3. SYSTEM REPORTS ===== -->
-    <div class="section">
-        <h2>📊 گزارش‌های سیستمی</h2>
-        <div class="report-grid">
-            <div class="report-card">
-                <div class="report-title">📈 کاربران جدید این هفته</div>
-                <div class="report-number">۱۲۴</div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="number">۱,۲۴۷</span>
+                <span class="label">کل کاربران</span>
             </div>
-            <div class="report-card">
-                <div class="report-title">📊 توزیع سطح</div>
-                <div style="font-size:0.8rem;">سطح ۱: ۲٬۱۰۰</div>
-                <div style="font-size:0.8rem;">سطح ۲: ۱٬۵۰۰</div>
-                <div style="font-size:0.8rem;">سطح ۳: ۷۲۵</div>
+            <div class="stat-card">
+                <span class="number">۳۴</span>
+                <span class="label">درخواست‌های جدید</span>
             </div>
-            <div class="report-card">
-                <div class="report-title">⏳ کاربران غیرفعال (۳۰ روز)</div>
-                <div class="report-number danger">۴۲</div>
+            <div class="stat-card">
+                <span class="number">۱۲</span>
+                <span class="label">دستاوردهای جدید</span>
+            </div>
+            <div class="stat-card">
+                <span class="number">۸۹</span>
+                <span class="label">سفیران فعال</span>
             </div>
         </div>
-    </div>
 
-    <!-- ===== 4. SYSTEM MESSAGES ===== -->
-    <div class="section">
-        <h2>📢 ارسال پیام سیستمی</h2>
-        <div class="msg-section">
-            <select>
-                <option>همه کاربران</option>
-                <option>سطح ۱</option>
-                <option>سطح ۲</option>
-                <option>سطح ۳</option>
-            </select>
-            <input type="text" placeholder="متن پیام..." />
-            <button class="btn-send">📨 ارسال</button>
-        </div>
-    </div>
+        <h2 style="font-size:1rem; margin-bottom:0.8rem; color:#0a0a1a;">📋 درخواست‌های ثبت‌نام</h2>
 
-    <!-- ===== 5. REFERRAL MONITORING ===== -->
-    <div class="section">
-        <h2>📣 نظارت بر دعوت‌ها</h2>
-        <div class="table-wrap">
-            <table>
-                <thead><tr><th>کد کاربر</th><th>دعوت موفق</th><th>دعوت ناموفق</th><th>نسبت</th><th>وضعیت</th></tr></thead>
+        <div class="table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>کد کارت</th>
+                        <th>ارزش‌ها</th>
+                        <th>تاریخ</th>
+                        <th>وضعیت</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
                 <tbody>
                     <tr>
-                        <td>CIM-1234-5678-الف</td><td>۱۲</td><td>۳</td><td>۸۰٪</td>
-                        <td><span class="status-approved">✅ عادی</span></td>
+                        <td>CIM-۱۲۳۴-۵۶۷۸</td>
+                        <td>صلح, عدالت, همکاری</td>
+                        <td>۱۴۰۵/۰۵/۲۲</td>
+                        <td><span class="badge badge-pending">در انتظار</span></td>
+                        <td>
+                            <button class="btn-small btn-approve">✓ تأیید</button>
+                            <button class="btn-small btn-reject">✗ رد</button>
+                        </td>
                     </tr>
                     <tr>
-                        <td>CIM-9999-8888-و</td><td>۲</td><td>۴۵</td><td>۴٪</td>
-                        <td><span class="status-pending">⚠️ مشکوک</span> <button class="btn-sm btn-warn">🔍 بررسی</button></td>
+                        <td>CIM-۸۷۶۵-۴۳۲۱</td>
+                        <td>مهربانی, دانش, تنوع</td>
+                        <td>۱۴۰۵/۰۵/۲۱</td>
+                        <td><span class="badge badge-pending">در انتظار</span></td>
+                        <td>
+                            <button class="btn-small btn-approve">✓ تأیید</button>
+                            <button class="btn-small btn-reject">✗ رد</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>CIM-۵۵۵۵-۷۷۷۷</td>
+                        <td>مسئولیت, اخلاق, آزادی</td>
+                        <td>۱۴۰۵/۰۵/۲۰</td>
+                        <td><span class="badge badge-approved">تأیید شده</span></td>
+                        <td>—</td>
+                    </tr>
+                    <tr>
+                        <td>CIM-۹۹۹۹-۰۰۰۰</td>
+                        <td>عدالت, صلح, همدلی</td>
+                        <td>۱۴۰۵/۰۵/۱۹</td>
+                        <td><span class="badge badge-rejected">رد شده</span></td>
+                        <td>—</td>
                     </tr>
                 </tbody>
             </table>
         </div>
-    </div>
 
-    <!-- ===== 6. ADMIN LOG ===== -->
-    <div class="section">
-        <h2>📜 تاریخچهٔ اقدامات <span class="badge">۱۲۴ مورد</span></h2>
-        <div class="filter-bar">
-            <input type="text" placeholder="جستجو..." style="min-width:120px;" />
-            <select><option>همه اقدامات</option><option>تأیید</option><option>رد</option><option>ارسال ایمیل</option></select>
+        <div class="admin-actions">
+            <a href="#" class="btn btn-primary">📊 گزارش کامل</a>
+            <a href="#" class="btn btn-primary">📤 خروجی اکسل</a>
+            <a href="#" class="btn btn-danger">🗑️ پاکسازی</a>
+            <a href="index.html" class="btn btn-primary">↩ بازگشت به صفحه اصلی</a>
         </div>
-        <div class="table-wrap">
-            <table>
-                <thead><tr><th>زمان</th><th>اقدام</th><th>جزئیات</th></tr></thead>
-                <tbody>
-                    <tr><td>۲۰۲۶-۰۸-۲۱ ۱۴:۳۰</td><td>تأیید درخواست</td><td>CIM-1234-5678-الف</td></tr>
-                    <tr><td>۲۰۲۶-۰۸-۲۱ ۱۳:۱۵</td><td>ارسال ایمیل</td><td>CIM-9876-5432-ب</td></tr>
-                    <tr><td>۲۰۲۶-۰۸-۲۰ ۱۰:۰۰</td><td>رد درخواست</td><td>CIM-4567-8901-ج</td></tr>
-                </tbody>
-            </table>
+
+        <div class="note">
+            🔒 دسترسی محدود به ادمین‌های سیستم • تمام عملیات‌ها ثبت می‌شوند
         </div>
-        <div class="pagination"><button class="active">۱</button><button>۲</button><button>۳</button><button>۴</button></div>
     </div>
-
-    <!-- ===== BACK LINK ===== -->
-    <a href="index.html" class="back-link">← بازگشت به صفحه‌ی اصلی</a>
-
-</div>
-
-<!-- ===== SIMPLE JS FOR COUNTRY DROPDOWN ===== -->
-<script>
-    document.getElementById('countrySelect').addEventListener('change', function() {
-        const country = this.value;
-        const resultSpan = document.getElementById('countryResult');
-        const data = {
-            'all': '۴٬۳۲۵',
-            'ایران': '۳۴۵',
-            'ترکیه': '۳۳۳',
-            'پاکستان': '۴۲۱',
-            'گرجستان': '۱۸۹',
-            'آذربایجان': '۲۷۶',
-            'سایر': '۲٬۷۶۱'
-        };
-        resultSpan.innerHTML = `تعداد اعضا: <strong>${data[country] || '۰'}</strong>`;
-    });
-</script>
 </body>
 </html>
