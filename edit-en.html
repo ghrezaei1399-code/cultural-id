@@ -18,17 +18,17 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            color: #0a0a1a;
+            color: #1a0a0a;
         }
 
         body.dark {
-            color: #f0f0f0;
+            color: #f0e8e0;
         }
 
         .container {
             max-width: 700px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(0px);
             -webkit-backdrop-filter: blur(0px);
             border-radius: 48px;
@@ -40,7 +40,7 @@
         h1 {
             font-size: 1.8rem;
             font-weight: 800;
-            color: #1a1a2a;
+            color: #2a1a0a;
             text-align: center;
             margin-bottom: 0.3rem;
         }
@@ -52,32 +52,32 @@
         .subtitle {
             text-align: center;
             font-size: 0.9rem;
-            color: #2a2a3a;
+            color: #4a2a1a;
             opacity: 0.8;
             margin-bottom: 2rem;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            border-bottom: 1px solid rgba(30, 10, 0, 0.05);
             padding-bottom: 1rem;
         }
 
         body.dark .subtitle {
-            color: #d0d0e0;
-            border-bottom-color: rgba(255,255,255,0.05);
+            color: #d0c0b0;
+            border-bottom-color: rgba(255, 255, 255, 0.02);
         }
 
         .warning-box {
-            background: rgba(255, 200, 50, 0.1);
-            border: 1px solid rgba(255, 200, 50, 0.1);
+            background: rgba(180, 80, 30, 0.02);
+            border: 1px solid rgba(180, 80, 30, 0.02);
             border-radius: 16px;
             padding: 0.8rem 1.2rem;
             margin-bottom: 1.8rem;
             text-align: center;
             font-size: 0.85rem;
-            color: #5a4a0a;
+            color: #5a2a0a;
         }
 
         body.dark .warning-box {
             color: #f9e79f;
-            background: rgba(255, 200, 50, 0.05);
+            background: rgba(255, 200, 50, 0.02);
         }
 
         .warning-box strong {
@@ -96,12 +96,12 @@
             display: block;
             font-weight: 700;
             font-size: 0.9rem;
-            color: #1a1a2a;
+            color: #2a1a0a;
             margin-bottom: 0.3rem;
         }
 
         body.dark .form-group label {
-            color: #f0f0f0;
+            color: #e8d8c8;
         }
 
         .form-group input,
@@ -110,11 +110,11 @@
             width: 100%;
             padding: 0.8rem 1rem;
             border-radius: 16px;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(30, 10, 0, 0.02);
+            background: rgba(255, 255, 255, 0.02);
             font-family: inherit;
             font-size: 0.95rem;
-            color: #0a0a1a;
+            color: #1a0a0a;
             transition: all 0.3s ease;
             outline: none;
         }
@@ -122,34 +122,34 @@
         body.dark .form-group input,
         body.dark .form-group select,
         body.dark .form-group textarea {
-            background: rgba(255, 255, 255, 0.05);
-            color: #f0f0f0;
-            border-color: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.02);
+            color: #e8d8c8;
+            border-color: rgba(255, 255, 255, 0.02);
         }
 
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
-            border-color: rgba(0, 0, 0, 0.1);
-            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(60, 30, 10, 0.05);
+            background: rgba(255, 255, 255, 0.03);
         }
 
         body.dark .form-group input:focus,
         body.dark .form-group select:focus,
         body.dark .form-group textarea:focus {
-            border-color: rgba(255, 255, 255, 0.1);
-            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.03);
         }
 
         .form-group input::placeholder,
         .form-group textarea::placeholder {
-            color: #4a4a5a;
+            color: #4a3a2a;
             opacity: 0.5;
         }
 
         body.dark .form-group input::placeholder,
         body.dark .form-group textarea::placeholder {
-            color: #a0a0b0;
+            color: #908070;
         }
 
         .form-row {
@@ -187,45 +187,50 @@
         }
 
         .btn-primary {
-            background: rgba(0, 0, 0, 0.03);
-            color: #0a0a1a;
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            background: rgba(60, 30, 10, 0.02);
+            color: #2a1a0a;
+            border: 1px solid rgba(60, 30, 10, 0.02);
         }
 
         body.dark .btn-primary {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.02);
             color: #f9e79f;
-            border-color: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.02);
         }
 
         .btn-primary:hover {
-            background: rgba(0, 0, 0, 0.06);
+            background: rgba(60, 30, 10, 0.04);
             transform: scale(1.02);
         }
 
         body.dark .btn-primary:hover {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .btn-back {
-            background: rgba(0, 0, 0, 0.02);
-            color: #3a3a4a;
-            border: 1px solid rgba(0, 0, 0, 0.02);
+            background: rgba(60, 30, 10, 0.01);
+            color: #3a2a1a;
+            border: 1px solid rgba(60, 30, 10, 0.01);
         }
 
         body.dark .btn-back {
-            background: rgba(255, 255, 255, 0.02);
-            color: #a0a0b0;
-            border-color: rgba(255, 255, 255, 0.02);
+            background: rgba(255, 255, 255, 0.01);
+            color: #a09080;
+            border-color: rgba(255, 255, 255, 0.01);
         }
 
         .btn-back:hover {
-            background: rgba(0, 0, 0, 0.04);
+            background: rgba(60, 30, 10, 0.03);
             transform: scale(1.02);
         }
 
         body.dark .btn-back:hover {
-            background: rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 0.03);
         }
 
         .note {
@@ -233,34 +238,55 @@
             font-size: 0.75rem;
             opacity: 0.5;
             margin-top: 1.5rem;
-            color: #0a0a1a;
-            border-top: 1px solid rgba(0,0,0,0.02);
+            color: #1a0a0a;
+            border-top: 1px solid rgba(30, 10, 0, 0.02);
             padding-top: 1rem;
         }
 
         body.dark .note {
-            color: #d0d0e0;
-            border-top-color: rgba(255,255,255,0.02);
+            color: #b0a090;
+            border-top-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .success-message {
+            display: none;
+            background: rgba(50, 200, 50, 0.02);
+            border: 1px solid rgba(50, 200, 50, 0.02);
+            border-radius: 16px;
+            padding: 1rem;
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #0a5a0a;
+        }
+
+        body.dark .success-message {
+            color: #80b080;
+            background: rgba(50, 200, 50, 0.01);
+            border-color: rgba(50, 200, 50, 0.01);
+        }
+
+        .success-message.show {
+            display: block;
         }
 
         .theme-toggle {
             position: fixed;
             top: 1rem;
             right: 1rem;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(0,0,0,0.02);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(30, 10, 0, 0.02);
             font-size: 1.5rem;
             cursor: pointer;
             padding: 0.3rem 0.8rem;
             border-radius: 40px;
             transition: 0.3s;
-            color: #0a0a1a;
+            color: #1a0a0a;
         }
 
         body.dark .theme-toggle {
             color: #f9e79f;
-            background: rgba(0,0,0,0.1);
-            border-color: rgba(255,255,255,0.02);
+            background: rgba(0, 0, 0, 0.05);
+            border-color: rgba(255, 255, 255, 0.02);
         }
 
         .theme-toggle:hover {
@@ -284,7 +310,7 @@
             ⚠️ <strong>Important:</strong> You can edit your information <strong>only once</strong>. Please enter carefully.
         </div>
 
-        <form>
+        <form id="editForm">
             <div class="form-group">
                 <label>Card Code (Unchangeable)</label>
                 <input type="text" value="CIM-1234-5678-A" disabled style="opacity:0.5;" />
@@ -293,39 +319,39 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>Cultural Value 1</label>
-                    <input type="text" placeholder="e.g. Peacefulness" />
+                    <input type="text" placeholder="e.g. Peacefulness" required />
                 </div>
                 <div class="form-group">
                     <label>Cultural Value 2</label>
-                    <input type="text" placeholder="e.g. Respect for Diversity" />
+                    <input type="text" placeholder="e.g. Respect for Diversity" required />
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label>Cultural Value 3</label>
-                    <input type="text" placeholder="e.g. Collective Collaboration" />
+                    <input type="text" placeholder="e.g. Collective Collaboration" required />
                 </div>
                 <div class="form-group">
                     <label>Cultural Value 4</label>
-                    <input type="text" placeholder="e.g. Knowledge-Driven" />
+                    <input type="text" placeholder="e.g. Knowledge-Driven" required />
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label>Cultural Value 5</label>
-                    <input type="text" placeholder="e.g. Justice" />
+                    <input type="text" placeholder="e.g. Justice" required />
                 </div>
                 <div class="form-group">
                     <label>Cultural Value 6</label>
-                    <input type="text" placeholder="e.g. Kindness" />
+                    <input type="text" placeholder="e.g. Kindness" required />
                 </div>
             </div>
 
             <div class="form-group">
                 <label>Cultural Value 7</label>
-                <input type="text" placeholder="e.g. Responsibility" />
+                <input type="text" placeholder="e.g. Responsibility" required />
             </div>
 
             <div class="form-group">
@@ -334,10 +360,14 @@
             </div>
 
             <div class="btn-group">
-                <button type="submit" class="btn btn-primary">💾 Save Changes</button>
-                <a href="index.html" class="btn btn-back">↩ Back</a>
+                <button type="submit" class="btn btn-primary" id="submitBtn">💾 Save Changes</button>
+                <a href="index.html" class="btn btn-back">↩ Back to Home</a>
             </div>
         </form>
+
+        <div class="success-message" id="successMessage">
+            ✅ Changes saved successfully.
+        </div>
 
         <div class="note">
             ⚡ This edit is allowed only once. After confirmation, it cannot be undone.
@@ -363,6 +393,13 @@
                 }
             });
         })();
+
+        document.getElementById('editForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.getElementById('successMessage').classList.add('show');
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').textContent = '✅ Saved';
+        });
     </script>
 </body>
 </html>
