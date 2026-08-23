@@ -239,7 +239,7 @@
     <button class="theme-toggle" id="themeToggle">🌙</button>
 
     <div class="card-container">
-        <div class="logo">🪪 کارت هویت فرهنگی</div>
+        <div class="logo">🌍 کارت هویت فرهنگی</div>
         <div class="logo-sub">کارت جهانی هویت هوشمند فرهنگی</div>
 
         <div id="messageBox" class="message-box"></div>
@@ -322,7 +322,8 @@
                 }
 
                 const data = await response.json();
-                const content = atob(data.content);
+                // دیکد کردن صحیح UTF-8
+                const content = decodeURIComponent(atob(data.content));
                 const user = JSON.parse(content);
 
                 return user;
@@ -339,7 +340,7 @@
             try {
                 const user = await loadCardData();
 
-                // کد کارت
+                // کد کارت (با رعایت کد اختیاری)
                 document.getElementById('cardCode').textContent = user.cardCode || cardCode;
 
                 // نشان
