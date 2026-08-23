@@ -1,79 +1,423 @@
-// api/register.js
-export default async function handler(req, res) {
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method not allowed' });
-    }
-
-    try {
-        const userData = req.body;
-
-        if (!userData.fullName || !userData.country || !userData.city) {
-            return res.status(400).json({ error: 'فیلدهای الزامی پر نشده‌اند' });
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>ثبت‌نام | کارت جهانی هویت هوشمند فرهنگی</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+            background-image: url('assets/pisa.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #1a0a0a;
         }
-
-        if (!userData.values || userData.values.length < 5) {
-            return res.status(400).json({ error: 'حداقل ۵ ارزش فرهنگی انتخاب کنید' });
+        body.dark { color: #f0e8e0; }
+        .container {
+            max-width: 700px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(0px);
+            border-radius: 48px;
+            padding: 2.5rem 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1);
         }
-
-        const cardId = 'CID-' + Math.random().toString(36).substring(2, 10).toUpperCase();
-        const timestamp = new Date().toISOString();
-
-        const userRecord = {
-            cardId: cardId,
-            fullName: userData.fullName,
-            email: userData.email || '',
-            country: userData.country,
-            city: userData.city,
-            values: userData.values,
-            badge: userData.badge || 'normal',
-            registeredAt: timestamp,
-            lastUpdated: timestamp,
-            isActive: true
-        };
-
-        const GITHUB_TOKEN = process.env.GH_TOKEN;
-        if (!GITHUB_TOKEN) {
-            return res.status(500).json({ error: 'Server configuration error' });
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #2a1a0a;
+            text-align: center;
+            margin-bottom: 0.3rem;
         }
+        body.dark h1 { color: #f9e79f; }
+        .subtitle {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #4a2a1a;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(30, 10, 0, 0.05);
+            padding-bottom: 1rem;
+        }
+        body.dark .subtitle { color: #d0c0b0; border-bottom-color: rgba(255, 255, 255, 0.02); }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #2a1a0a;
+            margin-bottom: 0.3rem;
+        }
+        body.dark .form-group label { color: #e8d8c8; }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 16px;
+            border: 1px solid rgba(30, 10, 0, 0.02);
+            background: rgba(255, 255, 255, 0.02);
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: #1a0a0a;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        body.dark .form-group input,
+        body.dark .form-group textarea {
+            background: rgba(255, 255, 255, 0.02);
+            color: #e8d8c8;
+            border-color: rgba(255, 255, 255, 0.02);
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: rgba(60, 30, 10, 0.05);
+            background: rgba(255, 255, 255, 0.03);
+        }
+        body.dark .form-group input:focus,
+        body.dark .form-group textarea:focus {
+            border-color: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .form-group textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #4a3a2a;
+            opacity: 0.5;
+        }
+        body.dark .form-group input::placeholder,
+        body.dark .form-group textarea::placeholder {
+            color: #908070;
+        }
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .btn {
+            flex: 1;
+            padding: 0.8rem 1.5rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 140px;
+        }
+        .btn-primary {
+            background: rgba(60, 30, 10, 0.02);
+            color: #2a1a0a;
+            border: 1px solid rgba(60, 30, 10, 0.02);
+        }
+        body.dark .btn-primary {
+            background: rgba(255, 255, 255, 0.02);
+            color: #f9e79f;
+            border-color: rgba(255, 255, 255, 0.02);
+        }
+        .btn-primary:hover {
+            background: rgba(60, 30, 10, 0.04);
+            transform: scale(1.02);
+        }
+        body.dark .btn-primary:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-secondary {
+            background: rgba(60, 30, 10, 0.01);
+            color: #3a2a1a;
+            border: 1px solid rgba(60, 30, 10, 0.01);
+        }
+        body.dark .btn-secondary {
+            background: rgba(255, 255, 255, 0.01);
+            color: #a09080;
+            border-color: rgba(255, 255, 255, 0.01);
+        }
+        .btn-secondary:hover {
+            background: rgba(60, 30, 10, 0.03);
+            transform: scale(1.02);
+        }
+        body.dark .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .note {
+            text-align: center;
+            font-size: 0.75rem;
+            opacity: 0.5;
+            margin-top: 1.5rem;
+            color: #1a0a0a;
+            border-top: 1px solid rgba(30, 10, 0, 0.02);
+            padding-top: 1rem;
+        }
+        body.dark .note { color: #b0a090; border-top-color: rgba(255, 255, 255, 0.02); }
+        .message-box {
+            display: none;
+            padding: 1rem;
+            border-radius: 16px;
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        .message-box.success {
+            display: block;
+            background: rgba(50, 200, 50, 0.05);
+            border: 1px solid rgba(50, 200, 50, 0.05);
+            color: #0a5a0a;
+        }
+        body.dark .message-box.success {
+            color: #80b080;
+            background: rgba(50, 200, 50, 0.01);
+            border-color: rgba(50, 200, 50, 0.01);
+        }
+        .message-box.error {
+            display: block;
+            background: rgba(200, 50, 50, 0.05);
+            border: 1px solid rgba(200, 50, 50, 0.05);
+            color: #5a0a0a;
+        }
+        body.dark .message-box.error {
+            color: #b08080;
+            background: rgba(200, 50, 50, 0.01);
+            border-color: rgba(200, 50, 50, 0.01);
+        }
+        .theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(30, 10, 0, 0.02);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.3rem 0.8rem;
+            border-radius: 40px;
+            transition: 0.3s;
+            color: #1a0a0a;
+        }
+        body.dark .theme-toggle {
+            color: #f9e79f;
+            background: rgba(0, 0, 0, 0.05);
+            border-color: rgba(255, 255, 255, 0.02);
+        }
+        .theme-toggle:hover { transform: scale(1.1); }
+        .value-item {
+            background: rgba(255, 255, 255, 0.01);
+            border-radius: 12px;
+            padding: 0.8rem;
+            margin-bottom: 0.8rem;
+            border: 1px solid rgba(30, 10, 0, 0.02);
+        }
+        body.dark .value-item { border-color: rgba(255, 255, 255, 0.02); }
+        .value-item .value-title {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #2a1a0a;
+            margin-bottom: 0.3rem;
+            display: block;
+        }
+        body.dark .value-item .value-title { color: #e8d8c8; }
+        @font-face {
+            font-family: 'Vazir';
+            src: local('Vazir'), local('IRANSans');
+        }
+        .hidden { display: none; }
+        .email-box {
+            margin-top: 0.5rem;
+        }
+        .email-box label {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #2a1a0a;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+        body.dark .email-box label { color: #e8d8c8; }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" id="themeToggle">🌙</button>
 
-        const filePath = `data/active/${cardId}.json`;
-        const fileContent = Buffer.from(JSON.stringify(userRecord, null, 2)).toString('base64');
+    <div class="container">
+        <h1>📝 ثبت‌نام و دریافت شناسنامه</h1>
+        <div class="subtitle">کارت جهانی هویت هوشمند فرهنگی</div>
 
-        const response = await fetch(
-            `https://api.github.com/repos/ghrezaei1399-code/cultural-id/contents/${filePath}`,
-            {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `token ${GITHUB_TOKEN}`,
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/vnd.github.v3+json',
-                },
-                body: JSON.stringify({
-                    message: `Register new user: ${cardId}`,
-                    content: fileContent,
-                    branch: 'main',
-                }),
+        <div id="messageBox" class="message-box"></div>
+
+        <form id="registerForm">
+            <div class="value-item">
+                <label class="value-title">۱. ارزش‌های بومی</label>
+                <input type="text" id="v1" placeholder="مثلاً: صلح‌دوستی، مهمان‌نوازی" required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">۲. دانش فردی</label>
+                <input type="text" id="v2" placeholder="مثلاً: دانش بومی، مهارت‌های سنتی" required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">۳. همکاری جمعی</label>
+                <input type="text" id="v3" placeholder="مثلاً: کار گروهی، مشارکت اجتماعی" required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">۴. تنوع فرهنگی</label>
+                <input type="text" id="v4" placeholder="مثلاً: احترام به فرهنگ‌های مختلف" required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">۵. صلح پایدار جهانی</label>
+                <input type="text" id="v5" placeholder="مثلاً: گفت‌وگو، حل تعارض" required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">۶. محو خشونت</label>
+                <input type="text" id="v6" placeholder="مثلاً: کاهش تعصب، ترویج مدارا" required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">۷. اتحاد فرهنگی</label>
+                <input type="text" id="v7" placeholder="مثلاً: پل‌های ارتباطی میان فرهنگ‌ها" required />
+            </div>
+
+            <div class="form-group">
+                <label>کد اختیاری (۵ کاراکتر دلخواه)</label>
+                <input type="text" id="optionalCode" maxlength="5" placeholder="مثلاً: الف-ب-ج-د-ه" />
+                <small style="opacity:0.5; font-size:0.7rem;">اختیاری - می‌توانید خالی بگذارید</small>
+            </div>
+
+            <!-- باکس جدید: ارتباط با هم‌فکران -->
+            <div class="form-group email-box">
+                <label>📧 چنانچه می‌خواهید با هم‌فرهنگی‌ها و هم‌فکران خود ارتباط برقرار کنید، ایمیل خود را وارد کنید</label>
+                <input type="email" id="communicationEmail" placeholder="ایمیل خود را وارد کنید (اختیاری)" />
+                <small style="opacity:0.5; font-size:0.7rem;">اختیاری - فقط برای ارتباط استفاده می‌شود</small>
+            </div>
+
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary" id="submitBtn">🎯 دریافت شناسنامه</button>
+                <a href="index.html" class="btn btn-secondary">↩ بازگشت</a>
+            </div>
+        </form>
+
+        <div class="note">
+            بدون اطلاعات شخصی • کاملاً ناشناس • اطلاعات در مخزن ذخیره می‌شود
+        </div>
+    </div>
+
+    <script>
+        // ===== تم =====
+        (function() {
+            const toggle = document.getElementById('themeToggle');
+            const body = document.body;
+            if (localStorage.getItem('theme') === 'dark') {
+                body.classList.add('dark');
+                toggle.textContent = '☀️';
             }
-        );
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            return res.status(response.status).json({
-                error: 'خطا در ذخیره‌سازی در مخزن',
-                details: errorData.message
+            toggle.addEventListener('click', function() {
+                body.classList.toggle('dark');
+                if (body.classList.contains('dark')) {
+                    toggle.textContent = '☀️';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    toggle.textContent = '🌙';
+                    localStorage.setItem('theme', 'light');
+                }
             });
+        })();
+
+        // ===== نمایش پیام =====
+        function showMessage(text, type) {
+            const box = document.getElementById('messageBox');
+            box.textContent = text;
+            box.className = 'message-box ' + type;
+            box.style.display = 'block';
         }
 
-        return res.status(200).json({
-            success: true,
-            cardId: cardId,
-            badge: userRecord.badge
-        });
+        function hideMessage() {
+            const box = document.getElementById('messageBox');
+            box.style.display = 'none';
+            box.className = 'message-box';
+        }
 
-    } catch (error) {
-        return res.status(500).json({
-            error: 'خطای داخلی سرور',
-            details: error.message
+        // ===== ارسال فرم به API Vercel =====
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            hideMessage();
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ در حال ثبت...';
+
+            try {
+                const values = [
+                    document.getElementById('v1').value.trim(),
+                    document.getElementById('v2').value.trim(),
+                    document.getElementById('v3').value.trim(),
+                    document.getElementById('v4').value.trim(),
+                    document.getElementById('v5').value.trim(),
+                    document.getElementById('v6').value.trim(),
+                    document.getElementById('v7').value.trim()
+                ];
+
+                for (let v of values) {
+                    if (!v) {
+                        throw new Error('لطفاً تمام ۷ ارزش فرهنگی را وارد کنید.');
+                    }
+                }
+
+                const optionalCode = document.getElementById('optionalCode').value.trim() || '';
+                const communicationEmail = document.getElementById('communicationEmail').value.trim() || '';
+
+                const userData = {
+                    values: values,
+                    optionalCode: optionalCode,
+                    communicationEmail: communicationEmail
+                };
+
+                // ارسال به API سرور Vercel
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userData),
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    showMessage(`✅ ثبت‌نام با موفقیت انجام شد. کد شما: ${result.cardId}`, 'success');
+                    submitBtn.textContent = '✅ ثبت شد';
+                    localStorage.setItem('culturalCardCode', result.cardId);
+                    setTimeout(() => {
+                        window.location.href = `card-fa.html?code=${result.cardId}`;
+                    }, 2000);
+                } else {
+                    throw new Error(result.error || 'خطا در ثبت‌نام');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage(`❌ خطا: ${error.message}`, 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🎯 دریافت شناسنامه';
+            }
         });
-    }
-}
+    </script>
+</body>
+</html>
