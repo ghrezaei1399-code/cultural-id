@@ -22,28 +22,28 @@
         }
         body.dark { color: #f0e8e0; }
 
-        /* ===== کارت افقی ===== */
+        /* ===== کارت افقی (طول کمتر) ===== */
         .card-container {
             max-width: 700px;
             width: 100%;
             background: #0a0a0a;
             border-radius: 32px;
-            padding: 2rem 3rem;
+            padding: 1.5rem 3rem 2rem 3rem;
             border: 3px solid #d4af37;
             box-shadow: 0 0 40px rgba(212, 175, 55, 0.2), inset 0 0 60px rgba(212, 175, 55, 0.05);
             text-align: center;
             position: relative;
-            min-height: 400px;
+            min-height: 320px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
         }
 
-        /* ===== هولوگرام (وسط پایین - قرینه لوگو) ===== */
+        /* ===== هولوگرام (وسط پایین) ===== */
         .holo-icon {
             position: absolute;
-            bottom: 15px;
+            bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
             width: 60px;
@@ -65,23 +65,21 @@
             border-radius: 50%;
         }
 
-        /* ===== لوگو (بزرگ، بالای کارت، بدون کادر و حذف پس‌زمینه سفید) ===== */
+        /* ===== لوگو (بزرگ‌تر و بالاتر) ===== */
         .logo-wrapper {
             display: block;
-            margin: 0 auto 0.3rem auto;
+            margin: 0 auto 0.1rem auto;
             text-align: center;
             position: relative;
             z-index: 10;
         }
         .logo-img {
-            max-width: 200px;
-            max-height: 100px;
+            max-width: 280px;
+            max-height: 140px;
             object-fit: contain;
             display: block;
             margin: 0 auto;
-            /* حذف پس‌زمینه سفید */
             mix-blend-mode: multiply;
-            /* دایره طلایی پررنگ‌تر */
             border: 3px solid #d4af37;
             border-radius: 50%;
             background: rgba(212, 175, 55, 0.1);
@@ -102,7 +100,7 @@
             border: 2px solid #d4af37;
             border-radius: 40px;
             display: inline-block;
-            margin: 0.2rem 0 0.8rem 0;
+            margin: 0.2rem 0 0.6rem 0;
             background: rgba(212, 175, 55, 0.03);
             box-shadow: 0 0 25px rgba(212, 175, 55, 0.08);
             text-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
@@ -118,7 +116,7 @@
             padding: 0.7rem 1rem;
             border-radius: 16px;
             border: 2px solid #d4af37;
-            margin: 0.6rem 0 0.4rem 0;
+            margin: 0.5rem 0 0.3rem 0;
             direction: ltr;
             font-family: 'Courier New', monospace;
             color: #f9e79f;
@@ -273,7 +271,7 @@
     <button class="theme-toggle" id="themeToggle">🌙</button>
 
     <div class="card-container">
-        <!-- هولوگرام (وسط پایین - قرینه لوگو) -->
+        <!-- هولوگرام (وسط پایین) -->
         <div class="holo-icon">
             <img src="assets/hologram.png" alt="Hologram" />
         </div>
@@ -282,7 +280,7 @@
         <div id="loading" class="loading">⏳ در حال بارگیری اطلاعات...</div>
 
         <div id="cardContent" style="display:none;">
-            <!-- لوگوی فارسی (بزرگ، بالای کارت، بدون پس‌زمینه سفید، دایره طلایی پررنگ) -->
+            <!-- لوگوی فارسی (بزرگ‌تر و بالاتر) -->
             <div class="logo-wrapper">
                 <img src="assets/logo-fa.png" alt="لوگوی فارسی" class="logo-img" />
             </div>
