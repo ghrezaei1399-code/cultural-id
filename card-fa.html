@@ -27,7 +27,7 @@
             width: 100%;
             background: #0a0a0a;
             border-radius: 32px;
-            padding: 2.5rem 2rem 2rem 2rem;
+            padding: 2.5rem 2rem 2.5rem 2rem;
             border: 3px solid #d4af37;
             box-shadow: 0 0 40px rgba(212, 175, 55, 0.2), inset 0 0 60px rgba(212, 175, 55, 0.05);
             text-align: center;
@@ -39,47 +39,45 @@
             position: absolute;
             bottom: 15px;
             left: 20px;
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #d4af37, #f9e79f, #d4af37, #b8860b, #d4af37);
-            background-size: 300% 300%;
-            animation: holoSpin 4s ease-in-out infinite;
+            background: conic-gradient(from 0deg, #d4af37, #f9e79f, #b8860b, #d4af37, #f9e79f, #d4af37);
+            animation: holoSpin 3s linear infinite;
             border: 2px solid #d4af37;
-            box-shadow: 0 0 25px rgba(212, 175, 55, 0.4);
-            opacity: 0.8;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+            opacity: 0.9;
         }
         @keyframes holoSpin {
-            0% { background-position: 0% 50%; transform: rotate(0deg); }
-            50% { background-position: 100% 50%; transform: rotate(180deg); }
-            100% { background-position: 0% 50%; transform: rotate(360deg); }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        /* ===== لوگو با کادر طلایی ===== */
+        /* ===== لوگو ===== */
         .logo-wrapper {
             display: inline-block;
-            padding: 0.4rem 1.8rem;
+            padding: 0.3rem 1rem;
             border: 2px solid #d4af37;
             border-radius: 60px;
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.2rem;
             background: rgba(212, 175, 55, 0.05);
             box-shadow: 0 0 30px rgba(212, 175, 55, 0.1);
         }
         .logo {
-            font-size: 1.8rem;
+            font-size: 2.2rem;
             font-weight: 800;
             color: #f9e79f;
             letter-spacing: 2px;
             text-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
         }
 
-        /* ===== عنوان کارت با کادر طلایی ===== */
+        /* ===== عنوان کارت (یک باکس) ===== */
         .card-title {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 700;
             color: #d4af37;
             letter-spacing: 2px;
-            padding: 0.3rem 1.2rem;
+            padding: 0.4rem 1.5rem;
             border: 2px solid #d4af37;
             border-radius: 40px;
             display: inline-block;
@@ -89,7 +87,7 @@
             text-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
         }
 
-        /* ===== کد کارت با کادر طلایی ===== */
+        /* ===== کد کارت ===== */
         .card-code {
             font-size: 1.2rem;
             font-weight: 700;
@@ -242,11 +240,11 @@
         <div id="cardContent" style="display:none;">
             <!-- لوگو -->
             <div class="logo-wrapper">
-                <div class="logo">کارت</div>
+                <div class="logo">🌍</div>
             </div>
 
-            <!-- عنوان کارت -->
-            <div class="card-title">جهانی هویت هوشمند فرهنگی</div>
+            <!-- عنوان کارت (یک باکس) -->
+            <div class="card-title">کارت جهانی هویت هوشمند فرهنگی</div>
 
             <!-- نشان -->
             <div id="badgeContainer"></div>
