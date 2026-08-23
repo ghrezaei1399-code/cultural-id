@@ -10,11 +10,13 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'لطفاً تمام ۷ ارزش فرهنگی را وارد کنید.' });
         }
 
+        // تولید کد کارت با رعایت کد اختیاری کاربر
         const part1 = Math.floor(1000 + Math.random() * 9000);
         const part2 = Math.floor(1000 + Math.random() * 9000);
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        const randomChar = chars.charAt(Math.floor(Math.random() * chars.length));
-        const cardId = `CIM-${part1}-${part2}-${randomChar}`;
+        const optionalCode = userData.optionalCode || '-----'; // اگر کاربر خالی گذاشت
+        // اگر کاربر کد اختیاری وارد کرده، از آن استفاده کن
+        const finalOptionalCode = userData.optionalCode ? userData.optionalCode : '-----';
+        const cardId = `CIM-${part1}-${part2}-${finalOptionalCode}`;
 
         const userRecord = {
             cardCode: cardId,
@@ -33,7 +35,10 @@ export default async function handler(req, res) {
         }
 
         const filePath = `data/active/${cardId}.json`;
-        const fileContent = Buffer.from(JSON.stringify(userRecord, null, 2)).toString('base64');
+        // استفاده از encodeURIComponent برای ذخیره درست UTF-8
+        const jsonString = JSON.stringify(userRecord, null, 2);
+        const encodedContent = encodeURIComponent(jsonString);
+        const fileContent = Buffer.from(encodedContent).toString('base64');
 
         const response = await fetch(
             `https://api.github.com/repos/ghrezaei1399-code/cultural-id/contents/${filePath}`,
