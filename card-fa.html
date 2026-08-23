@@ -22,7 +22,6 @@
         }
         body.dark { color: #f0e8e0; }
 
-        /* ===== کارت اصلی ===== */
         .card-container {
             max-width: 420px;
             width: 100%;
@@ -33,10 +32,8 @@
             box-shadow: 0 0 40px rgba(212, 175, 55, 0.15), inset 0 0 60px rgba(212, 175, 55, 0.03);
             text-align: center;
             position: relative;
-            transition: all 0.3s ease;
         }
 
-        /* ===== هولوگرام ===== */
         .holo-badge {
             position: absolute;
             top: -12px;
@@ -59,7 +56,6 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* ===== لوگو ===== */
         .logo-wrapper {
             display: inline-block;
             padding: 0.5rem 1.5rem;
@@ -82,7 +78,6 @@
             margin-bottom: 1.2rem;
         }
 
-        /* ===== کد کارت ===== */
         .card-code {
             font-size: 1.2rem;
             font-weight: 700;
@@ -98,7 +93,6 @@
             box-shadow: inset 0 0 30px rgba(212, 175, 55, 0.05);
         }
 
-        /* ===== نشان ===== */
         .badge {
             display: inline-block;
             padding: 0.2rem 1.2rem;
@@ -118,7 +112,6 @@
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
         }
 
-        /* ===== دکمه‌های زیر کارت ===== */
         .actions {
             max-width: 420px;
             width: 100%;
@@ -163,7 +156,6 @@
             border-color: #d4af37;
         }
 
-        /* ===== بقیه ===== */
         .theme-toggle {
             position: fixed;
             top: 1rem;
@@ -224,30 +216,23 @@
 <body>
     <button class="theme-toggle" id="themeToggle">🌙</button>
 
-    <!-- ===== کارت ===== -->
     <div class="card-container">
-        <!-- هولوگرام -->
         <div class="holo-badge">✦ هولوگرام</div>
 
         <div id="messageBox" class="message-box"></div>
         <div id="loading" class="loading">⏳ در حال بارگیری اطلاعات...</div>
 
         <div id="cardContent" style="display:none;">
-            <!-- لوگو -->
             <div class="logo-wrapper">
                 <div class="logo">کارت</div>
             </div>
             <div class="logo-sub">جهانی هویت هوشمند فرهنگی</div>
 
-            <!-- نشان -->
             <div id="badgeContainer"></div>
-
-            <!-- کد کارت -->
             <div class="card-code" id="cardCode">---</div>
         </div>
     </div>
 
-    <!-- ===== دکمه‌های زیر کارت ===== -->
     <div class="actions" id="actions" style="display:none;">
         <a href="#" class="btn btn-gold" id="backCardBtn">🔍 پشت کارت</a>
         <a href="edit-fa.html" class="btn btn-gold" id="editLink">✏️ ویرایش</a>
@@ -293,20 +278,30 @@
             box.style.display = 'block';
         }
 
-        // ===== بارگیری اطلاعات =====
+        // ===== بارگیری اطلاعات از مخزن =====
         async function loadCardData() {
             try {
                 const response = await fetch(
                     `https://api.github.com/repos/ghrezaei1399-code/cultural-id/contents/data/active/${cardCode}.json`,
-                    { headers: { 'Accept': 'application/vnd.github.v3+json' } }
+                    {
+                        headers: { 'Accept': 'application/vnd.github.v3+json' }
+                    }
                 );
+
                 if (!response.ok) {
-                    if (response.status === 404) throw new Error('کارت با این کد یافت نشد.');
+                    if (response.status === 404) {
+                        throw new Error('کارت با این کد یافت نشد.');
+                    }
                     throw new Error('خطا در دریافت اطلاعات');
                 }
+
                 const data = await response.json();
-                const content = decodeURIComponent(atob(data.content));
-                return JSON.parse(content);
+                // دیکد کردن صحیح: ابتدا base64 و سپس decodeURIComponent
+                const decoded = atob(data.content);
+                const content = decodeURIComponent(decoded);
+                const user = JSON.parse(content);
+
+                return user;
             } catch (error) {
                 throw error;
             }
