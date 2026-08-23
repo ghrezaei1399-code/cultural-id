@@ -2,407 +2,385 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>کارت هویت فرهنگی</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 2rem 1rem;
+            background-image: url('assets/pisa.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #1a0a0a;
         }
-
-        .card-container {
+        body.dark { color: #f0e8e0; }
+        .container {
+            max-width: 500px;
             width: 100%;
-            max-width: 480px;
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 32px;
-            padding: 40px 32px;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s;
-        }
-
-        .card:hover {
-            transform: translateY(-4px);
-        }
-
-        .card-header {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(0px);
+            border-radius: 48px;
+            padding: 2.5rem 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1);
             text-align: center;
-            margin-bottom: 28px;
         }
-
-        .card-header .badge {
-            display: inline-block;
-            padding: 6px 20px;
-            border-radius: 40px;
-            font-size: 14px;
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #2a1a0a;
+            text-align: center;
+            margin-bottom: 0.3rem;
+        }
+        body.dark h1 { color: #f9e79f; }
+        .subtitle {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #4a2a1a;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(30, 10, 0, 0.05);
+            padding-bottom: 1rem;
+        }
+        body.dark .subtitle { color: #d0c0b0; border-bottom-color: rgba(255, 255, 255, 0.02); }
+        .card-code {
+            font-size: 1.2rem;
             font-weight: 700;
-            margin-bottom: 12px;
-        }
-
-        .badge.golden {
-            background: linear-gradient(135deg, #fbbf24, #f59e0b);
-            color: #78350f;
-        }
-
-        .badge.normal {
-            background: #e2e8f0;
-            color: #475569;
-        }
-
-        .card-header h1 {
-            font-size: 22px;
-            color: #1e293b;
-        }
-
-        .card-header .card-id {
-            font-size: 14px;
-            color: #64748b;
-            font-family: monospace;
             letter-spacing: 2px;
-            background: #f1f5f9;
-            padding: 6px 16px;
-            border-radius: 20px;
-            display: inline-block;
-            margin-top: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 0.8rem;
+            border-radius: 16px;
+            border: 1px solid rgba(30, 10, 0, 0.02);
+            margin: 1rem 0;
+            direction: ltr;
         }
-
-        .info-row {
+        body.dark .card-code {
+            border-color: rgba(255, 255, 255, 0.02);
+        }
+        .value-list {
+            text-align: right;
+            margin: 1.5rem 0;
+        }
+        .value-item {
+            background: rgba(255, 255, 255, 0.01);
+            border-radius: 12px;
+            padding: 0.6rem 1rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid rgba(30, 10, 0, 0.02);
             display: flex;
             justify-content: space-between;
-            padding: 14px 0;
-            border-bottom: 1px solid #e2e8f0;
+            align-items: center;
         }
-
-        .info-row:last-child {
-            border-bottom: none;
+        body.dark .value-item { border-color: rgba(255, 255, 255, 0.02); }
+        .value-num {
+            font-weight: 700;
+            opacity: 0.5;
+            font-size: 0.8rem;
         }
-
-        .info-label {
-            font-weight: 600;
-            color: #475569;
-            font-size: 14px;
-        }
-
-        .info-value {
-            color: #0f172a;
-            font-size: 15px;
+        .value-text {
             font-weight: 500;
-            text-align: left;
         }
-
-        .values-section {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 2px dashed #e2e8f0;
+        .badge {
+            display: inline-block;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+            background: rgba(255, 215, 0, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.05);
+            color: #b8860b;
         }
-
-        .values-section h3 {
-            font-size: 16px;
-            color: #334155;
-            margin-bottom: 12px;
+        body.dark .badge {
+            color: #f9e79f;
+            border-color: rgba(255, 215, 0, 0.02);
         }
-
-        .value-tags {
+        .badge.golden {
+            background: rgba(255, 215, 0, 0.08);
+            border-color: rgba(255, 215, 0, 0.08);
+        }
+        .btn-group {
             display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
             flex-wrap: wrap;
-            gap: 8px;
         }
-
-        .value-tag {
-            background: #eef2ff;
-            color: #4f46e5;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 500;
+        .btn {
+            flex: 1;
+            padding: 0.8rem 1.5rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
         }
-
+        .btn-primary {
+            background: rgba(60, 30, 10, 0.02);
+            color: #2a1a0a;
+            border: 1px solid rgba(60, 30, 10, 0.02);
+        }
+        body.dark .btn-primary {
+            background: rgba(255, 255, 255, 0.02);
+            color: #f9e79f;
+            border-color: rgba(255, 255, 255, 0.02);
+        }
+        .btn-primary:hover {
+            background: rgba(60, 30, 10, 0.04);
+            transform: scale(1.02);
+        }
+        body.dark .btn-primary:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .btn-secondary {
+            background: rgba(60, 30, 10, 0.01);
+            color: #3a2a1a;
+            border: 1px solid rgba(60, 30, 10, 0.01);
+        }
+        body.dark .btn-secondary {
+            background: rgba(255, 255, 255, 0.01);
+            color: #a09080;
+            border-color: rgba(255, 255, 255, 0.01);
+        }
+        .btn-secondary:hover {
+            background: rgba(60, 30, 10, 0.03);
+            transform: scale(1.02);
+        }
+        body.dark .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .note {
+            text-align: center;
+            font-size: 0.75rem;
+            opacity: 0.5;
+            margin-top: 1.5rem;
+            color: #1a0a0a;
+            border-top: 1px solid rgba(30, 10, 0, 0.02);
+            padding-top: 1rem;
+        }
+        body.dark .note { color: #b0a090; border-top-color: rgba(255, 255, 255, 0.02); }
+        .theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(30, 10, 0, 0.02);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.3rem 0.8rem;
+            border-radius: 40px;
+            transition: 0.3s;
+            color: #1a0a0a;
+        }
+        body.dark .theme-toggle {
+            color: #f9e79f;
+            background: rgba(0, 0, 0, 0.05);
+            border-color: rgba(255, 255, 255, 0.02);
+        }
+        .theme-toggle:hover { transform: scale(1.1); }
+        .message-box {
+            display: none;
+            padding: 1rem;
+            border-radius: 16px;
+            text-align: center;
+            margin-top: 1rem;
+        }
+        .message-box.error {
+            display: block;
+            background: rgba(200, 50, 50, 0.05);
+            border: 1px solid rgba(200, 50, 50, 0.05);
+            color: #5a0a0a;
+        }
+        body.dark .message-box.error {
+            color: #b08080;
+            background: rgba(200, 50, 50, 0.01);
+            border-color: rgba(200, 50, 50, 0.01);
+        }
         .loading {
             text-align: center;
-            padding: 40px 20px;
-            color: #fff;
-            font-size: 18px;
+            padding: 2rem 0;
+            opacity: 0.6;
         }
-
-        .loading .spinner {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(255, 255, 255, 0.2);
-            border-top: 4px solid #fff;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-bottom: 16px;
+        .email-info {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            opacity: 0.6;
+            word-break: break-all;
         }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .error {
-            text-align: center;
-            padding: 40px 20px;
-            color: #fff;
-            font-size: 18px;
-        }
-
-        .error a {
-            color: #fbbf24;
-            text-decoration: underline;
-        }
-
-        .back-btn {
-            display: inline-block;
-            margin-top: 16px;
-            padding: 10px 24px;
-            background: rgba(255, 255, 255, 0.2);
-            color: #fff;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 40px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-
-        .back-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .footer-actions {
-            margin-top: 24px;
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .footer-actions a {
-            padding: 10px 20px;
-            border-radius: 40px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-            transition: 0.3s;
-        }
-
-        .btn-edit {
-            background: #6366f1;
-            color: #fff;
-        }
-
-        .btn-edit:hover {
-            background: #4f46e5;
-            transform: translateY(-2px);
-        }
-
-        .btn-request {
-            background: #10b981;
-            color: #fff;
-        }
-
-        .btn-request:hover {
-            background: #059669;
-            transform: translateY(-2px);
-        }
-
-        @media (max-width: 500px) {
-            .card {
-                padding: 28px 20px;
-            }
-            .info-row {
-                flex-direction: column;
-                gap: 4px;
-            }
-            .info-value {
-                text-align: right;
-            }
+        body.dark .email-info { color: #b0a090; }
+        @font-face {
+            font-family: 'Vazir';
+            src: local('Vazir'), local('IRANSans');
         }
     </style>
 </head>
 <body>
-    <div class="card-container" id="app">
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <div>در حال بارگیری اطلاعات...</div>
-        </div>
+    <button class="theme-toggle" id="themeToggle">🌙</button>
 
-        <div id="cardContent" style="display: none;">
-            <div class="card">
-                <div class="card-header">
-                    <span class="badge" id="badge">نشان</span>
-                    <h1>🌍 کارت هویت فرهنگی</h1>
-                    <div class="card-id" id="cardId">CID-XXXXXXXX</div>
-                </div>
+    <div class="container">
+        <h1>🪪 کارت هویت فرهنگی</h1>
+        <div class="subtitle">کارت جهانی هویت هوشمند فرهنگی</div>
 
-                <div class="info-row">
-                    <span class="info-label">👤 نام و نام خانوادگی</span>
-                    <span class="info-value" id="fullName">---</span>
-                </div>
+        <div id="messageBox" class="message-box"></div>
+        <div id="loading" class="loading">⏳ در حال بارگیری اطلاعات...</div>
 
-                <div class="info-row">
-                    <span class="info-label">🌍 کشور</span>
-                    <span class="info-value" id="country">---</span>
-                </div>
+        <div id="cardContent" style="display:none;">
+            <div id="badgeContainer"></div>
+            <div class="card-code" id="cardCode">---</div>
 
-                <div class="info-row">
-                    <span class="info-label">🏙️ شهر</span>
-                    <span class="info-value" id="city">---</span>
-                </div>
+            <div class="value-list" id="valueList"></div>
 
-                <div class="info-row">
-                    <span class="info-label">📧 ایمیل</span>
-                    <span class="info-value" id="email">---</span>
-                </div>
+            <div id="emailContainer" class="email-info"></div>
 
-                <div class="info-row">
-                    <span class="info-label">📅 تاریخ ثبت</span>
-                    <span class="info-value" id="registeredAt">---</span>
-                </div>
-
-                <div class="values-section">
-                    <h3>🌟 ارزش‌های فرهنگی</h3>
-                    <div class="value-tags" id="values"></div>
-                </div>
-
-                <div class="footer-actions">
-                    <a href="edit-fa.html?cardId=CID-XXXXXXXX" class="btn-edit" id="editLink">✏️ ویرایش</a>
-                    <a href="request-fa.html?cardId=CID-XXXXXXXX" class="btn-request" id="requestLink">🤝 ارتباط با هم‌فکران</a>
-                </div>
-
-                <div style="text-align: center; margin-top: 20px;">
-                    <a href="index.html" class="back-btn">🏠 بازگشت به صفحه اصلی</a>
-                </div>
+            <div class="btn-group">
+                <a href="edit-fa.html" class="btn btn-primary" id="editLink">✏️ ویرایش</a>
+                <a href="request-fa.html" class="btn btn-secondary" id="requestLink">🤝 ارتباط</a>
+            </div>
+            <div style="margin-top:0.5rem;">
+                <a href="index.html" class="btn btn-secondary">↩ بازگشت</a>
             </div>
         </div>
 
-        <div class="error" id="error" style="display: none;">
-            <div style="font-size: 48px; margin-bottom: 16px;">😕</div>
-            <p id="errorMessage">خطا در بارگیری اطلاعات</p>
-            <a href="index.html" class="back-btn">🏠 بازگشت به صفحه اصلی</a>
+        <div class="note">
+            بدون اطلاعات شخصی • کاملاً ناشناس
         </div>
     </div>
 
     <script>
-        function getCardIdFromUrl() {
+        // ===== تم =====
+        (function() {
+            const toggle = document.getElementById('themeToggle');
+            const body = document.body;
+            if (localStorage.getItem('theme') === 'dark') {
+                body.classList.add('dark');
+                toggle.textContent = '☀️';
+            }
+            toggle.addEventListener('click', function() {
+                body.classList.toggle('dark');
+                if (body.classList.contains('dark')) {
+                    toggle.textContent = '☀️';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    toggle.textContent = '🌙';
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+        })();
+
+        // ===== دریافت کد از URL =====
+        function getCardCode() {
             const params = new URLSearchParams(window.location.search);
-            return params.get('cardId') || sessionStorage.getItem('cardId');
+            return params.get('code') || localStorage.getItem('culturalCardCode');
         }
 
-        const cardId = getCardIdFromUrl();
+        const cardCode = getCardCode();
 
-        if (!cardId) {
+        if (!cardCode) {
             document.getElementById('loading').style.display = 'none';
-            document.getElementById('error').style.display = 'block';
-            document.getElementById('errorMessage').textContent = 'کد کارت یافت نشد. لطفاً از صفحه ثبت‌نام اقدام کنید.';
-            throw new Error('No card ID found');
+            const box = document.getElementById('messageBox');
+            box.textContent = '❌ کد کارت یافت نشد. لطفاً از صفحه ثبت‌نام اقدام کنید.';
+            box.className = 'message-box error';
+            box.style.display = 'block';
         }
 
-        document.getElementById('editLink').href = `edit-fa.html?cardId=${cardId}`;
-        document.getElementById('requestLink').href = `request-fa.html?cardId=${cardId}`;
-
-        async function fetchUserData() {
+        // ===== بارگیری اطلاعات از مخزن =====
+        async function loadCardData() {
             try {
                 const response = await fetch(
-                    `https://api.github.com/repos/ghrezaei1399-code/cultural-id/contents/data/active/${cardId}.json`,
-                    { headers: { 'Accept': 'application/vnd.github.v3+json' } }
+                    `https://api.github.com/repos/ghrezaei1399-code/cultural-id/contents/data/active/${cardCode}.json`,
+                    {
+                        headers: { 'Accept': 'application/vnd.github.v3+json' }
+                    }
                 );
 
                 if (!response.ok) {
                     if (response.status === 404) {
-                        throw new Error('کارت با این کد یافت نشد. ممکن است حذف شده باشد.');
+                        throw new Error('کارت با این کد یافت نشد.');
                     }
-                    throw new Error(`خطا در دریافت اطلاعات: ${response.status}`);
+                    throw new Error('خطا در دریافت اطلاعات');
                 }
 
                 const data = await response.json();
                 const content = atob(data.content);
                 const user = JSON.parse(content);
+
                 return user;
             } catch (error) {
-                console.error('Fetch error:', error);
                 throw error;
             }
         }
 
+        // ===== نمایش کارت =====
         async function renderCard() {
             const loading = document.getElementById('loading');
             const cardContent = document.getElementById('cardContent');
-            const errorDiv = document.getElementById('error');
-            const errorMessage = document.getElementById('errorMessage');
 
             try {
-                const user = await fetchUserData();
+                const user = await loadCardData();
 
-                document.getElementById('cardId').textContent = user.cardId || cardId;
-                document.getElementById('fullName').textContent = user.fullName || '---';
-                document.getElementById('country').textContent = user.country || '---';
-                document.getElementById('city').textContent = user.city || '---';
-                document.getElementById('email').textContent = user.email || '---';
-                document.getElementById('registeredAt').textContent =
-                    user.registeredAt ? new Date(user.registeredAt).toLocaleDateString('fa-IR') : '---';
+                // کد کارت
+                document.getElementById('cardCode').textContent = user.cardCode || cardCode;
 
-                const badge = document.getElementById('badge');
+                // نشان (بدون منطق ۲۰۰ نفر اول - بعداً اضافه می‌شود)
+                const badgeContainer = document.getElementById('badgeContainer');
                 if (user.badge === 'golden') {
-                    badge.textContent = '🌟 نشان طلایی';
-                    badge.className = 'badge golden';
+                    badgeContainer.innerHTML = '<span class="badge golden">🌟 نشان طلایی - سفیر فرهنگی</span>';
                 } else {
-                    badge.textContent = 'نشان نقره‌ای';
-                    badge.className = 'badge normal';
+                    badgeContainer.innerHTML = '<span class="badge">نشان نقره‌ای</span>';
                 }
 
-                const valuesContainer = document.getElementById('values');
-                const valueLabels = {
-                    honesty: '🔹 راستی و صداقت',
-                    justice: '⚖️ عدالت',
-                    peace: '🕊️ صلح‌جویی',
-                    knowledge: '📚 دانش‌ورزی',
-                    art: '🎨 هنر و زیبایی',
-                    nature: '🌿 طبیعت‌دوستی',
-                    family: '👨‍👩‍👧‍👦 خانواده‌گرایی',
-                    freedom: '🕊️ آزادگی',
-                    respect: '🤝 احترام به دیگران',
-                    progress: '🚀 پیشرفت و نوآوری'
-                };
-
-                valuesContainer.innerHTML = '';
-                if (user.values && user.values.length > 0) {
-                    user.values.forEach(val => {
-                        const tag = document.createElement('span');
-                        tag.className = 'value-tag';
-                        tag.textContent = valueLabels[val] || val;
-                        valuesContainer.appendChild(tag);
+                // ارزش‌ها
+                const valueList = document.getElementById('valueList');
+                valueList.innerHTML = '';
+                if (user.values && user.values.length === 7) {
+                    const labels = ['ارزش‌های بومی', 'دانش فردی', 'همکاری جمعی', 'تنوع فرهنگی', 'صلح پایدار جهانی', 'محو خشونت', 'اتحاد فرهنگی'];
+                    user.values.forEach((val, index) => {
+                        const div = document.createElement('div');
+                        div.className = 'value-item';
+                        div.innerHTML = `
+                            <span class="value-num">${index + 1}</span>
+                            <span class="value-text">${val}</span>
+                        `;
+                        valueList.appendChild(div);
                     });
-                } else {
-                    valuesContainer.innerHTML = '<span style="color: #94a3b8;">ارزشی انتخاب نشده است</span>';
                 }
+
+                // ایمیل ارتباط
+                const emailContainer = document.getElementById('emailContainer');
+                if (user.communicationEmail) {
+                    emailContainer.textContent = `📧 راه ارتباطی: ${user.communicationEmail}`;
+                } else {
+                    emailContainer.textContent = '📧 راه ارتباطی ثبت نشده است';
+                }
+
+                // لینک‌های ویرایش و ارتباط
+                document.getElementById('editLink').href = `edit-fa.html?code=${cardCode}`;
+                document.getElementById('requestLink').href = `request-fa.html?code=${cardCode}`;
 
                 loading.style.display = 'none';
                 cardContent.style.display = 'block';
 
             } catch (error) {
                 loading.style.display = 'none';
-                errorDiv.style.display = 'block';
-                errorMessage.textContent = error.message || 'خطا در بارگیری اطلاعات';
+                const box = document.getElementById('messageBox');
+                box.textContent = `❌ ${error.message}`;
+                box.className = 'message-box error';
+                box.style.display = 'block';
             }
         }
 
-        renderCard();
+        if (cardCode) {
+            renderCard();
+        }
     </script>
 </body>
 </html>
