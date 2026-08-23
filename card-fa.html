@@ -20,10 +20,10 @@
             color: #1a0a0a;
         }
         body.dark { color: #f0e8e0; }
-        .container {
-            max-width: 500px;
+        .card-container {
+            max-width: 480px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(0px);
             border-radius: 48px;
             padding: 2.5rem 2rem;
@@ -31,39 +31,37 @@
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
-        h1 {
-            font-size: 1.8rem;
+        .logo {
+            font-size: 2.5rem;
             font-weight: 800;
             color: #2a1a0a;
-            text-align: center;
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.2rem;
         }
-        body.dark h1 { color: #f9e79f; }
-        .subtitle {
-            text-align: center;
-            font-size: 0.9rem;
-            color: #4a2a1a;
-            opacity: 0.8;
-            margin-bottom: 2rem;
-            border-bottom: 1px solid rgba(30, 10, 0, 0.05);
-            padding-bottom: 1rem;
+        body.dark .logo { color: #f9e79f; }
+        .logo-sub {
+            font-size: 0.7rem;
+            opacity: 0.5;
+            color: #1a0a0a;
+            letter-spacing: 2px;
+            margin-bottom: 1.5rem;
         }
-        body.dark .subtitle { color: #d0c0b0; border-bottom-color: rgba(255, 255, 255, 0.02); }
+        body.dark .logo-sub { color: #b0a090; }
         .card-code {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 700;
             letter-spacing: 2px;
             background: rgba(255, 255, 255, 0.02);
             padding: 0.8rem;
             border-radius: 16px;
             border: 1px solid rgba(30, 10, 0, 0.02);
-            margin: 1rem 0;
+            margin: 1rem 0 1.5rem 0;
             direction: ltr;
+            font-family: 'Courier New', monospace;
         }
         body.dark .card-code {
             border-color: rgba(255, 255, 255, 0.02);
         }
-        .value-list {
+        .values-list {
             text-align: right;
             margin: 1.5rem 0;
         }
@@ -80,17 +78,31 @@
         body.dark .value-item { border-color: rgba(255, 255, 255, 0.02); }
         .value-num {
             font-weight: 700;
-            opacity: 0.5;
+            opacity: 0.4;
             font-size: 0.8rem;
         }
         .value-text {
             font-weight: 500;
+            font-size: 0.95rem;
+        }
+        .qr-placeholder {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            border: 2px dashed rgba(30, 10, 0, 0.05);
+            border-radius: 16px;
+            font-size: 0.8rem;
+            opacity: 0.4;
+            color: #1a0a0a;
+        }
+        body.dark .qr-placeholder {
+            border-color: rgba(255, 255, 255, 0.02);
+            color: #b0a090;
         }
         .badge {
             display: inline-block;
-            padding: 0.3rem 1.2rem;
+            padding: 0.2rem 1rem;
             border-radius: 40px;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             font-weight: 700;
             margin: 0.5rem 0;
             background: rgba(255, 215, 0, 0.05);
@@ -107,22 +119,22 @@
         }
         .btn-group {
             display: flex;
-            gap: 1rem;
+            gap: 0.8rem;
             margin-top: 1.5rem;
             flex-wrap: wrap;
+            justify-content: center;
         }
         .btn {
-            flex: 1;
-            padding: 0.8rem 1.5rem;
+            padding: 0.6rem 1.5rem;
             border-radius: 60px;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.85rem;
             text-decoration: none;
             text-align: center;
             border: none;
             cursor: pointer;
             transition: all 0.3s ease;
-            min-width: 120px;
+            min-width: 100px;
         }
         .btn-primary {
             background: rgba(60, 30, 10, 0.02);
@@ -160,8 +172,8 @@
         }
         .note {
             text-align: center;
-            font-size: 0.75rem;
-            opacity: 0.5;
+            font-size: 0.65rem;
+            opacity: 0.4;
             margin-top: 1.5rem;
             color: #1a0a0a;
             border-top: 1px solid rgba(30, 10, 0, 0.02);
@@ -174,9 +186,9 @@
             right: 1rem;
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(30, 10, 0, 0.02);
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             cursor: pointer;
-            padding: 0.3rem 0.8rem;
+            padding: 0.2rem 0.7rem;
             border-radius: 40px;
             transition: 0.3s;
             color: #1a0a0a;
@@ -211,9 +223,9 @@
             opacity: 0.6;
         }
         .email-info {
-            margin-top: 1rem;
-            font-size: 0.85rem;
-            opacity: 0.6;
+            margin-top: 0.8rem;
+            font-size: 0.8rem;
+            opacity: 0.5;
             word-break: break-all;
         }
         body.dark .email-info { color: #b0a090; }
@@ -226,9 +238,9 @@
 <body>
     <button class="theme-toggle" id="themeToggle">🌙</button>
 
-    <div class="container">
-        <h1>🪪 کارت هویت فرهنگی</h1>
-        <div class="subtitle">کارت جهانی هویت هوشمند فرهنگی</div>
+    <div class="card-container">
+        <div class="logo">🪪 کارت هویت فرهنگی</div>
+        <div class="logo-sub">کارت جهانی هویت هوشمند فرهنگی</div>
 
         <div id="messageBox" class="message-box"></div>
         <div id="loading" class="loading">⏳ در حال بارگیری اطلاعات...</div>
@@ -237,7 +249,9 @@
             <div id="badgeContainer"></div>
             <div class="card-code" id="cardCode">---</div>
 
-            <div class="value-list" id="valueList"></div>
+            <div class="values-list" id="valueList"></div>
+
+            <div id="qrContainer" class="qr-placeholder">[ کد QR منحصربه‌فرد ]</div>
 
             <div id="emailContainer" class="email-info"></div>
 
@@ -250,9 +264,7 @@
             </div>
         </div>
 
-        <div class="note">
-            بدون اطلاعات شخصی • کاملاً ناشناس
-        </div>
+        <div class="note">بدون اطلاعات شخصی • کاملاً ناشناس</div>
     </div>
 
     <script>
@@ -327,8 +339,10 @@
             try {
                 const user = await loadCardData();
 
+                // کد کارت
                 document.getElementById('cardCode').textContent = user.cardCode || cardCode;
 
+                // نشان
                 const badgeContainer = document.getElementById('badgeContainer');
                 if (user.badge === 'golden') {
                     badgeContainer.innerHTML = '<span class="badge golden">🌟 نشان طلایی - سفیر فرهنگی</span>';
@@ -336,6 +350,7 @@
                     badgeContainer.innerHTML = '<span class="badge">نشان نقره‌ای</span>';
                 }
 
+                // ارزش‌ها
                 const valueList = document.getElementById('valueList');
                 valueList.innerHTML = '';
                 if (user.values && user.values.length === 7) {
@@ -351,6 +366,7 @@
                     });
                 }
 
+                // ایمیل
                 const emailContainer = document.getElementById('emailContainer');
                 if (user.communicationEmail) {
                     emailContainer.textContent = `📧 راه ارتباطی: ${user.communicationEmail}`;
@@ -358,6 +374,7 @@
                     emailContainer.textContent = '📧 راه ارتباطی ثبت نشده است';
                 }
 
+                // لینک‌ها
                 document.getElementById('editLink').href = `edit-fa.html?code=${cardCode}`;
                 document.getElementById('requestLink').href = `request-fa.html?code=${cardCode}`;
 
