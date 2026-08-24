@@ -1,4 +1,14 @@
 export default async function handler(req, res) {
+    // ===== CORS Headers =====
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+    res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
+    
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
@@ -34,6 +44,7 @@ export default async function handler(req, res) {
 
         const filePath = `data/active/${cardId}.json`;
         const jsonString = JSON.stringify(userRecord, null, 2);
+        // این خط درست است - بدون encodeURIComponent
         const fileContent = Buffer.from(jsonString, 'utf-8').toString('base64');
 
         const response = await fetch(
@@ -74,4 +85,3 @@ export default async function handler(req, res) {
         });
     }
 }
-ساعت
