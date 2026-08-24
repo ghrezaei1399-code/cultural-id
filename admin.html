@@ -323,106 +323,107 @@
 
     <script>
         // ===== خواندن اطلاعات از GitHub =====
-        async function loadUsers() {
+       
+async function loadUsers() {
+    try {
+        const response = await fetch(
+            'https://api.github.com/repos/ghrezaei1399-code/cultural-id/contents/data/active',
+            {
+                headers: { 'Accept': 'application/vnd.github.v3+json' }
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error('خطا در دریافت اطلاعات');
+        }
+
+        const files = await response.json();
+        const jsonFiles = files.filter(f => f.name.endsWith('.json'));
+
+        let total = 0;
+        let golden = 0;
+        let silver = 0;
+        let bronze = 0;
+
+        const users = [];
+
+        for (const file of jsonFiles) {
             try {
-                const response = await fetch(
-                    'https://api.github.com/repos/ghrezaei1399-code/cultural-id/contents/data/active',
-                    {
-                        headers: { 'Accept': 'application/vnd.github.v3+json' }
-                    }
-                );
+                // استفاده از content به جای download_url
+                const decoded = decodeURIComponent(escape(atob(file.content)));
+                const userData = JSON.parse(decoded);
+                
+                users.push(userData);
+                total++;
 
-                if (!response.ok) {
-                    throw new Error('خطا در دریافت اطلاعات');
-                }
-
-                const files = await response.json();
-                const jsonFiles = files.filter(f => f.name.endsWith('.json'));
-
-                let total = 0;
-                let golden = 0;
-                let silver = 0;
-                let bronze = 0;
-
-                const users = [];
-
-                for (const file of jsonFiles) {
-                    try {
-                        const fileResponse = await fetch(file.download_url);
-                        const userData = await fileResponse.json();
-                        
-                        users.push(userData);
-                        total++;
-
-                        if (userData.badge === 'golden') golden++;
-                        else if (userData.badge === 'silver') silver++;
-                        else if (userData.badge === 'bronze') bronze++;
-                    } catch (e) {
-                        console.error('Error loading file:', file.name, e);
-                    }
-                }
-
-                // به‌روزرسانی آمار
-                document.getElementById('totalUsers').textContent = total.toLocaleString('fa-IR');
-                document.getElementById('goldenUsers').textContent = golden.toLocaleString('fa-IR');
-                document.getElementById('silverUsers').textContent = silver.toLocaleString('fa-IR');
-                document.getElementById('bronzeUsers').textContent = bronze.toLocaleString('fa-IR');
-
-                // نمایش جدول
-                const tableBody = document.getElementById('usersTableBody');
-                tableBody.innerHTML = '';
-
-                users.forEach(user => {
-                    const row = document.createElement('tr');
-                    
-                    const badgeClass = user.badge === 'golden' ? 'badge-golden' : 
-                                      user.badge === 'silver' ? 'badge-silver' : 'badge-bronze';
-                    
-                    const badgeText = user.badge === 'golden' ? '🌟 طلایی' : 
-                                     user.badge === 'silver' ? '🥈 نقره‌ای' : '🥉 برنزی';
-
-                    const statusClass = user.status === 'approved' ? 'badge-approved' : 
-                                      user.status === 'rejected' ? 'badge-rejected' : 'badge-pending';
-                    
-                    const statusText = user.status === 'approved' ? 'تأیید شده' : 
-                                     user.status === 'rejected' ? 'رد شده' : 'در انتظار';
-
-                    const valuesText = user.values ? user.values.join(', ') : '---';
-                    const optionalCode = user.optionalCode || '---';
-                    const email = user.communicationEmail || '---';
-                    const date = user.registrationDate ? new Date(user.registrationDate).toLocaleDateString('fa-IR') : '---';
-
-                    const allowConnection = user.allowConnection ? '✅' : '❌';
-                    const allowAchievements = user.allowAchievements ? '✅' : '❌';
-
-                    row.innerHTML = `
-                        <td>${user.cardCode || '---'}</td>
-                        <td>${valuesText}</td>
-                        <td>${optionalCode}</td>
-                        <td>${email}</td>
-                        <td>${date}</td>
-                        <td><span class="badge ${badgeClass}">${badgeText}</span></td>
-                        <td><span class="badge ${statusClass}">${statusText}</span></td>
-                        <td>${allowConnection}</td>
-                        <td>${allowAchievements}</td>
-                        <td>
-                            <button class="btn-small btn-approve" onclick="approveUser('${user.cardCode}')">✓ تأیید</button>
-                            <button class="btn-small btn-reject" onclick="rejectUser('${user.cardCode}')">✗ رد</button>
-                            <button class="btn-small btn-connect" onclick="toggleConnection('${user.cardCode}')">🔗 ارتباط</button>
-                            <button class="btn-small btn-achievement" onclick="toggleAchievements('${user.cardCode}')">🏆 دستاورد</button>
-                            <button class="btn-small btn-delete" onclick="deleteUser('${user.cardCode}')">🗑️ حذف</button>
-                        </td>
-                    `;
-                    
-                    tableBody.appendChild(row);
-                });
-
-            } catch (error) {
-                console.error('Error:', error);
-                alert('خطا در دریافت اطلاعات: ' + error.message);
+                if (userData.badge === 'golden') golden++;
+                else if (userData.badge === 'silver') silver++;
+                else if (userData.badge === 'bronze') bronze++;
+            } catch (e) {
+                console.error('Error loading file:', file.name, e);
             }
         }
 
+        // به‌روزرسانی آمار
+        document.getElementById('totalUsers').textContent = total.toLocaleString('fa-IR');
+        document.getElementById('goldenUsers').textContent = golden.toLocaleString('fa-IR');
+        document.getElementById('silverUsers').textContent = silver.toLocaleString('fa-IR');
+        document.getElementById('bronzeUsers').textContent = bronze.toLocaleString('fa-IR');
+
+        // نمایش جدول
+        const tableBody = document.getElementById('usersTableBody');
+        tableBody.innerHTML = '';
+
+        users.forEach(user => {
+            const row = document.createElement('tr');
+            
+            const badgeClass = user.badge === 'golden' ? 'badge-golden' : 
+                              user.badge === 'silver' ? 'badge-silver' : 'badge-bronze';
+            
+            const badgeText = user.badge === 'golden' ? '🌟 طلایی' : 
+                             user.badge === 'silver' ? '🥈 نقره‌ای' : '🥉 برنزی';
+
+            const statusClass = user.status === 'approved' ? 'badge-approved' : 
+                              user.status === 'rejected' ? 'badge-rejected' : 'badge-pending';
+            
+            const statusText = user.status === 'approved' ? 'تأیید شده' : 
+                             user.status === 'rejected' ? 'رد شده' : 'در انتظار';
+
+            const valuesText = user.values ? user.values.join(', ') : '---';
+            const optionalCode = user.optionalCode || '---';
+            const email = user.communicationEmail || '---';
+            const date = user.registrationDate ? new Date(user.registrationDate).toLocaleDateString('fa-IR') : '---';
+
+            const allowConnection = user.allowConnection ? '✅' : '❌';
+            const allowAchievements = user.allowAchievements ? '✅' : '❌';
+
+            row.innerHTML = `
+                <td>${user.cardCode || '---'}</td>
+                <td>${valuesText}</td>
+                <td>${optionalCode}</td>
+                <td>${email}</td>
+                <td>${date}</td>
+                <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+                <td><span class="badge ${statusClass}">${statusText}</span></td>
+                <td>${allowConnection}</td>
+                <td>${allowAchievements}</td>
+                <td>
+                    <button class="btn-small btn-approve" onclick="approveUser('${user.cardCode}')">✓ تأیید</button>
+                    <button class="btn-small btn-reject" onclick="rejectUser('${user.cardCode}')">✗ رد</button>
+                    <button class="btn-small btn-connect" onclick="toggleConnection('${user.cardCode}')">🔗 ارتباط</button>
+                    <button class="btn-small btn-achievement" onclick="toggleAchievements('${user.cardCode}')">🏆 دستاورد</button>
+                    <button class="btn-small btn-delete" onclick="deleteUser('${user.cardCode}')">🗑️ حذف</button>
+                </td>
+            `;
+            
+            tableBody.appendChild(row);
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        alert('خطا در دریافت اطلاعات: ' + error.message);
+    }
+}
         // ===== تأیید کاربر =====
         async function approveUser(cardCode) {
             if (!confirm(`آیا از تأیید کاربر ${cardCode} مطمئن هستید؟`)) return;
