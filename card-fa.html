@@ -22,7 +22,7 @@
         }
         body.dark { color: #f0e8e0; }
 
-        /* ===== کارت (باریک‌تر - طول کمتر) ===== */
+        /* ===== کارت ===== */
         .card-container {
             max-width: 420px;
             width: 100%;
@@ -40,7 +40,7 @@
             align-items: center;
         }
 
-        /* ===== هولوگرام (فقط تصویر در پایین - بدون کد اضافی) ===== */
+        /* ===== هولوگرام ===== */
         .holo-icon {
             position: absolute;
             bottom: 10px;
@@ -59,7 +59,7 @@
             object-fit: cover;
         }
 
-        /* ===== لوگو (بزرگ و بالاتر) ===== */
+        /* ===== لوگو ===== */
         .logo-wrapper {
             display: block;
             margin: 0 auto 0.1rem auto;
@@ -150,11 +150,17 @@
             color: #c0c0c0;
             box-shadow: 0 0 20px rgba(192, 192, 192, 0.1);
         }
+        .badge.bronze {
+            background: rgba(205, 127, 50, 0.08);
+            border-color: rgba(205, 127, 50, 0.3);
+            color: #cd7f32;
+            box-shadow: 0 0 20px rgba(205, 127, 50, 0.1);
+        }
         .badge-icon {
             font-size: 0.9rem;
         }
 
-        /* ===== دکمه‌های زیر کارت ===== */
+        /* ===== دکمه‌ها ===== */
         .actions {
             max-width: 420px;
             width: 100%;
@@ -265,7 +271,7 @@
     <button class="theme-toggle" id="themeToggle">🌙</button>
 
     <div class="card-container">
-        <!-- هولوگرام (فقط تصویر - بدون کد اضافی) -->
+        <!-- هولوگرام -->
         <div class="holo-icon">
             <img src="assets/hologram.png" alt="Hologram" />
         </div>
@@ -274,7 +280,7 @@
         <div id="loading" class="loading">⏳ در حال بارگیری اطلاعات...</div>
 
         <div id="cardContent" style="display:none;">
-            <!-- لوگوی فارسی (بزرگ و بالاتر) -->
+            <!-- لوگو -->
             <div class="logo-wrapper">
                 <img src="assets/logo-fa.png" alt="لوگوی فارسی" class="logo-img" />
             </div>
@@ -377,8 +383,10 @@
                 const badgeContainer = document.getElementById('badgeContainer');
                 if (user.badge === 'golden') {
                     badgeContainer.innerHTML = '<span class="badge golden"><span class="badge-icon">🌟</span> نشان طلایی</span>';
-                } else {
+                } else if (user.badge === 'silver') {
                     badgeContainer.innerHTML = '<span class="badge silver"><span class="badge-icon">🥈</span> نشان نقره‌ای</span>';
+                } else {
+                    badgeContainer.innerHTML = '<span class="badge bronze"><span class="badge-icon">🥉</span> نشان برنزی</span>';
                 }
 
                 document.getElementById('editLink').href = `edit-fa.html?code=${cardCode}`;
