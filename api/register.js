@@ -7,16 +7,41 @@ export default async function handler(req, res) {
         const userData = req.body;
 
         if (!userData.values || userData.values.length !== 7) {
-            return res.status(400).json({ error: 'لطفاً تمام ۷ ارزش فرهنگی را وارد کنید.' });
+            return res.status(400).json({ error: 'Please fill in all 7 cultural values.' });
         }
 
-        // تولید کد کارت با رعایت کد اختیاری کاربر
+        // تولید کد کارت
         const part1 = Math.floor(1000 + Math.random() * 9000);
         const part2 = Math.floor(1000 + Math.random() * 9000);
-        const optionalCode = userData.optionalCode || '-----'; // اگر کاربر خالی گذاشت
-        // اگر کاربر کد اختیاری وارد کرده، از آن استفاده کن
         const finalOptionalCode = userData.optionalCode ? userData.optionalCode : '-----';
         const cardId = `CIM-${part1}-${part2}-${finalOptionalCode}`;
+
+        // شمارش کاربران فعلی برای تعیین نشان
+        const countResponse = await fetch(
+            `https://api.github.com/repos/ghrezaei1399-code/cultural-id/contents/data/active`,
+            {
+                headers: {
+                    'Authorization': `token ${process.env.GH_TOKEN}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            }
+        );
+
+        let currentCount = 0;
+        if (countResponse.ok) {
+            const files = await countResponse.json();
+            currentCount = files.filter(f => f.name.endsWith('.json')).length;
+        }
+
+        // تعیین نشان بر اساس شماره کاربر
+        let badge = 'bronze';
+        if (currentCount + 1 <= 200) {
+            badge = 'golden';
+        } else if (currentCount + 1 <= 1000) {
+            badge = 'silver';
+        } else {
+            badge = 'bronze';
+        }
 
         const userRecord = {
             cardCode: cardId,
@@ -25,6 +50,7 @@ export default async function handler(req, res) {
             communicationEmail: userData.communicationEmail || '',
             registrationDate: new Date().toISOString(),
             status: 'active',
+            badge: badge,
             referrals: 0,
             achievements: []
         };
@@ -35,7 +61,6 @@ export default async function handler(req, res) {
         }
 
         const filePath = `data/active/${cardId}.json`;
-        // استفاده از encodeURIComponent برای ذخیره درست UTF-8
         const jsonString = JSON.stringify(userRecord, null, 2);
         const encodedContent = encodeURIComponent(jsonString);
         const fileContent = Buffer.from(encodedContent).toString('base64');
@@ -60,7 +85,7 @@ export default async function handler(req, res) {
         if (!response.ok) {
             const errorData = await response.json();
             return res.status(response.status).json({
-                error: 'خطا در ذخیره‌سازی در مخزن',
+                error: 'Error saving to repository',
                 details: errorData.message
             });
         }
@@ -68,12 +93,13 @@ export default async function handler(req, res) {
         return res.status(200).json({
             success: true,
             cardId: cardId,
-            message: 'ثبت‌نام با موفقیت انجام شد!'
+            badge: badge,
+            message: 'Registration successful!'
         });
 
     } catch (error) {
         return res.status(500).json({
-            error: 'خطای داخلی سرور',
+            error: 'Internal server error',
             details: error.message
         });
     }
