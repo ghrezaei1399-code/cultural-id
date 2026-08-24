@@ -348,8 +348,9 @@
 
                 for (const file of jsonFiles) {
                     try {
-                        // استفاده از content به جای download_url
-                        const decoded = decodeURIComponent(escape(atob(file.content)));
+                        // استفاده از TextDecoder برای UTF-8
+                        const bytes = Uint8Array.from(atob(file.content), c => c.charCodeAt(0));
+                        const decoded = new TextDecoder().decode(bytes);
                         const userData = JSON.parse(decoded);
                         
                         users.push(userData);
@@ -489,3 +490,4 @@
     </script>
 </body>
 </html>
+01:27
