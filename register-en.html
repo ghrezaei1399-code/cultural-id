@@ -24,7 +24,6 @@
             max-width: 700px;
             width: 100%;
             background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(0px);
             border-radius: 48px;
             padding: 2.5rem 2rem;
             border: 1px solid rgba(255, 255, 255, 0.02);
@@ -290,6 +289,12 @@
                 <small style="opacity:0.5; font-size:0.7rem;">Optional - you can leave it empty</small>
             </div>
 
+            <div class="form-group">
+                <label>📧 Email for communication (optional)</label>
+                <input type="email" id="communicationEmail" placeholder="Enter your email (optional)" />
+                <small style="opacity:0.5; font-size:0.7rem;">Optional - only for communication</small>
+            </div>
+
             <div class="btn-group">
                 <button type="submit" class="btn btn-primary" id="submitBtn">🎯 Get Your ID</button>
                 <a href="index.html" class="btn btn-secondary">↩ Back</a>
@@ -322,15 +327,6 @@
             });
         })();
 
-        // ===== Generate Card Code =====
-        function generateCardCode() {
-            const part1 = Math.floor(1000 + Math.random() * 9000);
-            const part2 = Math.floor(1000 + Math.random() * 9000);
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            const randomChar = chars.charAt(Math.floor(Math.random() * chars.length));
-            return `CIM-${part1}-${part2}-${randomChar}`;
-        }
-
         // ===== Show Message =====
         function showMessage(text, type) {
             const box = document.getElementById('messageBox');
@@ -343,73 +339,6 @@
             const box = document.getElementById('messageBox');
             box.style.display = 'none';
             box.className = 'message-box';
-        }
-
-        // ===== Save to Repository using GitHub API =====
-        async function saveToRepository(data) {
-            // ==============================================
-            // === Place your token here ===
-            // ==============================================
-            const GITHUB_TOKEN = process.env.GH_TOKEN;
-            // ==============================================
-
-            const REPO_OWNER = 'ghrezaei1399-code';
-            const REPO_NAME = 'cultural-id';
-            const FILE_PATH = `data/active/${data.cardCode}.json`;
-            const COMMIT_MESSAGE = `New user registration: ${data.cardCode}`;
-
-            const content = JSON.stringify(data, null, 2);
-
-            const checkUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
-            const checkResponse = await fetch(checkUrl, {
-                headers: {
-                    'Authorization': `token ${GITHUB_TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json'
-                }
-            });
-
-            if (checkResponse.status === 200) {
-                const existingData = await checkResponse.json();
-                const sha = existingData.sha;
-                const updateResponse = await fetch(checkUrl, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: COMMIT_MESSAGE,
-                        content: btoa(unescape(encodeURIComponent(content))),
-                        sha: sha
-                    })
-                });
-                if (!updateResponse.ok) {
-                    const errorData = await updateResponse.json();
-                    throw new Error(`Error updating file: ${errorData.message || 'Unknown'}`);
-                }
-                return await updateResponse.json();
-            }
-
-            const createResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `token ${GITHUB_TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: COMMIT_MESSAGE,
-                    content: btoa(unescape(encodeURIComponent(content)))
-                })
-            });
-
-            if (!createResponse.ok) {
-                const errorData = await createResponse.json();
-                throw new Error(`Error creating file: ${errorData.message || 'Unknown'}`);
-            }
-
-            return await createResponse.json();
         }
 
         // ===== Form Submission =====
@@ -439,30 +368,36 @@
                 }
 
                 const optionalCode = document.getElementById('optionalCode').value.trim() || '';
-                const cardCode = generateCardCode();
+                const communicationEmail = document.getElementById('communicationEmail').value.trim() || '';
 
                 const userData = {
-                    cardCode: cardCode,
-                    optionalCode: optionalCode,
                     values: values,
-                    registrationDate: new Date().toISOString(),
-                    status: 'active',
-                    referrals: 0,
-                    achievements: []
+                    optionalCode: optionalCode,
+                    communicationEmail: communicationEmail
                 };
 
-                localStorage.setItem('culturalCardData', JSON.stringify(userData));
-                localStorage.setItem('culturalCardCode', cardCode);
+                // ارسال به API سرور Vercel
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userData),
+                });
 
-                // Save to repository (comment this line if token is not set)
-                // await saveToRepository(userData);
+                const result = await response.json();
 
-                showMessage(`✅ Registration successful. Your code: ${cardCode}`, 'success');
-                submitBtn.textContent = '✅ Registered';
-
-                setTimeout(() => {
-                    window.location.href = `card-en.html?code=${cardCode}`;
-                }, 2000);
+                if (response.ok && result.success) {
+                    showMessage(`✅ Registration successful. Your code: ${result.cardId}`, 'success');
+                    submitBtn.textContent = '✅ Registered';
+                    localStorage.setItem('culturalCardCode', result.cardId);
+                    localStorage.setItem('culturalCardBadge', result.badge || 'silver');
+                    setTimeout(() => {
+                        window.location.href = `card-en.html?code=${result.cardId}`;
+                    }, 2000);
+                } else {
+                    throw new Error(result.error || 'Error in registration');
+                }
 
             } catch (error) {
                 console.error('Error:', error);
