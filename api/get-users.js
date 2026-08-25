@@ -30,7 +30,6 @@ export default async function handler(req, res) {
 
     const rawUsers = [];
 
-    // دریافت محتوای همه فایل‌ها
     for (const file of jsonFiles) {
       try {
         const fileRes = await fetch(file.download_url);
@@ -41,14 +40,14 @@ export default async function handler(req, res) {
       }
     }
 
-    // مرتب‌سازی بر اساس تاریخ ثبت‌نام (از قدیمی به جدید)
+    // مرتب‌سازی بر اساس تاریخ ثبت‌نام
     rawUsers.sort((a, b) => {
       const dateA = new Date(a.registrationDate || 0);
       const dateB = new Date(b.registrationDate || 0);
       return dateA - dateB;
     });
 
-    // محاسبه خودکار نشان بر اساس رتبه ثبت‌نام
+    // محاسبه نشان بر اساس رتبه
     const users = rawUsers.map((user, index) => {
       const rank = index + 1;
       let badge = 'bronze';
@@ -58,11 +57,11 @@ export default async function handler(req, res) {
       return {
         ...user,
         rank: rank,
-        badge: badge // بازنویسی نشان بر اساس رتبه واقعی
+        badge: badge
       };
     });
 
-    // محاسبه آمار
+    // آمار
     const stats = {
       total: users.length,
       golden: users.filter(u => u.badge === 'golden').length,
@@ -73,7 +72,7 @@ export default async function handler(req, res) {
       pending: users.filter(u => u.status === 'pending' || !u.status).length
     };
 
-    // محاسبه آمار بر اساس کشور
+    // آمار کشورها
     const countryStats = {};
     users.forEach(user => {
       const country = user.country || 'نامشخص';
@@ -88,12 +87,11 @@ export default async function handler(req, res) {
       countryStats[country].count++;
       countryStats[country].users.push({
         cardCode: user.cardCode,
-        name: user.nameFa || user.nameEn || '---',
-        badge: user.badge
+        badge: user.badge,
+        rank: user.rank
       });
     });
 
-    // تبدیل به آرایه و مرتب‌سازی بر اساس تعداد
     const countries = Object.values(countryStats).sort((a, b) => b.count - a.count);
 
     return res.status(200).json({ users, stats, countries });
