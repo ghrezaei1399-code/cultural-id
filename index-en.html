@@ -11,6 +11,7 @@
             font-family: 'Segoe UI', 'Vazir', sans-serif;
             min-height: 100vh;
             padding: 0.8rem;
+            padding-top: 5.5rem;
             background: linear-gradient(135deg, #fdf6e3 0%, #e8f4f8 50%, #f5e6d3 100%);
             background-attachment: fixed;
             color: #2a1a0a;
@@ -39,6 +40,72 @@
             background-image: 
                 radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.15) 0%, transparent 40%),
                 radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.08) 0%, transparent 40%);
+        }
+
+        .global-call-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: linear-gradient(135deg, #d4af37 0%, #f9e79f 50%, #d4af37 100%);
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4);
+            padding: 0.6rem 1rem;
+            border-bottom: 3px solid #8a6d1f;
+        }
+        body.dark .global-call-banner {
+            background: linear-gradient(135deg, #8a6d1f 0%, #d4af37 50%, #8a6d1f 100%);
+            border-bottom-color: #f9e79f;
+        }
+
+        .banner-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            align-items: center;
+        }
+
+        .banner-slogan {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #2a1a0a;
+            text-align: center;
+            line-height: 1.5;
+            text-shadow: 0 1px 3px rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        body.dark .banner-slogan {
+            color: #2a1a0a;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .banner-icon {
+            font-size: 1.2rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        .banner-slogan-1 {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            border: 1px solid rgba(138, 109, 31, 0.3);
+        }
+
+        .banner-slogan-2 {
+            background: rgba(138, 109, 31, 0.15);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            border: 1px solid rgba(138, 109, 31, 0.4);
+            font-style: italic;
         }
 
         .container {
@@ -704,7 +771,8 @@
         .btn-bottom:hover { transform: scale(1.05); }
 
         @media (min-width: 768px) {
-            body { padding: 1.5rem; }
+            body { padding: 1.5rem; padding-top: 6rem; }
+            .banner-slogan { font-size: 1rem; }
             .hero-header { padding: 1.5rem 1rem; border-radius: 30px; margin-bottom: 1rem; }
             .main-logo { width: 90px; height: 90px; }
             .site-title { font-size: 1.6rem; }
@@ -741,6 +809,20 @@
     </style>
 </head>
 <body>
+
+<div class="global-call-banner">
+    <div class="banner-content">
+        <div class="banner-slogan banner-slogan-1">
+            <span class="banner-icon">🌍</span>
+            <span>Cultural kin of the world, unite to preserve our shared heritage</span>
+        </div>
+        <div class="banner-slogan banner-slogan-2">
+            <span class="banner-icon">⚠️</span>
+            <span>Every lost culture erases a piece of humanity's soul forever</span>
+        </div>
+    </div>
+</div>
+
 <div class="container">
 
     <div class="hero-header">
