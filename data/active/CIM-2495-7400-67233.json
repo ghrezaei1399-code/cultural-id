@@ -1,0 +1,21 @@
+{
+  "cardCode": "CIM-2495-7400-67233",
+  "country": "Iran",
+  "countryCode": "IR",
+  "values": [
+    "دست",
+    "پا",
+    "سر",
+    "کمر",
+    "شکم",
+    "چشم",
+    "دهان"
+  ],
+  "optionalCode": "00000",
+  "communicationEmail": "ghrezaei1399@gmail.com",
+  "registrationDate": "2026-08-25T12:18:40.407Z",
+  "status": "pending",
+  "allowConnection": true,
+  "allowAchievements": false,
+  "culturalInfo": ""
+}
