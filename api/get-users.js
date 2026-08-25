@@ -1,105 +1,77 @@
-// api/get-users.js
+// api/get-user.js
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // استفاده دقیق از نام متغیری که در Vercel دارید
   const token = process.env.GH_TOKEN;
+  const { code } = req.query;
 
-  if (!token) {
-    return res.status(500).json({ error: 'توکن گیت‌هاب (GH_TOKEN) در Vercel تنظیم نشده است' });
+  if (!code) {
+    return res.status(400).json({ error: 'کد کارت الزامی است' });
   }
 
   const owner = 'ghrezaei1399-code';
   const repo = 'cultural-id';
-  const path = 'data/active';
+  const path = `data/active/${code}.json`;
 
   try {
-    const listResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+    // ۱. دریافت اطلاعات فایل خاص کاربر
+    const fileRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Accept': 'application/vnd.github.v3+json'
       }
     });
 
-    if (!listResponse.ok) {
-      throw new Error(`GitHub API Error: ${listResponse.status}`);
+    if (!fileRes.ok) {
+      return res.status(404).json({ error: 'کارت با این کد یافت نشد' });
     }
 
-    const files = await listResponse.json();
+    const fileData = await fileRes.json();
+    const content = Buffer.from(fileData.content, 'base64').toString('utf8');
+    const userData = JSON.parse(content);
+
+    // ۲. دریافت لیست همه کاربران برای محاسبه دقیق رتبه
+    const listRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/active`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+    
+    const files = await listRes.json();
     const jsonFiles = files.filter(f => f.name.endsWith('.json'));
 
-    const rawUsers = [];
-
-    for (const file of jsonFiles) {
+    // دریافت تاریخ ثبت‌نام همه برای مرتب‌سازی دقیق
+    const usersWithDates = [];
+    for (const f of jsonFiles) {
       try {
-        const fileRes = await fetch(file.download_url);
-        const userData = await fileRes.json();
-        rawUsers.push(userData);
-      } catch (e) {
-        console.error('Error parsing file:', file.name, e);
-      }
+        const res = await fetch(f.download_url);
+        const d = await res.json();
+        usersWithDates.push({ name: f.name, date: new Date(d.registrationDate || 0).getTime() });
+      } catch (e) {}
     }
 
-    // مرتب‌سازی بر اساس تاریخ ثبت‌نام
-    rawUsers.sort((a, b) => {
-      const dateA = new Date(a.registrationDate || 0);
-      const dateB = new Date(b.registrationDate || 0);
-      return dateA - dateB;
-    });
+    // مرتب‌سازی از قدیمی به جدید
+    usersWithDates.sort((a, b) => a.date - b.date);
 
-    // محاسبه نشان بر اساس رتبه
-    const users = rawUsers.map((user, index) => {
-      const rank = index + 1;
-      let badge = 'bronze';
-      if (rank <= 200) badge = 'golden';
-      else if (rank <= 1000) badge = 'silver';
-      
-      return {
-        ...user,
-        rank: rank,
-        badge: badge
-      };
-    });
+    // یافتن رتبه این کاربر
+    const userIndex = usersWithDates.findIndex(u => u.name === `${code}.json`);
+    const rank = userIndex !== -1 ? userIndex + 1 : usersWithDates.length;
+    
+    // محاسبه نشان بر اساس رتبه (دقیقاً مطابق ادمین)
+    let badge = 'bronze';
+    if (rank <= 200) badge = 'golden';
+    else if (rank <= 1000) badge = 'silver';
 
-    // آمار
-    const stats = {
-      total: users.length,
-      golden: users.filter(u => u.badge === 'golden').length,
-      silver: users.filter(u => u.badge === 'silver').length,
-      bronze: users.filter(u => u.badge === 'bronze').length,
-      approved: users.filter(u => u.status === 'approved').length,
-      rejected: users.filter(u => u.status === 'rejected').length,
-      pending: users.filter(u => u.status === 'pending' || !u.status).length
-    };
+    userData.rank = rank;
+    userData.badge = badge;
 
-    // آمار کشورها
-    const countryStats = {};
-    users.forEach(user => {
-      const country = user.country || 'نامشخص';
-      if (!countryStats[country]) {
-        countryStats[country] = {
-          country: country,
-          countryCode: user.countryCode || 'XX',
-          count: 0,
-          users: []
-        };
-      }
-      countryStats[country].count++;
-      countryStats[country].users.push({
-        cardCode: user.cardCode,
-        badge: user.badge,
-        rank: user.rank
-      });
-    });
-
-    const countries = Object.values(countryStats).sort((a, b) => b.count - a.count);
-
-    return res.status(200).json({ users, stats, countries });
+    return res.status(200).json({ user: userData });
 
   } catch (error) {
-    console.error('API Error:', error);
+    console.error('Get User Error:', error);
     return res.status(500).json({ error: error.message });
   }
 }
