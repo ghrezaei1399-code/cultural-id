@@ -88,9 +88,11 @@
             border-color: rgba(255, 255, 255, 0.05);
             background: rgba(255, 255, 255, 0.03);
         }
+        /* باکس‌های بزرگ‌تر برای ارزش‌های فرهنگی */
         .form-group textarea {
-            min-height: 60px;
+            min-height: 100px;
             resize: vertical;
+            line-height: 1.6;
         }
         .form-group input::placeholder,
         .form-group textarea::placeholder {
@@ -248,6 +250,62 @@
             margin-bottom: 0.3rem;
         }
         body.dark .email-box label { color: #e8d8c8; }
+        
+        /* بخش اولویت‌بندی */
+        .priority-section {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 16px;
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(30, 10, 0, 0.03);
+        }
+        body.dark .priority-section { border-color: rgba(255, 255, 255, 0.03); }
+        .priority-title {
+            font-weight: 800;
+            font-size: 1rem;
+            color: #2a1a0a;
+            margin-bottom: 0.5rem;
+        }
+        body.dark .priority-title { color: #e8d8c8; }
+        .priority-description {
+            font-size: 0.8rem;
+            color: #4a3a2a;
+            opacity: 0.7;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        body.dark .priority-description { color: #b0a090; }
+        .priority-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.8rem;
+        }
+        .priority-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+        .priority-item label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #3a2a1a;
+        }
+        body.dark .priority-item label { color: #c0b0a0; }
+        .priority-item select {
+            padding: 0.5rem;
+            border-radius: 8px;
+            border: 1px solid rgba(30, 10, 0, 0.02);
+            background: rgba(255, 255, 255, 0.02);
+            font-family: inherit;
+            font-size: 0.85rem;
+            color: #1a0a0a;
+            cursor: pointer;
+        }
+        body.dark .priority-item select {
+            background: rgba(255, 255, 255, 0.02);
+            color: #e8d8c8;
+            border-color: rgba(255, 255, 255, 0.02);
+        }
     </style>
 </head>
 <body>
@@ -262,37 +320,138 @@
         <form id="registerForm">
             <div class="value-item">
                 <label class="value-title">۱. ارزش‌های بومی</label>
-                <input type="text" id="v1" placeholder="مثلاً: صلح‌دوستی، مهمان‌نوازی" required />
+                <textarea id="v1" placeholder="مثلاً: صلح‌دوستی، مهمان‌نوازی، احترام به بزرگان" required></textarea>
             </div>
 
             <div class="value-item">
                 <label class="value-title">۲. دانش فردی</label>
-                <input type="text" id="v2" placeholder="مثلاً: دانش بومی، مهارت‌های سنتی" required />
+                <textarea id="v2" placeholder="مثلاً: دانش بومی، مهارت‌های سنتی، تجربه کاری" required></textarea>
             </div>
 
             <div class="value-item">
                 <label class="value-title">۳. همکاری جمعی</label>
-                <input type="text" id="v3" placeholder="مثلاً: کار گروهی، مشارکت اجتماعی" required />
+                <textarea id="v3" placeholder="مثلاً: کار گروهی، مشارکت اجتماعی، داوطلبی" required></textarea>
             </div>
 
             <div class="value-item">
                 <label class="value-title">۴. تنوع فرهنگی</label>
-                <input type="text" id="v4" placeholder="مثلاً: احترام به فرهنگ‌های مختلف" required />
+                <textarea id="v4" placeholder="مثلاً: احترام به فرهنگ‌های مختلف، یادگیری از دیگران" required></textarea>
             </div>
 
             <div class="value-item">
                 <label class="value-title">۵. صلح پایدار جهانی</label>
-                <input type="text" id="v5" placeholder="مثلاً: گفت‌وگو، حل تعارض" required />
+                <textarea id="v5" placeholder="مثلاً: گفت‌وگو، حل تعارض، دیپلماسی فرهنگی" required></textarea>
             </div>
 
             <div class="value-item">
                 <label class="value-title">۶. محو خشونت</label>
-                <input type="text" id="v6" placeholder="مثلاً: کاهش تعصب، ترویج مدارا" required />
+                <textarea id="v6" placeholder="مثلاً: کاهش تعصب، ترویج مدارا، مبارزه با تبعیض" required></textarea>
             </div>
 
             <div class="value-item">
                 <label class="value-title">۷. اتحاد فرهنگی</label>
-                <input type="text" id="v7" placeholder="مثلاً: پل‌های ارتباطی میان فرهنگ‌ها" required />
+                <textarea id="v7" placeholder="مثلاً: پل‌های ارتباطی میان فرهنگ‌ها، هم‌افزایی" required></textarea>
+            </div>
+
+            <!-- بخش اولویت‌بندی -->
+            <div class="priority-section">
+                <div class="priority-title">🎯 اولویت‌بندی ارزش‌های فرهنگی شما</div>
+                <div class="priority-description">
+                    لطفاً به هر ارزش فرهنگی یک اولویت از ۱ (بیشترین اهمیت) تا ۷ (کمترین اهمیت) بدهید. این اولویت‌ها به سیستم کمک می‌کند همفرهنگان شما را شناسایی کند.
+                </div>
+                <div class="priority-grid">
+                    <div class="priority-item">
+                        <label>ارزش ۱</label>
+                        <select id="p1" required>
+                            <option value="">انتخاب</option>
+                            <option value="1">۱</option>
+                            <option value="2">۲</option>
+                            <option value="3">۳</option>
+                            <option value="4">۴</option>
+                            <option value="5">۵</option>
+                            <option value="6">۶</option>
+                            <option value="7">۷</option>
+                        </select>
+                    </div>
+                    <div class="priority-item">
+                        <label>ارزش ۲</label>
+                        <select id="p2" required>
+                            <option value="">انتخاب</option>
+                            <option value="1">۱</option>
+                            <option value="2">۲</option>
+                            <option value="3">۳</option>
+                            <option value="4">۴</option>
+                            <option value="5">۵</option>
+                            <option value="6">۶</option>
+                            <option value="7">۷</option>
+                        </select>
+                    </div>
+                    <div class="priority-item">
+                        <label>ارزش ۳</label>
+                        <select id="p3" required>
+                            <option value="">انتخاب</option>
+                            <option value="1">۱</option>
+                            <option value="2">۲</option>
+                            <option value="3">۳</option>
+                            <option value="4">۴</option>
+                            <option value="5">۵</option>
+                            <option value="6">۶</option>
+                            <option value="7">۷</option>
+                        </select>
+                    </div>
+                    <div class="priority-item">
+                        <label>ارزش ۴</label>
+                        <select id="p4" required>
+                            <option value="">انتخاب</option>
+                            <option value="1">۱</option>
+                            <option value="2">۲</option>
+                            <option value="3">۳</option>
+                            <option value="4">۴</option>
+                            <option value="5">۵</option>
+                            <option value="6">۶</option>
+                            <option value="7">۷</option>
+                        </select>
+                    </div>
+                    <div class="priority-item">
+                        <label>ارزش ۵</label>
+                        <select id="p5" required>
+                            <option value="">انتخاب</option>
+                            <option value="1">۱</option>
+                            <option value="2">۲</option>
+                            <option value="3">۳</option>
+                            <option value="4">۴</option>
+                            <option value="5">۵</option>
+                            <option value="6">۶</option>
+                            <option value="7">۷</option>
+                        </select>
+                    </div>
+                    <div class="priority-item">
+                        <label>ارزش ۶</label>
+                        <select id="p6" required>
+                            <option value="">انتخاب</option>
+                            <option value="1">۱</option>
+                            <option value="2">۲</option>
+                            <option value="3">۳</option>
+                            <option value="4">۴</option>
+                            <option value="5">۵</option>
+                            <option value="6">۶</option>
+                            <option value="7">۷</option>
+                        </select>
+                    </div>
+                    <div class="priority-item">
+                        <label>ارزش ۷</label>
+                        <select id="p7" required>
+                            <option value="">انتخاب</option>
+                            <option value="1">۱</option>
+                            <option value="2">۲</option>
+                            <option value="3">۳</option>
+                            <option value="4">۴</option>
+                            <option value="5">۵</option>
+                            <option value="6">۶</option>
+                            <option value="7">۷</option>
+                        </select>
+                    </div>
+                </div>
             </div>
 
             <div class="form-group">
@@ -353,6 +512,20 @@
             box.className = 'message-box';
         }
 
+        // ===== اعتبارسنجی اولویت‌ها =====
+        function validatePriorities() {
+            const priorities = [];
+            for (let i = 1; i <= 7; i++) {
+                const val = document.getElementById(`p${i}`).value;
+                if (!val) return { valid: false, error: 'لطفاً اولویت همه ارزش‌ها را مشخص کنید.' };
+                if (priorities.includes(parseInt(val))) {
+                    return { valid: false, error: 'هر اولویت باید منحصر به فرد باشد. نمی‌توانید یک عدد را دو بار انتخاب کنید.' };
+                }
+                priorities.push(parseInt(val));
+            }
+            return { valid: true, priorities: priorities };
+        }
+
         // ===== ارسال فرم به API Vercel =====
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -379,16 +552,22 @@
                     }
                 }
 
+                // اعتبارسنجی اولویت‌ها
+                const priorityCheck = validatePriorities();
+                if (!priorityCheck.valid) {
+                    throw new Error(priorityCheck.error);
+                }
+
                 const optionalCode = document.getElementById('optionalCode').value.trim() || '';
                 const communicationEmail = document.getElementById('communicationEmail').value.trim() || '';
 
                 const userData = {
                     values: values,
+                    priorities: priorityCheck.priorities,
                     optionalCode: optionalCode,
                     communicationEmail: communicationEmail
                 };
 
-                // ارسال به API سرور Vercel
                 const response = await fetch('/api/register', {
                     method: 'POST',
                     headers: {
@@ -400,13 +579,11 @@
                 const result = await response.json();
 
                 if (response.ok && result.success) {
-                    // ✅ اصلاح مهم: استفاده از result.cardCode به جای result.cardId
                     const generatedCode = result.cardCode;
                     showMessage(`✅ ثبت‌نام با موفقیت انجام شد. کد شما: ${generatedCode}`, 'success');
                     submitBtn.textContent = '✅ ثبت شد';
                     localStorage.setItem('culturalCardCode', generatedCode);
                     
-                    // هدایت به صفحه کارت با کد صحیح
                     setTimeout(() => {
                         window.location.href = `card-fa.html?code=${generatedCode}`;
                     }, 2000);
