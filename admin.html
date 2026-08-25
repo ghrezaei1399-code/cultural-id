@@ -21,7 +21,6 @@
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.12);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border-radius: 32px;
             padding: 2rem;
             border: 1px solid rgba(255, 255, 255, 0.15);
@@ -46,7 +45,6 @@
             padding-bottom: 1rem;
         }
 
-        /* ===== آمار ===== */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -85,18 +83,12 @@
         .stat-card.golden { background: rgba(212, 175, 55, 0.15); }
         .stat-card.silver { background: rgba(192, 192, 192, 0.2); }
         .stat-card.bronze { background: rgba(205, 127, 50, 0.15); }
-        .stat-card.approved { background: rgba(50, 200, 50, 0.15); }
-        .stat-card.pending { background: rgba(255, 200, 50, 0.15); }
 
-        /* ===== ماژول کشویی کشورها ===== */
         .section-title {
             font-size: 1.1rem;
             font-weight: 700;
             color: #0a0a1a;
             margin: 1.5rem 0 0.8rem 0;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
         .country-selector {
@@ -104,7 +96,6 @@
             border-radius: 16px;
             padding: 1rem;
             margin-bottom: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .country-dropdown {
@@ -118,39 +109,6 @@
             font-weight: 600;
             cursor: pointer;
             margin-bottom: 1rem;
-        }
-
-        .country-list {
-            display: none;
-            max-height: 300px;
-            overflow-y: auto;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            padding: 0.5rem;
-        }
-
-        .country-list.active { display: block; }
-
-        .country-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.6rem 0.8rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.2s;
-            margin-bottom: 0.3rem;
-        }
-
-        .country-item:hover { background: rgba(255, 255, 255, 0.15); }
-
-        .country-item .name { font-weight: 600; color: #0a0a1a; }
-        .country-item .count {
-            background: rgba(0, 0, 0, 0.1);
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            color: #0a0a1a;
         }
 
         .country-users {
@@ -171,7 +129,6 @@
             font-size: 0.85rem;
         }
 
-        /* ===== جدول ===== */
         .table-container {
             overflow-x: auto;
             border-radius: 16px;
@@ -226,15 +183,10 @@
             border: none;
             cursor: pointer;
             margin: 0.1rem;
-            transition: 0.2s;
         }
 
-        .btn-small:hover { transform: scale(1.05); }
         .btn-view { background: rgba(50, 150, 200, 0.2); color: #0a4a6a; }
-        .btn-approve { background: rgba(50, 200, 50, 0.2); color: #0a6a0a; }
-        .btn-reject { background: rgba(200, 50, 50, 0.2); color: #6a1a1a; }
 
-        /* ===== مودال ===== */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -258,7 +210,6 @@
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
         }
 
         .modal-header {
@@ -270,10 +221,7 @@
             padding-bottom: 1rem;
         }
 
-        .modal-header h2 {
-            font-size: 1.3rem;
-            color: #0a0a1a;
-        }
+        .modal-header h2 { font-size: 1.3rem; color: #0a0a1a; }
 
         .modal-close {
             background: rgba(200, 50, 50, 0.1);
@@ -287,7 +235,7 @@
 
         .modal-body .info-row {
             display: grid;
-            grid-template-columns: 150px 1fr;
+            grid-template-columns: 180px 1fr;
             gap: 0.5rem;
             padding: 0.6rem 0;
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
@@ -319,13 +267,10 @@
             font-size: 0.9rem;
             border: none;
             cursor: pointer;
-            transition: 0.3s;
         }
 
-        .btn-modal:hover { transform: translateY(-2px); }
         .btn-modal.approve { background: rgba(50, 200, 50, 0.2); color: #0a6a0a; }
         .btn-modal.reject { background: rgba(200, 50, 50, 0.2); color: #6a1a1a; }
-        .btn-modal.delete { background: rgba(200, 50, 50, 0.3); color: #6a1a1a; }
 
         .admin-actions {
             display: flex;
@@ -347,6 +292,16 @@
             color: #0a0a1a;
         }
 
+        .note {
+            text-align: center;
+            font-size: 0.75rem;
+            opacity: 0.6;
+            margin-top: 1.5rem;
+            color: #0a0a1a;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 1rem;
+        }
+
         @media (max-width: 768px) {
             .modal-body .info-row {
                 grid-template-columns: 1fr;
@@ -357,9 +312,8 @@
 <body>
     <div class="container">
         <h1>🛡️ داشبورد ادمین</h1>
-        <div class="subtitle">مدیریت کارت‌های جهانی هویت هوشمند فرهنگی</div>
+        <div class="subtitle">مدیریت کارت‌های جهانی هویت هوشمند فرهنگی • کاملاً ناشناس</div>
 
-        <!-- ===== آمار ===== -->
         <div class="stats-grid">
             <div class="stat-card">
                 <span class="number" id="totalUsers">۰</span>
@@ -367,45 +321,35 @@
             </div>
             <div class="stat-card golden">
                 <span class="number" id="goldenUsers">۰</span>
-                <div class="label">🌟 نشان طلایی (۱-۲۰۰)</div>
+                <div class="label">🌟 طلایی (۱-۲۰۰)</div>
             </div>
             <div class="stat-card silver">
                 <span class="number" id="silverUsers">۰</span>
-                <div class="label">🥈 نشان نقره‌ای (۲۰۱-۱۰۰۰)</div>
+                <div class="label">🥈 نقره‌ای (۲۰۱-۱۰۰۰)</div>
             </div>
             <div class="stat-card bronze">
                 <span class="number" id="bronzeUsers">۰</span>
-                <div class="label">🥉 نشان برنزی (۱۰۰۱-۱۰۰۰۰)</div>
-            </div>
-            <div class="stat-card approved">
-                <span class="number" id="approvedUsers">۰</span>
-                <div class="label">✅ تأیید شده</div>
-            </div>
-            <div class="stat-card pending">
-                <span class="number" id="pendingUsers">۰</span>
-                <div class="label">⏳ در انتظار</div>
+                <div class="label">🥉 برنزی (۱۰۰۱-۱۰۰۰۰)</div>
             </div>
         </div>
 
-        <!-- ===== ماژول کشویی کشورها ===== -->
-        <div class="section-title">🌍 آمار بر اساس کشور</div>
+        <div class="section-title">🌍 آمار بر اساس کشور (تشخیص از IP)</div>
         <div class="country-selector">
             <select class="country-dropdown" id="countryDropdown" onchange="showCountryUsers(this.value)">
-                <option value="">-- انتخاب کشور برای مشاهده اعضا --</option>
+                <option value="">-- انتخاب کشور --</option>
             </select>
             <div id="countryUsersList" class="country-users"></div>
         </div>
 
-        <!-- ===== جدول کاربران ===== -->
-        <div class="section-title">📋 کاربران ثبت‌نام شده</div>
+        <div class="section-title">📋 کاربران ثبت‌نام شده (فقط اطلاعات فرهنگی)</div>
         <div class="table-container">
             <table class="admin-table">
                 <thead>
                     <tr>
                         <th>رتبه</th>
                         <th>کد کارت</th>
-                        <th>نام</th>
                         <th>کشور</th>
+                        <th>ارزش‌ها</th>
                         <th>تاریخ</th>
                         <th>نشان</th>
                         <th>وضعیت</th>
@@ -421,21 +365,20 @@
         <div class="admin-actions">
             <a href="index.html" class="btn">↩ بازگشت به صفحه اصلی</a>
         </div>
+
+        <div class="note">
+            🔒 کاملاً ناشناس • بدون اطلاعات هویتی • فقط اطلاعات فرهنگی
+        </div>
     </div>
 
-    <!-- ===== مودال نمایش جزئیات ===== -->
     <div class="modal-overlay" id="userModal">
         <div class="modal">
             <div class="modal-header">
                 <h2 id="modalTitle">جزئیات کاربر</h2>
                 <button class="modal-close" onclick="closeModal()">✕</button>
             </div>
-            <div class="modal-body" id="modalBody">
-                <!-- محتوای مودال به صورت داینامیک پر می‌شود -->
-            </div>
-            <div class="modal-actions" id="modalActions">
-                <!-- دکمه‌های تأیید/رد -->
-            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-actions" id="modalActions"></div>
         </div>
     </div>
 
@@ -443,7 +386,6 @@
         let allUsers = [];
         let allCountries = [];
 
-        // ===== بارگذاری داده‌ها =====
         async function loadUsers() {
             try {
                 const response = await fetch('/api/get-users');
@@ -453,15 +395,11 @@
                 allUsers = data.users;
                 allCountries = data.countries;
 
-                // به‌روزرسانی آمار
                 document.getElementById('totalUsers').textContent = data.stats.total.toLocaleString('fa-IR');
                 document.getElementById('goldenUsers').textContent = data.stats.golden.toLocaleString('fa-IR');
                 document.getElementById('silverUsers').textContent = data.stats.silver.toLocaleString('fa-IR');
                 document.getElementById('bronzeUsers').textContent = data.stats.bronze.toLocaleString('fa-IR');
-                document.getElementById('approvedUsers').textContent = data.stats.approved.toLocaleString('fa-IR');
-                document.getElementById('pendingUsers').textContent = data.stats.pending.toLocaleString('fa-IR');
 
-                // پر کردن dropdown کشورها
                 const dropdown = document.getElementById('countryDropdown');
                 dropdown.innerHTML = '<option value="">-- انتخاب کشور --</option>';
                 allCountries.forEach(c => {
@@ -471,7 +409,6 @@
                     dropdown.appendChild(opt);
                 });
 
-                // پر کردن جدول
                 renderTable(allUsers);
 
             } catch (error) {
@@ -481,7 +418,6 @@
             }
         }
 
-        // ===== نمایش جدول =====
         function renderTable(users) {
             const tbody = document.getElementById('usersTableBody');
             if (users.length === 0) {
@@ -497,15 +433,15 @@
                 const statusClass = `badge-${status}`;
                 const statusText = status === 'approved' ? 'تأیید شده' : 
                                   status === 'rejected' ? 'رد شده' : 'در انتظار';
-                const name = user.nameFa || user.nameEn || '---';
+                const valuesText = user.values ? user.values.slice(0, 2).join('، ') + (user.values.length > 2 ? '...' : '') : '---';
                 const date = user.registrationDate ? new Date(user.registrationDate).toLocaleDateString('fa-IR') : '---';
 
                 return `
                     <tr>
                         <td>${user.rank}</td>
-                        <td>${user.cardCode || '---'}</td>
-                        <td>${name}</td>
+                        <td style="font-family: monospace; font-size: 0.75rem;">${user.cardCode || '---'}</td>
                         <td>${user.country || '---'}</td>
+                        <td>${valuesText}</td>
                         <td>${date}</td>
                         <td><span class="badge ${badgeClass}">${badgeText}</span></td>
                         <td><span class="badge ${statusClass}">${statusText}</span></td>
@@ -517,7 +453,6 @@
             }).join('');
         }
 
-        // ===== نمایش کاربران یک کشور =====
         function showCountryUsers(country) {
             const container = document.getElementById('countryUsersList');
             if (!country) {
@@ -534,7 +469,8 @@
                 </div>
                 ${countryData.users.map(u => `
                     <div class="country-user-item">
-                        <span>${u.name} (${u.cardCode})</span>
+                        <span style="font-family: monospace; font-size: 0.8rem;">${u.cardCode}</span>
+                        <span>رتبه: ${u.rank}</span>
                         <span class="badge badge-${u.badge}">${u.badge === 'golden' ? '🌟' : u.badge === 'silver' ? '🥈' : '🥉'}</span>
                     </div>
                 `).join('')}
@@ -542,30 +478,24 @@
             container.classList.add('active');
         }
 
-        // ===== نمایش جزئیات کاربر در مودال =====
         function viewUser(cardCode) {
             const user = allUsers.find(u => u.cardCode === cardCode);
             if (!user) return;
 
-            document.getElementById('modalTitle').textContent = `جزئیات: ${user.nameFa || user.nameEn || '---'}`;
+            document.getElementById('modalTitle').textContent = `جزئیات فرهنگی: ${user.cardCode}`;
             
             const body = document.getElementById('modalBody');
             body.innerHTML = `
-                <div class="info-row"><div class="info-label">کد کارت:</div><div class="info-value">${user.cardCode}</div></div>
+                <div class="info-row"><div class="info-label">کد کارت:</div><div class="info-value" style="font-family: monospace;">${user.cardCode}</div></div>
                 <div class="info-row"><div class="info-label">رتبه ثبت‌نام:</div><div class="info-value">${user.rank}</div></div>
-                <div class="info-row"><div class="info-label">نام (فارسی):</div><div class="info-value">${user.nameFa || '---'}</div></div>
-                <div class="info-row"><div class="info-label">نام (انگلیسی):</div><div class="info-value">${user.nameEn || '---'}</div></div>
-                <div class="info-row"><div class="info-label">نام خانوادگی (فارسی):</div><div class="info-value">${user.familyFa || '---'}</div></div>
-                <div class="info-row"><div class="info-label">نام خانوادگی (انگلیسی):</div><div class="info-value">${user.familyEn || '---'}</div></div>
-                <div class="info-row"><div class="info-label">کشور:</div><div class="info-value">${user.country || '---'}</div></div>
-                <div class="info-row"><div class="info-label">ایمیل ارتباطی:</div><div class="info-value">${user.communicationEmail || '---'}</div></div>
+                <div class="info-row"><div class="info-label">کشور (از IP):</div><div class="info-value">${user.country || '---'}</div></div>
                 <div class="info-row"><div class="info-label">تاریخ ثبت‌نام:</div><div class="info-value">${user.registrationDate ? new Date(user.registrationDate).toLocaleDateString('fa-IR') : '---'}</div></div>
-                <div class="info-row"><div class="info-label">نشان:</div><div class="info-value"><span class="badge badge-${user.badge}">${user.badge}</span></div></div>
-                <div class="info-row"><div class="info-label">وضعیت:</div><div class="info-value"><span class="badge badge-${user.status || 'pending'}">${user.status || 'pending'}</span></div></div>
+                <div class="info-row"><div class="info-label">نشان:</div><div class="info-value"><span class="badge badge-${user.badge}">${user.badge === 'golden' ? '🌟 طلایی' : user.badge === 'silver' ? '🥈 نقره‌ای' : '🥉 برنزی'}</span></div></div>
+                <div class="info-row"><div class="info-label">وضعیت:</div><div class="info-value"><span class="badge badge-${user.status || 'pending'}">${user.status === 'approved' ? 'تأیید شده' : user.status === 'rejected' ? 'رد شده' : 'در انتظار'}</span></div></div>
                 <div class="info-row"><div class="info-label">ارزش‌های فرهنگی:</div><div class="info-value">${user.values ? user.values.join('، ') : '---'}</div></div>
                 <div class="info-row"><div class="info-label">کد اختیاری:</div><div class="info-value">${user.optionalCode || '---'}</div></div>
+                <div class="info-row"><div class="info-label">ایمیل ارتباطی:</div><div class="info-value">${user.communicationEmail || 'ثبت نشده'}</div></div>
                 <div class="info-row"><div class="info-label">اجازه ارتباط:</div><div class="info-value">${user.allowConnection ? '✅ بله' : '❌ خیر'}</div></div>
-                <div class="info-row"><div class="info-label">اجازه نمایش دستاوردها:</div><div class="info-value">${user.allowAchievements ? '✅ بله' : '❌ خیر'}</div></div>
                 ${user.culturalInfo ? `<div class="info-row"><div class="info-label">اطلاعات فرهنگی:</div><div class="info-value">${user.culturalInfo}</div></div>` : ''}
             `;
 
@@ -573,7 +503,6 @@
             actions.innerHTML = `
                 <button class="btn-modal approve" onclick="approveUser('${user.cardCode}')">✓ تأیید</button>
                 <button class="btn-modal reject" onclick="rejectUser('${user.cardCode}')">✗ رد</button>
-                <button class="btn-modal delete" onclick="deleteUser('${user.cardCode}')">🗑️ حذف</button>
             `;
 
             document.getElementById('userModal').classList.add('active');
@@ -583,28 +512,20 @@
             document.getElementById('userModal').classList.remove('active');
         }
 
-        // ===== عملیات‌ها (در مرحله بعد با API واقعی متصل می‌شوند) =====
         async function approveUser(cardCode) {
             if (!confirm(`تأیید کاربر ${cardCode}؟`)) return;
-            alert('⚠️ در مرحله بعد، API تأیید واقعی پیاده‌سازی خواهد شد.');
+            alert('⚠️ API تأیید در مرحله بعد پیاده‌سازی خواهد شد.');
         }
 
         async function rejectUser(cardCode) {
             if (!confirm(`رد کاربر ${cardCode}؟`)) return;
-            alert('⚠️ در مرحله بعد، API رد واقعی پیاده‌سازی خواهد شد.');
+            alert('⚠️ API رد در مرحله بعد پیاده‌سازی خواهد شد.');
         }
 
-        async function deleteUser(cardCode) {
-            if (!confirm(`حذف کاربر ${cardCode}؟ این عمل غیرقابل بازگشت است.`)) return;
-            alert('⚠️ در مرحله بعد، API حذف واقعی پیاده‌سازی خواهد شد.');
-        }
-
-        // بستن مودال با کلیک روی overlay
         document.getElementById('userModal').addEventListener('click', function(e) {
             if (e.target === this) closeModal();
         });
 
-        // بارگذاری اولیه
         loadUsers();
     </script>
 </body>
