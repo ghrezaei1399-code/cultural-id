@@ -47,8 +47,11 @@ export default async function handler(req, res) {
       return dateA - dateB;
     });
 
-    // محاسبه نشان بر اساس رتبه
-    const users = rawUsers.map((user, index) => {
+    // ⭐ حذف کاربران رد شده از لیست اصلی
+    const activeUsers = rawUsers.filter(user => user.status !== 'rejected');
+
+    // محاسبه نشان بر اساس رتبه (فقط برای کاربران فعال)
+    const users = activeUsers.map((user, index) => {
       const rank = index + 1;
       let badge = 'bronze';
       if (rank <= 200) badge = 'golden';
@@ -61,18 +64,18 @@ export default async function handler(req, res) {
       };
     });
 
-    // آمار
+    // آمار (فقط کاربران فعال)
     const stats = {
       total: users.length,
       golden: users.filter(u => u.badge === 'golden').length,
       silver: users.filter(u => u.badge === 'silver').length,
       bronze: users.filter(u => u.badge === 'bronze').length,
       approved: users.filter(u => u.status === 'approved').length,
-      rejected: users.filter(u => u.status === 'rejected').length,
+      rejected: rawUsers.filter(u => u.status === 'rejected').length, // تعداد رد شده‌ها برای اطلاع
       pending: users.filter(u => u.status === 'pending' || !u.status).length
     };
 
-    // آمار کشورها
+    // آمار کشورها (فقط کاربران فعال)
     const countryStats = {};
     users.forEach(user => {
       const country = user.country || 'نامشخص';
