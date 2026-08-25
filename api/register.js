@@ -1,111 +1,116 @@
-// api/get-users.js
+// api/register.js
 export default async function handler(req, res) {
-  if (req.method !== 'GET') {
+  if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // چک کردن چند نام مختلف برای توکن
-  const token = process.env.GITHUB_TOKEN || 
-                process.env.GH_TOKEN || 
-                process.env.GITHUB_ACCESS_TOKEN ||
-                process.env.TOKEN;
-
+  const token = process.env.GH_TOKEN;
   if (!token) {
-    console.error('Available env vars:', Object.keys(process.env).filter(k => k.includes('TOKEN') || k.includes('GITHUB')));
-    return res.status(500).json({ 
-      error: 'توکن گیت‌هاب تنظیم نشده است. لطفاً GITHUB_TOKEN را در Vercel تنظیم کنید.' 
-    });
+    return res.status(500).json({ error: 'توکن گیت‌هاب تنظیم نشده است' });
   }
 
-  const owner = 'ghrezaei1399-code';
-  const repo = 'cultural-id';
-  const path = 'data/active';
-
   try {
-    const listResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json'
-      }
-    });
-
-    if (!listResponse.ok) {
-      throw new Error(`GitHub API Error: ${listResponse.status}`);
-    }
-
-    const files = await listResponse.json();
-    const jsonFiles = files.filter(f => f.name.endsWith('.json'));
-
-    const rawUsers = [];
-
-    for (const file of jsonFiles) {
+    const data = req.body;
+    
+    // ===== تشخیص کشور از IP (بهینه‌شده و پایدار) =====
+    // استخراج IP واقعی کاربر از هدرهای درخواست
+    const ip = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress;
+    let country = 'نامشخص';
+    let countryCode = 'XX';
+    
+    // اگر IP معتبر باشد (لوکال هاست نباشد)
+    if (ip && ip !== '::1' && !ip.startsWith('127.0.0.1')) {
       try {
-        const fileRes = await fetch(file.download_url);
-        const userData = await fileRes.json();
-        rawUsers.push(userData);
+        // استفاده از سرویس رایگان و بدون محدودیت سخت‌گیرانه ipwho.is
+        const ipResponse = await fetch(`https://ipwho.is/${ip}`);
+        if (ipResponse.ok) {
+          const ipData = await ipResponse.json();
+          if (ipData.success) {
+            country = ipData.country || 'نامشخص';
+            countryCode = ipData.country_code || 'XX';
+          }
+        }
       } catch (e) {
-        console.error('Error parsing file:', file.name, e);
+        console.error('Error fetching IP location:', e);
+        // در صورت خطا، کشور همان "نامشخص" باقی می‌ماند
       }
     }
 
-    // مرتب‌سازی بر اساس تاریخ ثبت‌نام
-    rawUsers.sort((a, b) => {
-      const dateA = new Date(a.registrationDate || 0);
-      const dateB = new Date(b.registrationDate || 0);
-      return dateA - dateB;
-    });
+    // ===== تولید کد کارت ۳ بخشی =====
+    const part1 = Math.floor(1000 + Math.random() * 9000); // ۴ رقم
+    const part2 = Math.floor(1000 + Math.random() * 9000); // ۴ رقم
+    const part3 = Math.floor(10000 + Math.random() * 90000); // ۵ رقم
+    const cardCode = `CIM-${part1}-${part2}-${part3}`;
 
-    // محاسبه نشان بر اساس رتبه
-    const users = rawUsers.map((user, index) => {
-      const rank = index + 1;
-      let badge = 'bronze';
-      if (rank <= 200) badge = 'golden';
-      else if (rank <= 1000) badge = 'silver';
-      
-      return {
-        ...user,
-        rank: rank,
-        badge: badge
-      };
-    });
-
-    // آمار
-    const stats = {
-      total: users.length,
-      golden: users.filter(u => u.badge === 'golden').length,
-      silver: users.filter(u => u.badge === 'silver').length,
-      bronze: users.filter(u => u.badge === 'bronze').length,
-      approved: users.filter(u => u.status === 'approved').length,
-      rejected: users.filter(u => u.status === 'rejected').length,
-      pending: users.filter(u => u.status === 'pending' || !u.status).length
+    // ===== ساخت داده کاربر (فقط اطلاعات فرهنگی و ناشناس) =====
+    const userData = {
+      cardCode: cardCode,
+      country: country,
+      countryCode: countryCode,
+      values: data.values || [],
+      optionalCode: data.optionalCode || '',
+      communicationEmail: data.communicationEmail || '',
+      registrationDate: new Date().toISOString(),
+      status: 'pending',
+      allowConnection: !!data.communicationEmail,
+      allowAchievements: false, // فقط ادمین می‌تواند این را برای ۲۰۰ نفر اول فعال کند
+      culturalInfo: data.culturalInfo || ''
     };
 
-    // آمار کشورها
-    const countryStats = {};
-    users.forEach(user => {
-      const country = user.country || 'نامشخص';
-      if (!countryStats[country]) {
-        countryStats[country] = {
-          country: country,
-          countryCode: user.countryCode || 'XX',
-          count: 0,
-          users: []
-        };
-      }
-      countryStats[country].count++;
-      countryStats[country].users.push({
-        cardCode: user.cardCode,
-        badge: user.badge,
-        rank: user.rank
+    // ===== Commit به گیت‌هاب =====
+    const owner = 'ghrezaei1399-code';
+    const repo = 'cultural-id';
+    const path = `data/active/${cardCode}.json`;
+    const content = Buffer.from(JSON.stringify(userData, null, 2)).toString('base64');
+
+    // بررسی وجود فایل (برای به‌روزرسانی)
+    let sha = null;
+    try {
+      const fileRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
       });
+      if (fileRes.ok) {
+        const fileData = await fileRes.json();
+        sha = fileData.sha;
+      }
+    } catch (e) {
+      // فایل وجود ندارد، مشکلی نیست (ثبت‌نام جدید)
+    }
+
+    // ساخت Commit
+    const commitData = {
+      message: `Register new user: ${cardCode} from ${country}`,
+      content: content,
+      branch: 'main'
+    };
+    if (sha) commitData.sha = sha;
+
+    const commitResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(commitData)
     });
 
-    const countries = Object.values(countryStats).sort((a, b) => b.count - a.count);
+    if (!commitResponse.ok) {
+      throw new Error(`GitHub API Error: ${commitResponse.status}`);
+    }
 
-    return res.status(200).json({ users, stats, countries });
+    return res.status(200).json({ 
+      success: true, 
+      cardCode: cardCode,
+      country: country,
+      message: 'ثبت‌نام با موفقیت و به صورت ناشناس انجام شد'
+    });
 
   } catch (error) {
-    console.error('API Error:', error);
+    console.error('Register Error:', error);
     return res.status(500).json({ error: error.message });
   }
 }
