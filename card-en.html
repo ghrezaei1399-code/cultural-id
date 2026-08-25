@@ -4,328 +4,301 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Cultural ID Card</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
             font-family: 'Segoe UI', 'Vazir', sans-serif;
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
             padding: 2rem 1rem;
             background-image: url('assets/pisa.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            color: #1a0a0a;
+            background-repeat: no-repeat;
+            color: #f0f0f0;
         }
-        body.dark { color: #f0e8e0; }
-
-        /* ===== Card ===== */
+        
+        /* Card Container: Vertical, centered, golden borders */
         .card-container {
-            max-width: 420px;
-            width: 100%;
+            width: 340px;
+            min-height: 520px;
             background: #0a0a0a;
-            border-radius: 32px;
-            padding: 1.5rem 2rem 2.5rem 2rem;
-            border: 3px solid #d4af37;
-            box-shadow: 0 0 40px rgba(212, 175, 55, 0.2), inset 0 0 60px rgba(212, 175, 55, 0.05);
+            border: 2px solid #d4af37;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.5), inset 0 0 15px rgba(212, 175, 55, 0.15);
+            border-radius: 20px;
+            padding: 1.5rem 1.2rem;
+            display: none;
+            flex-direction: column;
+            align-items: center;
             text-align: center;
+            gap: 1.2rem;
             position: relative;
-            min-height: 380px;
+        }
+        
+        /* Logo: Top, larger, golden circle, transparent bg */
+        .logo-container {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 3px solid #d4af37;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.6), inset 0 0 10px rgba(212, 175, 55, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+        }
+        
+        .card-logo {
+            width: 55px;
+            height: 55px;
+            object-fit: contain;
+            background: transparent !important;
+        }
+        
+        .card-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #d4af37;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+            line-height: 1.4;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Code Box */
+        .card-code-box {
+            width: 100%;
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px solid #d4af37;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+            border-radius: 10px;
+            padding: 0.9rem;
+            text-align: center;
+        }
+        
+        .optional-code-formatted {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.15rem;
+            color: #f0f0f0;
+            letter-spacing: 1.5px;
+            font-weight: bold;
+        }
+        
+        /* Values Section: Compact, centered */
+        .values-section {
+            width: 100%;
+            background: rgba(212, 175, 55, 0.05);
+            border: 1px solid #d4af37;
+            border-radius: 10px;
+            padding: 0.8rem;
+        }
+        
+        .values-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+        }
+        
+        .value-item {
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid #d4af37;
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: 0.7rem;
+            color: #d4af37;
+            white-space: nowrap;
+            font-weight: 600;
+        }
+        
+        /* Hologram: Bottom, golden box */
+        .hologram-box {
+            width: 65px;
+            height: 65px;
+            border: 2px solid #d4af37;
+            border-radius: 10px;
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.5), inset 0 0 10px rgba(212, 175, 55, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(212, 175, 55, 0.1);
+            margin-top: auto;
+        }
+        
+        .hologram {
+            width: 42px;
+            height: 42px;
+            opacity: 0.9;
+        }
+        
+        /* Bottom Modules */
+        .bottom-modules {
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+            width: 340px;
             align-items: center;
         }
-
-        /* ===== Hologram ===== */
-        .holo-icon {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
+        
+        /* Beautiful Buttons */
+        .action-btn {
+            width: 100%;
+            padding: 0.9rem;
+            background: linear-gradient(135deg, #d4af37 0%, #f4d03f 50%, #b8962e 100%);
+            color: #0a0a0a;
+            border: 1px solid #f9d976;
+            border-radius: 12px;
+            font-family: 'Segoe UI', 'Vazir', sans-serif;
+            font-weight: 800;
+            font-size: 0.95rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4), inset 0 1px 0 rgba(255,255,255,0.4);
+            transition: all 0.3s ease;
+            position: relative;
             overflow: hidden;
-            border: 2px solid #d4af37;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
         }
-        .holo-icon img {
+        
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+            transition: left 0.6s;
         }
-
-        /* ===== Logo ===== */
-        .logo-wrapper {
-            display: block;
-            margin: 0 auto 0.1rem auto;
-            text-align: center;
-            position: relative;
-            z-index: 10;
+        
+        .action-btn:hover::before {
+            left: 100%;
         }
-        .logo-img {
-            max-width: 200px;
-            max-height: 100px;
-            object-fit: contain;
-            display: block;
-            margin: 0 auto;
-            mix-blend-mode: multiply;
-            border: 3px solid #d4af37;
-            border-radius: 50%;
-            background: rgba(212, 175, 55, 0.1);
-            box-shadow: 0 0 40px rgba(212, 175, 55, 0.3);
-            padding: 8px;
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.6), inset 0 1px 0 rgba(255,255,255,0.4);
         }
-        body.dark .logo-img {
-            mix-blend-mode: screen;
-        }
-
-        /* ===== Card Title ===== */
-        .card-title {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #d4af37;
-            letter-spacing: 2px;
-            padding: 0.4rem 1.5rem;
-            border: 2px solid #d4af37;
-            border-radius: 40px;
-            display: inline-block;
-            margin: 0.2rem 0 0.6rem 0;
-            background: rgba(212, 175, 55, 0.03);
-            box-shadow: 0 0 25px rgba(212, 175, 55, 0.08);
-            text-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
-            position: relative;
-            z-index: 5;
-        }
-
-        /* ===== Card Code ===== */
-        .card-code {
-            font-size: 1.2rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            padding: 0.7rem 1rem;
-            border-radius: 16px;
-            border: 2px solid #d4af37;
-            margin: 0.5rem 0 0.3rem 0;
-            direction: ltr;
-            font-family: 'Courier New', monospace;
-            color: #f9e79f;
-            background: rgba(255, 255, 255, 0.02);
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.08), inset 0 0 30px rgba(212, 175, 55, 0.03);
-            text-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
-            position: relative;
-            z-index: 5;
-        }
-
-        /* ===== Badge ===== */
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 0.2rem 1.2rem;
-            border-radius: 40px;
-            font-size: 0.65rem;
-            font-weight: 700;
-            margin: 0.2rem 0;
-            background: rgba(212, 175, 55, 0.08);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            color: #d4af37;
-            letter-spacing: 1px;
-            position: relative;
-            z-index: 5;
-        }
-        .badge.golden {
-            background: rgba(212, 175, 55, 0.12);
-            border-color: #d4af37;
-            color: #f9e79f;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
-        }
-        .badge.silver {
-            background: rgba(192, 192, 192, 0.08);
-            border-color: rgba(192, 192, 192, 0.3);
-            color: #c0c0c0;
-            box-shadow: 0 0 20px rgba(192, 192, 192, 0.1);
-        }
-        .badge.bronze {
-            background: rgba(205, 127, 50, 0.08);
-            border-color: rgba(205, 127, 50, 0.3);
-            color: #cd7f32;
-            box-shadow: 0 0 20px rgba(205, 127, 50, 0.1);
-        }
-        .badge-icon {
-            font-size: 0.9rem;
-        }
-
-        /* ===== Buttons ===== */
-        .actions {
-            max-width: 420px;
+        
+        /* Notice Box */
+        .notice-box {
             width: 100%;
-            margin-top: 1.5rem;
-            display: flex;
-            gap: 0.8rem;
-            flex-wrap: wrap;
-            justify-content: center;
-            position: relative;
-            z-index: 5;
-        }
-        .btn {
-            padding: 0.5rem 1.5rem;
-            border-radius: 60px;
-            font-weight: 700;
-            font-size: 0.8rem;
-            text-decoration: none;
+            background: rgba(10, 10, 10, 0.85);
+            border: 1px solid #d4af37;
+            border-radius: 12px;
+            padding: 1rem;
             text-align: center;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            min-width: 80px;
-            background: rgba(255, 255, 255, 0.02);
-            color: #2a1a0a;
-            border: 1px solid rgba(60, 30, 10, 0.02);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+            backdrop-filter: blur(5px);
         }
-        body.dark .btn {
-            color: #f9e79f;
-            border-color: rgba(255, 255, 255, 0.02);
+        
+        .notice-text {
+            font-size: 0.8rem;
+            color: #f0f0f0;
+            line-height: 1.6;
         }
-        .btn:hover {
-            transform: scale(1.02);
-            background: rgba(60, 30, 10, 0.04);
-        }
-        body.dark .btn:hover {
-            background: rgba(255, 255, 255, 0.04);
-        }
-        .btn-gold {
-            border-color: rgba(212, 175, 55, 0.2);
+        
+        .notice-text a {
             color: #d4af37;
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px dashed #d4af37;
+            transition: all 0.3s;
         }
-        .btn-gold:hover {
-            background: rgba(212, 175, 55, 0.05);
-            border-color: #d4af37;
+        
+        .notice-text a:hover {
+            color: #f4d03f;
+            border-bottom-style: solid;
         }
-
-        .theme-toggle {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(30, 10, 0, 0.02);
-            font-size: 1.3rem;
-            cursor: pointer;
-            padding: 0.2rem 0.7rem;
-            border-radius: 40px;
-            transition: 0.3s;
-            color: #1a0a0a;
-        }
-        body.dark .theme-toggle {
-            color: #f9e79f;
-            background: rgba(0, 0, 0, 0.05);
-            border-color: rgba(255, 255, 255, 0.02);
-        }
-        .theme-toggle:hover { transform: scale(1.1); }
-
+        
+        /* Error & Loading */
         .message-box {
             display: none;
-            padding: 1rem;
-            border-radius: 16px;
+            padding: 1.5rem;
+            border-radius: 12px;
             text-align: center;
-            margin-top: 1rem;
+            font-weight: 600;
+            max-width: 340px;
+            width: 100%;
         }
+        
         .message-box.error {
             display: block;
-            background: rgba(200, 50, 50, 0.05);
-            border: 1px solid rgba(200, 50, 50, 0.05);
-            color: #5a0a0a;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #dc2626;
+            color: #dc2626;
+            box-shadow: 0 0 15px rgba(220, 38, 38, 0.5);
         }
-        body.dark .message-box.error {
-            color: #b08080;
-            background: rgba(200, 50, 50, 0.01);
-            border-color: rgba(200, 50, 50, 0.01);
-        }
+        
         .loading {
             text-align: center;
-            padding: 2rem 0;
-            opacity: 0.6;
+            padding: 2rem;
             color: #d4af37;
+            font-weight: 600;
+            font-size: 1.1rem;
         }
-        @font-face {
-            font-family: 'Vazir';
-            src: local('Vazir'), local('IRANSans');
-        }
-        .note {
-            text-align: center;
-            font-size: 0.55rem;
-            opacity: 0.2;
-            margin-top: 1.2rem;
-            color: #1a0a0a;
-            position: relative;
-            z-index: 5;
-        }
-        body.dark .note { color: #b0a090; }
     </style>
 </head>
 <body>
-    <button class="theme-toggle" id="themeToggle">🌙</button>
 
-    <div class="card-container">
-        <!-- Hologram -->
-        <div class="holo-icon">
-            <img src="assets/hologram.png" alt="Hologram" />
+    <div id="loading" class="loading">⏳ Loading Card Data...</div>
+
+    <div class="card-container" id="cardContent">
+        <!-- Logo at Top -->
+        <div class="logo-container">
+            <img src="assets/logo-en.png" alt="Logo" class="card-logo" onerror="this.style.display='none'">
+        </div>
+        
+        <div class="card-title">Global Smart Cultural Identity Card</div>
+
+        <!-- Single Code Box with CIM format -->
+        <div class="card-code-box">
+            <div class="optional-code-formatted" id="displayOptionalCode">---</div>
         </div>
 
-        <div id="messageBox" class="message-box"></div>
-        <div id="loading" class="loading">⏳ Loading...</div>
+        <!-- Compact Values Section -->
+        <div class="values-section">
+            <div class="values-list" id="displayValues"></div>
+        </div>
 
-        <div id="cardContent" style="display:none;">
-            <!-- Logo -->
-            <div class="logo-wrapper">
-                <img src="assets/logo-en.png" alt="Logo" class="logo-img" />
+        <!-- Hologram at Bottom -->
+        <div class="hologram-box">
+            <img src="assets/hologram.png" alt="Hologram" class="hologram" onerror="this.style.display='none'">
+        </div>
+    </div>
+
+    <!-- Bottom Modules -->
+    <div class="bottom-modules" id="bottomModules" style="display: none;">
+        <button class="action-btn" onclick="window.location.href='index.html'">
+            <span>↩</span> Back to Main Page
+        </button>
+        <button class="action-btn" onclick="saveCard()">
+            <span>💾</span> Save Card
+        </button>
+        
+        <!-- Notice Box -->
+        <div class="notice-box">
+            <div class="notice-text">
+                If you are among the first 200 people, return to the <a href="index.html">main site page</a> and upload your achievement.
             </div>
-
-            <!-- Card Title -->
-            <div class="card-title">Global Smart Cultural Identity Card</div>
-
-            <!-- Badge -->
-            <div id="badgeContainer"></div>
-
-            <!-- Card Code -->
-            <div class="card-code" id="cardCode">---</div>
         </div>
     </div>
 
-    <div class="actions" id="actions" style="display:none;">
-        <a href="#" class="btn btn-gold" id="backCardBtn">🔍 Back of Card</a>
-        <a href="edit-en.html" class="btn btn-gold" id="editLink">✏️ Edit</a>
-        <a href="index.html" class="btn">↩ Back</a>
+    <div class="message-box error" id="errorMessage">
+        ❌ Card code not found or invalid.
     </div>
-
-    <div class="note">No personal info • Completely anonymous</div>
 
     <script>
-        // ===== Theme =====
-        (function() {
-            const toggle = document.getElementById('themeToggle');
-            const body = document.body;
-            if (localStorage.getItem('theme') === 'dark') {
-                body.classList.add('dark');
-                toggle.textContent = '☀️';
-            }
-            toggle.addEventListener('click', function() {
-                body.classList.toggle('dark');
-                if (body.classList.contains('dark')) {
-                    toggle.textContent = '☀️';
-                    localStorage.setItem('theme', 'dark');
-                } else {
-                    toggle.textContent = '🌙';
-                    localStorage.setItem('theme', 'light');
-                }
-            });
-        })();
-
-        // ===== Get Card Code =====
+        // Get Card Code from URL or LocalStorage
         function getCardCode() {
             const params = new URLSearchParams(window.location.search);
             return params.get('code') || localStorage.getItem('culturalCardCode');
@@ -333,29 +306,23 @@
 
         const cardCode = getCardCode();
 
-        if (!cardCode) {
-            document.getElementById('loading').style.display = 'none';
-            const box = document.getElementById('messageBox');
-            box.textContent = '❌ Card code not found. Please register first.';
-            box.className = 'message-box error';
-            box.style.display = 'block';
-        }
-
-        // ===== Load Card Data =====
         async function loadCardData() {
+            if (!cardCode) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorMessage').textContent = '❌ Card code not found. Please register first.';
+                return;
+            }
+
             try {
+                // Fetching from GitHub as per original English version logic
                 const response = await fetch(
                     `https://api.github.com/repos/ghrezaei1399-code/cultural-id/contents/data/active/${cardCode}.json`,
-                    {
-                        headers: { 'Accept': 'application/vnd.github.v3+json' }
-                    }
+                    { headers: { 'Accept': 'application/vnd.github.v3+json' } }
                 );
 
                 if (!response.ok) {
-                    if (response.status === 404) {
-                        throw new Error('Card not found.');
-                    }
-                    throw new Error('Error loading data');
+                    throw new Error(response.status === 404 ? 'Card not found.' : 'Error loading data.');
                 }
 
                 const data = await response.json();
@@ -363,51 +330,59 @@
                 const content = decodeURIComponent(decoded);
                 const user = JSON.parse(content);
 
-                return user;
+                // Generate CIM format with random numbers as requested
+                const r1 = Math.floor(1000 + Math.random() * 9000);
+                const r2 = Math.floor(1000 + Math.random() * 9000);
+                document.getElementById('displayOptionalCode').textContent = `CIM - ${r1} - ${r2} - 66666`;
+
+                // Render 5 symbolic cultural values in English
+                const valuesContainer = document.getElementById('displayValues');
+                valuesContainer.innerHTML = '';
+                const hardcodedValues = [
+                    'Indigenous Values',
+                    'Individual Knowledge',
+                    'Collective Cooperation',
+                    'Cultural Diversity',
+                    'Global Peace'
+                ];
+                
+                hardcodedValues.forEach(v => {
+                    const div = document.createElement('div');
+                    div.className = 'value-item';
+                    div.textContent = v;
+                    valuesContainer.appendChild(div);
+                });
+
+                // Show card, hide loading/error
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('errorMessage').style.display = 'none';
+                document.getElementById('cardContent').style.display = 'flex';
+                document.getElementById('bottomModules').style.display = 'flex';
+
             } catch (error) {
-                throw error;
+                console.error('Error:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorMessage').textContent = `❌ ${error.message}`;
             }
         }
 
-        // ===== Render Card =====
-        async function renderCard() {
-            const loading = document.getElementById('loading');
-            const cardContent = document.getElementById('cardContent');
-            const actions = document.getElementById('actions');
-
-            try {
-                const user = await loadCardData();
-
-                document.getElementById('cardCode').textContent = user.cardCode || cardCode;
-
-                const badgeContainer = document.getElementById('badgeContainer');
-                if (user.badge === 'golden') {
-                    badgeContainer.innerHTML = '<span class="badge golden"><span class="badge-icon">🌟</span> Golden Badge</span>';
-                } else if (user.badge === 'silver') {
-                    badgeContainer.innerHTML = '<span class="badge silver"><span class="badge-icon">🥈</span> Silver Badge</span>';
-                } else {
-                    badgeContainer.innerHTML = '<span class="badge bronze"><span class="badge-icon">🥉</span> Bronze Badge</span>';
-                }
-
-                document.getElementById('editLink').href = `edit-en.html?code=${cardCode}`;
-                document.getElementById('backCardBtn').href = `card-back-en.html?code=${cardCode}`;
-
-                loading.style.display = 'none';
-                cardContent.style.display = 'block';
-                actions.style.display = 'flex';
-
-            } catch (error) {
-                loading.style.display = 'none';
-                const box = document.getElementById('messageBox');
-                box.textContent = `❌ ${error.message}`;
-                box.className = 'message-box error';
-                box.style.display = 'block';
-            }
+        // Save Card as Image
+        function saveCard() {
+            const cardElement = document.getElementById('cardContent');
+            html2canvas(cardElement, {
+                backgroundColor: '#0a0a0a',
+                scale: 2
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `cultural-id-card-${cardCode}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
         }
 
-        if (cardCode) {
-            renderCard();
-        }
+        // Initialize
+        document.addEventListener('DOMContentLoaded', loadCardData);
     </script>
 </body>
 </html>
