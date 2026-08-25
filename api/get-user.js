@@ -1,4 +1,3 @@
-// api/get-user.js - برای صفحه کارت (یک کاربر خاص)
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -16,7 +15,6 @@ export default async function handler(req, res) {
   const path = `data/active/${code}.json`;
 
   try {
-    // ۱. دریافت اطلاعات فایل خاص کاربر
     const fileRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -32,7 +30,6 @@ export default async function handler(req, res) {
     const content = Buffer.from(fileData.content, 'base64').toString('utf8');
     const userData = JSON.parse(content);
 
-    // ۲. دریافت لیست همه کاربران برای محاسبه دقیق رتبه
     const listRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/active`, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -41,9 +38,8 @@ export default async function handler(req, res) {
     });
     
     const files = await listRes.json();
-    const jsonFiles = files.filter(f => f.name.endsWith('.json'));
+    const jsonFiles = Array.isArray(files) ? files.filter(f => f.name.endsWith('.json')) : [];
 
-    // دریافت تاریخ ثبت‌نام همه برای مرتب‌سازی دقیق
     const usersWithDates = [];
     for (const f of jsonFiles) {
       try {
@@ -53,25 +49,28 @@ export default async function handler(req, res) {
       } catch (e) {}
     }
 
-    // مرتب‌سازی از قدیمی به جدید
     usersWithDates.sort((a, b) => a.date - b.date);
-
-    // یافتن رتبه این کاربر
     const userIndex = usersWithDates.findIndex(u => u.name === `${code}.json`);
     const rank = userIndex !== -1 ? userIndex + 1 : usersWithDates.length;
     
-    // محاسبه نشان بر اساس رتبه
     let badge = 'bronze';
     if (rank <= 200) badge = 'golden';
     else if (rank <= 1000) badge = 'silver';
 
-    userData.rank = rank;
-    userData.badge = badge;
-
-    return res.status(200).json({ user: userData });
+    // بازگرداندن فقط فیلدهای مورد نیاز کارت
+    return res.status(200).json({ 
+      user: {
+        cardCode: userData.cardCode,
+        country: userData.country,
+        rank: rank,
+        badge: badge,
+        optionalCode: userData.optionalCode,
+        values: Array.isArray(userData.values) ? userData.values : []
+      } 
+    });
 
   } catch (error) {
     console.error('Get User Error:', error);
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: 'خطای داخلی سرور' });
   }
 }
