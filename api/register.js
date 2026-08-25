@@ -31,7 +31,6 @@ export default async function handler(req, res) {
         }
       } catch (e) {
         console.warn('IP detection failed, using fallback:', e.message);
-        // ثبت‌نام متوقف نمی‌شود، فقط کشور پیش‌فرض ثبت می‌شود
       }
     }
 
@@ -41,7 +40,7 @@ export default async function handler(req, res) {
     const part3 = Math.floor(10000 + Math.random() * 90000);
     const cardCode = `CIM-${part1}-${part2}-${part3}`;
 
-    // ۳. محاسبه رتبه در زمان ثبت‌نام (نه در زمان نمایش)
+    // ۳. محاسبه رتبه در زمان ثبت‌نام
     let rank = 1;
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
@@ -63,13 +62,14 @@ export default async function handler(req, res) {
       console.warn('Rank calculation failed, using default:', e.message);
     }
 
-    // ۴. ساخت داده‌های کاربر (با ذخیره رتبه)
+    // ۴. ساخت داده‌های کاربر (با ذخیره اولویت‌ها)
     const userData = {
       cardCode: cardCode,
       country: country,
       countryCode: countryCode,
       rank: rank,
       values: Array.isArray(data.values) ? data.values : [],
+      priorities: Array.isArray(data.priorities) && data.priorities.length === 7 ? data.priorities : [],
       optionalCode: data.optionalCode || '',
       communicationEmail: data.communicationEmail || '',
       registrationDate: new Date().toISOString(),
