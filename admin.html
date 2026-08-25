@@ -349,7 +349,7 @@
                 for (const file of jsonFiles) {
                     try {
                         // استفاده از TextDecoder برای UTF-8
-                       const decoded = decodeURIComponent(escape(atob(file.content)));
+                        const bytes = Uint8Array.from(atob(file.content), c => c.charCodeAt(0));
                         const decoded = new TextDecoder().decode(bytes);
                         const userData = JSON.parse(decoded);
                         
@@ -490,5 +490,3 @@
     </script>
 </body>
 </html>
-هنوز نهایی نشده
-هنوز نهایی نشده
