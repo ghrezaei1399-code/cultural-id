@@ -30,41 +30,20 @@ export default async function handler(req, res) {
     const content = Buffer.from(fileData.content, 'base64').toString('utf8');
     const userData = JSON.parse(content);
 
-    const listRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/active`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json'
-      }
-    });
-    
-    const files = await listRes.json();
-    const jsonFiles = Array.isArray(files) ? files.filter(f => f.name.endsWith('.json')) : [];
-
-    const usersWithDates = [];
-    for (const f of jsonFiles) {
-      try {
-        const res = await fetch(f.download_url);
-        const d = await res.json();
-        usersWithDates.push({ name: f.name, date: new Date(d.registrationDate || 0).getTime() });
-      } catch (e) {}
-    }
-
-    usersWithDates.sort((a, b) => a.date - b.date);
-    const userIndex = usersWithDates.findIndex(u => u.name === `${code}.json`);
-    const rank = userIndex !== -1 ? userIndex + 1 : usersWithDates.length;
-    
+    // محاسبه نشان بر اساس رتبه ذخیره‌شده
+    const rank = userData.rank || 1;
     let badge = 'bronze';
     if (rank <= 200) badge = 'golden';
     else if (rank <= 1000) badge = 'silver';
 
-    // بازگرداندن فقط فیلدهای مورد نیاز کارت
+    // بازگرداندن فقط فیلدهای ضروری
     return res.status(200).json({ 
       user: {
         cardCode: userData.cardCode,
-        country: userData.country,
+        country: userData.country || 'Global',
         rank: rank,
         badge: badge,
-        optionalCode: userData.optionalCode,
+        optionalCode: userData.optionalCode || '',
         values: Array.isArray(userData.values) ? userData.values : []
       } 
     });
