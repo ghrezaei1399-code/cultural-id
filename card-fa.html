@@ -23,123 +23,173 @@
             background-repeat: no-repeat;
         }
         
+        /* کارت افقی و کوچک‌تر */
         .card-container {
-            width: 360px;
-            min-height: 580px;
+            width: 480px;
+            height: 260px;
             background: #0a0a0a;
             border: 2px solid #d4af37;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.6), inset 0 0 15px rgba(212, 175, 55, 0.2);
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.5), inset 0 0 15px rgba(212, 175, 55, 0.15);
             border-radius: 16px;
-            padding: 1.5rem;
-            position: relative;
+            padding: 1.2rem 1.5rem;
             display: none;
             color: #f0f0f0;
+            flex-direction: row;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        /* ستون کناری: لوگو و هولوگرام */
+        .card-sidebar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.2rem;
+        }
+        
+        /* لوگو در دایره طلایی با پس‌زمینه شفاف */
+        .logo-container {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: 2px solid #d4af37;
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
         }
         
         .card-logo {
-            width: 70px;
-            height: 70px;
+            width: 40px;
+            height: 40px;
             object-fit: contain;
-            margin: 0 auto 1rem;
-            display: block;
+            background: transparent !important;
+        }
+        
+        /* هولوگرام در باکس طلایی */
+        .hologram-box {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #d4af37;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(212, 175, 55, 0.1);
+        }
+        
+        .hologram {
+            width: 32px;
+            height: 32px;
+            opacity: 0.9;
+        }
+        
+        /* بخش اصلی محتوا */
+        .card-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 0.7rem;
         }
         
         .card-title {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 800;
             color: #d4af37;
-            text-align: center;
-            margin-bottom: 1.2rem;
-            text-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
+            text-align: right;
+            text-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
         }
         
         .card-code-box {
-            background: rgba(212, 175, 55, 0.05);
+            background: rgba(212, 175, 55, 0.08);
             border: 1px solid #d4af37;
-            box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+            box-shadow: 0 0 8px rgba(212, 175, 55, 0.2);
             border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1.2rem;
+            padding: 0.6rem 1rem;
             text-align: center;
-        }
-        
-        .card-code {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #f0f0f0;
-            letter-spacing: 2px;
-            margin-bottom: 0.5rem;
         }
         
         .optional-code-formatted {
             font-family: 'Courier New', Courier, monospace;
-            font-size: 0.95rem;
-            color: #d4af37;
-            letter-spacing: 1px;
+            font-size: 1.15rem;
+            color: #f0f0f0;
+            letter-spacing: 1.5px;
             font-weight: bold;
         }
         
         .values-section {
             background: rgba(212, 175, 55, 0.05);
             border: 1px solid #d4af37;
-            box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
             border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1.2rem;
+            padding: 0.5rem;
         }
         
         .values-list {
             display: flex;
             flex-wrap: wrap;
+            gap: 4px;
             justify-content: center;
-            gap: 0.5rem;
         }
         
         .value-item {
-            background: rgba(212, 175, 55, 0.1);
+            background: rgba(212, 175, 55, 0.15);
             border: 1px solid #d4af37;
-            border-radius: 20px;
-            padding: 0.3rem 0.6rem;
-            font-size: 0.75rem;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 0.65rem;
             color: #d4af37;
-            text-align: center;
+            white-space: nowrap;
         }
         
-        .hologram {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto;
-            display: block;
-            opacity: 0.9;
-        }
-        
+        /* ماژول‌های پایین */
         .bottom-modules {
             display: flex;
             flex-direction: column;
             gap: 0.8rem;
             margin-top: 1.5rem;
-            width: 360px;
+            width: 480px;
             align-items: center;
         }
         
         .action-btn {
             width: 100%;
-            padding: 0.8rem;
-            background: linear-gradient(135deg, #d4af37, #b8962e);
-            color: #000;
-            border: none;
-            border-radius: 8px;
+            padding: 0.85rem;
+            background: linear-gradient(135deg, #d4af37 0%, #f4d03f 50%, #b8962e 100%);
+            color: #0a0a0a;
+            border: 1px solid #f9d976;
+            border-radius: 10px;
             font-family: 'Vazir', 'IRANSans', sans-serif;
-            font-weight: 700;
-            font-size: 1rem;
+            font-weight: 800;
+            font-size: 0.95rem;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(212, 175, 55, 0.4);
-            transition: transform 0.2s;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4), inset 0 1px 0 rgba(255,255,255,0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+        
+        .action-btn:hover::before {
+            left: 100%;
         }
         
         .action-btn:hover {
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.6), inset 0 1px 0 rgba(255,255,255,0.4);
         }
         
         .first-200-notice {
@@ -147,12 +197,19 @@
             color: #f0f0f0;
             text-align: center;
             margin-top: 0.5rem;
+            line-height: 1.6;
         }
         
         .first-200-notice a {
             color: #d4af37;
             text-decoration: none;
             font-weight: bold;
+            border-bottom: 1px dashed #d4af37;
+            transition: color 0.3s;
+        }
+        
+        .first-200-notice a:hover {
+            color: #f4d03f;
         }
         
         .error-message {
@@ -163,7 +220,7 @@
             display: none;
             text-align: center;
             font-weight: 600;
-            max-width: 360px;
+            max-width: 480px;
             width: 100%;
             border: 2px solid #dc2626;
             box-shadow: 0 0 15px rgba(220, 38, 38, 0.5);
@@ -173,27 +230,33 @@
 <body>
 
     <div class="card-container" id="cardContent">
-        <img src="assets/logo-fa.png" alt="Logo" class="card-logo" id="cardLogo" onerror="this.style.display='none'">
+        <div class="card-sidebar">
+            <div class="logo-container">
+                <img src="assets/logo-fa.png" alt="Logo" class="card-logo" onerror="this.style.display='none'">
+            </div>
+            <div class="hologram-box">
+                <img src="assets/hologram.png" alt="Hologram" class="hologram" onerror="this.style.display='none'">
+            </div>
+        </div>
         
-        <div class="card-title">کارت جهانی هویت هوشمند فرهنگی</div>
+        <div class="card-main">
+            <div class="card-title">کارت جهانی هویت هوشمند فرهنگی</div>
 
-        <div class="card-code-box">
-            <div class="card-code" id="displayCardCode">---</div>
-            <div class="optional-code-formatted" id="displayOptionalCode"></div>
+            <div class="card-code-box">
+                <div class="optional-code-formatted" id="displayOptionalCode">---</div>
+            </div>
+
+            <div class="values-section">
+                <div class="values-list" id="displayValues"></div>
+            </div>
         </div>
-
-        <div class="values-section">
-            <div class="values-list" id="displayValues"></div>
-        </div>
-
-        <img src="assets/hologram.png" alt="Hologram" class="hologram" onerror="this.style.display='none'">
     </div>
 
     <div class="bottom-modules" id="bottomModules">
-        <button class="action-btn" onclick="window.location.href='/'">بازگشت به صفحه اصلی سایت</button>
-        <button class="action-btn" onclick="saveCard()">ذخیره کارت</button>
+        <button class="action-btn" onclick="window.location.href='/'">بازگشت به صفحه ی اصلی</button>
+        <button class="action-btn" onclick="saveCard()">ذخیره ی کارت</button>
         <div class="first-200-notice">
-            ویژه ۲۰۰ نفر اول: <a href="/upload-achievements">آپلود دستاوردهای فرهنگی</a>
+            اگر جزو 200 نفر اول هستید به صفحه ی اصلی سایت برگردید و دستاورد خود را آپلود کنید
         </div>
     </div>
 
@@ -222,14 +285,16 @@
 
                 const user = data.user;
 
-                document.getElementById('displayCardCode').textContent = user.cardCode || '---';
-                
+                // نمایش فقط کد اختیاری با فرمت صحیح CIM
                 if (user.optionalCode && user.optionalCode.trim() !== '') {
                     const r1 = Math.floor(1000 + Math.random() * 9000);
                     const r2 = Math.floor(1000 + Math.random() * 9000);
-                    document.getElementById('displayOptionalCode').textContent = `cim - ${r1}- ${r2}-66666`;
+                    document.getElementById('displayOptionalCode').textContent = `CIM - ${r1}- ${r2}-66666`;
+                } else {
+                    document.getElementById('displayOptionalCode').textContent = 'CIM - ---- - ---- - 66666';
                 }
 
+                // نمایش 5 ارزش فرهنگی به صورت فشرده و نمادین
                 const valuesContainer = document.getElementById('displayValues');
                 valuesContainer.innerHTML = '';
                 const hardcodedValues = [
@@ -237,9 +302,7 @@
                     'دانش فردی',
                     'همکاری جمعی',
                     'تنوع فرهنگی',
-                    'صلح پایدار جهانی',
-                    'محو خشونت',
-                    'اتحاد فرهنگی'
+                    'صلح پایدار'
                 ];
                 
                 hardcodedValues.forEach(v => {
@@ -250,7 +313,7 @@
                 });
 
                 document.getElementById('cardErrorMessage').style.display = 'none';
-                document.getElementById('cardContent').style.display = 'block';
+                document.getElementById('cardContent').style.display = 'flex';
                 document.getElementById('bottomModules').style.display = 'flex';
 
             } catch (error) {
