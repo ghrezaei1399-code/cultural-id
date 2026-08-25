@@ -1,108 +1,111 @@
-// api/register.js
+// api/get-users.js
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
+  if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const token = process.env.GITHUB_TOKEN;
+  // چک کردن چند نام مختلف برای توکن
+  const token = process.env.GITHUB_TOKEN || 
+                process.env.GH_TOKEN || 
+                process.env.GITHUB_ACCESS_TOKEN ||
+                process.env.TOKEN;
+
   if (!token) {
-    return res.status(500).json({ error: 'توکن گیت‌هاب تنظیم نشده است' });
+    console.error('Available env vars:', Object.keys(process.env).filter(k => k.includes('TOKEN') || k.includes('GITHUB')));
+    return res.status(500).json({ 
+      error: 'توکن گیت‌هاب تنظیم نشده است. لطفاً GITHUB_TOKEN را در Vercel تنظیم کنید.' 
+    });
   }
 
+  const owner = 'ghrezaei1399-code';
+  const repo = 'cultural-id';
+  const path = 'data/active';
+
   try {
-    const data = req.body;
-    
-    // ===== تشخیص کشور از IP =====
-    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    let country = 'نامشخص';
-    let countryCode = 'XX';
-    
-    try {
-      const ipResponse = await fetch(`https://ipapi.co/${ip}/json/`);
-      if (ipResponse.ok) {
-        const ipData = await ipResponse.json();
-        country = ipData.country_name || 'نامشخص';
-        countryCode = ipData.country_code || 'XX';
-      }
-    } catch (e) {
-      console.error('Error fetching IP location:', e);
-    }
-
-    // ===== تولید کد کارت 3 بخشی =====
-    const part1 = Math.floor(1000 + Math.random() * 9000); // 4 رقم
-    const part2 = Math.floor(1000 + Math.random() * 9000); // 4 رقم
-    const part3 = Math.floor(10000 + Math.random() * 90000); // 5 رقم
-    const cardCode = `CIM-${part1}-${part2}-${part3}`;
-
-    // ===== ساخت داده کاربر (فقط اطلاعات فرهنگی) =====
-    const userData = {
-      cardCode: cardCode,
-      country: country,
-      countryCode: countryCode,
-      values: data.values || [],
-      optionalCode: data.optionalCode || '',
-      communicationEmail: data.communicationEmail || '',
-      registrationDate: new Date().toISOString(),
-      status: 'pending',
-      allowConnection: !!data.communicationEmail,
-      allowAchievements: false, // بعداً توسط ادمین تعیین می‌شود
-      culturalInfo: data.culturalInfo || ''
-    };
-
-    // ===== Commit به گیت‌هاب =====
-    const owner = 'ghrezaei1399-code';
-    const repo = 'cultural-id';
-    const path = `data/active/${cardCode}.json`;
-    const content = Buffer.from(JSON.stringify(userData, null, 2)).toString('base64');
-
-    // دریافت SHA فایل (اگر وجود داشته باشد)
-    let sha = null;
-    try {
-      const fileRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/vnd.github.v3+json'
-        }
-      });
-      if (fileRes.ok) {
-        const fileData = await fileRes.json();
-        sha = fileData.sha;
-      }
-    } catch (e) {
-      // فایل وجود ندارد، مشکلی نیست
-    }
-
-    // ساخت Commit
-    const commitData = {
-      message: `Register new user: ${cardCode}`,
-      content: content,
-      branch: 'main'
-    };
-    if (sha) commitData.sha = sha;
-
-    const commitResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
-      method: 'PUT',
+    const listResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(commitData)
+        'Accept': 'application/vnd.github.v3+json'
+      }
     });
 
-    if (!commitResponse.ok) {
-      throw new Error(`GitHub API Error: ${commitResponse.status}`);
+    if (!listResponse.ok) {
+      throw new Error(`GitHub API Error: ${listResponse.status}`);
     }
 
-    return res.status(200).json({ 
-      success: true, 
-      cardCode: cardCode,
-      country: country,
-      message: 'ثبت‌نام با موفقیت انجام شد'
+    const files = await listResponse.json();
+    const jsonFiles = files.filter(f => f.name.endsWith('.json'));
+
+    const rawUsers = [];
+
+    for (const file of jsonFiles) {
+      try {
+        const fileRes = await fetch(file.download_url);
+        const userData = await fileRes.json();
+        rawUsers.push(userData);
+      } catch (e) {
+        console.error('Error parsing file:', file.name, e);
+      }
+    }
+
+    // مرتب‌سازی بر اساس تاریخ ثبت‌نام
+    rawUsers.sort((a, b) => {
+      const dateA = new Date(a.registrationDate || 0);
+      const dateB = new Date(b.registrationDate || 0);
+      return dateA - dateB;
     });
 
+    // محاسبه نشان بر اساس رتبه
+    const users = rawUsers.map((user, index) => {
+      const rank = index + 1;
+      let badge = 'bronze';
+      if (rank <= 200) badge = 'golden';
+      else if (rank <= 1000) badge = 'silver';
+      
+      return {
+        ...user,
+        rank: rank,
+        badge: badge
+      };
+    });
+
+    // آمار
+    const stats = {
+      total: users.length,
+      golden: users.filter(u => u.badge === 'golden').length,
+      silver: users.filter(u => u.badge === 'silver').length,
+      bronze: users.filter(u => u.badge === 'bronze').length,
+      approved: users.filter(u => u.status === 'approved').length,
+      rejected: users.filter(u => u.status === 'rejected').length,
+      pending: users.filter(u => u.status === 'pending' || !u.status).length
+    };
+
+    // آمار کشورها
+    const countryStats = {};
+    users.forEach(user => {
+      const country = user.country || 'نامشخص';
+      if (!countryStats[country]) {
+        countryStats[country] = {
+          country: country,
+          countryCode: user.countryCode || 'XX',
+          count: 0,
+          users: []
+        };
+      }
+      countryStats[country].count++;
+      countryStats[country].users.push({
+        cardCode: user.cardCode,
+        badge: user.badge,
+        rank: user.rank
+      });
+    });
+
+    const countries = Object.values(countryStats).sort((a, b) => b.count - a.count);
+
+    return res.status(200).json({ users, stats, countries });
+
   } catch (error) {
-    console.error('Register Error:', error);
+    console.error('API Error:', error);
     return res.status(500).json({ error: error.message });
   }
 }
