@@ -9,9 +9,6 @@
         body {
             font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 2rem 1rem;
             background-image: url('assets/نماد صلح.jpg');
             background-size: cover;
@@ -20,13 +17,13 @@
         }
 
         .container {
-            max-width: 1200px;
-            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
             background: rgba(255, 255, 255, 0.12);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border-radius: 48px;
-            padding: 2.5rem 2rem;
+            border-radius: 32px;
+            padding: 2rem;
             border: 1px solid rgba(255, 255, 255, 0.15);
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
         }
@@ -49,35 +46,30 @@
             padding-bottom: 1rem;
         }
 
+        /* ===== آمار ===== */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 1rem;
             margin-bottom: 2rem;
         }
 
-        @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
         .stat-card {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.08);
             border-radius: 20px;
             padding: 1.2rem;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             transition: 0.3s;
         }
 
         .stat-card:hover {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.15);
             transform: translateY(-3px);
         }
 
         .stat-card .number {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 800;
             color: #0a0a1a;
             display: block;
@@ -85,14 +77,105 @@
 
         .stat-card .label {
             font-size: 0.75rem;
-            opacity: 0.6;
             color: #2a2a3a;
+            opacity: 0.8;
+            margin-top: 0.3rem;
         }
 
+        .stat-card.golden { background: rgba(212, 175, 55, 0.15); }
+        .stat-card.silver { background: rgba(192, 192, 192, 0.2); }
+        .stat-card.bronze { background: rgba(205, 127, 50, 0.15); }
+        .stat-card.approved { background: rgba(50, 200, 50, 0.15); }
+        .stat-card.pending { background: rgba(255, 200, 50, 0.15); }
+
+        /* ===== ماژول کشویی کشورها ===== */
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0a0a1a;
+            margin: 1.5rem 0 0.8rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .country-selector {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .country-dropdown {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+            color: #0a0a1a;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
+
+        .country-list {
+            display: none;
+            max-height: 300px;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 0.5rem;
+        }
+
+        .country-list.active { display: block; }
+
+        .country-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 0.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-bottom: 0.3rem;
+        }
+
+        .country-item:hover { background: rgba(255, 255, 255, 0.15); }
+
+        .country-item .name { font-weight: 600; color: #0a0a1a; }
+        .country-item .count {
+            background: rgba(0, 0, 0, 0.1);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: #0a0a1a;
+        }
+
+        .country-users {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+        }
+
+        .country-users.active { display: block; }
+
+        .country-user-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.85rem;
+        }
+
+        /* ===== جدول ===== */
         .table-container {
             overflow-x: auto;
             border-radius: 16px;
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.05);
             padding: 0.5rem;
         }
 
@@ -102,13 +185,12 @@
         }
 
         .admin-table th {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.08);
             padding: 0.8rem 0.5rem;
             text-align: center;
             font-size: 0.8rem;
             font-weight: 700;
             color: #0a0a1a;
-            border-bottom: 2px solid rgba(255,255,255,0.05);
         }
 
         .admin-table td {
@@ -116,12 +198,10 @@
             text-align: center;
             font-size: 0.85rem;
             color: #1a1a2a;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .admin-table tr:hover td {
-            background: rgba(255, 255, 255, 0.03);
-        }
+        .admin-table tr:hover td { background: rgba(255, 255, 255, 0.08); }
 
         .badge {
             display: inline-block;
@@ -131,98 +211,131 @@
             font-weight: 600;
         }
 
-        .badge-golden {
-            background: rgba(212, 175, 55, 0.15);
-            color: #8a7a0a;
-            border: 1px solid rgba(212, 175, 55, 0.1);
-        }
-
-        .badge-silver {
-            background: rgba(192, 192, 192, 0.15);
-            color: #5a5a6a;
-            border: 1px solid rgba(192, 192, 192, 0.1);
-        }
-
-        .badge-bronze {
-            background: rgba(205, 127, 50, 0.15);
-            color: #6a4a0a;
-            border: 1px solid rgba(205, 127, 50, 0.1);
-        }
-
-        .badge-approved {
-            background: rgba(50, 200, 50, 0.15);
-            color: #0a6a0a;
-            border: 1px solid rgba(50, 200, 50, 0.1);
-        }
-
-        .badge-rejected {
-            background: rgba(200, 50, 50, 0.15);
-            color: #6a1a1a;
-            border: 1px solid rgba(200, 50, 50, 0.1);
-        }
-
-        .badge-pending {
-            background: rgba(255, 200, 50, 0.15);
-            color: #8a7a0a;
-            border: 1px solid rgba(255, 200, 50, 0.1);
-        }
+        .badge-golden { background: rgba(212, 175, 55, 0.2); color: #8a7a0a; }
+        .badge-silver { background: rgba(192, 192, 192, 0.25); color: #4a4a5a; }
+        .badge-bronze { background: rgba(205, 127, 50, 0.2); color: #6a4a0a; }
+        .badge-approved { background: rgba(50, 200, 50, 0.2); color: #0a6a0a; }
+        .badge-rejected { background: rgba(200, 50, 50, 0.2); color: #6a1a1a; }
+        .badge-pending { background: rgba(255, 200, 50, 0.2); color: #8a7a0a; }
 
         .btn-small {
-            padding: 0.2rem 0.8rem;
-            border-radius: 30px;
+            padding: 0.3rem 0.7rem;
+            border-radius: 20px;
             font-size: 0.7rem;
             font-weight: 600;
             border: none;
             cursor: pointer;
+            margin: 0.1rem;
+            transition: 0.2s;
+        }
+
+        .btn-small:hover { transform: scale(1.05); }
+        .btn-view { background: rgba(50, 150, 200, 0.2); color: #0a4a6a; }
+        .btn-approve { background: rgba(50, 200, 50, 0.2); color: #0a6a0a; }
+        .btn-reject { background: rgba(200, 50, 50, 0.2); color: #6a1a1a; }
+
+        /* ===== مودال ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 2rem;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+            padding-bottom: 1rem;
+        }
+
+        .modal-header h2 {
+            font-size: 1.3rem;
+            color: #0a0a1a;
+        }
+
+        .modal-close {
+            background: rgba(200, 50, 50, 0.1);
+            border: none;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #6a1a1a;
+        }
+
+        .modal-body .info-row {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 0.5rem;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .modal-body .info-label {
+            font-weight: 700;
+            color: #2a2a3a;
+            font-size: 0.85rem;
+        }
+
+        .modal-body .info-value {
+            color: #0a0a1a;
+            font-size: 0.9rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-modal {
+            padding: 0.7rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
             transition: 0.3s;
-            text-decoration: none;
-            display: inline-block;
-            margin: 0 0.2rem;
         }
 
-        .btn-small:hover {
-            transform: scale(1.05);
-        }
-
-        .btn-approve {
-            background: rgba(50, 200, 50, 0.1);
-            color: #0a6a0a;
-            border: 1px solid rgba(50, 200, 50, 0.1);
-        }
-
-        .btn-reject {
-            background: rgba(200, 50, 50, 0.1);
-            color: #6a1a1a;
-            border: 1px solid rgba(200, 50, 50, 0.1);
-        }
-
-        .btn-delete {
-            background: rgba(200, 50, 50, 0.1);
-            color: #6a1a1a;
-            border: 1px solid rgba(200, 50, 50, 0.1);
-        }
-
-        .btn-connect {
-            background: rgba(50, 150, 200, 0.1);
-            color: #0a4a6a;
-            border: 1px solid rgba(50, 150, 200, 0.1);
-        }
-
-        .btn-achievement {
-            background: rgba(150, 50, 200, 0.1);
-            color: #4a0a6a;
-            border: 1px solid rgba(150, 50, 200, 0.1);
-        }
+        .btn-modal:hover { transform: translateY(-2px); }
+        .btn-modal.approve { background: rgba(50, 200, 50, 0.2); color: #0a6a0a; }
+        .btn-modal.reject { background: rgba(200, 50, 50, 0.2); color: #6a1a1a; }
+        .btn-modal.delete { background: rgba(200, 50, 50, 0.3); color: #6a1a1a; }
 
         .admin-actions {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.8rem;
             justify-content: center;
             flex-wrap: wrap;
-            margin-top: 1.5rem;
+            margin-top: 2rem;
         }
 
-        .admin-actions .btn {
+        .btn {
             padding: 0.6rem 1.5rem;
             border-radius: 40px;
             font-weight: 700;
@@ -230,34 +343,14 @@
             text-decoration: none;
             border: none;
             cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .btn-primary {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15);
             color: #0a0a1a;
-            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .btn-danger {
-            background: rgba(200, 50, 50, 0.1);
-            color: #6a1a1a;
-            border: 1px solid rgba(200, 50, 50, 0.05);
-        }
-
-        .note {
-            text-align: center;
-            font-size: 0.75rem;
-            opacity: 0.5;
-            margin-top: 1.5rem;
-            color: #0a0a1a;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            padding-top: 1rem;
-        }
-
-        @font-face {
-            font-family: 'Vazir';
-            src: local('Vazir'), local('IRANSans');
+        @media (max-width: 768px) {
+            .modal-body .info-row {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -266,145 +359,252 @@
         <h1>🛡️ داشبورد ادمین</h1>
         <div class="subtitle">مدیریت کارت‌های جهانی هویت هوشمند فرهنگی</div>
 
+        <!-- ===== آمار ===== -->
         <div class="stats-grid">
             <div class="stat-card">
                 <span class="number" id="totalUsers">۰</span>
-                <span class="label">کل کاربران</span>
+                <div class="label">کل کاربران</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card golden">
                 <span class="number" id="goldenUsers">۰</span>
-                <span class="label">نشان طلایی</span>
+                <div class="label">🌟 نشان طلایی (۱-۲۰۰)</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card silver">
                 <span class="number" id="silverUsers">۰</span>
-                <span class="label">نشان نقره‌ای</span>
+                <div class="label">🥈 نشان نقره‌ای (۲۰۱-۱۰۰۰)</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card bronze">
                 <span class="number" id="bronzeUsers">۰</span>
-                <span class="label">نشان برنزی</span>
+                <div class="label">🥉 نشان برنزی (۱۰۰۱-۱۰۰۰۰)</div>
+            </div>
+            <div class="stat-card approved">
+                <span class="number" id="approvedUsers">۰</span>
+                <div class="label">✅ تأیید شده</div>
+            </div>
+            <div class="stat-card pending">
+                <span class="number" id="pendingUsers">۰</span>
+                <div class="label">⏳ در انتظار</div>
             </div>
         </div>
 
-        <h2 style="font-size:1rem; margin-bottom:0.8rem; color:#0a0a1a;">📋 کاربران ثبت‌نام شده</h2>
+        <!-- ===== ماژول کشویی کشورها ===== -->
+        <div class="section-title">🌍 آمار بر اساس کشور</div>
+        <div class="country-selector">
+            <select class="country-dropdown" id="countryDropdown" onchange="showCountryUsers(this.value)">
+                <option value="">-- انتخاب کشور برای مشاهده اعضا --</option>
+            </select>
+            <div id="countryUsersList" class="country-users"></div>
+        </div>
 
+        <!-- ===== جدول کاربران ===== -->
+        <div class="section-title">📋 کاربران ثبت‌نام شده</div>
         <div class="table-container">
             <table class="admin-table">
                 <thead>
                     <tr>
+                        <th>رتبه</th>
                         <th>کد کارت</th>
-                        <th>ارزش‌ها</th>
-                        <th>کد اختیاری</th>
-                        <th>ایمیل</th>
+                        <th>نام</th>
+                        <th>کشور</th>
                         <th>تاریخ</th>
                         <th>نشان</th>
                         <th>وضعیت</th>
-                        <th>ارتباط</th>
-                        <th>دستاوردها</th>
                         <th>عملیات</th>
                     </tr>
                 </thead>
                 <tbody id="usersTableBody">
-                    <!-- داده‌ها توسط JavaScript پر می‌شود -->
+                    <tr><td colspan="8" style="text-align:center; padding: 2rem;">در حال بارگذاری...</td></tr>
                 </tbody>
             </table>
         </div>
 
         <div class="admin-actions">
-            <a href="#" class="btn btn-primary">📊 گزارش کامل</a>
-            <a href="#" class="btn btn-primary">📤 خروجی اکسل</a>
-            <a href="#" class="btn btn-danger">🗑️ پاکسازی</a>
-            <a href="index.html" class="btn btn-primary">↩ بازگشت به صفحه اصلی</a>
+            <a href="index.html" class="btn">↩ بازگشت به صفحه اصلی</a>
         </div>
+    </div>
 
-        <div class="note">
-            🔒 دسترسی محدود به ادمین‌های سیستم • تمام عملیات‌ها ثبت می‌شوند
+    <!-- ===== مودال نمایش جزئیات ===== -->
+    <div class="modal-overlay" id="userModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle">جزئیات کاربر</h2>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- محتوای مودال به صورت داینامیک پر می‌شود -->
+            </div>
+            <div class="modal-actions" id="modalActions">
+                <!-- دکمه‌های تأیید/رد -->
+            </div>
         </div>
     </div>
 
     <script>
-      // ===== خواندن اطلاعات از API Route امن داخلی =====
-async function loadUsers() {
-    try {
-        // نمایش وضعیت بارگذاری (اختیاری)
-        const tableBody = document.getElementById('usersTableBody');
-        tableBody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding: 2rem;">در حال دریافت اطلاعات...</td></tr>';
+        let allUsers = [];
+        let allCountries = [];
 
-        // درخواست به API داخلی خودمان در Vercel
-        const response = await fetch('/api/get-users');
-        
-        if (!response.ok) {
-            const errData = await response.json();
-            throw new Error(errData.error || 'خطا در دریافت اطلاعات از سرور');
+        // ===== بارگذاری داده‌ها =====
+        async function loadUsers() {
+            try {
+                const response = await fetch('/api/get-users');
+                if (!response.ok) throw new Error('خطا در دریافت اطلاعات');
+                
+                const data = await response.json();
+                allUsers = data.users;
+                allCountries = data.countries;
+
+                // به‌روزرسانی آمار
+                document.getElementById('totalUsers').textContent = data.stats.total.toLocaleString('fa-IR');
+                document.getElementById('goldenUsers').textContent = data.stats.golden.toLocaleString('fa-IR');
+                document.getElementById('silverUsers').textContent = data.stats.silver.toLocaleString('fa-IR');
+                document.getElementById('bronzeUsers').textContent = data.stats.bronze.toLocaleString('fa-IR');
+                document.getElementById('approvedUsers').textContent = data.stats.approved.toLocaleString('fa-IR');
+                document.getElementById('pendingUsers').textContent = data.stats.pending.toLocaleString('fa-IR');
+
+                // پر کردن dropdown کشورها
+                const dropdown = document.getElementById('countryDropdown');
+                dropdown.innerHTML = '<option value="">-- انتخاب کشور --</option>';
+                allCountries.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c.country;
+                    opt.textContent = `${c.country} (${c.count.toLocaleString('fa-IR')} نفر)`;
+                    dropdown.appendChild(opt);
+                });
+
+                // پر کردن جدول
+                renderTable(allUsers);
+
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('usersTableBody').innerHTML = 
+                    `<tr><td colspan="8" style="text-align:center; color:red; padding: 2rem;">خطا: ${error.message}</td></tr>`;
+            }
         }
 
-        const data = await response.json();
-        const users = data.users;
-        const stats = data.stats;
+        // ===== نمایش جدول =====
+        function renderTable(users) {
+            const tbody = document.getElementById('usersTableBody');
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 2rem;">کاربری یافت نشد</td></tr>';
+                return;
+            }
 
-        // به‌روزرسانی آمار
-        document.getElementById('totalUsers').textContent = stats.total.toLocaleString('fa-IR');
-        document.getElementById('goldenUsers').textContent = stats.golden.toLocaleString('fa-IR');
-        document.getElementById('silverUsers').textContent = stats.silver.toLocaleString('fa-IR');
-        document.getElementById('bronzeUsers').textContent = stats.bronze.toLocaleString('fa-IR');
+            tbody.innerHTML = users.map(user => {
+                const badgeClass = `badge-${user.badge}`;
+                const badgeText = user.badge === 'golden' ? '🌟 طلایی' : 
+                                 user.badge === 'silver' ? '🥈 نقره‌ای' : '🥉 برنزی';
+                const status = user.status || 'pending';
+                const statusClass = `badge-${status}`;
+                const statusText = status === 'approved' ? 'تأیید شده' : 
+                                  status === 'rejected' ? 'رد شده' : 'در انتظار';
+                const name = user.nameFa || user.nameEn || '---';
+                const date = user.registrationDate ? new Date(user.registrationDate).toLocaleDateString('fa-IR') : '---';
 
-        // پاک کردن پیام بارگذاری
-        tableBody.innerHTML = '';
-
-        if (users.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding: 2rem;">هنوز کاربری ثبت‌نام نکرده است.</td></tr>';
-            return;
+                return `
+                    <tr>
+                        <td>${user.rank}</td>
+                        <td>${user.cardCode || '---'}</td>
+                        <td>${name}</td>
+                        <td>${user.country || '---'}</td>
+                        <td>${date}</td>
+                        <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+                        <td><span class="badge ${statusClass}">${statusText}</span></td>
+                        <td>
+                            <button class="btn-small btn-view" onclick="viewUser('${user.cardCode}')">👁️ مشاهده</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
         }
 
-        // نمایش جدول
-        users.forEach(user => {
-            const row = document.createElement('tr');
-            
-            const badgeClass = user.badge === 'golden' ? 'badge-golden' : 
-                              user.badge === 'silver' ? 'badge-silver' : 'badge-bronze';
-            const badgeText = user.badge === 'golden' ? '🌟 طلایی' : 
-                             user.badge === 'silver' ? '🥈 نقره‌ای' : '🥉 برنزی';
+        // ===== نمایش کاربران یک کشور =====
+        function showCountryUsers(country) {
+            const container = document.getElementById('countryUsersList');
+            if (!country) {
+                container.classList.remove('active');
+                return;
+            }
 
-            const statusClass = user.status === 'approved' ? 'badge-approved' : 
-                              user.status === 'rejected' ? 'badge-rejected' : 'badge-pending';
-            const statusText = user.status === 'approved' ? 'تأیید شده' : 
-                             user.status === 'rejected' ? 'رد شده' : 'در انتظار';
+            const countryData = allCountries.find(c => c.country === country);
+            if (!countryData) return;
 
-            const valuesText = user.values ? user.values.join(', ') : '---';
-            const optionalCode = user.optionalCode || '---';
-            const email = user.communicationEmail || '---';
-            const date = user.registrationDate ? new Date(user.registrationDate).toLocaleDateString('fa-IR') : '---';
-
-            const allowConnection = user.allowConnection ? '✅' : '❌';
-            const allowAchievements = user.allowAchievements ? '✅' : '❌';
-
-            row.innerHTML = `
-                <td>${user.cardCode || '---'}</td>
-                <td>${valuesText}</td>
-                <td>${optionalCode}</td>
-                <td>${email}</td>
-                <td>${date}</td>
-                <td><span class="badge ${badgeClass}">${badgeText}</span></td>
-                <td><span class="badge ${statusClass}">${statusText}</span></td>
-                <td>${allowConnection}</td>
-                <td>${allowAchievements}</td>
-                <td>
-                    <button class="btn-small btn-approve" onclick="approveUser('${user.cardCode}')">✓ تأیید</button>
-                    <button class="btn-small btn-reject" onclick="rejectUser('${user.cardCode}')">✗ رد</button>
-                    <button class="btn-small btn-connect" onclick="toggleConnection('${user.cardCode}')">🔗 ارتباط</button>
-                    <button class="btn-small btn-achievement" onclick="toggleAchievements('${user.cardCode}')">🏆 دستاورد</button>
-                    <button class="btn-small btn-delete" onclick="deleteUser('${user.cardCode}')">🗑️ حذف</button>
-                </td>
+            container.innerHTML = `
+                <div style="font-weight: 700; margin-bottom: 0.5rem; color: #0a0a1a;">
+                    ${countryData.country} - ${countryData.count.toLocaleString('fa-IR')} عضو:
+                </div>
+                ${countryData.users.map(u => `
+                    <div class="country-user-item">
+                        <span>${u.name} (${u.cardCode})</span>
+                        <span class="badge badge-${u.badge}">${u.badge === 'golden' ? '🌟' : u.badge === 'silver' ? '🥈' : '🥉'}</span>
+                    </div>
+                `).join('')}
             `;
-            tableBody.appendChild(row);
+            container.classList.add('active');
+        }
+
+        // ===== نمایش جزئیات کاربر در مودال =====
+        function viewUser(cardCode) {
+            const user = allUsers.find(u => u.cardCode === cardCode);
+            if (!user) return;
+
+            document.getElementById('modalTitle').textContent = `جزئیات: ${user.nameFa || user.nameEn || '---'}`;
+            
+            const body = document.getElementById('modalBody');
+            body.innerHTML = `
+                <div class="info-row"><div class="info-label">کد کارت:</div><div class="info-value">${user.cardCode}</div></div>
+                <div class="info-row"><div class="info-label">رتبه ثبت‌نام:</div><div class="info-value">${user.rank}</div></div>
+                <div class="info-row"><div class="info-label">نام (فارسی):</div><div class="info-value">${user.nameFa || '---'}</div></div>
+                <div class="info-row"><div class="info-label">نام (انگلیسی):</div><div class="info-value">${user.nameEn || '---'}</div></div>
+                <div class="info-row"><div class="info-label">نام خانوادگی (فارسی):</div><div class="info-value">${user.familyFa || '---'}</div></div>
+                <div class="info-row"><div class="info-label">نام خانوادگی (انگلیسی):</div><div class="info-value">${user.familyEn || '---'}</div></div>
+                <div class="info-row"><div class="info-label">کشور:</div><div class="info-value">${user.country || '---'}</div></div>
+                <div class="info-row"><div class="info-label">ایمیل ارتباطی:</div><div class="info-value">${user.communicationEmail || '---'}</div></div>
+                <div class="info-row"><div class="info-label">تاریخ ثبت‌نام:</div><div class="info-value">${user.registrationDate ? new Date(user.registrationDate).toLocaleDateString('fa-IR') : '---'}</div></div>
+                <div class="info-row"><div class="info-label">نشان:</div><div class="info-value"><span class="badge badge-${user.badge}">${user.badge}</span></div></div>
+                <div class="info-row"><div class="info-label">وضعیت:</div><div class="info-value"><span class="badge badge-${user.status || 'pending'}">${user.status || 'pending'}</span></div></div>
+                <div class="info-row"><div class="info-label">ارزش‌های فرهنگی:</div><div class="info-value">${user.values ? user.values.join('، ') : '---'}</div></div>
+                <div class="info-row"><div class="info-label">کد اختیاری:</div><div class="info-value">${user.optionalCode || '---'}</div></div>
+                <div class="info-row"><div class="info-label">اجازه ارتباط:</div><div class="info-value">${user.allowConnection ? '✅ بله' : '❌ خیر'}</div></div>
+                <div class="info-row"><div class="info-label">اجازه نمایش دستاوردها:</div><div class="info-value">${user.allowAchievements ? '✅ بله' : '❌ خیر'}</div></div>
+                ${user.culturalInfo ? `<div class="info-row"><div class="info-label">اطلاعات فرهنگی:</div><div class="info-value">${user.culturalInfo}</div></div>` : ''}
+            `;
+
+            const actions = document.getElementById('modalActions');
+            actions.innerHTML = `
+                <button class="btn-modal approve" onclick="approveUser('${user.cardCode}')">✓ تأیید</button>
+                <button class="btn-modal reject" onclick="rejectUser('${user.cardCode}')">✗ رد</button>
+                <button class="btn-modal delete" onclick="deleteUser('${user.cardCode}')">🗑️ حذف</button>
+            `;
+
+            document.getElementById('userModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('userModal').classList.remove('active');
+        }
+
+        // ===== عملیات‌ها (در مرحله بعد با API واقعی متصل می‌شوند) =====
+        async function approveUser(cardCode) {
+            if (!confirm(`تأیید کاربر ${cardCode}؟`)) return;
+            alert('⚠️ در مرحله بعد، API تأیید واقعی پیاده‌سازی خواهد شد.');
+        }
+
+        async function rejectUser(cardCode) {
+            if (!confirm(`رد کاربر ${cardCode}؟`)) return;
+            alert('⚠️ در مرحله بعد، API رد واقعی پیاده‌سازی خواهد شد.');
+        }
+
+        async function deleteUser(cardCode) {
+            if (!confirm(`حذف کاربر ${cardCode}؟ این عمل غیرقابل بازگشت است.`)) return;
+            alert('⚠️ در مرحله بعد، API حذف واقعی پیاده‌سازی خواهد شد.');
+        }
+
+        // بستن مودال با کلیک روی overlay
+        document.getElementById('userModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
         });
 
-    } catch (error) {
-        console.error('Error:', error);
-        document.getElementById('usersTableBody').innerHTML = `<tr><td colspan="10" style="text-align:center; padding: 2rem; color:red;">خطا: ${error.message}</td></tr>`;
-    }
-}
-
-        // ===== بارگذاری اولیه =====
+        // بارگذاری اولیه
         loadUsers();
     </script>
 </body>
