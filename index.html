@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>کارت جهانی هویت هوشمند فرهنگی | Global Smart Cultural ID</title>
+    <title>کارت جهانی هویت هوشمند فرهنگی</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
             min-height: 100vh;
-            padding: 2rem 1rem;
+            padding: 0.8rem;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             background-attachment: fixed;
             color: #f0e8d0;
@@ -38,15 +38,15 @@
             z-index: 1;
         }
 
-        /* ===== هدر بزرگ با لوگو درخشان ===== */
+        /* ===== هدر فشرده ===== */
         .hero-header {
             text-align: center;
-            padding: 2.5rem 1.5rem 2rem;
+            padding: 1rem 0.8rem;
             background: linear-gradient(135deg, rgba(212, 175, 55, 0.12) 0%, rgba(0, 0, 0, 0.4) 100%);
-            border-radius: 40px;
+            border-radius: 24px;
             border: 2px solid rgba(212, 175, 55, 0.3);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), inset 0 0 40px rgba(212, 175, 55, 0.08);
-            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 0 30px rgba(212, 175, 55, 0.08);
+            margin-bottom: 0.8rem;
             position: relative;
             overflow: hidden;
         }
@@ -71,137 +71,122 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.8rem;
         }
 
         .date-display {
-            font-size: 0.85rem;
+            font-size: 0.7rem;
             font-weight: 600;
             color: #f9e79f;
             background: rgba(0, 0, 0, 0.4);
-            padding: 0.4rem 1.2rem;
-            border-radius: 30px;
+            padding: 0.25rem 0.8rem;
+            border-radius: 20px;
             border: 1px solid rgba(212, 175, 55, 0.3);
         }
 
         .theme-toggle {
             background: rgba(0, 0, 0, 0.4);
             border: 1px solid rgba(212, 175, 55, 0.3);
-            font-size: 1.3rem;
+            font-size: 1rem;
             cursor: pointer;
-            padding: 0.3rem 0.9rem;
-            border-radius: 40px;
-            transition: 0.3s;
+            padding: 0.2rem 0.6rem;
+            border-radius: 30px;
             color: #f9e79f;
         }
-        .theme-toggle:hover { transform: scale(1.1); background: rgba(212, 175, 55, 0.2); }
 
         .logo-showcase {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
+            justify-content: center;
+            gap: 0.8rem;
         }
 
         .main-logo {
-            width: 160px;
-            height: 160px;
+            width: 70px;
+            height: 70px;
             object-fit: contain;
-            filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.6));
+            filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.6));
             animation: floatLogo 4s ease-in-out infinite;
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
-            border-radius: 50%;
-            padding: 15px;
+            flex-shrink: 0;
         }
 
         @keyframes floatLogo {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-5px); }
         }
 
+        .title-wrap { text-align: right; }
+
         .site-title {
-            font-size: 2.2rem;
+            font-size: 1.15rem;
             font-weight: 900;
             background: linear-gradient(135deg, #f9e79f 0%, #d4af37 50%, #f9e79f 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            text-align: center;
             line-height: 1.3;
-            text-shadow: 0 0 40px rgba(212, 175, 55, 0.3);
-            letter-spacing: -0.5px;
+            letter-spacing: -0.3px;
         }
 
         .site-subtitle {
-            font-size: 1rem;
+            font-size: 0.65rem;
             color: #b8b0c8;
             font-weight: 400;
-            letter-spacing: 2px;
-            margin-top: 0.3rem;
+            letter-spacing: 1.5px;
+            margin-top: 0.15rem;
         }
 
         /* ===== نوار زبان ===== */
         .lang-bar {
             display: flex;
             justify-content: center;
-            gap: 0.8rem;
-            margin-bottom: 1.5rem;
-            padding: 0.6rem;
+            gap: 0.5rem;
+            margin-bottom: 0.8rem;
+            padding: 0.35rem;
             background: rgba(0, 0, 0, 0.4);
-            border-radius: 60px;
+            border-radius: 40px;
             border: 1px solid rgba(212, 175, 55, 0.2);
-            backdrop-filter: blur(10px);
         }
 
         .lang-bar a {
-            padding: 0.5rem 1.5rem;
-            border-radius: 40px;
+            padding: 0.35rem 1.2rem;
+            border-radius: 30px;
             text-decoration: none;
-            font-size: 0.9rem;
+            font-size: 0.78rem;
             font-weight: 700;
             color: #b8b0c8;
             transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .lang-bar a:hover {
-            color: #f9e79f;
-            background: rgba(212, 175, 55, 0.1);
         }
 
         .lang-bar a.active {
             background: linear-gradient(135deg, #d4af37, #f9e79f);
             color: #1a1a2e;
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+            box-shadow: 0 3px 10px rgba(212, 175, 55, 0.4);
         }
 
-        /* ===== شعار متحرک ===== */
+        /* ===== شعار متحرک کوتاه ===== */
         .slogan-scroller {
             overflow: hidden;
             background: linear-gradient(90deg, rgba(212, 175, 55, 0.15), rgba(0, 0, 0, 0.4), rgba(212, 175, 55, 0.15));
-            border-radius: 40px;
-            padding: 0.6rem 0;
-            margin-bottom: 2rem;
+            border-radius: 30px;
+            padding: 0.4rem 0;
+            margin-bottom: 0.8rem;
             border: 1px solid rgba(212, 175, 55, 0.3);
         }
 
         .slogan-track {
             display: flex;
-            gap: 3rem;
+            gap: 2rem;
             animation: scrollSlogan 20s linear infinite;
             white-space: nowrap;
             width: max-content;
         }
 
         .slogan-track span {
-            font-size: 1rem;
+            font-size: 0.78rem;
             font-weight: 600;
             color: #f9e79f;
-            padding: 0 1rem;
-            text-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+            padding: 0 0.5rem;
         }
 
         @keyframes scrollSlogan {
@@ -209,195 +194,151 @@
             100% { transform: translateX(-50%); }
         }
 
-        /* ===== باکس‌های متنوع با رنگ‌های مختلف ===== */
+        /* ===== باکس‌های فشرده ===== */
         .box {
-            border-radius: 28px;
-            padding: 1.8rem 2rem;
-            margin-bottom: 1.5rem;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
+            border-radius: 18px;
+            padding: 0.9rem 1rem;
+            margin-bottom: 0.7rem;
+            transition: all 0.3s ease;
         }
 
-        .box:hover {
-            transform: translateY(-5px);
-        }
-
-        /* باکس طلایی - مشخصات */
         .box-gold {
             background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(0, 0, 0, 0.4) 100%);
             border: 2px solid rgba(212, 175, 55, 0.4);
-            box-shadow: 0 10px 40px rgba(212, 175, 55, 0.15);
         }
-        .box-gold:hover { box-shadow: 0 15px 50px rgba(212, 175, 55, 0.25); }
         .box-gold .box-title { color: #f9e79f; }
         .box-gold .box-title::before { content: "🪪 "; }
 
-        /* باکس آبی - اهداف */
         .box-blue {
             background: linear-gradient(135deg, rgba(52, 152, 219, 0.15) 0%, rgba(0, 0, 0, 0.4) 100%);
             border: 2px solid rgba(52, 152, 219, 0.4);
-            box-shadow: 0 10px 40px rgba(52, 152, 219, 0.15);
         }
-        .box-blue:hover { box-shadow: 0 15px 50px rgba(52, 152, 219, 0.25); }
         .box-blue .box-title { color: #85c1e9; }
         .box-blue .box-title::before { content: "🎯 "; }
 
-        /* باکس سبز - مزایا */
         .box-green {
             background: linear-gradient(135deg, rgba(46, 204, 113, 0.15) 0%, rgba(0, 0, 0, 0.4) 100%);
             border: 2px solid rgba(46, 204, 113, 0.4);
-            box-shadow: 0 10px 40px rgba(46, 204, 113, 0.15);
         }
-        .box-green:hover { box-shadow: 0 15px 50px rgba(46, 204, 113, 0.25); }
         .box-green .box-title { color: #82e0aa; }
         .box-green .box-title::before { content: "⭐ "; }
 
-        /* باکس بنفش - نمونه کارت */
         .box-purple {
             background: linear-gradient(135deg, rgba(155, 89, 182, 0.15) 0%, rgba(0, 0, 0, 0.4) 100%);
             border: 2px solid rgba(155, 89, 182, 0.4);
-            box-shadow: 0 10px 40px rgba(155, 89, 182, 0.15);
         }
-        .box-purple:hover { box-shadow: 0 15px 50px rgba(155, 89, 182, 0.25); }
         .box-purple .box-title { color: #d2b4de; }
         .box-purple .box-title::before { content: "💳 "; }
 
         .box-title {
-            font-size: 1.4rem;
+            font-size: 0.95rem;
             font-weight: 800;
-            margin-bottom: 1rem;
-            padding-bottom: 0.8rem;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
-            gap: 0.6rem;
-            letter-spacing: -0.3px;
+            gap: 0.4rem;
         }
 
         .box p {
-            font-size: 1rem;
-            line-height: 2;
+            font-size: 0.8rem;
+            line-height: 1.7;
             color: #e8e0f0;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
 
-        .box p strong {
-            color: #f9e79f;
-            font-weight: 700;
-        }
+        .box p strong { color: #f9e79f; font-weight: 700; }
 
-        .box ul {
-            list-style: none;
-            line-height: 2.4;
-        }
+        .box ul { list-style: none; line-height: 1.9; }
 
         .box ul li {
-            font-size: 0.95rem;
+            font-size: 0.78rem;
             color: #e8e0f0;
-            padding: 0.3rem 0;
-            padding-right: 2rem;
+            padding: 0.1rem 0;
+            padding-right: 1.3rem;
             position: relative;
         }
 
-        .box-gold ul li::before { content: "✦"; color: #f9e79f; position: absolute; right: 0; font-size: 1.1rem; }
-        .box-blue ul li::before { content: "◆"; color: #85c1e9; position: absolute; right: 0; font-size: 0.9rem; }
-        .box-green ul li::before { content: "✓"; color: #82e0aa; position: absolute; right: 0; font-weight: 900; font-size: 1.1rem; }
+        .box-gold ul li::before { content: "✦"; color: #f9e79f; position: absolute; right: 0; }
+        .box-blue ul li::before { content: "◆"; color: #85c1e9; position: absolute; right: 0; font-size: 0.7rem; }
+        .box-green ul li::before { content: "✓"; color: #82e0aa; position: absolute; right: 0; font-weight: 900; }
 
         .principles {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 0.6rem;
-            margin-top: 1rem;
+            gap: 0.3rem;
+            margin-top: 0.5rem;
         }
 
         .principles span {
-            padding: 0.4rem 1.2rem;
+            padding: 0.2rem 0.7rem;
             background: rgba(52, 152, 219, 0.2);
             border: 1px solid rgba(52, 152, 219, 0.4);
-            border-radius: 30px;
-            font-size: 0.8rem;
+            border-radius: 20px;
+            font-size: 0.65rem;
             font-weight: 700;
             color: #85c1e9;
-            letter-spacing: 0.5px;
         }
 
-        /* ===== نمونه کارت زیبا ===== */
+        /* ===== نمونه کارت کوچک ===== */
         .card-sample {
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
-            border-radius: 20px;
-            padding: 1.5rem;
+            border-radius: 14px;
+            padding: 0.8rem;
             text-align: center;
             border: 2px solid #d4af37;
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3), inset 0 0 20px rgba(212, 175, 55, 0.1);
-            position: relative;
-            overflow: hidden;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            justify-content: center;
+            flex-wrap: wrap;
         }
-
-        .card-sample::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: linear-gradient(45deg, transparent 30%, rgba(212, 175, 55, 0.1) 50%, transparent 70%);
-            animation: shimmer 3s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        .card-sample > * { position: relative; z-index: 1; }
 
         .card-sample .card-logo {
-            width: 70px;
-            height: 70px;
+            width: 45px;
+            height: 45px;
             object-fit: contain;
-            margin: 0 auto 0.8rem;
-            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.6));
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.6));
         }
 
         .card-sample .card-id {
-            font-size: 1.1rem;
+            font-size: 0.85rem;
             font-weight: 800;
             background: rgba(212, 175, 55, 0.15);
-            padding: 0.5rem 1.2rem;
-            border-radius: 40px;
-            display: inline-block;
-            direction: ltr;
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
             color: #f9e79f;
             border: 1px solid #d4af37;
             font-family: 'Courier New', monospace;
-            letter-spacing: 2px;
-            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
         }
 
         .card-sample .card-values {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 0.4rem;
-            margin: 0.8rem 0;
+            gap: 0.25rem;
         }
 
         .card-sample .v-tag {
-            padding: 0.3rem 0.8rem;
-            border-radius: 30px;
-            font-size: 0.7rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.6rem;
             background: rgba(212, 175, 55, 0.15);
             color: #f9e79f;
             border: 1px solid rgba(212, 175, 55, 0.4);
             font-weight: 600;
         }
 
-        /* ===== ماژول‌های بزرگ و جذاب ===== */
+        /* ===== ماژول‌های فشرده ===== */
         .modules {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1rem;
-            margin: 2rem 0;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            margin: 0.8rem 0;
         }
 
         .module-btn {
@@ -405,88 +346,66 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 1.8rem 1rem;
-            border-radius: 24px;
+            padding: 0.8rem 0.4rem;
+            border-radius: 16px;
             text-decoration: none;
-            transition: all 0.4s ease;
+            transition: all 0.3s ease;
             text-align: center;
-            position: relative;
-            overflow: hidden;
-            min-height: 180px;
+            min-height: 95px;
         }
 
-        .module-btn::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            transition: left 0.6s;
-        }
-
-        .module-btn:hover::before { left: 100%; }
-        .module-btn:hover { transform: translateY(-8px); }
+        .module-btn:active { transform: scale(0.97); }
 
         .module-register {
-            background: linear-gradient(135deg, rgba(46, 204, 113, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%);
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(0, 0, 0, 0.5));
             border: 2px solid rgba(46, 204, 113, 0.5);
             color: #82e0aa;
         }
-        .module-register:hover { box-shadow: 0 15px 40px rgba(46, 204, 113, 0.3); }
-
         .module-edit {
-            background: linear-gradient(135deg, rgba(52, 152, 219, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%);
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(0, 0, 0, 0.5));
             border: 2px solid rgba(52, 152, 219, 0.5);
             color: #85c1e9;
         }
-        .module-edit:hover { box-shadow: 0 15px 40px rgba(52, 152, 219, 0.3); }
-
         .module-connect {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%);
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(0, 0, 0, 0.5));
             border: 2px solid rgba(212, 175, 55, 0.5);
             color: #f9e79f;
         }
-        .module-connect:hover { box-shadow: 0 15px 40px rgba(212, 175, 55, 0.3); }
-
         .module-invite {
-            background: linear-gradient(135deg, rgba(155, 89, 182, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%);
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.2), rgba(0, 0, 0, 0.5));
             border: 2px solid rgba(155, 89, 182, 0.5);
             color: #d2b4de;
         }
-        .module-invite:hover { box-shadow: 0 15px 40px rgba(155, 89, 182, 0.3); }
-
         .module-cancel {
-            background: linear-gradient(135deg, rgba(231, 76, 60, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%);
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(0, 0, 0, 0.5));
             border: 2px solid rgba(231, 76, 60, 0.5);
             color: #f1948a;
         }
-        .module-cancel:hover { box-shadow: 0 15px 40px rgba(231, 76, 60, 0.3); }
 
         .module-btn .icon {
-            font-size: 3rem;
-            margin-bottom: 0.8rem;
-            filter: drop-shadow(0 0 15px currentColor);
+            font-size: 1.6rem;
+            margin-bottom: 0.3rem;
         }
 
         .module-btn .label {
             font-weight: 800;
-            font-size: 1.05rem;
-            margin-bottom: 0.4rem;
+            font-size: 0.75rem;
+            line-height: 1.3;
         }
 
         .module-btn .desc {
-            font-size: 0.75rem;
-            opacity: 0.8;
-            line-height: 1.5;
+            font-size: 0.6rem;
+            opacity: 0.75;
+            margin-top: 0.15rem;
         }
 
-        /* ===== دکمه CTA بزرگ ===== */
+        /* ===== CTA فشرده ===== */
         .cta-area {
             text-align: center;
-            margin: 2rem 0;
-            padding: 2rem;
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(0, 0, 0, 0.4) 100%);
-            border-radius: 30px;
+            margin: 0.8rem 0;
+            padding: 0.9rem;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(0, 0, 0, 0.4));
+            border-radius: 20px;
             border: 2px solid rgba(212, 175, 55, 0.3);
         }
 
@@ -494,82 +413,57 @@
             display: inline-block;
             background: linear-gradient(135deg, #d4af37 0%, #f9e79f 50%, #d4af37 100%);
             color: #1a1a2e;
-            padding: 1rem 3rem;
-            border-radius: 60px;
+            padding: 0.6rem 1.8rem;
+            border-radius: 40px;
             font-weight: 900;
-            font-size: 1.2rem;
+            font-size: 0.9rem;
             text-decoration: none;
-            transition: 0.3s;
-            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
-            letter-spacing: 0.5px;
-            position: relative;
-            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
         }
-
-        .btn-main::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-            transition: left 0.6s;
-        }
-
-        .btn-main:hover::before { left: 100%; }
-        .btn-main:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(212, 175, 55, 0.6); }
 
         .cta-note {
-            margin-top: 0.8rem;
-            font-size: 0.8rem;
+            margin-top: 0.4rem;
+            font-size: 0.65rem;
             color: #b8b0c8;
-            letter-spacing: 1px;
         }
 
-        /* ===== بخش گالری دستاوردها ===== */
+        /* ===== گالری فشرده ===== */
         .achievement-section {
-            margin-top: 2rem;
-            padding: 2rem;
-            border-radius: 30px;
-            background: linear-gradient(135deg, rgba(241, 196, 15, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%);
+            margin-top: 0.8rem;
+            padding: 0.9rem;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(241, 196, 15, 0.1), rgba(0, 0, 0, 0.4));
             border: 2px solid rgba(241, 196, 15, 0.3);
         }
 
         .achievement-section h2 {
-            font-size: 1.5rem;
+            font-size: 0.95rem;
             font-weight: 800;
             color: #f9e79f;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
             text-align: center;
-            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
         }
 
         .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 1rem;
-            margin: 1.5rem 0;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin: 0.6rem 0;
         }
 
         .gallery-item {
             background: rgba(0, 0, 0, 0.4);
-            border-radius: 20px;
-            padding: 1rem;
+            border-radius: 12px;
+            padding: 0.5rem;
             border: 1px solid rgba(212, 175, 55, 0.2);
-            transition: 0.3s;
             text-align: center;
-        }
-
-        .gallery-item:hover {
-            transform: translateY(-5px);
-            border-color: rgba(212, 175, 55, 0.5);
-            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
         }
 
         .gallery-placeholder {
             width: 100%;
             aspect-ratio: 1/1;
             background: rgba(212, 175, 55, 0.08);
-            border-radius: 16px;
+            border-radius: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -577,131 +471,131 @@
             border: 1px dashed rgba(212, 175, 55, 0.3);
         }
 
-        .gallery-placeholder img { max-width: 50%; height: auto; opacity: 0.5; filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5)); }
-        .gallery-placeholder .gallery-label { font-size: 0.7rem; color: #f9e79f; margin-top: 0.5rem; font-weight: 600; }
+        .gallery-placeholder img { max-width: 40%; opacity: 0.5; }
+        .gallery-placeholder .gallery-label { font-size: 0.55rem; color: #f9e79f; margin-top: 0.2rem; }
 
-        .gallery-title { display: block; font-weight: 700; font-size: 0.85rem; color: #f9e79f; margin-top: 0.6rem; }
-        .gallery-author { display: block; font-size: 0.7rem; color: #b8b0c8; margin-top: 0.2rem; }
+        .gallery-title { display: block; font-weight: 700; font-size: 0.65rem; color: #f9e79f; margin-top: 0.3rem; }
+        .gallery-author { display: block; font-size: 0.55rem; color: #b8b0c8; }
 
         .btn-upload {
-            display: inline-block;
+            display: block;
+            text-align: center;
             background: linear-gradient(135deg, rgba(241, 196, 15, 0.2), rgba(212, 175, 55, 0.3));
             color: #f9e79f;
-            padding: 0.7rem 1.8rem;
-            border-radius: 40px;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
             text-decoration: none;
             font-weight: 700;
-            font-size: 0.9rem;
-            transition: 0.3s;
+            font-size: 0.72rem;
             border: 1px solid rgba(212, 175, 55, 0.4);
-            margin-top: 1rem;
+            margin-top: 0.5rem;
         }
 
-        .btn-upload:hover {
-            transform: scale(1.05);
-            background: linear-gradient(135deg, rgba(241, 196, 15, 0.3), rgba(212, 175, 55, 0.4));
-            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
-        }
-
-        /* ===== ماژول‌های پایین ===== */
+        /* ===== ماژول‌های پایین فشرده ===== */
         .bottom-modules-wrapper {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-top: 2rem;
+            gap: 0.5rem;
+            margin-top: 0.8rem;
         }
 
         .bottom-module {
             text-align: center;
-            padding: 2rem 1.5rem;
-            border-radius: 30px;
-            transition: 0.4s;
-            position: relative;
-            overflow: hidden;
+            padding: 0.9rem 0.6rem;
+            border-radius: 18px;
         }
 
         .bottom-about {
-            background: linear-gradient(135deg, rgba(52, 152, 219, 0.15) 0%, rgba(0, 0, 0, 0.4) 100%);
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.15), rgba(0, 0, 0, 0.4));
             border: 2px solid rgba(52, 152, 219, 0.4);
         }
-        .bottom-about:hover { box-shadow: 0 15px 40px rgba(52, 152, 219, 0.25); transform: translateY(-5px); }
         .bottom-about h3 { color: #85c1e9; }
 
         .bottom-radio {
-            background: linear-gradient(135deg, rgba(155, 89, 182, 0.15) 0%, rgba(0, 0, 0, 0.4) 100%);
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.15), rgba(0, 0, 0, 0.4));
             border: 2px solid rgba(155, 89, 182, 0.4);
         }
-        .bottom-radio:hover { box-shadow: 0 15px 40px rgba(155, 89, 182, 0.25); transform: translateY(-5px); }
         .bottom-radio h3 { color: #d2b4de; }
 
         .bottom-module h3 {
-            font-size: 1.3rem;
+            font-size: 0.85rem;
             font-weight: 800;
-            margin-bottom: 0.6rem;
+            margin-bottom: 0.3rem;
         }
 
         .bottom-module p {
             color: #e8e0f0;
-            font-size: 0.95rem;
-            margin-bottom: 1.2rem;
-            line-height: 1.7;
+            font-size: 0.68rem;
+            margin-bottom: 0.6rem;
+            line-height: 1.5;
         }
 
         .btn-bottom {
             display: inline-block;
             background: rgba(0, 0, 0, 0.4);
             color: #f9e79f;
-            padding: 0.7rem 2rem;
-            border-radius: 60px;
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.7rem;
             text-decoration: none;
-            transition: 0.3s;
             border: 1px solid rgba(212, 175, 55, 0.4);
         }
 
-        .btn-bottom:hover {
-            background: rgba(212, 175, 55, 0.2);
-            transform: scale(1.05);
-        }
-
-        /* ===== ریسپانسیو ===== */
-        @media (max-width: 768px) {
-            body { padding: 1rem; }
-            .hero-header { padding: 1.5rem 1rem; border-radius: 30px; }
-            .main-logo { width: 120px; height: 120px; }
+        /* ===== دسکتاپ - کمی بزرگ‌تر ===== */
+        @media (min-width: 768px) {
+            body { padding: 1.5rem; }
+            .hero-header { padding: 1.5rem 1rem; border-radius: 30px; margin-bottom: 1rem; }
+            .main-logo { width: 90px; height: 90px; }
             .site-title { font-size: 1.6rem; }
-            .site-subtitle { font-size: 0.85rem; }
-            .box { padding: 1.3rem; border-radius: 22px; }
-            .box-title { font-size: 1.2rem; }
-            .modules { grid-template-columns: 1fr; }
-            .module-btn { min-height: 150px; }
-            .bottom-modules-wrapper { grid-template-columns: 1fr; }
-            .btn-main { padding: 0.8rem 2rem; font-size: 1rem; }
-            .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+            .site-subtitle { font-size: 0.8rem; }
+            .top-bar { margin-bottom: 1rem; }
+            .date-display { font-size: 0.8rem; padding: 0.3rem 1rem; }
+            .lang-bar { padding: 0.4rem; margin-bottom: 1rem; }
+            .lang-bar a { font-size: 0.85rem; padding: 0.4rem 1.5rem; }
+            .slogan-scroller { padding: 0.5rem 0; margin-bottom: 1rem; }
+            .slogan-track span { font-size: 0.9rem; }
+            .box { padding: 1.2rem 1.4rem; margin-bottom: 0.9rem; border-radius: 22px; }
+            .box-title { font-size: 1.15rem; }
+            .box p { font-size: 0.9rem; }
+            .box ul li { font-size: 0.85rem; }
+            .modules { grid-template-columns: repeat(3, 1fr); gap: 0.7rem; }
+            .module-btn { min-height: 120px; padding: 1rem; }
+            .module-btn .icon { font-size: 2rem; }
+            .module-btn .label { font-size: 0.9rem; }
+            .module-btn .desc { font-size: 0.7rem; }
+            .btn-main { padding: 0.8rem 2.5rem; font-size: 1.05rem; }
+            .gallery-grid { grid-template-columns: repeat(4, 1fr); }
+            .bottom-module { padding: 1.2rem 0.8rem; }
+            .bottom-module h3 { font-size: 1rem; }
+            .bottom-module p { font-size: 0.8rem; }
+            .btn-bottom { font-size: 0.8rem; padding: 0.5rem 1.3rem; }
         }
 
-        @media (max-width: 480px) {
-            .main-logo { width: 100px; height: 100px; }
-            .site-title { font-size: 1.3rem; }
-            .gallery-grid { grid-template-columns: 1fr; }
+        @media (min-width: 1024px) {
+            .main-logo { width: 110px; height: 110px; }
+            .site-title { font-size: 1.9rem; }
+            .modules { grid-template-columns: repeat(5, 1fr); }
+            .gallery-grid { grid-template-columns: repeat(5, 1fr); }
         }
     </style>
 </head>
 <body>
 <div class="container">
 
-    <!-- ===== هدر بزرگ با لوگو ===== -->
+    <!-- ===== هدر فشرده ===== -->
     <div class="hero-header">
         <div class="top-bar">
-            <div class="date-display" id="dateDisplay">📅 در حال بارگذاری...</div>
+            <div class="date-display" id="dateDisplay">📅 ...</div>
             <button class="theme-toggle" id="themeToggle">🌙</button>
         </div>
 
         <div class="logo-showcase">
-            <img src="assets/logo-fa.png" alt="شناسنامه فرهنگی جهانی" class="main-logo" />
-            <h1 class="site-title">کارت جهانی هویت هوشمند فرهنگی</h1>
-            <div class="site-subtitle">GLOBAL SMART CULTURAL IDENTITY CARD</div>
+            <img src="assets/logo-fa.png" alt="لوگو" class="main-logo" />
+            <div class="title-wrap">
+                <h1 class="site-title">کارت جهانی هویت هوشمند فرهنگی</h1>
+                <div class="site-subtitle">GLOBAL SMART CULTURAL IDENTITY CARD</div>
+            </div>
         </div>
     </div>
 
@@ -723,25 +617,23 @@
         </div>
     </div>
 
-    <!-- ===== باکس طلایی - مشخصات ===== -->
+    <!-- ===== باکس طلایی ===== -->
     <div class="box box-gold">
         <div class="box-title">مشخصات کارت</div>
-        <p>کارت جهانی هویت هوشمند فرهنگی، یک <strong>هویت دیجیتال غیرمتمرکز</strong> است که بر اساس ارزش‌های فرهنگی شما ساخته می‌شود، نه نام، ملیت یا اطلاعات شخصی.</p>
+        <p>هویت دیجیتال <strong>غیرمتمرکز</strong> بر اساس ارزش‌های فرهنگی شما، نه نام و ملیت.</p>
         <ul>
             <li>ثبت ۷ ارزش فرهنگی به انتخاب شما</li>
-            <li>کد منحصربه‌فرد با بخش اختیاری (۵ کاراکتر دلخواه)</li>
+            <li>کد منحصربه‌فرد با بخش اختیاری</li>
             <li>قابلیت ارتباط با دیگران (اختیاری)</li>
-            <li>ذخیره‌ی اطلاعات فقط بر اساس فرهنگ</li>
         </ul>
     </div>
 
-    <!-- ===== باکس آبی - اهداف ===== -->
+    <!-- ===== باکس آبی ===== -->
     <div class="box box-blue">
         <div class="box-title">اهداف کارت</div>
         <ul>
-            <li>ایجاد شبکه‌ای از مصلحان فرهنگی بدون مرز</li>
+            <li>شبکه‌ای از مصلحان فرهنگی بدون مرز</li>
             <li>حفاظت از تنوع فرهنگی به عنوان سرمایه‌ی مشترک</li>
-            <li>ارتباط هم‌فکران بدون نیاز به شناسایی هویتی</li>
             <li>ترویج صلح، محو خشونت و اتحاد فرهنگی</li>
         </ul>
         <div class="principles">
@@ -752,14 +644,13 @@
         </div>
     </div>
 
-    <!-- ===== باکس سبز - مزایا ===== -->
+    <!-- ===== باکس سبز ===== -->
     <div class="box box-green">
         <div class="box-title">مزایای داشتن کارت</div>
         <ul>
-            <li>عضویت در جنبش جهانی حفظ تنوع فرهنگی ملل</li>
-            <li>دسترسی به شبکه‌ای از افراد متنوع با فرهنگ و علائق مشترک</li>
-            <li>بدون توجه به هویت شخصی</li>
-            <li>امکان ارتباط با دیگران از طریق راه‌های دلخواه</li>
+            <li>عضویت در جنبش جهانی حفظ تنوع فرهنگی</li>
+            <li>دسترسی به شبکه‌ای از افراد هم‌فرهنگ</li>
+            <li>ارتباط با دیگران از راه‌های دلخواه</li>
         </ul>
     </div>
 
@@ -773,75 +664,72 @@
                 <span class="v-tag">ارزش‌های بومی</span>
                 <span class="v-tag">دانش فردی</span>
                 <span class="v-tag">همکاری جمعی</span>
-                <span class="v-tag">تنوع فرهنگی</span>
             </div>
         </div>
     </div>
 
-    <!-- ===== ماژول‌های بزرگ ===== -->
+    <!-- ===== ماژول‌های فشرده ===== -->
     <div class="modules">
         <a href="register-fa.html" class="module-btn module-register">
             <span class="icon">📝</span>
-            <span class="label">ثبت‌نام و دریافت شناسنامه</span>
-            <span class="desc">پر کردن فرم ۷ ارزش فرهنگی</span>
+            <span class="label">ثبت‌نام</span>
+            <span class="desc">دریافت شناسنامه</span>
         </a>
         <a href="edit-fa.html" class="module-btn module-edit">
             <span class="icon">✏️</span>
-            <span class="label">ویرایش اطلاعات</span>
-            <span class="desc">فقط یک بار امکان تغییر دارد</span>
+            <span class="label">ویرایش</span>
+            <span class="desc">یک بار تغییر</span>
         </a>
         <a href="request-fa.html?type=connection" class="module-btn module-connect">
             <span class="icon">🤝</span>
-            <span class="label">ارتباط با هم‌فکران</span>
-            <span class="desc">ثبت درخواست برای ادمین</span>
+            <span class="label">ارتباط</span>
+            <span class="desc">با هم‌فکران</span>
         </a>
         <a href="referral-fa.html" class="module-btn module-invite">
             <span class="icon">📣</span>
-            <span class="label">دعوت از دوستان</span>
-            <span class="desc">سفیر فرهنگی شوید</span>
+            <span class="label">دعوت دوستان</span>
+            <span class="desc">سفیر فرهنگی</span>
         </a>
         <a href="request-fa.html?type=delete" class="module-btn module-cancel">
             <span class="icon">🚪</span>
-            <span class="label">انصراف از عضویت</span>
-            <span class="desc">درخواست حذف حساب کاربری</span>
+            <span class="label">انصراف</span>
+            <span class="desc">حذف حساب</span>
         </a>
     </div>
 
-    <!-- ===== CTA بزرگ ===== -->
+    <!-- ===== CTA ===== -->
     <div class="cta-area">
         <a href="register-fa.html" class="btn-main">🎯 دریافت شناسنامه فرهنگی</a>
         <div class="cta-note">بدون اطلاعات شخصی • کاملاً ناشناس • ۳ دقیقه</div>
     </div>
 
-    <!-- ===== گالری دستاوردها ===== -->
+    <!-- ===== گالری ===== -->
     <div class="achievement-section">
         <h2>🏆 گالری دستاوردهای ۲۰۰ سفیر</h2>
         <div class="gallery-grid">
             <div class="gallery-item">
                 <div class="gallery-placeholder">
                     <img src="assets/logo-fa.png" alt="لوگو" />
-                    <span class="gallery-label">به زودی...</span>
+                    <span class="gallery-label">به زودی</span>
                 </div>
-                <span class="gallery-title">در انتظار آثار سفیران</span>
+                <span class="gallery-title">آثار سفیران</span>
                 <span class="gallery-author">۲۰۰ نفر اول</span>
             </div>
         </div>
-        <div style="text-align: center;">
-            <a href="upload-achievement-fa.html" class="btn-upload">📤 اگر از ۲۰۰ نفر اول هستید، اثر خود را آپلود کنید</a>
-        </div>
+        <a href="upload-achievement-fa.html" class="btn-upload">📤 اگر از ۲۰۰ نفر اول هستید، اثر خود را آپلود کنید</a>
     </div>
 
-    <!-- ===== ماژول‌های پایین ===== -->
+    <!-- ===== پایین ===== -->
     <div class="bottom-modules-wrapper">
         <div class="bottom-module bottom-about">
             <h3>📖 درباره پروژه</h3>
-            <p>اهداف، اصول بنیادین و فلسفه‌ی غیرمتمرکز</p>
+            <p>اهداف و فلسفه‌ی غیرمتمرکز</p>
             <a href="about-fa.html" class="btn-bottom">بیشتر بدانید</a>
         </div>
         <div class="bottom-module bottom-radio">
             <h3>📡 رادیوتلویزیون هوشمند</h3>
-            <p>شبکه‌های فرهنگی خود را بسازید و محتوای گروهی خود را منتشر کنید</p>
-            <a href="about-fa.html#radio-tv" class="btn-bottom">مشاهده نمونه‌ها</a>
+            <p>شبکه‌های فرهنگی و محتوای گروهی</p>
+            <a href="about-fa.html#radio-tv" class="btn-bottom">مشاهده</a>
         </div>
     </div>
 
