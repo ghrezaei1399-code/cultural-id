@@ -512,14 +512,41 @@
             document.getElementById('userModal').classList.remove('active');
         }
 
+        // ==========================================
+        // توابع اصلاح‌شده برای ارسال دستور واقعی به سرور
+        // ==========================================
+        async function updateStatus(cardCode, newStatus) {
+            try {
+                const response = await fetch('/api/update-user-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cardCode, status: newStatus })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'خطا در بروزرسانی وضعیت');
+                }
+
+                alert(newStatus === 'approved' ? '✅ کاربر با موفقیت تأیید شد.' : '❌ کاربر با موفقیت رد شد.');
+                closeModal();
+                loadUsers(); // بارگذاری مجدد جدول برای نمایش وضعیت جدید
+
+            } catch (error) {
+                console.error('Error updating status:', error);
+                alert('خطا: ' + error.message);
+            }
+        }
+
         async function approveUser(cardCode) {
-            if (!confirm(`تأیید کاربر ${cardCode}؟`)) return;
-            alert('⚠️ API تأیید در مرحله بعد پیاده‌سازی خواهد شد.');
+            if (!confirm(`آیا از تأیید نهایی کاربر با کد ${cardCode} اطمینان دارید؟`)) return;
+            await updateStatus(cardCode, 'approved');
         }
 
         async function rejectUser(cardCode) {
-            if (!confirm(`رد کاربر ${cardCode}؟`)) return;
-            alert('⚠️ API رد در مرحله بعد پیاده‌سازی خواهد شد.');
+            if (!confirm(`آیا از رد کردن کاربر با کد ${cardCode} اطمینان دارید؟`)) return;
+            await updateStatus(cardCode, 'rejected');
         }
 
         document.getElementById('userModal').addEventListener('click', function(e) {
