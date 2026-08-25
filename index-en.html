@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Global Smart Cultural ID</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', 'Vazir', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+            background-image: url('assets/نماد صلح.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            transition: background 0.3s, color 0.3s;
+            color: #0a0a1a;
+        }
+        body.dark { color: #e8e0f0; }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(2px);
+            border-radius: 60px;
+            padding: 1.5rem 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
+        }
+        body.dark .container {
+            background: rgba(0, 0, 0, 0.35);
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .header {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .date-display {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #0a0a1a;
+            background: rgba(255,255,255,0.15);
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+        }
+        body.dark .date-display { color: #f9e79f; background: rgba(0,0,0,0.3); }
+
+        .theme-toggle {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(0,0,0,0.05);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            transition: 0.3s;
+            color: #0a0a1a;
+        }
+        body.dark .theme-toggle {
+            color: #f9e79f;
+            background: rgba(0,0,0,0.25);
+        }
+        .theme-toggle:hover { transform: scale(1.1); background: rgba(255,255,255,0.2); }
+
+        .logos-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+        }
+
+        .logo-main {
+            max-height: 90px;
+            width: auto;
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.05));
+            transition: transform 0.3s ease;
+        }
+        .logo-main:hover { transform: scale(1.03); }
+
+        .site-name {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #0a0a1a;
+            text-shadow: 0 2px 12px rgba(255,255,255,0.15);
+            text-align: center;
+            line-height: 1.2;
+            background: rgba(255,255,255,0.05);
+            padding: 0.2rem 1.2rem;
+            border-radius: 40px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .site-name .fa {
+            font-size: 0.8rem;
+            font-weight: 400;
+            opacity: 0.7;
+            display: block;
+            color: #1a0a1a;
+        }
+        body.dark .site-name { color: #f9e79f; background: rgba(0,0,0,0.1); }
+        body.dark .site-name .fa { color: #c8c0d8; }
+
+        .lang-bar {
+            background: rgba(255,255,255,0.05);
+            border-radius: 60px;
+            padding: 0.4rem 1rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .lang-bar a {
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            background: rgba(255,255,255,0.05);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #0a0a1a;
+            border: 1px solid transparent;
+            transition: all 0.25s ease;
+        }
+        .lang-bar a:hover, .lang-bar a.active {
+            background: rgba(255,255,255,0.15);
+            color: #0a0a1a;
+            border-color: rgba(255,255,255,0.1);
+        }
+        body.dark .lang-bar a { color: #e8e0f0; }
+        body.dark .lang-bar a:hover, body.dark .lang-bar a.active {
+            color: #f9e79f;
+            background: rgba(255,255,255,0.08);
+        }
+
+        .slogan-scroller {
+            overflow: hidden;
+            background: rgba(255,255,255,0.05);
+            border-radius: 40px;
+            padding: 0.25rem 0;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .slogan-track {
+            display: flex;
+            gap: 2.5rem;
+            animation: scrollSlogan 10s linear infinite;
+            white-space: nowrap;
+            width: max-content;
+        }
+        .slogan-track span {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #0a0a1a;
+            padding: 0 1rem;
+            opacity: 0.8;
+        }
+        body.dark .slogan-track span { color: #e8e0f0; }
+        @keyframes scrollSlogan {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .box {
+            border-radius: 28px;
+            padding: 1.6rem 1.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03);
+            transition: all 0.25s ease;
+            background: rgba(255, 255, 255, 0.06);
+            margin-bottom: 1.5rem;
+        }
+        .box:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+            background: rgba(255, 255, 255, 0.10);
+        }
+        body.dark .box { background: rgba(0, 0, 0, 0.15); }
+        body.dark .box:hover { background: rgba(0, 0, 0, 0.25); }
+
+        .box-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            padding-bottom: 0.2rem;
+            border-bottom: 2px solid rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #0a0a1a;
+        }
+        body.dark .box-title { color: #f9e79f; border-bottom-color: rgba(255,255,255,0.05); }
+
+        .box p, .box ul {
+            font-size: 0.9rem;
+            line-height: 1.8;
+            opacity: 0.9;
+            color: #0a0a1a;
+        }
+        body.dark .box p, body.dark .box ul { color: #d0d0e0; }
+
+        .box ul { list-style: none; line-height: 2.2; }
+        .box ul li::before { content: "✦ "; font-weight: bold; color: #0a0a1a; }
+        body.dark .box ul li::before { color: #f9e79f; }
+
+        .card-sample {
+            background: rgba(255,255,255,0.05);
+            border-radius: 24px;
+            padding: 1rem 1.2rem;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+        }
+        .card-sample:hover { transform: translateY(-4px); background: rgba(255,255,255,0.08); }
+        body.dark .card-sample { background: rgba(0,0,0,0.1); }
+
+        .card-sample .card-logo { max-height: 50px; width: auto; display: block; margin: 0 auto 0.3rem; }
+        .card-sample .card-id {
+            font-size: 0.85rem;
+            font-weight: 700;
+            background: rgba(255,255,255,0.05);
+            padding: 0.1rem 0.8rem;
+            border-radius: 40px;
+            display: inline-block;
+            color: #0a0a1a;
+        }
+        body.dark .card-sample .card-id { color: #f9e79f; background: rgba(0,0,0,0.2); }
+
+        .card-sample .card-id-parts {
+            font-size: 0.5rem;
+            opacity: 0.6;
+            margin: 0.1rem 0;
+            color: #0a0a1a;
+        }
+        body.dark .card-sample .card-id-parts { color: #b8b0c8; }
+
+        .card-sample .card-id-parts .highlight {
+            background: #f9e79f;
+            padding: 0 0.2rem;
+            border-radius: 10px;
+            color: #7d6608;
+            font-weight: 600;
+        }
+
+        .card-sample .card-values { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.2rem; margin: 0.2rem 0; }
+        .card-sample .card-values .v-tag {
+            padding: 0.05rem 0.5rem;
+            border-radius: 30px;
+            font-size: 0.5rem;
+            background: rgba(255,255,255,0.05);
+            color: #0a0a1a;
+        }
+        body.dark .card-sample .card-values .v-tag { color: #d0d0e0; background: rgba(0,0,0,0.15); }
+
+        .card-sample .card-qr {
+            font-size: 0.4rem;
+            opacity: 0.4;
+            margin-top: 0.2rem;
+            border-top: 1px dashed rgba(0,0,0,0.05);
+            padding-top: 0.2rem;
+            color: #0a0a1a;
+        }
+        body.dark .card-sample .card-qr { color: #b8b0c8; }
+
+        .principles {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.2rem 0.8rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 40px;
+            padding: 0.2rem 1rem;
+            font-size: 0.65rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            color: #0a0a1a;
+        }
+        body.dark .principles { color: #d0d0e0; background: rgba(0,0,0,0.1); }
+
+        .modules {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            margin: 0.8rem 0;
+        }
+        .module-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 24px;
+            padding: 0.8rem 0.4rem;
+            text-decoration: none;
+            color: #0a0a1a;
+            transition: 0.25s;
+            text-align: center;
+        }
+        body.dark .module-btn { color: #e8e0f0; background: rgba(0,0,0,0.1); }
+        .module-btn:hover { background: rgba(255,255,255,0.12); transform: translateY(-3px); }
+        body.dark .module-btn:hover { background: rgba(255,255,255,0.05); }
+        .module-btn .icon { font-size: 1.4rem; margin-bottom: 0.1rem; }
+        .module-btn .label { font-weight: 700; font-size: 0.8rem; }
+        .module-btn .desc { font-size: 0.6rem; opacity: 0.6; }
+        body.dark .module-btn .desc { opacity: 0.7; }
+
+        .cta-area { text-align: center; margin: 0.6rem 0; }
+        .btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.08);
+            color: #0a0a1a;
+            padding: 0.5rem 2rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        body.dark .btn { color: #f9e79f; background: rgba(0,0,0,0.15); }
+        .btn:hover { background: rgba(255,255,255,0.15); transform: scale(1.02); }
+        body.dark .btn:hover { background: rgba(255,255,255,0.05); }
+
+        .cta-area > div { color: #0a0a1a; }
+        body.dark .cta-area > div { color: #b8b0c8; }
+
+        .achievement-section {
+            margin-top: 1.2rem;
+            padding: 1rem;
+            border-radius: 24px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        body.dark .achievement-section { background: rgba(0,0,0,0.08); }
+
+        .achievement-section h2 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #0a0a1a;
+            margin-bottom: 0.2rem;
+        }
+        body.dark .achievement-section h2 { color: #f9e79f; }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 0.6rem;
+            margin: 0.6rem 0;
+        }
+        .gallery-item {
+            background: rgba(255,255,255,0.03);
+            border-radius: 18px;
+            padding: 0.6rem;
+            border: 1px solid rgba(255,255,255,0.03);
+            transition: 0.3s;
+            text-align: center;
+        }
+        .gallery-item:hover { transform: translateY(-3px); background: rgba(255,255,255,0.08); }
+        body.dark .gallery-item { background: rgba(0,0,0,0.05); }
+        body.dark .gallery-item:hover { background: rgba(0,0,0,0.12); }
+
+        .gallery-placeholder {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background: rgba(255,255,255,0.03);
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px dashed rgba(0,0,0,0.05);
+        }
+        body.dark .gallery-placeholder { border-color: rgba(255,255,255,0.03); background: rgba(0,0,0,0.05); }
+
+        .gallery-placeholder img { max-width: 50%; height: auto; opacity: 0.3; }
+        .gallery-placeholder .gallery-label { font-size: 0.55rem; opacity: 0.5; color: #0a0a1a; }
+        body.dark .gallery-placeholder .gallery-label { color: #b8b0c8; }
+
+        .gallery-title { display: block; font-weight: 700; font-size: 0.7rem; color: #0a0a1a; }
+        body.dark .gallery-title { color: #f9e79f; }
+
+        .gallery-author { display: block; font-size: 0.55rem; opacity: 0.5; color: #0a0a1a; }
+        body.dark .gallery-author { color: #b8b0c8; }
+
+        .btn-upload {
+            display: inline-block;
+            background: rgba(255,255,255,0.05);
+            color: #0a0a1a;
+            padding: 0.2rem 1.2rem;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.7rem;
+            transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .btn-upload:hover { transform: scale(1.02); background: rgba(255,255,255,0.12); }
+        body.dark .btn-upload { color: #e8e0f0; background: rgba(0,0,0,0.1); }
+        body.dark .btn-upload:hover { background: rgba(255,255,255,0.05); }
+
+        .bottom-modules-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        @media (max-width: 768px) {
+            .bottom-modules-wrapper { grid-template-columns: 1fr; gap: 1rem; }
+        }
+
+        .bottom-module {
+            text-align: center;
+            padding: 1.2rem;
+            border-radius: 32px;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: 0.3s;
+        }
+        .bottom-module:hover { background: rgba(255, 255, 255, 0.10); transform: translateY(-3px); }
+        body.dark .bottom-module { background: rgba(0, 0, 0, 0.12); }
+        body.dark .bottom-module:hover { background: rgba(0, 0, 0, 0.20); }
+
+        .bottom-module h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0a0a1a;
+            margin-bottom: 0.3rem;
+        }
+        body.dark .bottom-module h3 { color: #f9e79f; }
+
+        .bottom-module p {
+            opacity: 0.8;
+            max-width: 500px;
+            margin: 0 auto 0.8rem;
+            color: #0a0a1a;
+            font-size: 0.9rem;
+        }
+        body.dark .bottom-module p { color: #d0d0e0; }
+
+        .btn-bottom {
+            display: inline-block;
+            background: rgba(255,255,255,0.06);
+            color: #0a0a1a;
+            padding: 0.5rem 2rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        body.dark .btn-bottom { color: #f9e79f; background: rgba(0,0,0,0.1); }
+        .btn-bottom:hover { background: rgba(255,255,255,0.12); transform: scale(1.02); }
+        body.dark .btn-bottom:hover { background: rgba(255,255,255,0.05); }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .container { padding: 1rem; border-radius: 40px; }
+            .logos-container { flex-direction: column; gap: 0.3rem; }
+            .site-name { font-size: 1.4rem; padding: 0.1rem 0.6rem; }
+            .site-name .fa { font-size: 0.7rem; }
+            .lang-bar { padding: 0.3rem 0.6rem; gap: 0.2rem; }
+            .lang-bar a { font-size: 0.65rem; padding: 0.1rem 0.5rem; }
+            .box { padding: 1rem; }
+            .slogan-track span { font-size: 0.75rem; }
+            .logo-main { max-height: 65px; }
+            .gallery-grid { grid-template-columns: 1fr 1fr; }
+            .modules { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 480px) {
+            .gallery-grid { grid-template-columns: 1fr; }
+            .modules { grid-template-columns: 1fr; }
+            .logo-main { max-height: 55px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="header">
+        <div class="top-bar">
+            <div class="date-display" id="dateDisplay">📅 Friday, August 26, 2026</div>
+            <button class="theme-toggle" id="themeToggle">🌙</button>
+        </div>
+
+        <div class="logos-container">
+            <img src="assets/logo-en.png" alt="Global Cultural ID" class="logo-main" />
+            <span class="site-name">
+                Global Smart Cultural Identity Card
+                <span class="fa">کارت جهانی هویت هوشمند فرهنگی</span>
+            </span>
+        </div>
+    </div>
+
+    <div class="lang-bar">
+        <a href="index.html">فارسی</a>
+        <a href="#" class="active">English</a>
+    </div>
+
+    <div class="slogan-scroller">
+        <div class="slogan-track">
+            <span>✦ Our Culture, Our Connection, Our Shared Future ✦</span>
+            <span>✦ Our Culture, Our Connection, Our Shared Future ✦</span>
+            <span>✦ Our Culture, Our Connection, Our Shared Future ✦</span>
+            <span>✦ Our Culture, Our Connection, Our Shared Future ✦</span>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-title">🪪 Card Specifications</div>
+        <p>The Global Smart Cultural ID is a decentralized digital identity built on <strong>cultural values</strong>, not on name, nationality, or personal data.</p>
+        <ul>
+            <li>Register 7 cultural values of your choice</li>
+            <li>Unique ID with optional 5‑character code</li>
+            <li>Optional connection with others</li>
+            <li>Data stored only based on culture</li>
+        </ul>
+    </div>
+
+    <div class="box">
+        <div class="box-title">🎯 Goals of the Card</div>
+        <ul>
+            <li>Build a borderless network of cultural reformers</li>
+            <li>Protect cultural diversity as a shared asset</li>
+            <li>Connect like‑minded people without identity disclosure</li>
+            <li>Promote peace, eliminate violence, foster cultural unity</li>
+        </ul>
+        <div style="margin-top:0.6rem;">
+            <span class="principles">
+                <span>✧ Non‑Political</span>
+                <span>✧ Non‑Governmental</span>
+                <span>✧ Non‑Profit</span>
+                <span>✧ Decentralized</span>
+            </span>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-title">⭐ Benefits of Having an ID</div>
+        <ul>
+            <li>Membership in the global movement to preserve cultural diversity of nations</li>
+            <li>Access to a network of diverse individuals with shared culture and interests</li>
+            <li>Regardless of personal identity</li>
+            <li>Connect with others via your preferred channels</li>
+        </ul>
+    </div>
+
+    <div class="box">
+        <div class="box-title">🪪 Sample Card</div>
+        <div class="card-sample">
+            <img src="assets/logo-en.png" alt="Logo" class="card-logo" />
+            <div class="card-id">CIM-1234-5678-A</div>
+            <div class="card-id-parts">
+                CIM • 1234 • 5678 • <span class="highlight">A</span>
+                <span style="display:block; font-size:0.45rem; opacity:0.6;">(Optional: 5 custom characters)</span>
+            </div>
+            <div class="card-values">
+                <span class="v-tag">Indigenous Values</span>
+                <span class="v-tag">Individual Knowledge</span>
+                <span class="v-tag">Collective Collaboration</span>
+            </div>
+            <div class="card-qr">[ Unique QR Code ]</div>
+        </div>
+    </div>
+
+    <div class="modules">
+        <a href="register-en.html" class="module-btn">
+            <span class="icon">📝</span>
+            <span class="label">Register & Get ID</span>
+            <span class="desc">Fill in the 7 cultural values form</span>
+        </a>
+        <a href="edit-en.html" class="module-btn">
+            <span class="icon">✏️</span>
+            <span class="label">Edit Information</span>
+            <span class="desc">Only one-time change allowed</span>
+        </a>
+        <a href="request-en.html?type=connection" class="module-btn">
+            <span class="icon">🤝</span>
+            <span class="label">Connect with Reformers</span>
+            <span class="desc">Submit request to admin</span>
+        </a>
+        <a href="referral-en.html" class="module-btn">
+            <span class="icon">📣</span>
+            <span class="label">Invite Friends</span>
+            <span class="desc">Become a cultural ambassador and network</span>
+        </a>
+        <a href="request-en.html?type=delete" class="module-btn" style="border-color: rgba(200, 50, 50, 0.1);">
+            <span class="icon">🚪</span>
+            <span class="label">Cancel Membership</span>
+            <span class="desc">Request account deletion</span>
+        </a>
+    </div>
+
+    <div class="cta-area">
+        <a href="register-en.html" class="btn">🎯 Get Your ID</a>
+        <div style="margin-top:0.2rem; font-size:0.6rem; opacity:0.6;">No personal info • Completely anonymous • 3 minutes</div>
+    </div>
+
+    <div class="achievement-section">
+        <h2>🏆 Gallery of 200 Ambassadors</h2>
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <div class="gallery-placeholder">
+                    <img src="assets/logo-en.png" alt="Logo" />
+                    <span class="gallery-label">Coming Soon...</span>
+                </div>
+                <div class="gallery-info">
+                    <span class="gallery-title">Awaiting Ambassadors' Works</span>
+                    <span class="gallery-author">First 200 Members</span>
+                </div>
+            </div>
+        </div>
+        <a href="upload-achievement-en.html" class="btn-upload">📤 If you are among the first 200, upload your work</a>
+    </div>
+
+    <div class="bottom-modules-wrapper">
+        <div class="bottom-module">
+            <h3>📖 About Project</h3>
+            <p>Goals, principles & decentralized philosophy</p>
+            <a href="about-en.html" class="btn-bottom">Learn More</a>
+        </div>
+        <div class="bottom-module">
+            <h3>📡 Smart Radio-TV</h3>
+            <p>Build cultural networks & publish group content</p>
+            <a href="about-en.html#radio-tv" class="btn-bottom">View Samples</a>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    (function() {
+        const now = new Date();
+        const opts = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+        document.getElementById('dateDisplay').textContent = '📅 ' + now.toLocaleDateString('en-US', opts);
+    })();
+
+    (function() {
+        const toggle = document.getElementById('themeToggle');
+        const body = document.body;
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark');
+            toggle.textContent = '☀️';
+        }
+        toggle.addEventListener('click', function() {
+            body.classList.toggle('dark');
+            if (body.classList.contains('dark')) {
+                toggle.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                toggle.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+    })();
+</script>
+</body>
+</html>
