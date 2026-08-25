@@ -73,7 +73,7 @@ export default async function handler(req, res) {
       optionalCode: data.optionalCode || '',
       communicationEmail: data.communicationEmail || '',
       registrationDate: new Date().toISOString(),
-      status: 'active',
+      status: 'pending', // ⭐ اصلاح شد: وضعیت پیش‌فرض "در انتظار تایید ادمین"
       allowConnection: !!data.communicationEmail,
       allowAchievements: false,
       culturalInfo: data.culturalInfo || ''
@@ -84,7 +84,7 @@ export default async function handler(req, res) {
     const content = Buffer.from(JSON.stringify(userData, null, 2)).toString('base64');
 
     const commitData = {
-      message: `Register new user: ${cardCode} from ${country} (Rank #${rank})`,
+      message: `Register new user: ${cardCode} from ${country} (Rank #${rank}) - Status: Pending`,
       content: content,
       branch: 'main'
     };
@@ -108,7 +108,7 @@ export default async function handler(req, res) {
       cardCode: cardCode,
       country: country,
       rank: rank,
-      message: 'ثبت‌نام با موفقیت انجام شد'
+      message: 'ثبت‌نام با موفقیت انجام شد و در انتظار تأیید ادمین است.'
     });
 
   } catch (error) {
