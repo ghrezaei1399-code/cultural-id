@@ -152,4 +152,275 @@
             border-color: rgba(255, 255, 255, 0.01);
         }
         .btn-secondary:hover {
-           
+            background: rgba(60, 30, 10, 0.03);
+            transform: scale(1.02);
+        }
+        body.dark .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .note {
+            text-align: center;
+            font-size: 0.75rem;
+            opacity: 0.5;
+            margin-top: 1.5rem;
+            color: #1a0a0a;
+            border-top: 1px solid rgba(30, 10, 0, 0.02);
+            padding-top: 1rem;
+        }
+        body.dark .note { color: #b0a090; border-top-color: rgba(255, 255, 255, 0.02); }
+        .message-box {
+            display: none;
+            padding: 1rem;
+            border-radius: 16px;
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        .message-box.success {
+            display: block;
+            background: rgba(50, 200, 50, 0.05);
+            border: 1px solid rgba(50, 200, 50, 0.05);
+            color: #0a5a0a;
+        }
+        body.dark .message-box.success {
+            color: #80b080;
+            background: rgba(50, 200, 50, 0.01);
+            border-color: rgba(50, 200, 50, 0.01);
+        }
+        .message-box.error {
+            display: block;
+            background: rgba(200, 50, 50, 0.05);
+            border: 1px solid rgba(200, 50, 50, 0.05);
+            color: #5a0a0a;
+        }
+        body.dark .message-box.error {
+            color: #b08080;
+            background: rgba(200, 50, 50, 0.01);
+            border-color: rgba(200, 50, 50, 0.01);
+        }
+        .theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(30, 10, 0, 0.02);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.3rem 0.8rem;
+            border-radius: 40px;
+            transition: 0.3s;
+            color: #1a0a0a;
+        }
+        body.dark .theme-toggle {
+            color: #f9e79f;
+            background: rgba(0, 0, 0, 0.05);
+            border-color: rgba(255, 255, 255, 0.02);
+        }
+        .theme-toggle:hover { transform: scale(1.1); }
+        .value-item {
+            background: rgba(255, 255, 255, 0.01);
+            border-radius: 12px;
+            padding: 0.8rem;
+            margin-bottom: 0.8rem;
+            border: 1px solid rgba(30, 10, 0, 0.02);
+        }
+        body.dark .value-item { border-color: rgba(255, 255, 255, 0.02); }
+        .value-item .value-title {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #2a1a0a;
+            margin-bottom: 0.3rem;
+            display: block;
+        }
+        body.dark .value-item .value-title { color: #e8d8c8; }
+        @font-face {
+            font-family: 'Vazir';
+            src: local('Vazir'), local('IRANSans');
+        }
+        .hidden { display: none; }
+        .email-box {
+            margin-top: 0.5rem;
+        }
+        .email-box label {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #2a1a0a;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+        body.dark .email-box label { color: #e8d8c8; }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" id="themeToggle">🌙</button>
+
+    <div class="container">
+        <h1>📝 ثبت‌نام و دریافت شناسنامه</h1>
+        <div class="subtitle">کارت جهانی هویت هوشمند فرهنگی</div>
+
+        <div id="messageBox" class="message-box"></div>
+
+        <form id="registerForm">
+            <div class="value-item">
+                <label class="value-title">۱. ارزش‌های بومی</label>
+                <input type="text" id="v1" placeholder="مثلاً: صلح‌دوستی، مهمان‌نوازی" required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">۲. دانش فردی</label>
+                <input type="text" id="v2" placeholder="مثلاً: دانش بومی، مهارت‌های سنتی" required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">۳. همکاری جمعی</label>
+                <input type="text" id="v3" placeholder="مثلاً: کار گروهی، مشارکت اجتماعی" required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">۴. تنوع فرهنگی</label>
+                <input type="text" id="v4" placeholder="مثلاً: احترام به فرهنگ‌های مختلف" required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">۵. صلح پایدار جهانی</label>
+                <input type="text" id="v5" placeholder="مثلاً: گفت‌وگو، حل تعارض" required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">۶. محو خشونت</label>
+                <input type="text" id="v6" placeholder="مثلاً: کاهش تعصب، ترویج مدارا" required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">۷. اتحاد فرهنگی</label>
+                <input type="text" id="v7" placeholder="مثلاً: پل‌های ارتباطی میان فرهنگ‌ها" required />
+            </div>
+
+            <div class="form-group">
+                <label>کد اختیاری (۵ کاراکتر دلخواه)</label>
+                <input type="text" id="optionalCode" maxlength="5" placeholder="مثلاً: الف-ب-ج-د-ه" />
+                <small style="opacity:0.5; font-size:0.7rem;">اختیاری - می‌توانید خالی بگذارید</small>
+            </div>
+
+            <div class="form-group email-box">
+                <label>📧 چنانچه می‌خواهید با هم‌فرهنگی‌ها و هم‌فکران خود ارتباط برقرار کنید، ایمیل خود را وارد کنید</label>
+                <input type="email" id="communicationEmail" placeholder="ایمیل خود را وارد کنید (اختیاری)" />
+                <small style="opacity:0.5; font-size:0.7rem;">اختیاری - فقط برای ارتباط استفاده می‌شود</small>
+            </div>
+
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary" id="submitBtn">🎯 دریافت شناسنامه</button>
+                <a href="index.html" class="btn btn-secondary">↩ بازگشت</a>
+            </div>
+        </form>
+
+        <div class="note">
+            بدون اطلاعات شخصی • کاملاً ناشناس • اطلاعات در مخزن ذخیره می‌شود
+        </div>
+    </div>
+
+    <script>
+        // ===== تم =====
+        (function() {
+            const toggle = document.getElementById('themeToggle');
+            const body = document.body;
+            if (localStorage.getItem('theme') === 'dark') {
+                body.classList.add('dark');
+                toggle.textContent = '☀️';
+            }
+            toggle.addEventListener('click', function() {
+                body.classList.toggle('dark');
+                if (body.classList.contains('dark')) {
+                    toggle.textContent = '☀️';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    toggle.textContent = '🌙';
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+        })();
+
+        // ===== نمایش پیام =====
+        function showMessage(text, type) {
+            const box = document.getElementById('messageBox');
+            box.textContent = text;
+            box.className = 'message-box ' + type;
+            box.style.display = 'block';
+        }
+
+        function hideMessage() {
+            const box = document.getElementById('messageBox');
+            box.style.display = 'none';
+            box.className = 'message-box';
+        }
+
+        // ===== ارسال فرم به API Vercel =====
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            hideMessage();
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ در حال ثبت...';
+
+            try {
+                const values = [
+                    document.getElementById('v1').value.trim(),
+                    document.getElementById('v2').value.trim(),
+                    document.getElementById('v3').value.trim(),
+                    document.getElementById('v4').value.trim(),
+                    document.getElementById('v5').value.trim(),
+                    document.getElementById('v6').value.trim(),
+                    document.getElementById('v7').value.trim()
+                ];
+
+                for (let v of values) {
+                    if (!v) {
+                        throw new Error('لطفاً تمام ۷ ارزش فرهنگی را وارد کنید.');
+                    }
+                }
+
+                const optionalCode = document.getElementById('optionalCode').value.trim() || '';
+                const communicationEmail = document.getElementById('communicationEmail').value.trim() || '';
+
+                const userData = {
+                    values: values,
+                    optionalCode: optionalCode,
+                    communicationEmail: communicationEmail
+                };
+
+                // ارسال به API سرور Vercel
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userData),
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    // ✅ اصلاح مهم: استفاده از result.cardCode به جای result.cardId
+                    const generatedCode = result.cardCode;
+                    showMessage(`✅ ثبت‌نام با موفقیت انجام شد. کد شما: ${generatedCode}`, 'success');
+                    submitBtn.textContent = '✅ ثبت شد';
+                    localStorage.setItem('culturalCardCode', generatedCode);
+                    
+                    // هدایت به صفحه کارت با کد صحیح
+                    setTimeout(() => {
+                        window.location.href = `card-fa.html?code=${generatedCode}`;
+                    }, 2000);
+                } else {
+                    throw new Error(result.error || 'خطا در ثبت‌نام');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage(`❌ خطا: ${error.message}`, 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🎯 دریافت شناسنامه';
+            }
+        });
+    </script>
+</body>
+</html>
