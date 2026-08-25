@@ -1,0 +1,31 @@
+{
+  "cardCode": "CIM-7789-8183-55286",
+  "country": "Iran",
+  "countryCode": "IR",
+  "rank": 1,
+  "values": [
+    "تمامیت ارضی",
+    "هوش مصنوعی",
+    "تشکیلات سازی",
+    "پاسداشت فرهنگ های مختلف",
+    "صلح دوستی کنشگرانه",
+    "مبارزه با هرگونه خشونت ورزی",
+    "گفتگوی تمدن ها"
+  ],
+  "priorities": [
+    1,
+    7,
+    4,
+    3,
+    6,
+    5,
+    2
+  ],
+  "optionalCode": "66666",
+  "communicationEmail": "ghrezaei1399@gmail.com",
+  "registrationDate": "2026-08-25T18:38:04.955Z",
+  "status": "active",
+  "allowConnection": true,
+  "allowAchievements": false,
+  "culturalInfo": ""
+}
