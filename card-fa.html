@@ -5,146 +5,194 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>کارت هویت فرهنگی | Cultural ID</title>
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
             font-family: 'Vazir', 'IRANSans', sans-serif;
-            background: #f4f4f9;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 1rem;
+            padding: 2rem 1rem;
+            background-image: url('assets/pisa.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
         }
+        
+        /* کانتینر اصلی شفاف */
         .card-container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            padding: 2rem;
-            max-width: 400px;
+            max-width: 450px;
             width: 100%;
-            text-align: center;
+            background: rgba(255, 255, 255, 0.0);
+            backdrop-filter: blur(0px);
+            border-radius: 24px;
+            padding: 2.5rem 2rem;
+            border: 3px solid #d4af37;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
             position: relative;
-            overflow: hidden;
             display: none;
         }
+        
+        /* لوگو */
         .card-logo {
-            width: 80px;
-            height: 80px;
+            width: 100px;
+            height: 100px;
             object-fit: contain;
-            margin-bottom: 1rem;
+            margin: 0 auto 1.5rem;
+            display: block;
         }
+        
+        /* عنوان کارت */
         .card-title {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             font-weight: 800;
             color: #2a1a0a;
-            margin-bottom: 0.5rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
         }
+        
+        /* باکس کد اصلی */
+        .card-code-box {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #d4af37;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
         .card-code {
-            font-family: monospace;
-            font-size: 1.1rem;
-            background: #f0f0f5;
-            padding: 0.5rem;
-            border-radius: 8px;
-            margin: 1rem 0;
-            color: #333;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2a1a0a;
+            letter-spacing: 2px;
+        }
+        
+        /* باکس کد اختیاری */
+        .optional-code-box {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #d4af37;
+            border-radius: 12px;
+            padding: 0.8rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            display: none;
+        }
+        
+        .optional-code-label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+        
+        .optional-code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #2a1a0a;
             letter-spacing: 1px;
         }
-        .card-badge {
-            font-size: 1rem;
-            font-weight: 700;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            display: inline-block;
-            margin-bottom: 1rem;
-        }
-        .badge-golden { background: rgba(212, 175, 55, 0.2); color: #8a7a0a; border: 1px solid #d4af37; }
-        .badge-silver { background: rgba(192, 192, 192, 0.2); color: #4a4a5a; border: 1px solid #c0c0c0; }
-        .badge-bronze { background: rgba(205, 127, 50, 0.2); color: #6a4a0a; border: 1px solid #cd7f32; }
         
-        .card-details {
-            text-align: right;
-            margin-top: 1.5rem;
-            border-top: 1px solid #eee;
-            padding-top: 1rem;
+        /* بخش ارزش‌های فرهنگی */
+        .values-section {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #d4af37;
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
         }
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.8rem;
+        
+        .values-title {
             font-size: 0.9rem;
+            font-weight: 700;
+            color: #2a1a0a;
+            margin-bottom: 0.8rem;
+            text-align: center;
         }
-        .detail-label { color: #666; font-weight: 600; }
-        .detail-value { color: #222; font-weight: 700; }
         
         .values-list {
             display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
+            flex-direction: column;
+            gap: 0.6rem;
         }
-        .value-tag {
-            background: #eef2ff;
-            color: #4f46e5;
-            padding: 0.3rem 0.6rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
+        
+        .value-item {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid #d4af37;
+            border-radius: 8px;
+            padding: 0.6rem 0.8rem;
+            font-size: 0.85rem;
+            color: #2a1a0a;
+            line-height: 1.5;
         }
+        
+        .value-item::before {
+            content: "• ";
+            color: #d4af37;
+            font-weight: bold;
+            margin-left: 0.3rem;
+        }
+        
+        /* هولوگرام */
+        .hologram {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+            display: block;
+            opacity: 0.9;
+        }
+        
+        /* پیام خطا */
         .error-message {
             color: #dc2626;
-            background: #fee2e2;
-            padding: 1rem;
+            background: rgba(254, 226, 226, 0.95);
+            padding: 1.5rem;
             border-radius: 12px;
             display: none;
             text-align: center;
-        }
-        .hologram {
-            width: 60px;
-            height: 60px;
-            margin: 1rem auto;
-            opacity: 0.8;
+            font-weight: 600;
+            max-width: 450px;
+            width: 100%;
+            border: 2px solid #dc2626;
         }
     </style>
 </head>
 <body>
 
     <div class="card-container" id="cardContent">
-        <!-- بخش‌های کاملاً استاتیک -->
+        <!-- ۱. لوگوی فارسی -->
         <img src="assets/logo-fa.png" alt="Logo" class="card-logo" id="cardLogo" onerror="this.style.display='none'">
-        <div class="card-title">کارت جهانی هویت هوشمند فرهنگی</div>
-        <img src="assets/hologram.png" alt="Hologram" class="hologram" onerror="this.style.display='none'">
-
-        <!-- بخش‌های کاملاً پویا (فقط محتوای این باکس‌ها تغییر می‌کند) -->
-        <div class="card-code" id="displayCardCode">---</div>
-        <div id="displayBadge" class="card-badge">---</div>
-
-        <div class="card-details">
-            <div class="detail-row">
-                <span class="detail-label">رتبه ثبت‌نام:</span>
-                <span class="detail-value" id="displayRank">---</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">کشور (IP):</span>
-                <span class="detail-value" id="displayCountry">---</span>
-            </div>
-            
-            <div class="detail-row" id="optionalCodeRow" style="display: none;">
-                <span class="detail-label">کد اختیاری:</span>
-                <span class="detail-value" id="displayOptionalCode">---</span>
-            </div>
-
-            <div class="detail-row" style="flex-direction: column; margin-top: 1rem;">
-                <span class="detail-label" style="margin-bottom: 0.5rem;">ارزش‌های فرهنگی ثبت شده:</span>
-                <div class="values-list" id="displayValues"></div>
-            </div>
-        </div>
         
-        <div style="margin-top: 1.5rem; font-size: 0.7rem; color: #888;">
-            این کارت فاقد ارزش مادی است و صرفاً هویت فرهنگی ناشناس را تأیید می‌کند.
+        <!-- ۲. نام کارت -->
+        <div class="card-title">کارت جهانی هویت هوشمند فرهنگی</div>
+
+        <!-- ۳. باکس کد اصلی -->
+        <div class="card-code-box">
+            <div class="card-code" id="displayCardCode">---</div>
         </div>
+
+        <!-- ۴. باکس کد اختیاری -->
+        <div class="optional-code-box" id="optionalCodeBox">
+            <div class="optional-code-label">کد اختیاری:</div>
+            <div class="optional-code" id="displayOptionalCode">---</div>
+        </div>
+
+        <!-- ۵. بخش ارزش‌های فرهنگی -->
+        <div class="values-section">
+            <div class="values-title">ارزش‌های فرهنگی ثبت شده:</div>
+            <div class="values-list" id="displayValues"></div>
+        </div>
+
+        <!-- ۶. هولوگرام در پایین -->
+        <img src="assets/hologram.png" alt="Hologram" class="hologram" onerror="this.style.display='none'">
     </div>
 
     <div class="error-message" id="cardErrorMessage">
-        ❌ کارت با این کد یافت نشد یا خطایی رخ داده است.
+        ❌ کارت با این کد یافت نشد.
     </div>
 
     <script>
@@ -153,63 +201,52 @@
 
         async function loadCardData() {
             if (!cardCode || cardCode === 'undefined') {
-                document.getElementById('cardContent').style.display = 'none';
                 document.getElementById('cardErrorMessage').style.display = 'block';
+                document.getElementById('cardErrorMessage').textContent = '❌ کد کارت نامعتبر است.';
                 return;
             }
 
             try {
-                const response = await fetch(`/api/get-user?code=${encodeURIComponent(cardCode)}`);
+                const response = await fetch(`/api/get-user?code=${cardCode}`);
                 const data = await response.json();
 
-                if (!response.ok || !data.user) {
-                    throw new Error('یافت نشد');
+                if (!response.ok) {
+                    throw new Error(data.error || 'خطا در دریافت اطلاعات');
                 }
 
                 const user = data.user;
 
-                // تزریق ایمن داده‌ها فقط به المان‌های پویا
+                // نمایش کد اصلی
                 document.getElementById('displayCardCode').textContent = user.cardCode || '---';
-                document.getElementById('displayCountry').textContent = user.country || 'نامشخص';
-                document.getElementById('displayRank').textContent = user.rank || '---';
                 
-                const badgeElement = document.getElementById('displayBadge');
-                const badge = (user.badge || 'bronze').toLowerCase();
-                if (badge === 'golden') {
-                    badgeElement.textContent = '🌟 نشان طلایی';
-                    badgeElement.className = 'card-badge badge-golden';
-                } else if (badge === 'silver') {
-                    badgeElement.textContent = '🥈 نشان نقره‌ای';
-                    badgeElement.className = 'card-badge badge-silver';
-                } else {
-                    badgeElement.textContent = '🥉 نشان برنزی';
-                    badgeElement.className = 'card-badge badge-bronze';
-                }
-
+                // نمایش کد اختیاری (اگر وجود داشته باشد)
                 if (user.optionalCode && user.optionalCode.trim() !== '') {
                     document.getElementById('displayOptionalCode').textContent = user.optionalCode;
-                    document.getElementById('optionalCodeRow').style.display = 'flex';
+                    document.getElementById('optionalCodeBox').style.display = 'block';
                 }
 
+                // نمایش ارزش‌های فرهنگی
                 const valuesContainer = document.getElementById('displayValues');
                 valuesContainer.innerHTML = '';
-                if (Array.isArray(user.values) && user.values.length > 0) {
+                if (user.values && user.values.length > 0) {
                     user.values.forEach(v => {
-                        const span = document.createElement('span');
-                        span.className = 'value-tag';
-                        span.textContent = v;
-                        valuesContainer.appendChild(span);
+                        const div = document.createElement('div');
+                        div.className = 'value-item';
+                        div.textContent = v;
+                        valuesContainer.appendChild(div);
                     });
                 } else {
-                    valuesContainer.innerHTML = '<span style="color:#999;">ثبت نشده</span>';
+                    valuesContainer.innerHTML = '<div class="value-item">ثبت نشده</div>';
                 }
 
+                // نمایش کارت و مخفی کردن خطا
                 document.getElementById('cardErrorMessage').style.display = 'none';
                 document.getElementById('cardContent').style.display = 'block';
 
             } catch (error) {
-                document.getElementById('cardContent').style.display = 'none';
+                console.error('Error:', error);
                 document.getElementById('cardErrorMessage').style.display = 'block';
+                document.getElementById('cardErrorMessage').textContent = `❌ ${error.message}`;
             }
         }
 
