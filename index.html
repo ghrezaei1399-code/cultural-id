@@ -11,11 +11,12 @@
             font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
             min-height: 100vh;
             padding: 0.8rem;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background: linear-gradient(135deg, #fdf6e3 0%, #e8f4f8 50%, #f5e6d3 100%);
             background-attachment: fixed;
-            color: #f0e8d0;
+            color: #2a1a0a;
             position: relative;
             overflow-x: hidden;
+            transition: background 0.5s ease, color 0.5s ease;
         }
 
         body::before {
@@ -24,10 +25,21 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             background-image: 
-                radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.06) 0%, transparent 40%);
+                radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(135, 206, 235, 0.1) 0%, transparent 40%);
             pointer-events: none;
             z-index: 0;
+        }
+
+        /* ===== حالت شب ===== */
+        body.dark {
+            background: linear-gradient(135deg, #3a2f20 0%, #2a2418 50%, #4a3a28 100%);
+            color: #f0e8d0;
+        }
+        body.dark::before {
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.08) 0%, transparent 40%);
         }
 
         .container {
@@ -38,17 +50,23 @@
             z-index: 1;
         }
 
-        /* ===== هدر فشرده ===== */
+        /* ===== هدر ===== */
         .hero-header {
             text-align: center;
             padding: 1rem 0.8rem;
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.12) 0%, rgba(0, 0, 0, 0.4) 100%);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(253, 246, 227, 0.8) 100%);
             border-radius: 24px;
-            border: 2px solid rgba(212, 175, 55, 0.3);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 0 30px rgba(212, 175, 55, 0.08);
+            border: 2px solid rgba(212, 175, 55, 0.4);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.15), inset 0 0 20px rgba(255, 255, 255, 0.5);
             margin-bottom: 0.8rem;
             position: relative;
             overflow: hidden;
+            transition: all 0.5s ease;
+        }
+        body.dark .hero-header {
+            background: linear-gradient(135deg, rgba(74, 58, 40, 0.7) 0%, rgba(58, 47, 32, 0.8) 100%);
+            border-color: rgba(212, 175, 55, 0.5);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(212, 175, 55, 0.1);
         }
 
         .hero-header::before {
@@ -56,7 +74,7 @@
             position: absolute;
             top: -50%; left: -50%;
             width: 200%; height: 200%;
-            background: conic-gradient(from 0deg, transparent, rgba(212, 175, 55, 0.1), transparent 30%);
+            background: conic-gradient(from 0deg, transparent, rgba(212, 175, 55, 0.08), transparent 30%);
             animation: rotateGlow 15s linear infinite;
         }
 
@@ -77,22 +95,35 @@
         .date-display {
             font-size: 0.7rem;
             font-weight: 600;
-            color: #f9e79f;
-            background: rgba(0, 0, 0, 0.4);
+            color: #8a6d1f;
+            background: rgba(255, 255, 255, 0.6);
             padding: 0.25rem 0.8rem;
             border-radius: 20px;
             border: 1px solid rgba(212, 175, 55, 0.3);
+            transition: all 0.5s ease;
+        }
+        body.dark .date-display {
+            color: #f9e79f;
+            background: rgba(0, 0, 0, 0.3);
+            border-color: rgba(212, 175, 55, 0.4);
         }
 
         .theme-toggle {
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(255, 255, 255, 0.6);
             border: 1px solid rgba(212, 175, 55, 0.3);
             font-size: 1rem;
             cursor: pointer;
             padding: 0.2rem 0.6rem;
             border-radius: 30px;
-            color: #f9e79f;
+            color: #8a6d1f;
+            transition: all 0.3s;
         }
+        body.dark .theme-toggle {
+            background: rgba(0, 0, 0, 0.3);
+            color: #f9e79f;
+            border-color: rgba(212, 175, 55, 0.4);
+        }
+        .theme-toggle:hover { transform: scale(1.1); }
 
         .logo-showcase {
             display: flex;
@@ -105,7 +136,7 @@
             width: 70px;
             height: 70px;
             object-fit: contain;
-            filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.6));
+            filter: drop-shadow(0 4px 12px rgba(212, 175, 55, 0.4));
             animation: floatLogo 4s ease-in-out infinite;
             flex-shrink: 0;
         }
@@ -120,21 +151,28 @@
         .site-title {
             font-size: 1.15rem;
             font-weight: 900;
-            background: linear-gradient(135deg, #f9e79f 0%, #d4af37 50%, #f9e79f 100%);
+            background: linear-gradient(135deg, #8a6d1f 0%, #d4af37 50%, #8a6d1f 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             line-height: 1.3;
             letter-spacing: -0.3px;
         }
+        body.dark .site-title {
+            background: linear-gradient(135deg, #f9e79f 0%, #d4af37 50%, #f9e79f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
         .site-subtitle {
             font-size: 0.65rem;
-            color: #b8b0c8;
+            color: #6a5a3a;
             font-weight: 400;
             letter-spacing: 1.5px;
             margin-top: 0.15rem;
         }
+        body.dark .site-subtitle { color: #c8b890; }
 
         /* ===== نوار زبان ===== */
         .lang-bar {
@@ -143,9 +181,15 @@
             gap: 0.5rem;
             margin-bottom: 0.8rem;
             padding: 0.35rem;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(255, 255, 255, 0.6);
             border-radius: 40px;
-            border: 1px solid rgba(212, 175, 55, 0.2);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            backdrop-filter: blur(10px);
+            transition: all 0.5s ease;
+        }
+        body.dark .lang-bar {
+            background: rgba(0, 0, 0, 0.3);
+            border-color: rgba(212, 175, 55, 0.4);
         }
 
         .lang-bar a {
@@ -154,24 +198,29 @@
             text-decoration: none;
             font-size: 0.78rem;
             font-weight: 700;
-            color: #b8b0c8;
+            color: #6a5a3a;
             transition: all 0.3s ease;
         }
+        body.dark .lang-bar a { color: #c8b890; }
 
         .lang-bar a.active {
             background: linear-gradient(135deg, #d4af37, #f9e79f);
-            color: #1a1a2e;
+            color: #2a1a0a;
             box-shadow: 0 3px 10px rgba(212, 175, 55, 0.4);
         }
 
-        /* ===== شعار متحرک کوتاه ===== */
+        /* ===== شعار ===== */
         .slogan-scroller {
             overflow: hidden;
-            background: linear-gradient(90deg, rgba(212, 175, 55, 0.15), rgba(0, 0, 0, 0.4), rgba(212, 175, 55, 0.15));
+            background: linear-gradient(90deg, rgba(212, 175, 55, 0.15), rgba(255, 255, 255, 0.5), rgba(212, 175, 55, 0.15));
             border-radius: 30px;
             padding: 0.4rem 0;
             margin-bottom: 0.8rem;
             border: 1px solid rgba(212, 175, 55, 0.3);
+            transition: all 0.5s ease;
+        }
+        body.dark .slogan-scroller {
+            background: linear-gradient(90deg, rgba(212, 175, 55, 0.2), rgba(74, 58, 40, 0.5), rgba(212, 175, 55, 0.2));
         }
 
         .slogan-track {
@@ -185,49 +234,79 @@
         .slogan-track span {
             font-size: 0.78rem;
             font-weight: 600;
-            color: #f9e79f;
+            color: #8a6d1f;
             padding: 0 0.5rem;
         }
+        body.dark .slogan-track span { color: #f9e79f; }
 
         @keyframes scrollSlogan {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
         }
 
-        /* ===== باکس‌های فشرده ===== */
+        /* ===== باکس‌ها ===== */
         .box {
             border-radius: 18px;
             padding: 0.9rem 1rem;
             margin-bottom: 0.7rem;
             transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
         }
 
+        /* طلایی - مشخصات */
         .box-gold {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(0, 0, 0, 0.4) 100%);
-            border: 2px solid rgba(212, 175, 55, 0.4);
+            background: linear-gradient(135deg, rgba(255, 248, 220, 0.85) 0%, rgba(253, 246, 227, 0.9) 100%);
+            border: 2px solid rgba(212, 175, 55, 0.5);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.15);
         }
-        .box-gold .box-title { color: #f9e79f; }
+        body.dark .box-gold {
+            background: linear-gradient(135deg, rgba(74, 58, 40, 0.7) 0%, rgba(58, 47, 32, 0.8) 100%);
+            border-color: rgba(212, 175, 55, 0.5);
+        }
+        .box-gold .box-title { color: #8a6d1f; }
+        body.dark .box-gold .box-title { color: #f9e79f; }
         .box-gold .box-title::before { content: "🪪 "; }
 
+        /* آبی - اهداف */
         .box-blue {
-            background: linear-gradient(135deg, rgba(52, 152, 219, 0.15) 0%, rgba(0, 0, 0, 0.4) 100%);
-            border: 2px solid rgba(52, 152, 219, 0.4);
+            background: linear-gradient(135deg, rgba(220, 240, 255, 0.85) 0%, rgba(200, 230, 250, 0.9) 100%);
+            border: 2px solid rgba(100, 170, 220, 0.5);
+            box-shadow: 0 6px 20px rgba(100, 170, 220, 0.15);
         }
-        .box-blue .box-title { color: #85c1e9; }
+        body.dark .box-blue {
+            background: linear-gradient(135deg, rgba(40, 60, 80, 0.7) 0%, rgba(50, 70, 90, 0.8) 100%);
+            border-color: rgba(133, 193, 233, 0.5);
+        }
+        .box-blue .box-title { color: #2874a6; }
+        body.dark .box-blue .box-title { color: #85c1e9; }
         .box-blue .box-title::before { content: "🎯 "; }
 
+        /* سبز - مزایا */
         .box-green {
-            background: linear-gradient(135deg, rgba(46, 204, 113, 0.15) 0%, rgba(0, 0, 0, 0.4) 100%);
-            border: 2px solid rgba(46, 204, 113, 0.4);
+            background: linear-gradient(135deg, rgba(220, 245, 220, 0.85) 0%, rgba(200, 235, 200, 0.9) 100%);
+            border: 2px solid rgba(100, 180, 100, 0.5);
+            box-shadow: 0 6px 20px rgba(100, 180, 100, 0.15);
         }
-        .box-green .box-title { color: #82e0aa; }
+        body.dark .box-green {
+            background: linear-gradient(135deg, rgba(40, 70, 40, 0.7) 0%, rgba(50, 80, 50, 0.8) 100%);
+            border-color: rgba(130, 224, 170, 0.5);
+        }
+        .box-green .box-title { color: #1e7a1e; }
+        body.dark .box-green .box-title { color: #82e0aa; }
         .box-green .box-title::before { content: "⭐ "; }
 
+        /* بنفش - نمونه کارت */
         .box-purple {
-            background: linear-gradient(135deg, rgba(155, 89, 182, 0.15) 0%, rgba(0, 0, 0, 0.4) 100%);
-            border: 2px solid rgba(155, 89, 182, 0.4);
+            background: linear-gradient(135deg, rgba(240, 225, 250, 0.85) 0%, rgba(230, 215, 245, 0.9) 100%);
+            border: 2px solid rgba(160, 120, 200, 0.5);
+            box-shadow: 0 6px 20px rgba(160, 120, 200, 0.15);
         }
-        .box-purple .box-title { color: #d2b4de; }
+        body.dark .box-purple {
+            background: linear-gradient(135deg, rgba(70, 50, 90, 0.7) 0%, rgba(80, 60, 100, 0.8) 100%);
+            border-color: rgba(210, 180, 222, 0.5);
+        }
+        .box-purple .box-title { color: #6a3d9a; }
+        body.dark .box-purple .box-title { color: #d2b4de; }
         .box-purple .box-title::before { content: "💳 "; }
 
         .box-title {
@@ -235,34 +314,38 @@
             font-weight: 800;
             margin-bottom: 0.5rem;
             padding-bottom: 0.4rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             display: flex;
             align-items: center;
             gap: 0.4rem;
         }
+        body.dark .box-title { border-bottom-color: rgba(255, 255, 255, 0.1); }
 
         .box p {
             font-size: 0.8rem;
             line-height: 1.7;
-            color: #e8e0f0;
+            color: #3a2a1a;
             margin-bottom: 0.5rem;
         }
+        body.dark .box p { color: #e8dcc0; }
 
-        .box p strong { color: #f9e79f; font-weight: 700; }
+        .box p strong { color: #8a6d1f; font-weight: 700; }
+        body.dark .box p strong { color: #f9e79f; }
 
         .box ul { list-style: none; line-height: 1.9; }
 
         .box ul li {
             font-size: 0.78rem;
-            color: #e8e0f0;
+            color: #3a2a1a;
             padding: 0.1rem 0;
             padding-right: 1.3rem;
             position: relative;
         }
+        body.dark .box ul li { color: #e8dcc0; }
 
-        .box-gold ul li::before { content: "✦"; color: #f9e79f; position: absolute; right: 0; }
-        .box-blue ul li::before { content: "◆"; color: #85c1e9; position: absolute; right: 0; font-size: 0.7rem; }
-        .box-green ul li::before { content: "✓"; color: #82e0aa; position: absolute; right: 0; font-weight: 900; }
+        .box-gold ul li::before { content: "✦"; color: #d4af37; position: absolute; right: 0; }
+        .box-blue ul li::before { content: "◆"; color: #5dade2; position: absolute; right: 0; font-size: 0.7rem; }
+        .box-green ul li::before { content: "✓"; color: #27ae60; position: absolute; right: 0; font-weight: 900; }
 
         .principles {
             display: flex;
@@ -274,34 +357,43 @@
 
         .principles span {
             padding: 0.2rem 0.7rem;
-            background: rgba(52, 152, 219, 0.2);
-            border: 1px solid rgba(52, 152, 219, 0.4);
+            background: rgba(93, 173, 226, 0.15);
+            border: 1px solid rgba(93, 173, 226, 0.4);
             border-radius: 20px;
             font-size: 0.65rem;
             font-weight: 700;
+            color: #2874a6;
+        }
+        body.dark .principles span {
+            background: rgba(133, 193, 233, 0.15);
+            border-color: rgba(133, 193, 233, 0.4);
             color: #85c1e9;
         }
 
-        /* ===== نمونه کارت کوچک ===== */
+        /* ===== نمونه کارت ===== */
         .card-sample {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            background: linear-gradient(135deg, #fff9e6 0%, #fdf6e3 100%);
             border-radius: 14px;
             padding: 0.8rem;
             text-align: center;
             border: 2px solid #d4af37;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
             display: flex;
             align-items: center;
             gap: 0.8rem;
             justify-content: center;
             flex-wrap: wrap;
         }
+        body.dark .card-sample {
+            background: linear-gradient(135deg, #3a2f20 0%, #2a2418 100%);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+        }
 
         .card-sample .card-logo {
             width: 45px;
             height: 45px;
             object-fit: contain;
-            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.6));
+            filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.5));
         }
 
         .card-sample .card-id {
@@ -310,11 +402,12 @@
             background: rgba(212, 175, 55, 0.15);
             padding: 0.3rem 0.8rem;
             border-radius: 30px;
-            color: #f9e79f;
+            color: #8a6d1f;
             border: 1px solid #d4af37;
             font-family: 'Courier New', monospace;
             letter-spacing: 1px;
         }
+        body.dark .card-sample .card-id { color: #f9e79f; }
 
         .card-sample .card-values {
             display: flex;
@@ -328,12 +421,13 @@
             border-radius: 20px;
             font-size: 0.6rem;
             background: rgba(212, 175, 55, 0.15);
-            color: #f9e79f;
+            color: #8a6d1f;
             border: 1px solid rgba(212, 175, 55, 0.4);
             font-weight: 600;
         }
+        body.dark .card-sample .v-tag { color: #f9e79f; }
 
-        /* ===== ماژول‌های فشرده ===== */
+        /* ===== ماژول‌ها ===== */
         .modules {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -352,33 +446,68 @@
             transition: all 0.3s ease;
             text-align: center;
             min-height: 95px;
+            backdrop-filter: blur(10px);
         }
 
         .module-btn:active { transform: scale(0.97); }
 
         .module-register {
-            background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(0, 0, 0, 0.5));
-            border: 2px solid rgba(46, 204, 113, 0.5);
+            background: linear-gradient(135deg, rgba(180, 230, 180, 0.8), rgba(150, 210, 150, 0.9));
+            border: 2px solid rgba(39, 174, 96, 0.5);
+            color: #1e7a1e;
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.15);
+        }
+        body.dark .module-register {
+            background: linear-gradient(135deg, rgba(40, 70, 40, 0.7), rgba(50, 80, 50, 0.8));
+            border-color: rgba(130, 224, 170, 0.5);
             color: #82e0aa;
         }
+
         .module-edit {
-            background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(0, 0, 0, 0.5));
+            background: linear-gradient(135deg, rgba(180, 220, 250, 0.8), rgba(150, 200, 240, 0.9));
             border: 2px solid rgba(52, 152, 219, 0.5);
+            color: #2874a6;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
+        }
+        body.dark .module-edit {
+            background: linear-gradient(135deg, rgba(40, 60, 80, 0.7), rgba(50, 70, 90, 0.8));
+            border-color: rgba(133, 193, 233, 0.5);
             color: #85c1e9;
         }
+
         .module-connect {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(0, 0, 0, 0.5));
+            background: linear-gradient(135deg, rgba(255, 240, 200, 0.8), rgba(253, 230, 180, 0.9));
             border: 2px solid rgba(212, 175, 55, 0.5);
+            color: #8a6d1f;
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.15);
+        }
+        body.dark .module-connect {
+            background: linear-gradient(135deg, rgba(74, 58, 40, 0.7), rgba(58, 47, 32, 0.8));
+            border-color: rgba(212, 175, 55, 0.5);
             color: #f9e79f;
         }
+
         .module-invite {
-            background: linear-gradient(135deg, rgba(155, 89, 182, 0.2), rgba(0, 0, 0, 0.5));
-            border: 2px solid rgba(155, 89, 182, 0.5);
+            background: linear-gradient(135deg, rgba(230, 200, 245, 0.8), rgba(215, 180, 235, 0.9));
+            border: 2px solid rgba(142, 68, 173, 0.5);
+            color: #6a3d9a;
+            box-shadow: 0 4px 12px rgba(142, 68, 173, 0.15);
+        }
+        body.dark .module-invite {
+            background: linear-gradient(135deg, rgba(70, 50, 90, 0.7), rgba(80, 60, 100, 0.8));
+            border-color: rgba(210, 180, 222, 0.5);
             color: #d2b4de;
         }
+
         .module-cancel {
-            background: linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(0, 0, 0, 0.5));
-            border: 2px solid rgba(231, 76, 60, 0.5);
+            background: linear-gradient(135deg, rgba(255, 210, 200, 0.8), rgba(250, 190, 180, 0.9));
+            border: 2px solid rgba(220, 80, 60, 0.5);
+            color: #a93226;
+            box-shadow: 0 4px 12px rgba(220, 80, 60, 0.15);
+        }
+        body.dark .module-cancel {
+            background: linear-gradient(135deg, rgba(90, 40, 40, 0.7), rgba(100, 50, 50, 0.8));
+            border-color: rgba(241, 148, 138, 0.5);
             color: #f1948a;
         }
 
@@ -395,54 +524,68 @@
 
         .module-btn .desc {
             font-size: 0.6rem;
-            opacity: 0.75;
+            opacity: 0.85;
             margin-top: 0.15rem;
         }
 
-        /* ===== CTA فشرده ===== */
+        /* ===== CTA ===== */
         .cta-area {
             text-align: center;
             margin: 0.8rem 0;
             padding: 0.9rem;
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(0, 0, 0, 0.4));
+            background: linear-gradient(135deg, rgba(255, 248, 220, 0.85), rgba(253, 246, 227, 0.9));
             border-radius: 20px;
-            border: 2px solid rgba(212, 175, 55, 0.3);
+            border: 2px solid rgba(212, 175, 55, 0.4);
+            transition: all 0.5s ease;
+        }
+        body.dark .cta-area {
+            background: linear-gradient(135deg, rgba(74, 58, 40, 0.7), rgba(58, 47, 32, 0.8));
+            border-color: rgba(212, 175, 55, 0.5);
         }
 
         .btn-main {
             display: inline-block;
             background: linear-gradient(135deg, #d4af37 0%, #f9e79f 50%, #d4af37 100%);
-            color: #1a1a2e;
+            color: #2a1a0a;
             padding: 0.6rem 1.8rem;
             border-radius: 40px;
             font-weight: 900;
             font-size: 0.9rem;
             text-decoration: none;
             box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+            transition: all 0.3s;
         }
+        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5); }
 
         .cta-note {
             margin-top: 0.4rem;
             font-size: 0.65rem;
-            color: #b8b0c8;
+            color: #6a5a3a;
         }
+        body.dark .cta-note { color: #c8b890; }
 
-        /* ===== گالری فشرده ===== */
+        /* ===== گالری ===== */
         .achievement-section {
             margin-top: 0.8rem;
             padding: 0.9rem;
             border-radius: 20px;
-            background: linear-gradient(135deg, rgba(241, 196, 15, 0.1), rgba(0, 0, 0, 0.4));
-            border: 2px solid rgba(241, 196, 15, 0.3);
+            background: linear-gradient(135deg, rgba(255, 245, 210, 0.85), rgba(255, 235, 190, 0.9));
+            border: 2px solid rgba(241, 196, 15, 0.4);
+            transition: all 0.5s ease;
+        }
+        body.dark .achievement-section {
+            background: linear-gradient(135deg, rgba(74, 58, 40, 0.7), rgba(58, 47, 32, 0.8));
+            border-color: rgba(241, 196, 15, 0.5);
         }
 
         .achievement-section h2 {
             font-size: 0.95rem;
             font-weight: 800;
-            color: #f9e79f;
+            color: #8a6d1f;
             margin-bottom: 0.5rem;
             text-align: center;
         }
+        body.dark .achievement-section h2 { color: #f9e79f; }
 
         .gallery-grid {
             display: grid;
@@ -452,36 +595,45 @@
         }
 
         .gallery-item {
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(255, 255, 255, 0.6);
             border-radius: 12px;
             padding: 0.5rem;
-            border: 1px solid rgba(212, 175, 55, 0.2);
+            border: 1px solid rgba(212, 175, 55, 0.3);
             text-align: center;
+            transition: all 0.3s;
         }
+        body.dark .gallery-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+        .gallery-item:hover { transform: translateY(-3px); }
 
         .gallery-placeholder {
             width: 100%;
             aspect-ratio: 1/1;
-            background: rgba(212, 175, 55, 0.08);
+            background: rgba(212, 175, 55, 0.1);
             border-radius: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            border: 1px dashed rgba(212, 175, 55, 0.3);
+            border: 1px dashed rgba(212, 175, 55, 0.4);
         }
 
-        .gallery-placeholder img { max-width: 40%; opacity: 0.5; }
-        .gallery-placeholder .gallery-label { font-size: 0.55rem; color: #f9e79f; margin-top: 0.2rem; }
+        .gallery-placeholder img { max-width: 40%; opacity: 0.6; }
+        .gallery-placeholder .gallery-label { font-size: 0.55rem; color: #8a6d1f; margin-top: 0.2rem; font-weight: 600; }
+        body.dark .gallery-placeholder .gallery-label { color: #f9e79f; }
 
-        .gallery-title { display: block; font-weight: 700; font-size: 0.65rem; color: #f9e79f; margin-top: 0.3rem; }
-        .gallery-author { display: block; font-size: 0.55rem; color: #b8b0c8; }
+        .gallery-title { display: block; font-weight: 700; font-size: 0.65rem; color: #8a6d1f; margin-top: 0.3rem; }
+        body.dark .gallery-title { color: #f9e79f; }
+        .gallery-author { display: block; font-size: 0.55rem; color: #6a5a3a; }
+        body.dark .gallery-author { color: #c8b890; }
 
         .btn-upload {
             display: block;
             text-align: center;
             background: linear-gradient(135deg, rgba(241, 196, 15, 0.2), rgba(212, 175, 55, 0.3));
-            color: #f9e79f;
+            color: #8a6d1f;
             padding: 0.5rem 1rem;
             border-radius: 30px;
             text-decoration: none;
@@ -489,9 +641,12 @@
             font-size: 0.72rem;
             border: 1px solid rgba(212, 175, 55, 0.4);
             margin-top: 0.5rem;
+            transition: all 0.3s;
         }
+        body.dark .btn-upload { color: #f9e79f; }
+        .btn-upload:hover { transform: scale(1.03); }
 
-        /* ===== ماژول‌های پایین فشرده ===== */
+        /* ===== پایین ===== */
         .bottom-modules-wrapper {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -503,19 +658,32 @@
             text-align: center;
             padding: 0.9rem 0.6rem;
             border-radius: 18px;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
         }
+        .bottom-module:hover { transform: translateY(-3px); }
 
         .bottom-about {
-            background: linear-gradient(135deg, rgba(52, 152, 219, 0.15), rgba(0, 0, 0, 0.4));
-            border: 2px solid rgba(52, 152, 219, 0.4);
+            background: linear-gradient(135deg, rgba(180, 220, 250, 0.8), rgba(150, 200, 240, 0.9));
+            border: 2px solid rgba(52, 152, 219, 0.5);
         }
-        .bottom-about h3 { color: #85c1e9; }
+        body.dark .bottom-about {
+            background: linear-gradient(135deg, rgba(40, 60, 80, 0.7), rgba(50, 70, 90, 0.8));
+            border-color: rgba(133, 193, 233, 0.5);
+        }
+        .bottom-about h3 { color: #2874a6; }
+        body.dark .bottom-about h3 { color: #85c1e9; }
 
         .bottom-radio {
-            background: linear-gradient(135deg, rgba(155, 89, 182, 0.15), rgba(0, 0, 0, 0.4));
-            border: 2px solid rgba(155, 89, 182, 0.4);
+            background: linear-gradient(135deg, rgba(230, 200, 245, 0.8), rgba(215, 180, 235, 0.9));
+            border: 2px solid rgba(142, 68, 173, 0.5);
         }
-        .bottom-radio h3 { color: #d2b4de; }
+        body.dark .bottom-radio {
+            background: linear-gradient(135deg, rgba(70, 50, 90, 0.7), rgba(80, 60, 100, 0.8));
+            border-color: rgba(210, 180, 222, 0.5);
+        }
+        .bottom-radio h3 { color: #6a3d9a; }
+        body.dark .bottom-radio h3 { color: #d2b4de; }
 
         .bottom-module h3 {
             font-size: 0.85rem;
@@ -524,25 +692,32 @@
         }
 
         .bottom-module p {
-            color: #e8e0f0;
+            color: #3a2a1a;
             font-size: 0.68rem;
             margin-bottom: 0.6rem;
             line-height: 1.5;
         }
+        body.dark .bottom-module p { color: #e8dcc0; }
 
         .btn-bottom {
             display: inline-block;
-            background: rgba(0, 0, 0, 0.4);
-            color: #f9e79f;
+            background: rgba(255, 255, 255, 0.6);
+            color: #2a1a0a;
             padding: 0.4rem 1rem;
             border-radius: 30px;
             font-weight: 700;
             font-size: 0.7rem;
             text-decoration: none;
             border: 1px solid rgba(212, 175, 55, 0.4);
+            transition: all 0.3s;
         }
+        body.dark .btn-bottom {
+            background: rgba(0, 0, 0, 0.3);
+            color: #f9e79f;
+        }
+        .btn-bottom:hover { transform: scale(1.05); }
 
-        /* ===== دسکتاپ - کمی بزرگ‌تر ===== */
+        /* ===== دسکتاپ ===== */
         @media (min-width: 768px) {
             body { padding: 1.5rem; }
             .hero-header { padding: 1.5rem 1rem; border-radius: 30px; margin-bottom: 1rem; }
@@ -583,7 +758,6 @@
 <body>
 <div class="container">
 
-    <!-- ===== هدر فشرده ===== -->
     <div class="hero-header">
         <div class="top-bar">
             <div class="date-display" id="dateDisplay">📅 ...</div>
@@ -599,13 +773,11 @@
         </div>
     </div>
 
-    <!-- ===== نوار زبان ===== -->
     <div class="lang-bar">
         <a href="#" class="active">🇮🇷 فارسی</a>
         <a href="index-en.html">🇬🇧 English</a>
     </div>
 
-    <!-- ===== شعار متحرک ===== -->
     <div class="slogan-scroller">
         <div class="slogan-track">
             <span>✦ فرهنگ ما، ارتباط ما، آینده‌ی مشترک ما ✦</span>
@@ -617,7 +789,6 @@
         </div>
     </div>
 
-    <!-- ===== باکس طلایی ===== -->
     <div class="box box-gold">
         <div class="box-title">مشخصات کارت</div>
         <p>هویت دیجیتال <strong>غیرمتمرکز</strong> بر اساس ارزش‌های فرهنگی شما، نه نام و ملیت.</p>
@@ -628,7 +799,6 @@
         </ul>
     </div>
 
-    <!-- ===== باکس آبی ===== -->
     <div class="box box-blue">
         <div class="box-title">اهداف کارت</div>
         <ul>
@@ -644,7 +814,6 @@
         </div>
     </div>
 
-    <!-- ===== باکس سبز ===== -->
     <div class="box box-green">
         <div class="box-title">مزایای داشتن کارت</div>
         <ul>
@@ -654,7 +823,6 @@
         </ul>
     </div>
 
-    <!-- ===== باکس بنفش - نمونه کارت ===== -->
     <div class="box box-purple">
         <div class="box-title">نمونه کارت</div>
         <div class="card-sample">
@@ -668,7 +836,6 @@
         </div>
     </div>
 
-    <!-- ===== ماژول‌های فشرده ===== -->
     <div class="modules">
         <a href="register-fa.html" class="module-btn module-register">
             <span class="icon">📝</span>
@@ -697,13 +864,11 @@
         </a>
     </div>
 
-    <!-- ===== CTA ===== -->
     <div class="cta-area">
         <a href="register-fa.html" class="btn-main">🎯 دریافت شناسنامه فرهنگی</a>
         <div class="cta-note">بدون اطلاعات شخصی • کاملاً ناشناس • ۳ دقیقه</div>
     </div>
 
-    <!-- ===== گالری ===== -->
     <div class="achievement-section">
         <h2>🏆 گالری دستاوردهای ۲۰۰ سفیر</h2>
         <div class="gallery-grid">
@@ -719,7 +884,6 @@
         <a href="upload-achievement-fa.html" class="btn-upload">📤 اگر از ۲۰۰ نفر اول هستید، اثر خود را آپلود کنید</a>
     </div>
 
-    <!-- ===== پایین ===== -->
     <div class="bottom-modules-wrapper">
         <div class="bottom-module bottom-about">
             <h3>📖 درباره پروژه</h3>
