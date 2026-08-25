@@ -4,13 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>کارت هویت فرهنگی | Cultural ID</title>
-    <!-- اضافه کردن فونت وزیرمتن برای اطمینان از نمایش صحیح و زیبا در همه دستگاه‌ها -->
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    
     <style>
-        /* استایل‌های پایه کارت */
         body {
-            font-family: 'Vazirmatn', 'IRANSans', 'Vazir', sans-serif;
+            font-family: 'Vazir', 'IRANSans', sans-serif;
             background: #f4f4f9;
             display: flex;
             justify-content: center;
@@ -18,24 +14,18 @@
             min-height: 100vh;
             margin: 0;
             padding: 1rem;
-            color: #333;
         }
         .card-container {
             background: white;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             padding: 2rem;
             max-width: 400px;
             width: 100%;
             text-align: center;
             position: relative;
             overflow: hidden;
-            display: none; /* پیش‌فرض مخفی تا زمان بارگذاری */
-            animation: fadeIn 0.5s ease-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            display: none;
         }
         .card-logo {
             width: 80px;
@@ -50,15 +40,14 @@
             margin-bottom: 0.5rem;
         }
         .card-code {
-            font-family: 'Courier New', Courier, monospace;
+            font-family: monospace;
             font-size: 1.1rem;
             background: #f0f0f5;
             padding: 0.5rem;
             border-radius: 8px;
             margin: 1rem 0;
             color: #333;
-            letter-spacing: 1.5px;
-            font-weight: bold;
+            letter-spacing: 1px;
         }
         .card-badge {
             font-size: 1rem;
@@ -68,9 +57,9 @@
             display: inline-block;
             margin-bottom: 1rem;
         }
-        .badge-golden { background: rgba(212, 175, 55, 0.15); color: #8a7a0a; border: 1px solid #d4af37; }
+        .badge-golden { background: rgba(212, 175, 55, 0.2); color: #8a7a0a; border: 1px solid #d4af37; }
         .badge-silver { background: rgba(192, 192, 192, 0.2); color: #4a4a5a; border: 1px solid #c0c0c0; }
-        .badge-bronze { background: rgba(205, 127, 50, 0.15); color: #8a5a1a; border: 1px solid #cd7f32; }
+        .badge-bronze { background: rgba(205, 127, 50, 0.2); color: #6a4a0a; border: 1px solid #cd7f32; }
         
         .card-details {
             text-align: right;
@@ -95,70 +84,37 @@
         }
         .value-tag {
             background: #eef2ff;
-            color: #4338ca;
+            color: #4f46e5;
             padding: 0.3rem 0.6rem;
             border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-        
-        /* استایل وضعیت‌های خطا و بارگذاری */
-        .status-message {
-            padding: 1.5rem;
-            border-radius: 12px;
-            text-align: center;
-            font-weight: 600;
-            max-width: 400px;
-            width: 100%;
+            font-size: 0.75rem;
         }
         .error-message {
-            color: #991b1b;
+            color: #dc2626;
             background: #fee2e2;
-            border: 1px solid #fecaca;
+            padding: 1rem;
+            border-radius: 12px;
             display: none;
+            text-align: center;
         }
-        .loading-message {
-            color: #1e40af;
-            background: #dbeafe;
-            border: 1px solid #bfdbfe;
-        }
-        
         .hologram {
             width: 60px;
             height: 60px;
             margin: 1rem auto;
             opacity: 0.8;
         }
-        .footer-text {
-            margin-top: 1.5rem;
-            font-size: 0.75rem;
-            color: #888;
-            line-height: 1.5;
-        }
     </style>
 </head>
 <body>
 
-    <!-- پیام بارگذاری -->
-    <div class="status-message loading-message" id="loadingMessage">
-        ⏳ در حال دریافت اطلاعات کارت...
-    </div>
-
-    <!-- پیام خطا -->
-    <div class="status-message error-message" id="cardErrorMessage">
-        ❌ <span id="errorText">خطای ناشناخته</span>
-    </div>
-
-    <!-- محتوای کارت -->
     <div class="card-container" id="cardContent">
-        <img src="assets/logo-fa.png" alt="لوگو" class="card-logo" id="cardLogo" onerror="this.style.display='none'">
-        
+        <!-- بخش‌های کاملاً استاتیک -->
+        <img src="assets/logo-fa.png" alt="Logo" class="card-logo" id="cardLogo" onerror="this.style.display='none'">
         <div class="card-title">کارت جهانی هویت هوشمند فرهنگی</div>
-        
-        <img src="assets/hologram.png" alt="هولوگرام امنیتی" class="hologram" onerror="this.style.display='none'">
+        <img src="assets/hologram.png" alt="Hologram" class="hologram" onerror="this.style.display='none'">
 
+        <!-- بخش‌های کاملاً پویا (فقط محتوای این باکس‌ها تغییر می‌کند) -->
         <div class="card-code" id="displayCardCode">---</div>
-
         <div id="displayBadge" class="card-badge">---</div>
 
         <div class="card-details">
@@ -182,58 +138,41 @@
             </div>
         </div>
         
-        <div class="footer-text">
+        <div style="margin-top: 1.5rem; font-size: 0.7rem; color: #888;">
             این کارت فاقد ارزش مادی است و صرفاً هویت فرهنگی ناشناس را تأیید می‌کند.
         </div>
     </div>
 
+    <div class="error-message" id="cardErrorMessage">
+        ❌ کارت با این کد یافت نشد یا خطایی رخ داده است.
+    </div>
+
     <script>
-        // استفاده از encodeURIComponent برای جلوگیری از مشکلات URL Injection
         const urlParams = new URLSearchParams(window.location.search);
         const cardCode = urlParams.get('code');
 
         async function loadCardData() {
-            const loadingEl = document.getElementById('loadingMessage');
-            const errorEl = document.getElementById('cardErrorMessage');
-            const errorTextEl = document.getElementById('errorText');
-            const cardEl = document.getElementById('cardContent');
-
-            if (!cardCode || cardCode.trim() === '' || cardCode === 'undefined') {
-                loadingEl.style.display = 'none';
-                errorEl.style.display = 'block';
-                errorTextEl.textContent = 'کد کارت نامعتبر است یا در آدرس وجود ندارد.';
+            if (!cardCode || cardCode === 'undefined') {
+                document.getElementById('cardContent').style.display = 'none';
+                document.getElementById('cardErrorMessage').style.display = 'block';
                 return;
             }
 
             try {
-                // درخواست به API با کد رمزنگاری‌شده
                 const response = await fetch(`/api/get-user?code=${encodeURIComponent(cardCode)}`);
-                
-                // بررسی وضعیت پاسخ قبل از تلاش برای پارس کردن JSON
-                if (!response.ok) {
-                    let errorMsg = 'خطا در دریافت اطلاعات از سرور';
-                    try {
-                        const errData = await response.json();
-                        errorMsg = errData.error || errorMsg;
-                    } catch (e) {
-                        errorMsg = `خطای سرور (کد ${response.status})`;
-                    }
-                    throw new Error(errorMsg);
+                const data = await response.json();
+
+                if (!response.ok || !data.user) {
+                    throw new Error('یافت نشد');
                 }
 
-                const data = await response.json();
                 const user = data.user;
 
-                if (!user) {
-                    throw new Error('اطلاعات کاربر یافت نشد.');
-                }
-
-                // پر کردن اطلاعات با استفاده از textContent برای جلوگیری از حملات XSS
+                // تزریق ایمن داده‌ها فقط به المان‌های پویا
                 document.getElementById('displayCardCode').textContent = user.cardCode || '---';
                 document.getElementById('displayCountry').textContent = user.country || 'نامشخص';
                 document.getElementById('displayRank').textContent = user.rank || '---';
                 
-                // تنظیم نشان
                 const badgeElement = document.getElementById('displayBadge');
                 const badge = (user.badge || 'bronze').toLowerCase();
                 if (badge === 'golden') {
@@ -247,35 +186,30 @@
                     badgeElement.className = 'card-badge badge-bronze';
                 }
 
-                // نمایش کد اختیاری
                 if (user.optionalCode && user.optionalCode.trim() !== '') {
                     document.getElementById('displayOptionalCode').textContent = user.optionalCode;
                     document.getElementById('optionalCodeRow').style.display = 'flex';
                 }
 
-                // نمایش ارزش‌ها (روش امن در برابر XSS)
                 const valuesContainer = document.getElementById('displayValues');
-                valuesContainer.innerHTML = ''; // پاکسازی محتوای قبلی
+                valuesContainer.innerHTML = '';
                 if (Array.isArray(user.values) && user.values.length > 0) {
                     user.values.forEach(v => {
                         const span = document.createElement('span');
                         span.className = 'value-tag';
-                        span.textContent = v; // استفاده از textContent به جای innerHTML برای امنیت
+                        span.textContent = v;
                         valuesContainer.appendChild(span);
                     });
                 } else {
-                    valuesContainer.innerHTML = '<span style="color:#999; font-size: 0.8rem;">ثبت نشده</span>';
+                    valuesContainer.innerHTML = '<span style="color:#999;">ثبت نشده</span>';
                 }
 
-                // نمایش موفقیت‌آمیز کارت
-                loadingEl.style.display = 'none';
-                cardEl.style.display = 'block';
+                document.getElementById('cardErrorMessage').style.display = 'none';
+                document.getElementById('cardContent').style.display = 'block';
 
             } catch (error) {
-                console.error('Error loading card:', error);
-                loadingEl.style.display = 'none';
-                errorEl.style.display = 'block';
-                errorTextEl.textContent = error.message || 'خطای ناشناخته در بارگذاری کارت';
+                document.getElementById('cardContent').style.display = 'none';
+                document.getElementById('cardErrorMessage').style.display = 'block';
             }
         }
 
