@@ -21,6 +21,7 @@
             background-position: center;
             background-attachment: fixed;
             background-repeat: no-repeat;
+            color: #f0f0f0;
         }
         
         /* کارت عمودی و استاندارد با چیدمان وسط‌چین */
@@ -41,7 +42,6 @@
             position: relative;
         }
         
-        /* لوگو در دایره طلایی بزرگتر با پس‌زمینه شفاف */
         .logo-container {
             width: 90px;
             height: 90px;
@@ -69,7 +69,6 @@
             line-height: 1.4;
         }
         
-        /* باکس کد */
         .card-code-box {
             width: 100%;
             background: rgba(212, 175, 55, 0.08);
@@ -89,7 +88,6 @@
             direction: ltr;
         }
         
-        /* باکس ارزش‌های فرهنگی فشرده و وسط‌چین */
         .values-section {
             width: 100%;
             background: rgba(212, 175, 55, 0.05);
@@ -116,7 +114,6 @@
             font-weight: 600;
         }
         
-        /* هولوگرام در باکس طلایی در پایین */
         .hologram-box {
             width: 65px;
             height: 65px;
@@ -146,7 +143,6 @@
             align-items: center;
         }
         
-        /* زیبا سازی دکمه‌ها */
         .action-btn {
             width: 100%;
             padding: 0.9rem;
@@ -188,7 +184,6 @@
             box-shadow: 0 8px 25px rgba(212, 175, 55, 0.6), inset 0 1px 0 rgba(255,255,255,0.4);
         }
         
-        /* باکس توضیحات پایین زیبا */
         .notice-box {
             width: 100%;
             background: rgba(10, 10, 10, 0.85);
@@ -219,6 +214,80 @@
             border-bottom-style: solid;
         }
         
+        /* ===== پیام رد عضویت ===== */
+        .rejected-container {
+            width: 340px;
+            background: #0a0a0a;
+            border: 2px solid #dc2626;
+            box-shadow: 0 0 30px rgba(220, 38, 38, 0.5), inset 0 0 15px rgba(220, 38, 38, 0.15);
+            border-radius: 20px;
+            padding: 2rem 1.5rem;
+            display: none;
+            color: #f0f0f0;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 1.2rem;
+        }
+        
+        .rejected-icon {
+            font-size: 4rem;
+            filter: drop-shadow(0 0 15px rgba(220, 38, 38, 0.6));
+        }
+        
+        .rejected-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #dc2626;
+            text-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
+        }
+        
+        .rejected-message {
+            font-size: 0.95rem;
+            color: #f0f0f0;
+            line-height: 1.8;
+            background: rgba(220, 38, 38, 0.08);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+        }
+        
+        .rejected-code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            color: #d4af37;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid #d4af37;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            letter-spacing: 1px;
+        }
+        
+        .btn-rejected {
+            width: 100%;
+            padding: 0.9rem;
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #b91c1c 100%);
+            color: #fff;
+            border: 1px solid #fca5a5;
+            border-radius: 12px;
+            font-family: 'Vazir', 'IRANSans', sans-serif;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-rejected:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.6);
+        }
+        
         .error-message {
             color: #dc2626;
             background: rgba(0, 0, 0, 0.9);
@@ -236,32 +305,44 @@
 </head>
 <body>
 
+    <!-- کارت فعال -->
     <div class="card-container" id="cardContent">
-        <!-- لوگو در بالا -->
         <div class="logo-container">
             <img src="assets/logo-fa.png" alt="Logo" class="card-logo" onerror="this.style.display='none'">
         </div>
         
         <div class="card-title">کارت جهانی هویت هوشمند فرهنگی</div>
 
-        <!-- باکس کد -->
         <div class="card-code-box">
             <div class="optional-code-formatted" id="displayOptionalCode">---</div>
         </div>
 
-        <!-- باکس ارزش‌های فرهنگی -->
         <div class="values-section">
             <div class="values-list" id="displayValues"></div>
         </div>
 
-        <!-- هولوگرام در پایین -->
         <div class="hologram-box">
             <img src="assets/hologram.png" alt="Hologram" class="hologram" onerror="this.style.display='none'">
         </div>
     </div>
 
-    <!-- ماژول‌های پایین -->
-    <div class="bottom-modules" id="bottomModules">
+    <!-- پیام رد عضویت -->
+    <div class="rejected-container" id="rejectedContent">
+        <div class="rejected-icon">❌</div>
+        <div class="rejected-title">عضویت شما پذیرفته نشد</div>
+        <div class="rejected-message">
+            متأسفانه درخواست عضویت شما توسط مدیر سیستم بررسی و <strong style="color:#dc2626;">تأیید نگردید</strong>.
+            <br><br>
+            در صورت نیاز به راهنمایی بیشتر، با پشتیبانی سایت تماس بگیرید.
+        </div>
+        <div class="rejected-code" id="rejectedCode">کد: ---</div>
+        <a href="index.html" class="btn-rejected">
+            <span>↩</span> بازگشت به صفحه اصلی
+        </a>
+    </div>
+
+    <!-- ماژول‌های پایین (فقط برای کارت فعال) -->
+    <div class="bottom-modules" id="bottomModules" style="display: none;">
         <button class="action-btn" onclick="window.location.href='/'">
             <span>↩</span> بازگشت به صفحه ی اصلی
         </button>
@@ -269,7 +350,6 @@
             <span>💾</span> ذخیره ی کارت
         </button>
         
-        <!-- باکس توضیحات زیبا -->
         <div class="notice-box">
             <div class="notice-text">
                 اگر جزو 200 نفر اول هستید به <a href="/">صفحه ی اصلی سایت</a> برگردید و دستاورد خود را آپلود کنید
@@ -302,7 +382,17 @@
 
                 const user = data.user;
 
-                // نمایش فقط کد اختیاری با فرمت صحیح CIM و اعداد تصادفی
+                // ⭐ بررسی وضعیت: اگر رد شده باشد، پیام رد نمایش داده شود
+                if (user.status === 'rejected') {
+                    document.getElementById('cardErrorMessage').style.display = 'none';
+                    document.getElementById('cardContent').style.display = 'none';
+                    document.getElementById('bottomModules').style.display = 'none';
+                    document.getElementById('rejectedContent').style.display = 'flex';
+                    document.getElementById('rejectedCode').textContent = `کد: ${user.cardCode || cardCode}`;
+                    return;
+                }
+
+                // در غیر این صورت کارت عادی نمایش داده شود
                 if (user.optionalCode && user.optionalCode.trim() !== '') {
                     const r1 = Math.floor(1000 + Math.random() * 9000);
                     const r2 = Math.floor(1000 + Math.random() * 9000);
@@ -311,7 +401,6 @@
                     document.getElementById('displayOptionalCode').textContent = 'CIM - ---- - ---- - 66666';
                 }
 
-                // نمایش 5 ارزش فرهنگی به صورت نمادین و فشرده
                 const valuesContainer = document.getElementById('displayValues');
                 valuesContainer.innerHTML = '';
                 const hardcodedValues = [
