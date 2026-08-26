@@ -23,19 +23,10 @@
             color: #f0f0f0;
         }
         .card-container {
-            width: 340px;
-            min-height: 520px;
-            background: #0a0a0a;
-            border: 2px solid #d4af37;
+            width: 340px; min-height: 520px; background: #0a0a0a; border: 2px solid #d4af37;
             box-shadow: 0 0 30px rgba(212, 175, 55, 0.5), inset 0 0 15px rgba(212, 175, 55, 0.15);
-            border-radius: 20px;
-            padding: 1.5rem 1.2rem;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 1.2rem;
-            position: relative;
+            border-radius: 20px; padding: 1.5rem 1.2rem; display: none; flex-direction: column;
+            align-items: center; text-align: center; gap: 1.2rem; position: relative;
         }
         .logo-container {
             width: 90px; height: 90px; border-radius: 50%; border: 3px solid #d4af37;
@@ -127,7 +118,7 @@
     <div class="bottom-modules" id="bottomModules" style="display: none;">
         <a id="backCardLink" href="#" class="action-btn secondary">🔄 پشت کارت</a>
         <button class="action-btn" onclick="saveCard()">💾 ذخیره ی کارت</button>
-        <a href="index.html" class="action-btn secondary">↩ بازگشت به صفحه ی اصلی سایت</a
+        <a href="index.html" class="action-btn secondary">↩ بازگشت به صفحه ی اصلی سایت</a>
     </div>
 
     <div class="error-message" id="cardErrorMessage">❌ کارت با این کد یافت نشد.</div>
@@ -169,17 +160,19 @@
                 // لینک پشت کارت
                 document.getElementById('backCardLink').href = `card-back-fa.html?code=${cardCode}`;
 
-                // نمایش ارزش‌های واقعی کاربر
+                // نمایش ۷ ارزش فرهنگی به صورت نمادین و ثابت (نه محتوای تایپ شده)
                 const valuesContainer = document.getElementById('displayValues');
                 valuesContainer.innerHTML = '';
-                if (user.values && user.values.length > 0) {
-                    user.values.forEach(v => {
-                        const div = document.createElement('div');
-                        div.className = 'value-item';
-                        div.textContent = v;
-                        valuesContainer.appendChild(div);
-                    });
-                }
+                const symbolicValues = [
+                    'ارزش‌های بومی', 'دانش فردی', 'همکاری جمعی', 
+                    'تنوع فرهنگی', 'صلح پایدار جهانی', 'محو خشونت', 'اتحاد فرهنگی'
+                ];
+                symbolicValues.forEach(v => {
+                    const div = document.createElement('div');
+                    div.className = 'value-item';
+                    div.textContent = v;
+                    valuesContainer.appendChild(div);
+                });
 
                 document.getElementById('cardErrorMessage').style.display = 'none';
                 document.getElementById('cardContent').style.display = 'flex';
