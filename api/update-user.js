@@ -19,25 +19,19 @@ export default async function handler(req, res) {
   const repo = 'cultural-id';
 
   try {
-    // مرحله ۱: پیدا کردن کاربر از index.json
+    // ۱. پیدا کردن کاربر از index.json
     const indexPath = 'data/index.json';
     const indexResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${indexPath}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json'
-      }
+      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
     });
 
-    if (!indexResponse.ok) {
-      throw new Error('فایل فهرست یافت نشد');
-    }
+    if (!indexResponse.ok) throw new Error('فایل فهرست یافت نشد');
 
     const indexFile = await indexResponse.json();
     const indexSha = indexFile.sha;
     const indexJsonString = Buffer.from(indexFile.content, 'base64').toString('utf8');
     let indexData = JSON.parse(indexJsonString);
 
-    // پیدا کردن کاربر در فهرست
     const normalizedInput = code.replace(/[\s\-]/g, '').toUpperCase();
     let userEntry = null;
 
@@ -49,57 +43,59 @@ export default async function handler(req, res) {
       }
     }
 
-    if (!userEntry) {
-      return res.status(404).json({ error: 'کاربر یافت نشد' });
-    }
+    if (!userEntry) return res.status(404).json({ error: 'کاربر یافت نشد' });
 
-    // مرحله ۲: خواندن فایل کامل کاربر
+    // ۲. خواندن فایل کامل کاربر
     const userPath = `data/active/${userEntry.cardCode}.json`;
     const userResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json'
-      }
+      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
     });
 
-    if (!userResponse.ok) {
-      throw new Error('فایل کاربر یافت نشد');
-    }
+    if (!userResponse.ok) throw new Error('فایل کاربر یافت نشد');
 
     const userFile = await userResponse.json();
     const userJsonString = Buffer.from(userFile.content, 'base64').toString('utf8');
     const userData = JSON.parse(userJsonString);
 
-    // مرحله ۳: بروزرسانی اطلاعات
-    if (updates.values) userData.values = updates.values;
-    if (updates.optionalCode !== undefined) {
+    // ۳. ⭐ تشخیص هوشمند تغییرات (Highlight Logic)
+    const changedFields = [];
+    
+    if (updates.values && JSON.stringify(updates.values) !== JSON.stringify(userData.values)) {
+      changedFields.push('values');
+      userData.values = updates.values;
+    }
+    if (updates.optionalCode !== undefined && updates.optionalCode !== userData.optionalCode) {
+      changedFields.push('optionalCode');
       userData.optionalCode = updates.optionalCode;
       
-      // ساخت displayCode جدید
+      // بروزرسانی displayCode
       const parts = userData.cardCode.split('-');
       const part1 = parts[1] || '0000';
       const part2 = parts[2] || '0000';
       const opt = updates.optionalCode.trim();
       userData.displayCode = opt ? `CIM - ${part1} - ${part2} - ${opt}` : `CIM - ${part1} - ${part2}`;
     }
-    if (updates.communicationEmail !== undefined) {
+    if (updates.communicationEmail !== undefined && updates.communicationEmail !== userData.communicationEmail) {
+      changedFields.push('communicationEmail');
       userData.communicationEmail = updates.communicationEmail;
     }
-    
+
+    // اگر هیچ تغییری وجود نداشت
+    if (changedFields.length === 0) {
+      return res.status(400).json({ error: 'هیچ تغییری نسبت به اطلاعات قبلی ثبت نشده است.' });
+    }
+
+    // ۴. ذخیره تغییرات و لیست فیلدهای تغییر یافته
     userData.status = 'pending_edit';
+    userData.pendingChanges = changedFields; // ⭐ این خط کلیدی است
     userData.lastEditRequest = new Date().toISOString();
 
-    // مرحله ۴: ذخیره فایل کاربر
     const newUserJsonString = JSON.stringify(userData, null, 2);
     const newUserContent = Buffer.from(newUserJsonString, 'utf8').toString('base64');
 
     await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
       method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
       body: JSON.stringify({
         message: `Edit request for user: ${userEntry.cardCode} - Pending admin approval`,
         content: newUserContent,
@@ -108,7 +104,7 @@ export default async function handler(req, res) {
       })
     });
 
-    // ⭐ مرحله ۵: آپدیت index.json
+    // ۵. بروزرسانی index.json
     const userIndex = indexData.findIndex(e => e.cardCode === userEntry.cardCode);
     if (userIndex !== -1) {
       indexData[userIndex].optionalCode = userData.optionalCode;
@@ -120,11 +116,7 @@ export default async function handler(req, res) {
 
     await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${indexPath}`, {
       method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
       body: JSON.stringify({
         message: `Update user ${userEntry.cardCode} in index - Pending edit`,
         content: newIndexContent,
@@ -133,10 +125,7 @@ export default async function handler(req, res) {
       })
     });
 
-    return res.status(200).json({ 
-      success: true, 
-      message: 'تغییرات با موفقیت ثبت شد و در انتظار تأیید ادمین است' 
-    });
+    return res.status(200).json({ success: true, message: 'تغییرات با موفقیت ثبت شد و در انتظار تأیید ادمین است' });
 
   } catch (error) {
     console.error('API Update Error:', error);
