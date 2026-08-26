@@ -1,0 +1,31 @@
+{
+  "cardCode": "CIM-7917-7651-86320",
+  "country": "Iran",
+  "countryCode": "IR",
+  "rank": 2,
+  "values": [
+    "تکریم والدین",
+    "تحول اداری",
+    "تشکیل ngo",
+    "تشکیل بستر فعالیت فرهنگی با همزبانان در منطقه",
+    "کنشگری مدنی برای صلح پایدار جهانی",
+    "راه اندازی پویش های#نه به جنگ",
+    "همکاری با یونسکو"
+  ],
+  "priorities": [
+    5,
+    6,
+    7,
+    1,
+    2,
+    3,
+    4
+  ],
+  "optionalCode": "97979",
+  "communicationEmail": "ghrezaei1399@gmail.com",
+  "registrationDate": "2026-08-26T09:04:19.066Z",
+  "status": "pending",
+  "allowConnection": true,
+  "allowAchievements": false,
+  "culturalInfo": ""
+}
