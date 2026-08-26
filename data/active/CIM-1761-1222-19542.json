@@ -17,8 +17,9 @@
   "displayCode": "CIM - 1761 - 1222 - نظریه",
   "communicationEmail": "",
   "registrationDate": "2026-08-26T19:27:45.027Z",
-  "status": "pending",
+  "status": "approved",
   "allowConnection": false,
   "allowAchievements": false,
-  "culturalInfo": ""
+  "culturalInfo": "",
+  "statusUpdatedAt": "2026-08-26T20:16:46.563Z"
 }
