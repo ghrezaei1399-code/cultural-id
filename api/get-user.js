@@ -16,39 +16,22 @@ export default async function handler(req, res) {
   const owner = 'ghrezaei1399-code';
   const repo = 'cultural-id';
 
-  // نرمال‌سازی کد ورودی (حذف فاصله و خط تیره، تبدیل به حروف بزرگ)
+  // نرمال‌سازی کد ورودی (حذف فاصله و خط تیره)
   const normalizedInput = code.replace(/[\s\-]/g, '').toUpperCase();
 
   try {
-    // ===== مرحله ۱: جستجوی مستقیم فایل کاربر =====
-    // این سریع‌ترین روش است و همیشه کار می‌کند
-    const directPath = `data/active/${code}.json`;
-    const directResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${directPath}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json'
-      }
-    });
-
-    if (directResponse.ok) {
-      const fileData = await directResponse.json();
-      const jsonString = Buffer.from(fileData.content, 'base64').toString('utf8');
-      const userData = JSON.parse(jsonString);
-      return res.status(200).json({ user: userData });
-    }
-
-    // ===== مرحله ۲: اگر نام فایل نبود، در index.json جستجو کن =====
+    // ===== مرحله ۱: جستجو در index.json برای پیدا کردن cardCode اصلی =====
     const indexPath = 'data/index.json';
     const indexResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${indexPath}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Accept': 'application/vnd.github.v3+json',
-        'Cache-Control': 'no-cache' // جلوگیری از کش
+        'Cache-Control': 'no-cache'
       }
     });
 
     if (!indexResponse.ok) {
-      return res.status(404).json({ error: 'فایل فهرست یافت نشد. لطفاً با ادمین تماس بگیرید.' });
+      return res.status(500).json({ error: 'فایل فهرست یافت نشد' });
     }
 
     const indexFile = await indexResponse.json();
@@ -75,11 +58,11 @@ export default async function handler(req, res) {
     if (!matchedEntry) {
       return res.status(404).json({ 
         error: 'کد کارت یافت نشد. لطفاً کد درج‌شده روی کارت خود را دقیقاً وارد کنید.',
-        hint: 'مثال: CIM-1234-5678-AB'
+        hint: 'مثال: CIM-3909-2989-27860 یا CIM - 3909 - 2989 - میراث'
       });
     }
 
-    // ===== مرحله ۳: خواندن فایل کامل کاربر =====
+    // ===== مرحله ۲: خواندن فایل کامل کاربر با cardCode اصلی =====
     const userPath = `data/active/${matchedEntry.cardCode}.json`;
     const userResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
       headers: {
