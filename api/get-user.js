@@ -15,77 +15,67 @@ export default async function handler(req, res) {
 
   const owner = 'ghrezaei1399-code';
   const repo = 'cultural-id';
-  const path = 'data/active';
 
-  // نرمال‌سازی کد ورودی کاربر (حذف فاصله‌ها و تبدیل به حروف بزرگ برای مقایسه‌ی دقیق)
+  // نرمال‌سازی کد ورودی (حذف فاصله و خط تیره)
   const normalizedInput = code.replace(/[\s\-]/g, '').toUpperCase();
 
   try {
-    // ۱. تلاش اول: جستجوی مستقیم نام فایل (سریع‌ترین حالت)
-    const directPath = `${path}/${code}.json`;
-    const directResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${directPath}`, {
+    // ⭐ مرحله ۱: خواندن index.json (فقط ۱ درخواست)
+    const indexPath = 'data/index.json';
+    const indexResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${indexPath}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Accept': 'application/vnd.github.v3+json'
       }
     });
 
-    if (directResponse.ok) {
-      const fileData = await directResponse.json();
-      const jsonString = Buffer.from(fileData.content, 'base64').toString('utf8');
-      return res.status(200).json({ user: JSON.parse(jsonString) });
+    if (!indexResponse.ok) {
+      throw new Error('فایل فهرست یافت نشد');
     }
 
-    // ۲. تلاش دوم: اگر نام فایل نبود، یعنی کاربر "کد نمایشی روی کارت" را وارد کرده است.
-    // باید در بین تمام فایل‌ها جستجو کنیم تا فایل منطبق را پیدا کنیم.
-    const listResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+    const indexFile = await indexResponse.json();
+    const jsonString = Buffer.from(indexFile.content, 'base64').toString('utf8');
+    const indexData = JSON.parse(jsonString);
+
+    // جستجو در فهرست
+    let matchedUser = null;
+
+    for (const entry of indexData) {
+      // بررسی تطابق با cardCode اصلی
+      if (entry.cardCode.replace(/[\s\-]/g, '').toUpperCase() === normalizedInput) {
+        matchedUser = entry;
+        break;
+      }
+      
+      // بررسی تطابق با displayCode (کد روی کارت)
+      if (entry.displayCode && entry.displayCode.replace(/[\s\-]/g, '').toUpperCase() === normalizedInput) {
+        matchedUser = entry;
+        break;
+      }
+    }
+
+    if (!matchedUser) {
+      return res.status(404).json({ error: 'کد کارت یافت نشد. لطفاً کد درج‌شده روی کارت خود را دقیقاً وارد کنید.' });
+    }
+
+    // ⭐ مرحله : خواندن فایل کامل کاربر (فقط  درخواست دیگر)
+    const userPath = `data/active/${matchedUser.cardCode}.json`;
+    const userResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Accept': 'application/vnd.github.v3+json'
       }
     });
 
-    if (!listResponse.ok) {
-      throw new Error('Failed to fetch directory');
+    if (!userResponse.ok) {
+      throw new Error('فایل کاربر یافت نشد');
     }
 
-    const files = await listResponse.json();
-    const jsonFiles = files.filter(f => f.name.endsWith('.json'));
+    const userFile = await userResponse.json();
+    const userJsonString = Buffer.from(userFile.content, 'base64').toString('utf8');
+    const userData = JSON.parse(userJsonString);
 
-    for (const file of jsonFiles) {
-      try {
-        const fileRes = await fetch(file.url, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/vnd.github.v3+json'
-          }
-        });
-        
-        const fileData = await fileRes.json();
-        const jsonString = Buffer.from(fileData.content, 'base64').toString('utf8');
-        const userData = JSON.parse(jsonString);
-
-        // ساخت کد نمایشی بر اساس داده‌های داخل فایل
-        const parts = userData.cardCode.split('-');
-        const part1 = parts[1] || '0000';
-        const part2 = parts[2] || '0000';
-        const opt = userData.optionalCode ? userData.optionalCode.trim() : '';
-        
-        // کد نمایشی ترکیبی: CIM + part1 + part2 + optionalCode
-        const constructedDisplayCode = `CIM${part1}${part2}${opt}`.toUpperCase();
-
-        // اگر کد وارد شده توسط کاربر با کد ساخته‌شده از فایل یکی بود، این همان کاربر است!
-        if (normalizedInput === constructedDisplayCode) {
-          return res.status(200).json({ user: userData });
-        }
-
-      } catch (e) {
-        console.error('Error parsing file:', file.name, e);
-      }
-    }
-
-    // اگر هیچ‌کدام مطابقت نداشت
-    return res.status(404).json({ error: 'کد کارت یافت نشد. لطفاً کد درج‌شده روی کارت خود را دقیقاً وارد کنید.' });
+    return res.status(200).json({ user: userData });
 
   } catch (error) {
     console.error('API Get User Error:', error);
