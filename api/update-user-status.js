@@ -29,18 +29,25 @@ export default async function handler(req, res) {
 
     const fileData = await fileResponse.json();
     
-    // ⭐ استفاده از Buffer برای حفظ کامل حروف فارسی
+    // ⭐ decode صحیح
     const jsonString = Buffer.from(fileData.content, 'base64').toString('utf8');
     const userData = JSON.parse(jsonString);
 
     userData.status = status;
     userData.statusUpdatedAt = new Date().toISOString();
 
-    // اگر ادمین ویرایش را رد کرد، وضعیت به pending برمی‌گردد (نه rejected)
+    // ⭐ اگر ادمین ویرایش را تایید کرد، قفل ویرایش فعال شود
+    if (status === 'approved' && userData.previousStatus === 'pending_edit') {
+      userData.editLocked = true;
+      userData.editLockedAt = new Date().toISOString();
+    }
+
+    // اگر ادمین ویرایش را رد کرد، به pending برمی‌گردد
     if (status === 'pending') {
       userData.lastEditRejectedAt = new Date().toISOString();
     }
 
+    // ⭐ encode صحیح
     const newJsonString = JSON.stringify(userData, null, 2);
     const newContent = Buffer.from(newJsonString, 'utf8').toString('base64');
 
