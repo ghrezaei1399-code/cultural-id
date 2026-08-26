@@ -20,7 +20,7 @@ export default async function handler(req, res) {
   const path = `data/active/${code}.json`;
 
   try {
-    // 1. دریافت اطلاعات فعلی فایل
+    // ۱. دریافت اطلاعات فعلی فایل
     const fileResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -33,23 +33,23 @@ export default async function handler(req, res) {
     }
 
     const fileData = await fileResponse.json();
-    const contentDecoded = atob(fileData.content);
-    const userData = JSON.parse(contentDecoded);
+    const jsonString = Buffer.from(fileData.content, 'base64').toString('utf8');
+    const userData = JSON.parse(jsonString);
 
-    // 2. بروزرسانی اطلاعات
+    // ۲. بروزرسانی اطلاعات
     if (updates.values) userData.values = updates.values;
     if (updates.optionalCode !== undefined) userData.optionalCode = updates.optionalCode;
     if (updates.communicationEmail !== undefined) userData.communicationEmail = updates.communicationEmail;
     
-    // 3. تغییر وضعیت به pending (در انتظار تأیید)
-    userData.status = 'pending';
-    userData.lastModified = new Date().toISOString();
-    userData.pendingChanges = true;
+    // ۳. ⭐ تغییر وضعیت به "در انتظار تایید ویرایش"
+    userData.status = 'pending_edit';
+    userData.lastEditRequest = new Date().toISOString();
 
-    // 4. کدگذاری مجدد محتوا
-    const newContent = btoa(unescape(encodeURIComponent(JSON.stringify(userData, null, 2))));
+    // ۴. کدگذاری مجدد محتوا با حفظ حروف فارسی
+    const newJsonString = JSON.stringify(userData, null, 2);
+    const newContent = Buffer.from(newJsonString, 'utf8').toString('base64');
 
-    // 5. ارسال درخواست آپدیت به گیت‌هاب
+    // ۵. ارسال درخواست آپدیت به گیت‌هاب
     const updateResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
       method: 'PUT',
       headers: {
@@ -58,7 +58,7 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        message: `Update user data for ${code} - Pending admin approval`,
+        message: `Edit request for user: ${code} - Pending admin approval`,
         content: newContent,
         sha: fileData.sha
       })
