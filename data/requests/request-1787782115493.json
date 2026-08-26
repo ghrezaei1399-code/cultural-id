@@ -14,6 +14,7 @@
   "type": "connection",
   "description": "تشکیل شبکه",
   "requestDate": "2026-08-26T22:08:35.493Z",
-  "status": "pending",
-  "culturalMatches": []
+  "status": "rejected",
+  "culturalMatches": [],
+  "rejectedAt": "2026-08-26T22:10:19.340Z"
 }
