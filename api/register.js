@@ -62,7 +62,7 @@ export default async function handler(req, res) {
       console.warn('Rank calculation failed, using default:', e.message);
     }
 
-    // ۴. ساخت داده‌های کاربر (⭐ اینجا کد اختیاری به درستی ذخیره می‌شود)
+    // ۴. ساخت داده‌های کاربر
     const userData = {
       cardCode: cardCode,
       country: country,
@@ -70,7 +70,7 @@ export default async function handler(req, res) {
       rank: rank,
       values: Array.isArray(data.values) ? data.values : [],
       priorities: Array.isArray(data.priorities) && data.priorities.length === 7 ? data.priorities : [],
-      optionalCode: data.optionalCode ? String(data.optionalCode).trim() : '', // ⭐ خط کلیدی ذخیره کد اختیاری
+      optionalCode: data.optionalCode ? String(data.optionalCode).trim() : '',
       communicationEmail: data.communicationEmail ? String(data.communicationEmail).trim() : '',
       registrationDate: new Date().toISOString(),
       status: 'pending',
@@ -79,9 +79,12 @@ export default async function handler(req, res) {
       culturalInfo: data.culturalInfo || ''
     };
 
-    // ۵. ارسال به گیت‌هاب
+    // ۵. ارسال به گیت‌هاب (⭐ اصلاح حیاتی برای حفظ حروف فارسی)
     const path = `data/active/${cardCode}.json`;
-    const content = Buffer.from(JSON.stringify(userData, null, 2)).toString('base64');
+    
+    // تبدیل ایمن و دقیق به Base64 با حفظ کامل حروف فارسی (UTF-8)
+    const jsonString = JSON.stringify(userData, null, 2);
+    const content = Buffer.from(jsonString, 'utf8').toString('base64');
 
     const commitData = {
       message: `Register new user: ${cardCode} from ${country} (Rank #${rank}) - Status: Pending`,
