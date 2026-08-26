@@ -5,12 +5,12 @@ export default async function handler(req, res) {
 
   const token = process.env.GH_TOKEN;
   if (!token) {
-    return res.status(500).json({ error: 'توکن گیت‌هاب (GH_TOKEN) تنظیم نشده است' });
+    return res.status(500).json({ error: 'GH_TOKEN is not configured' });
   }
 
   const { cardCode, status } = req.body;
   if (!cardCode || !status) {
-    return res.status(400).json({ error: 'کد کارت و وضعیت جدید الزامی است' });
+    return res.status(400).json({ error: 'Card code and status are required' });
   }
 
   const owner = 'ghrezaei1399-code';
@@ -18,7 +18,6 @@ export default async function handler(req, res) {
   const path = `data/active/${cardCode}.json`;
 
   try {
-    // ۱. دریافت اطلاعات فعلی فایل و SHA آن (برای آپدیت در گیت‌هاب الزامی است)
     const fileResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -26,22 +25,25 @@ export default async function handler(req, res) {
       }
     });
 
-    if (!fileResponse.ok) {
-      throw new Error('فایل کاربر یافت نشد');
-    }
+    if (!fileResponse.ok) throw new Error('User file not found');
 
     const fileData = await fileResponse.json();
-    const contentDecoded = atob(fileData.content);
-    const userData = JSON.parse(contentDecoded);
+    
+    // ⭐ استفاده از Buffer برای حفظ کامل حروف فارسی
+    const jsonString = Buffer.from(fileData.content, 'base64').toString('utf8');
+    const userData = JSON.parse(jsonString);
 
-    // ۲. بروزرسانی وضعیت در داده‌ها
     userData.status = status;
     userData.statusUpdatedAt = new Date().toISOString();
 
-    // ۳. کدگذاری مجدد محتوا
-    const newContent = btoa(unescape(encodeURIComponent(JSON.stringify(userData, null, 2))));
+    // اگر ادمین ویرایش را رد کرد، وضعیت به pending برمی‌گردد (نه rejected)
+    if (status === 'pending') {
+      userData.lastEditRejectedAt = new Date().toISOString();
+    }
 
-    // ۴. ارسال درخواست آپدیت به گیت‌هاب
+    const newJsonString = JSON.stringify(userData, null, 2);
+    const newContent = Buffer.from(newJsonString, 'utf8').toString('base64');
+
     const updateResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
       method: 'PUT',
       headers: {
@@ -50,20 +52,18 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        message: `Update user status to ${status} for ${cardCode}`,
+        message: `Admin action: Status changed to ${status} for ${cardCode}`,
         content: newContent,
         sha: fileData.sha
       })
     });
 
-    if (!updateResponse.ok) {
-      throw new Error('خطا در ذخیره‌سازی تغییرات در گیت‌هاب');
-    }
+    if (!updateResponse.ok) throw new Error('Failed to update file in GitHub');
 
-    return res.status(200).json({ success: true, message: 'وضعیت با موفقیت بروزرسانی شد' });
+    return res.status(200).json({ success: true, message: 'Status updated successfully' });
 
   } catch (error) {
-    console.error('API Update Error:', error);
+    console.error('API Update Status Error:', error);
     return res.status(500).json({ error: error.message });
   }
 }
