@@ -1,0 +1,31 @@
+{
+  "cardCode": "CIM-4543-3532-16346",
+  "country": "Iran",
+  "countryCode": "IR",
+  "rank": 3,
+  "values": [
+    "main",
+    "name",
+    "family",
+    "mother",
+    "yes",
+    "no",
+    "ok"
+  ],
+  "priorities": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "optionalCode": "lkjhg",
+  "communicationEmail": "gh_rezaei2003@yahoo.com",
+  "registrationDate": "2026-08-26T09:30:45.595Z",
+  "status": "pending",
+  "allowConnection": true,
+  "allowAchievements": false,
+  "culturalInfo": ""
+}
