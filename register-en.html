@@ -176,91 +176,36 @@
 </div>
 
 <script>
-    (function() {
-        const toggle = document.getElementById('themeToggle');
-        const body = document.body;
-        if (localStorage.getItem('theme') === 'dark') { body.classList.add('dark'); toggle.textContent = '️'; }
-        toggle.addEventListener('click', function() {
-            body.classList.toggle('dark');
-            if (body.classList.contains('dark')) { toggle.textContent = '☀️'; localStorage.setItem('theme', 'dark'); }
-            else { toggle.textContent = ''; localStorage.setItem('theme', 'light'); }
-        });
-    })();
-
-    function showMessage(text, type) {
-        const box = document.getElementById('messageBox');
-        box.textContent = text;
-        box.className = 'message-box ' + type;
-        box.style.display = 'block';
-    }
-    function hideMessage() { document.getElementById('messageBox').style.display = 'none'; }
-
-    function validatePriorities() {
-        const priorities = [];
-        for (let i = 1; i <= 7; i++) {
-            const val = document.getElementById(`p${i}`).value;
-            if (!val) return { valid: false, error: 'Please specify priority for all values.' };
-            if (priorities.includes(parseInt(val))) return { valid: false, error: 'Each priority must be unique.' };
-            priorities.push(parseInt(val));
-        }
-        return { valid: true, priorities: priorities };
-    }
-
-    document.getElementById('registerForm').addEventListener('submit', async function(e) {
+    // ... (کد تم بدون تغییر) ...
+    document.getElementById('requestForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        hideMessage();
         const submitBtn = document.getElementById('submitBtn');
         submitBtn.disabled = true;
-        submitBtn.textContent = '⏳ Registering...';
+        submitBtn.textContent = '⏳ در حال ارسال...';
 
         try {
-            const values = [
-                document.getElementById('v1').value.trim(), document.getElementById('v2').value.trim(),
-                document.getElementById('v3').value.trim(), document.getElementById('v4').value.trim(),
-                document.getElementById('v5').value.trim(), document.getElementById('v6').value.trim(),
-                document.getElementById('v7').value.trim()
-            ];
-            for (let v of values) { if (!v) throw new Error('Please fill in all 7 cultural values.'); }
+            const cardCode = document.getElementById('cardCode').value.trim();
+            const requestType = document.getElementById('requestType').value;
+            const description = document.getElementById('description').value.trim();
 
-            const priorityCheck = validatePriorities();
-            if (!priorityCheck.valid) throw new Error(priorityCheck.error);
+            if (!cardCode || !requestType) throw new Error('لطفاً کد کارت و نوع درخواست را وارد کنید.');
 
-            // ⭐ دریافت دقیق کد اختیاری
-            const optionalCode = document.getElementById('optionalCode').value.trim();
-            const communicationEmail = document.getElementById('communicationEmail').value.trim();
-
-            const userData = {
-                values: values,
-                priorities: priorityCheck.priorities,
-                optionalCode: optionalCode, // ⭐ ارسال به سرور
-                communicationEmail: communicationEmail
-            };
-
-            const response = await fetch('/api/register', {
+            const response = await fetch('/api/submit-request', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(userData),
+                body: JSON.stringify({ cardCode, type: requestType, description })
             });
 
             const result = await response.json();
-            if (response.ok && result.success) {
-                const generatedCode = result.cardCode;
-                showMessage(`✅ Registration successful. Your code: ${generatedCode}`, 'success');
-                submitBtn.textContent = '✅ Registered';
-                
-                // پاک کردن localStorage قدیمی و ذخیره کد جدید
-                localStorage.removeItem('culturalCardCode');
-                localStorage.setItem('culturalCardCode', generatedCode);
-                
-                setTimeout(() => { window.location.href = `card-en.html?code=${generatedCode}`; }, 2000);
-            } else {
-                throw new Error(result.error || 'Registration error');
-            }
+            if (!response.ok) throw new Error(result.error);
+
+            alert('✅ درخواست شما با موفقیت برای ادمین ارسال شد.');
+            window.location.href = 'index.html';
+
         } catch (error) {
-            console.error('Error:', error);
-            showMessage(`❌ Error: ${error.message}`, 'error');
+            alert('❌ ' + error.message);
             submitBtn.disabled = false;
-            submitBtn.textContent = '🎯 Get Your ID';
+            submitBtn.textContent = '📨 ارسال درخواست';
         }
     });
 </script>
