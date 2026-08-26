@@ -16,59 +16,81 @@ export default async function handler(req, res) {
   const owner = 'ghrezaei1399-code';
   const repo = 'cultural-id';
 
-  // نرمال‌سازی کد ورودی (حذف فاصله و خط تیره)
+  // نرمال‌سازی کد ورودی (حذف فاصله و خط تیره، تبدیل به حروف بزرگ)
   const normalizedInput = code.replace(/[\s\-]/g, '').toUpperCase();
 
   try {
-    // ⭐ مرحله ۱: خواندن index.json (فقط ۱ درخواست)
-    const indexPath = 'data/index.json';
-    const indexResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${indexPath}`, {
+    // ===== مرحله ۱: جستجوی مستقیم فایل کاربر =====
+    // این سریع‌ترین روش است و همیشه کار می‌کند
+    const directPath = `data/active/${code}.json`;
+    const directResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${directPath}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Accept': 'application/vnd.github.v3+json'
       }
     });
 
+    if (directResponse.ok) {
+      const fileData = await directResponse.json();
+      const jsonString = Buffer.from(fileData.content, 'base64').toString('utf8');
+      const userData = JSON.parse(jsonString);
+      return res.status(200).json({ user: userData });
+    }
+
+    // ===== مرحله ۲: اگر نام فایل نبود، در index.json جستجو کن =====
+    const indexPath = 'data/index.json';
+    const indexResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${indexPath}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Cache-Control': 'no-cache' // جلوگیری از کش
+      }
+    });
+
     if (!indexResponse.ok) {
-      throw new Error('فایل فهرست یافت نشد');
+      return res.status(404).json({ error: 'فایل فهرست یافت نشد. لطفاً با ادمین تماس بگیرید.' });
     }
 
     const indexFile = await indexResponse.json();
     const jsonString = Buffer.from(indexFile.content, 'base64').toString('utf8');
     const indexData = JSON.parse(jsonString);
 
-    // جستجو در فهرست
-    let matchedUser = null;
+    // جستجو در index.json
+    let matchedEntry = null;
 
     for (const entry of indexData) {
       // بررسی تطابق با cardCode اصلی
-      if (entry.cardCode.replace(/[\s\-]/g, '').toUpperCase() === normalizedInput) {
-        matchedUser = entry;
+      if (entry.cardCode && entry.cardCode.replace(/[\s\-]/g, '').toUpperCase() === normalizedInput) {
+        matchedEntry = entry;
         break;
       }
       
       // بررسی تطابق با displayCode (کد روی کارت)
       if (entry.displayCode && entry.displayCode.replace(/[\s\-]/g, '').toUpperCase() === normalizedInput) {
-        matchedUser = entry;
+        matchedEntry = entry;
         break;
       }
     }
 
-    if (!matchedUser) {
-      return res.status(404).json({ error: 'کد کارت یافت نشد. لطفاً کد درج‌شده روی کارت خود را دقیقاً وارد کنید.' });
+    if (!matchedEntry) {
+      return res.status(404).json({ 
+        error: 'کد کارت یافت نشد. لطفاً کد درج‌شده روی کارت خود را دقیقاً وارد کنید.',
+        hint: 'مثال: CIM-1234-5678-AB'
+      });
     }
 
-    // ⭐ مرحله : خواندن فایل کامل کاربر (فقط  درخواست دیگر)
-    const userPath = `data/active/${matchedUser.cardCode}.json`;
+    // ===== مرحله ۳: خواندن فایل کامل کاربر =====
+    const userPath = `data/active/${matchedEntry.cardCode}.json`;
     const userResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json'
+        'Accept': 'application/vnd.github.v3+json',
+        'Cache-Control': 'no-cache'
       }
     });
 
     if (!userResponse.ok) {
-      throw new Error('فایل کاربر یافت نشد');
+      return res.status(404).json({ error: 'فایل کاربر یافت نشد.' });
     }
 
     const userFile = await userResponse.json();
