@@ -48,9 +48,7 @@
             padding-bottom: 1rem;
         }
         body.dark .subtitle { color: #d0c0b0; border-bottom-color: rgba(255, 255, 255, 0.02); }
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
+        .form-group { margin-bottom: 1.5rem; }
         .form-group label {
             display: block;
             font-weight: 700;
@@ -92,25 +90,12 @@
             border-color: rgba(255, 255, 255, 0.05);
             background: rgba(255, 255, 255, 0.03);
         }
-        .form-group textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
+        .form-group textarea { min-height: 80px; resize: vertical; }
         .form-group input::placeholder,
-        .form-group textarea::placeholder {
-            color: #4a3a2a;
-            opacity: 0.5;
-        }
+        .form-group textarea::placeholder { color: #4a3a2a; opacity: 0.5; }
         body.dark .form-group input::placeholder,
-        body.dark .form-group textarea::placeholder {
-            color: #908070;
-        }
-        .btn-group {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-            flex-wrap: wrap;
-        }
+        body.dark .form-group textarea::placeholder { color: #908070; }
+        .btn-group { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
         .btn {
             flex: 1;
             padding: 0.8rem 1.5rem;
@@ -134,17 +119,9 @@
             color: #f9e79f;
             border-color: rgba(255, 255, 255, 0.02);
         }
-        .btn-primary:hover {
-            background: rgba(60, 30, 10, 0.04);
-            transform: scale(1.02);
-        }
-        body.dark .btn-primary:hover {
-            background: rgba(255, 255, 255, 0.04);
-        }
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
+        .btn-primary:hover { background: rgba(60, 30, 10, 0.04); transform: scale(1.02); }
+        body.dark .btn-primary:hover { background: rgba(255, 255, 255, 0.04); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
         .btn-secondary {
             background: rgba(60, 30, 10, 0.01);
             color: #3a2a1a;
@@ -155,13 +132,8 @@
             color: #a09080;
             border-color: rgba(255, 255, 255, 0.01);
         }
-        .btn-secondary:hover {
-            background: rgba(60, 30, 10, 0.03);
-            transform: scale(1.02);
-        }
-        body.dark .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.03);
-        }
+        .btn-secondary:hover { background: rgba(60, 30, 10, 0.03); transform: scale(1.02); }
+        body.dark .btn-secondary:hover { background: rgba(255, 255, 255, 0.03); }
         .note {
             text-align: center;
             font-size: 0.75rem;
@@ -220,10 +192,7 @@
             border-color: rgba(255, 255, 255, 0.02);
         }
         .theme-toggle:hover { transform: scale(1.1); }
-        @font-face {
-            font-family: 'Vazir';
-            src: local('Vazir'), local('IRANSans');
-        }
+        @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
     </style>
 </head>
 <body>
@@ -257,7 +226,7 @@
 
             <div class="btn-group">
                 <button type="submit" class="btn btn-primary" id="submitBtn">📨 Submit Request</button>
-                <a href="index.html" class="btn btn-secondary">↩ Back</a>
+                <a href="index-en.html" class="btn btn-secondary">↩ Back</a>
             </div>
         </form>
 
@@ -265,39 +234,95 @@
             🔒 Your request will be sent to the admin and you will be notified after review.
         </div>
     </div>
-<script>
-    // ... (کد تم بدون تغییر) ...
-    document.getElementById('requestForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const submitBtn = document.getElementById('submitBtn');
-        submitBtn.disabled = true;
-        submitBtn.textContent = '⏳ در حال ارسال...';
 
-        try {
-            const cardCode = document.getElementById('cardCode').value.trim();
-            const requestType = document.getElementById('requestType').value;
-            const description = document.getElementById('description').value.trim();
-
-            if (!cardCode || !requestType) throw new Error('لطفاً کد کارت و نوع درخواست را وارد کنید.');
-
-            const response = await fetch('/api/submit-request', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ cardCode, type: requestType, description })
+    <script>
+        // ===== Theme =====
+        (function() {
+            const toggle = document.getElementById('themeToggle');
+            const body = document.body;
+            if (localStorage.getItem('theme') === 'dark') {
+                body.classList.add('dark');
+                toggle.textContent = '☀️';
+            }
+            toggle.addEventListener('click', function() {
+                body.classList.toggle('dark');
+                if (body.classList.contains('dark')) {
+                    toggle.textContent = '☀️';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    toggle.textContent = '🌙';
+                    localStorage.setItem('theme', 'light');
+                }
             });
+        })();
 
-            const result = await response.json();
-            if (!response.ok) throw new Error(result.error);
-
-            alert('✅ درخواست شما با موفقیت برای ادمین ارسال شد.');
-            window.location.href = 'index.html';
-
-        } catch (error) {
-            alert('❌ ' + error.message);
-            submitBtn.disabled = false;
-            submitBtn.textContent = '📨 ارسال درخواست';
+        // ===== Show Message =====
+        function showMessage(text, type) {
+            const box = document.getElementById('messageBox');
+            box.textContent = text;
+            box.className = 'message-box ' + type;
+            box.style.display = 'block';
         }
-    });
-</script>
-    </body>
+
+        function hideMessage() {
+            const box = document.getElementById('messageBox');
+            box.style.display = 'none';
+            box.className = 'message-box';
+        }
+
+        // ===== Form Submission =====
+        document.getElementById('requestForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            hideMessage();
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Submitting...';
+
+            try {
+                const cardCode = document.getElementById('cardCode').value.trim();
+                const requestType = document.getElementById('requestType').value;
+                const description = document.getElementById('description').value.trim();
+
+                if (!cardCode) {
+                    throw new Error('Please enter your card code.');
+                }
+
+                if (!requestType) {
+                    throw new Error('Please select a request type.');
+                }
+
+                // ⭐ Send to secure API instead of direct GitHub access
+                const response = await fetch('/api/submit-request', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        cardCode: cardCode,
+                        type: requestType,
+                        description: description
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'Error submitting request');
+                }
+
+                showMessage('✅ Your request has been successfully submitted to the admin.', 'success');
+                submitBtn.textContent = '✅ Sent';
+
+                setTimeout(() => {
+                    window.location.href = 'index-en.html';
+                }, 2000);
+
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage(`❌ Error: ${error.message}`, 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '📨 Submit Request';
+            }
+        });
+    </script>
+</body>
 </html>
