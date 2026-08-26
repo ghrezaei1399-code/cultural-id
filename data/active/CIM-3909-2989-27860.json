@@ -21,14 +21,17 @@
     2,
     1
   ],
-  "optionalCode": "فرهنگ",
-  "displayCode": "CIM - 3909 - 2989 - فرهنگ",
+  "optionalCode": "رجائی",
+  "displayCode": "CIM - 3909 - 2989 - رجائی",
   "communicationEmail": "ghrezaei1399@gmail.com",
   "registrationDate": "2026-08-26T16:46:11.615Z",
-  "status": "approved",
+  "status": "pending_edit",
   "allowConnection": true,
   "allowAchievements": false,
   "culturalInfo": "",
   "statusUpdatedAt": "2026-08-26T16:54:02.162Z",
-  "lastEditRequest": "2026-08-26T16:49:43.110Z"
+  "lastEditRequest": "2026-08-26T18:03:28.132Z",
+  "pendingChanges": [
+    "optionalCode"
+  ]
 }
