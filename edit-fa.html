@@ -176,13 +176,26 @@
         }
 
         try {
-            showMessage('⏳ در حال فراخوانی اطلاعات...', 'info');
+            showMessage(' در حال فراخوانی اطلاعات...', 'info');
             const response = await fetch(`/api/get-user?code=${code}`);
             const data = await response.json();
 
             if (!response.ok) throw new Error(data.error || 'کد کارت یافت نشد.');
 
             const user = data.user;
+            
+            // ⭐ بررسی قفل ویرایش
+            if (user.editLocked === true) {
+                showMessage('⚠️ شما قبلاً درخواست ویرایش داده‌اید و توسط ادمین تایید شده است. امکان ویرایش مجدد وجود ندارد.', 'error');
+                return;
+            }
+            
+            // ⭐ بررسی وضعیت pending_edit (درخواست قبلی هنوز در انتظار است)
+            if (user.status === 'pending_edit') {
+                showMessage('⚠️ شما قبلاً درخواست ویرایش داده‌اید که هنوز توسط ادمین بررسی نشده است. لطفاً صبر کنید.', 'error');
+                return;
+            }
+
             currentCardCode = code;
 
             document.getElementById('displayCardCode').textContent = user.cardCode || code;
@@ -205,6 +218,14 @@
         } catch (error) {
             showMessage(`❌ خطا: ${error.message}`, 'error');
         }
+    }
+
+    function resetForm() {
+        document.getElementById('editForm').classList.add('hidden');
+        document.getElementById('codeEntrySection').classList.remove('hidden');
+        document.getElementById('inputCardCode').value = '';
+        hideMessage();
+        currentCardCode = '';
     }
 
     document.getElementById('editForm').addEventListener('submit', async function(e) {
@@ -242,11 +263,7 @@
             if (response.ok && result.success) {
                 showMessage('✅ تغییرات و اصلاحات در صورت تایید ادمین، ذخیره می‌شود و در غیر اینصورت لغو می‌گردد.', 'success');
                 submitBtn.textContent = '✅ ارسال شد';
-                
-                // ⭐ هدایت به صفحه اصلی سایت پس از ۳ ثانیه
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 3000);
+                setTimeout(() => { window.location.href = 'index.html'; }, 3000);
             } else {
                 throw new Error(result.error || 'خطا در ذخیره‌سازی');
             }
@@ -255,7 +272,7 @@
             console.error('Error:', error);
             showMessage(`❌ خطا: ${error.message}`, 'error');
             submitBtn.disabled = false;
-            submitBtn.textContent = ' ثبت تغییرات';
+            submitBtn.textContent = '💾 ثبت تغییرات';
         }
     });
 </script>
