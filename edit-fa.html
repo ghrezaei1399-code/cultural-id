@@ -185,7 +185,6 @@
             const user = data.user;
             currentCardCode = code;
 
-            // پر کردن فرم با اطلاعات واقعی کاربر
             document.getElementById('displayCardCode').textContent = user.cardCode || code;
             if (user.values && user.values.length === 7) {
                 document.getElementById('v1').value = user.values[0];
@@ -199,7 +198,6 @@
             document.getElementById('optionalCode').value = user.optionalCode || '';
             document.getElementById('communicationEmail').value = user.communicationEmail || '';
 
-            // نمایش فرم و مخفی کردن بخش ورود کد
             document.getElementById('codeEntrySection').classList.add('hidden');
             document.getElementById('editForm').classList.remove('hidden');
             hideMessage();
@@ -207,14 +205,6 @@
         } catch (error) {
             showMessage(`❌ خطا: ${error.message}`, 'error');
         }
-    }
-
-    function resetForm() {
-        document.getElementById('editForm').classList.add('hidden');
-        document.getElementById('codeEntrySection').classList.remove('hidden');
-        document.getElementById('inputCardCode').value = '';
-        hideMessage();
-        currentCardCode = '';
     }
 
     document.getElementById('editForm').addEventListener('submit', async function(e) {
@@ -250,13 +240,13 @@
             const result = await response.json();
 
             if (response.ok && result.success) {
-                // ⭐ پیام دقیق درخواستی شما
                 showMessage('✅ تغییرات و اصلاحات در صورت تایید ادمین، ذخیره می‌شود و در غیر اینصورت لغو می‌گردد.', 'success');
                 submitBtn.textContent = '✅ ارسال شد';
                 
+                // ⭐ هدایت به صفحه اصلی سایت پس از ۳ ثانیه
                 setTimeout(() => {
-                    resetForm();
-                }, 5000);
+                    window.location.href = 'index.html';
+                }, 3000);
             } else {
                 throw new Error(result.error || 'خطا در ذخیره‌سازی');
             }
@@ -265,7 +255,7 @@
             console.error('Error:', error);
             showMessage(`❌ خطا: ${error.message}`, 'error');
             submitBtn.disabled = false;
-            submitBtn.textContent = '💾 ثبت تغییرات';
+            submitBtn.textContent = ' ثبت تغییرات';
         }
     });
 </script>
