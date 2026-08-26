@@ -41,7 +41,7 @@ export default async function handler(req, res) {
 
     if (!userEntry) return res.status(404).json({ error: 'کاربر یافت نشد' });
 
-    // خواندن فایل کامل کاربر برای گرفتن اولویت‌ها و ایمیل
+    // ۲. خواندن فایل کامل کاربر (برای گرفتن ایمیل و اولویت‌ها)
     const userPath = `data/active/${userEntry.cardCode}.json`;
     const userResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
       headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
@@ -53,7 +53,39 @@ export default async function handler(req, res) {
     const userJsonString = Buffer.from(userFile.content, 'base64').toString('utf8');
     const userData = JSON.parse(userJsonString);
 
-    // ۲. پیدا کردن هم‌فرهنگان بر اساس FIRST ONLY اولویت‌ها (نه متن)
+    // ⭐ بررسی تکراری نبودن درخواست (جلوگیری از مشکل ۱)
+    const requestsPath = 'data/requests';
+    const requestsListResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${requestsPath}`, {
+      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+    });
+
+    if (requestsListResponse.ok) {
+      const requestFiles = await requestsListResponse.json();
+      if (Array.isArray(requestFiles)) {
+        for (const file of requestFiles) {
+          if (!file.name.endsWith('.json')) continue;
+          try {
+            const fileRes = await fetch(file.url, {
+              headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+            });
+            const fileData = await fileRes.json();
+            const contentStr = Buffer.from(fileData.content, 'base64').toString('utf8');
+            const existingReq = JSON.parse(contentStr);
+            
+            // اگر همین کاربر، همین نوع درخواست، و وضعیت pending دارد → رد کن
+            if (existingReq.cardCode === userEntry.cardCode && 
+                existingReq.type === type && 
+                existingReq.status === 'pending') {
+              return res.status(400).json({ 
+                error: 'شما قبلاً این درخواست را ثبت کرده‌اید و در انتظار بررسی است.' 
+              });
+            }
+          } catch (e) { /* ignore */ }
+        }
+      }
+    }
+
+    // ۳. پیدا کردن هم‌فرهنگان با الگوریتم انعطاف‌پذیر (حل مشکل ۲)
     const approvedUsers = indexData.filter(u => 
       u.status === 'approved' && 
       u.rank <= 200 && 
@@ -75,19 +107,18 @@ export default async function handler(req, res) {
         const otherJsonString = Buffer.from(otherFile.content, 'base64').toString('utf8');
         const otherData = JSON.parse(otherJsonString);
 
-        //  محاسبه شباهت فقط بر اساس آرایه priorities
         const similarityScore = calculatePrioritySimilarity(userData.priorities, otherData.priorities);
 
-        if (similarityScore >= 40) { // حداقل ۰ درصد تطابق در اولویت‌ها
+        // ⭐ آستانه را به ۲٪ کاهش دادیم (انعطاف‌پذیرتر)
+        if (similarityScore >= 20) {
           culturalMatches.push({
             cardCode: otherEntry.cardCode,
             displayCode: otherEntry.displayCode || otherEntry.cardCode,
             similarityScore: similarityScore,
             country: otherEntry.country,
             rank: otherEntry.rank,
-            // ⭐ بررسی وضعیت ایمیل برای ادمین
-            hasEmail: !!otherData.communicationEmail, 
-            email: otherData.communicationEmail || null // ایمیل فقط در سمت سرور/ادمین دیده می‌شود
+            hasEmail: !!otherData.communicationEmail,
+            email: otherData.communicationEmail || null
           });
         }
       } catch (e) {
@@ -95,22 +126,23 @@ export default async function handler(req, res) {
       }
     }
 
-    // مرتب‌سازی بر اساس بیشترین شباهت اولویت‌ها
     culturalMatches.sort((a, b) => b.similarityScore - a.similarityScore);
 
-    // ۳. ذخیره درخواست
+    // ۴. ذخیره درخواست
     const fileName = `request-${Date.now()}.json`;
     const path = `data/requests/${fileName}`;
 
     const requestData = {
       cardCode: userEntry.cardCode,
       displayCode: userEntry.displayCode || userEntry.cardCode,
-      requesterEmail: userData.communicationEmail || null, // ایمیل درخواست‌دهنده
+      // ⭐ ایمیل را مستقیماً از فایل کاربر می‌خوانیم (حل مشکل ۳)
+      requesterEmail: userData.communicationEmail || null,
+      requesterPriorities: userData.priorities || [],
       type,
       description: description || '',
       requestDate: new Date().toISOString(),
       status: 'pending',
-      culturalMatches: culturalMatches.slice(0, 10) // ۱۰ هم‌فرهنگ برتر از نظر اولویت
+      culturalMatches: culturalMatches.slice(0, 10)
     };
 
     const content = Buffer.from(JSON.stringify(requestData, null, 2), 'utf8').toString('base64');
@@ -141,30 +173,36 @@ export default async function handler(req, res) {
   }
 }
 
-// ⭐ الگوریتم هوشمند تطابق اولویت‌ها (بدون توجه به متن)
+//  الگوریتم انعطاف‌پذیر تطابق اولویت‌ها
 function calculatePrioritySimilarity(p1, p2) {
-  if (!p1 || !p2 || p1.length !== 7 || p2.length !== 7) return 0;
+  // اگر هر کدام اولویت ندارند، امتیاز 
+  if (!p1 || !p2 || p1.length === 0 || p2.length === 0) return 0;
+  
+  // پیدا کردن ارزش‌هایی که هر دو کاربر به آن‌ها اولویت داده‌اند (غیر از ۰ یا null)
+  const validIndices = [];
+  for (let i = 0; i < 7; i++) {
+    if (p1[i] && p2[i] && p1[i] > 0 && p2[i] > 0) {
+      validIndices.push(i);
+    }
+  }
+  
+  // اگر هیچ ارزش مشترکی ندارند که هر دو اولویت داده باشند
+  if (validIndices.length === 0) return 0;
   
   let score = 0;
   
-  // ۱. پیدا کردن ۳ اولویت برتر هر کاربر (اعداد ۱، ۲ و ۳ در آرایه)
-  const getTop3 = (arr) => arr.map((rank, index) => ({index, rank}))
-                               .sort((a,b) => a.rank - b.rank)
-                               .slice(0,3)
-                               .map(x => x.index);
-                               
-  const top3_p1 = getTop3(p1);
-  const top3_p2 = getTop3(p2);
-  
-  // ۲. بررسی اشتراک در ۳ اولویت اصلی (بسیار مهم - ۶ امتیاز)
-  const overlap = top3_p1.filter(x => top3_p2.includes(x)).length;
-  score += overlap * 20; // اگر هر ۳ تا یکی باشد = ۶۰ امتیاز
-
-  // ۳. بررسی تطابق دقیق رتبه‌ها در کل ۷ ارزش (۴۰ امتیاز)
-  for(let i = 0; i < 7; i++) {
-    if(p1[i] === p2[i]) score += 5; // تطابق دقیق رتبه
-    else if(Math.abs(p1[i] - p2[i]) === 1) score += 2; // رتبه‌های نزدیک
+  // برای هر ارزش مشترک، اختلاف رتبه را محاسبه کن
+  for (const idx of validIndices) {
+    const diff = Math.abs(p1[idx] - p2[idx]);
+    if (diff === 0) score += 15;        // تطابق کامل
+    else if (diff === 1) score += 10;   // نزدیک
+    else if (diff === 2) score += 5;    // نسبتاً نزدیک
+    // diff >= 3: امتیازی نمی‌گیرد
   }
   
-  return Math.min(Math.round(score), 100);
+  // نرمال‌سازی بر اساس تعداد ارزش‌های مشترک
+  const maxPossible = validIndices.length * 15;
+  const normalizedScore = Math.round((score / maxPossible) * 100);
+  
+  return Math.min(normalizedScore, 100);
 }
