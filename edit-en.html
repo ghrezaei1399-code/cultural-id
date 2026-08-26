@@ -136,12 +136,25 @@
         if (!code) { showMessage('❌ Please enter your card code.', 'error'); return; }
 
         try {
-            showMessage(' Fetching information...', 'info');
+            showMessage('⏳ Fetching information...', 'info');
             const response = await fetch(`/api/get-user?code=${code}`);
             const data = await response.json();
             if (!response.ok) throw new Error(data.error || 'Card code not found.');
 
             const user = data.user;
+            
+            // ⭐ Check edit lock
+            if (user.editLocked === true) {
+                showMessage('️ You have already edited your information and it was approved by the admin. Further editing is not allowed.', 'error');
+                return;
+            }
+            
+            // ⭐ Check if previous edit is still pending
+            if (user.status === 'pending_edit') {
+                showMessage('⚠️ You have already submitted an edit request that is still pending admin review. Please wait.', 'error');
+                return;
+            }
+
             currentCardCode = code;
 
             document.getElementById('displayCardCode').textContent = user.cardCode || code;
@@ -198,7 +211,6 @@
             const result = await response.json();
 
             if (response.ok && result.success) {
-                // ⭐ پیام دقیق انگلیسی
                 showMessage('✅ Changes and corrections will be saved upon admin approval, otherwise they will be canceled.', 'success');
                 submitBtn.textContent = '✅ Submitted';
                 setTimeout(() => { window.location.href = 'index-en.html'; }, 3000);
