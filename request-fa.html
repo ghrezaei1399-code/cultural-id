@@ -48,9 +48,7 @@
             padding-bottom: 1rem;
         }
         body.dark .subtitle { color: #d0c0b0; border-bottom-color: rgba(255, 255, 255, 0.02); }
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
+        .form-group { margin-bottom: 1.5rem; }
         .form-group label {
             display: block;
             font-weight: 700;
@@ -92,25 +90,12 @@
             border-color: rgba(255, 255, 255, 0.05);
             background: rgba(255, 255, 255, 0.03);
         }
-        .form-group textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
+        .form-group textarea { min-height: 80px; resize: vertical; }
         .form-group input::placeholder,
-        .form-group textarea::placeholder {
-            color: #4a3a2a;
-            opacity: 0.5;
-        }
+        .form-group textarea::placeholder { color: #4a3a2a; opacity: 0.5; }
         body.dark .form-group input::placeholder,
-        body.dark .form-group textarea::placeholder {
-            color: #908070;
-        }
-        .btn-group {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-            flex-wrap: wrap;
-        }
+        body.dark .form-group textarea::placeholder { color: #908070; }
+        .btn-group { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
         .btn {
             flex: 1;
             padding: 0.8rem 1.5rem;
@@ -134,17 +119,9 @@
             color: #f9e79f;
             border-color: rgba(255, 255, 255, 0.02);
         }
-        .btn-primary:hover {
-            background: rgba(60, 30, 10, 0.04);
-            transform: scale(1.02);
-        }
-        body.dark .btn-primary:hover {
-            background: rgba(255, 255, 255, 0.04);
-        }
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
+        .btn-primary:hover { background: rgba(60, 30, 10, 0.04); transform: scale(1.02); }
+        body.dark .btn-primary:hover { background: rgba(255, 255, 255, 0.04); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
         .btn-secondary {
             background: rgba(60, 30, 10, 0.01);
             color: #3a2a1a;
@@ -155,13 +132,8 @@
             color: #a09080;
             border-color: rgba(255, 255, 255, 0.01);
         }
-        .btn-secondary:hover {
-            background: rgba(60, 30, 10, 0.03);
-            transform: scale(1.02);
-        }
-        body.dark .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.03);
-        }
+        .btn-secondary:hover { background: rgba(60, 30, 10, 0.03); transform: scale(1.02); }
+        body.dark .btn-secondary:hover { background: rgba(255, 255, 255, 0.03); }
         .note {
             text-align: center;
             font-size: 0.75rem;
@@ -220,10 +192,7 @@
             border-color: rgba(255, 255, 255, 0.02);
         }
         .theme-toggle:hover { transform: scale(1.1); }
-        @font-face {
-            font-family: 'Vazir';
-            src: local('Vazir'), local('IRANSans');
-        }
+        @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
     </style>
 </head>
 <body>
@@ -301,39 +270,6 @@
             box.className = 'message-box';
         }
 
-        // ===== Save Request to Repository =====
-        async function saveRequest(requestData) {
-            const GITHUB_TOKEN = process.env.GH_TOKEN;
-            const REPO_OWNER = 'ghrezaei1399-code';
-            const REPO_NAME = 'cultural-id';
-            const FILE_NAME = `request-${Date.now()}.json`;
-            const FILE_PATH = `data/requests/${FILE_NAME}`;
-            const COMMIT_MESSAGE = `درخواست جدید: ${requestData.cardCode}`;
-
-            const content = JSON.stringify(requestData, null, 2);
-
-            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
-            const response = await fetch(url, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `token ${GITHUB_TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: COMMIT_MESSAGE,
-                    content: btoa(unescape(encodeURIComponent(content)))
-                })
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(`خطا در ارسال درخواست: ${errorData.message || 'ناشناخته'}`);
-            }
-
-            return await response.json();
-        }
-
         // ===== Form Submission =====
         document.getElementById('requestForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -356,18 +292,29 @@
                     throw new Error('لطفاً نوع درخواست را انتخاب کنید.');
                 }
 
-                const requestData = {
-                    cardCode: cardCode,
-                    type: requestType,
-                    description: description,
-                    requestDate: new Date().toISOString(),
-                    status: 'pending'
-                };
+                // ⭐ ارسال به API امن به جای دسترسی مستقیم به گیت‌هاب
+                const response = await fetch('/api/submit-request', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        cardCode: cardCode,
+                        type: requestType,
+                        description: description
+                    })
+                });
 
-                await saveRequest(requestData);
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'خطا در ارسال درخواست');
+                }
 
                 showMessage('✅ درخواست شما با موفقیت به ادمین ارسال شد.', 'success');
                 submitBtn.textContent = '✅ ارسال شد';
+
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
 
             } catch (error) {
                 console.error('Error:', error);
