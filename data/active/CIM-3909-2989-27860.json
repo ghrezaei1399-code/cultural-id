@@ -21,13 +21,14 @@
     2,
     1
   ],
-  "optionalCode": "تحلیل",
-  "displayCode": "CIM - 3909 - 2989 - تحلیل",
+  "optionalCode": "فرهنگ",
+  "displayCode": "CIM - 3909 - 2989 - فرهنگ",
   "communicationEmail": "ghrezaei1399@gmail.com",
   "registrationDate": "2026-08-26T16:46:11.615Z",
-  "status": "approved",
+  "status": "pending_edit",
   "allowConnection": true,
   "allowAchievements": false,
   "culturalInfo": "",
-  "statusUpdatedAt": "2026-08-26T16:47:28.819Z"
+  "statusUpdatedAt": "2026-08-26T16:47:28.819Z",
+  "lastEditRequest": "2026-08-26T16:49:43.110Z"
 }
