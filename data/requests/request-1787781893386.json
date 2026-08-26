@@ -14,6 +14,7 @@
   "type": "connection",
   "description": "دوستی و رفاقت",
   "requestDate": "2026-08-26T22:04:53.386Z",
-  "status": "pending",
-  "culturalMatches": []
+  "status": "rejected",
+  "culturalMatches": [],
+  "rejectedAt": "2026-08-26T22:10:34.061Z"
 }
