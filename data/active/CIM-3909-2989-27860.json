@@ -1,0 +1,32 @@
+{
+  "cardCode": "CIM-3909-2989-27860",
+  "country": "Iran",
+  "countryCode": "IR",
+  "rank": 1,
+  "values": [
+    "آزمایشگاه",
+    "سپهر",
+    "خردمندی",
+    "چارچوب",
+    "تولید",
+    "اطلس",
+    "ظهور"
+  ],
+  "priorities": [
+    7,
+    6,
+    5,
+    4,
+    3,
+    2,
+    1
+  ],
+  "optionalCode": "تحلیل",
+  "displayCode": "CIM - 3909 - 2989 - تحلیل",
+  "communicationEmail": "ghrezaei1399@gmail.com",
+  "registrationDate": "2026-08-26T16:46:11.615Z",
+  "status": "pending",
+  "allowConnection": true,
+  "allowAchievements": false,
+  "culturalInfo": ""
+}
