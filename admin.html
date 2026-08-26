@@ -304,6 +304,22 @@
             padding-top: 1rem;
         }
 
+        /* ⭐ استایل هایلایت برای فیلدهای تغییر یافته */
+        .highlight-change {
+            background-color: rgba(255, 200, 0, 0.15) !important;
+            border-right: 4px solid #d4af37 !important;
+            padding-right: 12px !important;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .highlight-change .info-label::after {
+            content: ' ✏️ تغییر یافته';
+            color: #b7791f;
+            font-weight: 800;
+            font-size: 0.75rem;
+            margin-right: 5px;
+        }
+
         @media (max-width: 768px) {
             .modal-body .info-row {
                 grid-template-columns: 1fr;
@@ -331,11 +347,11 @@
             </div>
             <div class="stat-card bronze">
                 <span class="number" id="bronzeUsers">۰</span>
-                <div class="label">🥉 برنزی (۱۰۰۱-۱۰۰۰۰)</div>
+                <div class="label"> برنزی (۱۰۰-۱۰۰۰۰)</div>
             </div>
         </div>
 
-        <div class="section-title">🌍 آمار بر اساس کشور (تشخیص از IP)</div>
+        <div class="section-title"> آمار بر اساس کشور (تشخیص از IP)</div>
         <div class="country-selector">
             <select class="country-dropdown" id="countryDropdown" onchange="showCountryUsers(this.value)">
                 <option value="">-- انتخاب کشور --</option>
@@ -343,7 +359,7 @@
             <div id="countryUsersList" class="country-users"></div>
         </div>
 
-        <div class="section-title">📋 کاربران ثبت‌نام شده (فقط اطلاعات فرهنگی)</div>
+        <div class="section-title"> کاربران ثبت‌نام شده (فقط اطلاعات فرهنگی)</div>
         <div class="table-container">
             <table class="admin-table">
                 <thead>
@@ -423,21 +439,27 @@
 
         function renderTable(users) {
             const tbody = document.getElementById('usersTableBody');
-            if (users.length === 0) {
+            
+            // ⭐ مرتب‌سازی: اول درخواست‌های ویرایش، بعد در انتظار، بعد تایید شده، بعد رد شده
+            const sortedUsers = [...users].sort((a, b) => {
+                const statusOrder = { 'pending_edit': 0, 'pending': 1, 'approved': 2, 'rejected': 3 };
+                return (statusOrder[a.status] || 4) - (statusOrder[b.status] || 4);
+            });
+
+            if (sortedUsers.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 2rem;">کاربری یافت نشد</td></tr>';
                 return;
             }
 
-            tbody.innerHTML = users.map(user => {
+            tbody.innerHTML = sortedUsers.map(user => {
                 const badgeClass = `badge-${user.badge}`;
                 const badgeText = user.badge === 'golden' ? '🌟 طلایی' : 
-                                 user.badge === 'silver' ? '🥈 نقره‌ای' : '🥉 برنزی';
+                                 user.badge === 'silver' ? ' نقره‌ای' : ' برنزی';
                 
                 const status = user.status || 'pending';
                 let statusClass = 'badge-pending';
                 let statusText = 'در انتظار';
 
-                // ⭐ تشخیص دقیق وضعیت‌ها
                 if (status === 'approved') {
                     statusClass = 'badge-approved';
                     statusText = 'تأیید شده';
@@ -451,6 +473,7 @@
 
                 const valuesText = user.values ? user.values.slice(0, 2).join('، ') + (user.values.length > 2 ? '...' : '') : '---';
                 const date = user.registrationDate ? new Date(user.registrationDate).toLocaleDateString('fa-IR') : '---';
+                const timeSince = user.lastEditRequest ? getTimeSince(user.lastEditRequest) : '';
 
                 return `
                     <tr>
@@ -461,13 +484,27 @@
                         <td>${valuesText}</td>
                         <td>${date}</td>
                         <td><span class="badge ${badgeClass}">${badgeText}</span></td>
-                        <td><span class="badge ${statusClass}">${statusText}</span></td>
+                        <td><span class="badge ${statusClass}">${statusText}</span>${timeSince}</td>
                         <td>
                             <button class="btn-small btn-view" onclick="viewUser('${user.cardCode}')">👁️ مشاهده</button>
                         </td>
                     </tr>
                 `;
             }).join('');
+        }
+
+        function getTimeSince(dateString) {
+            const now = new Date();
+            const date = new Date(dateString);
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMins / 60);
+            const diffDays = Math.floor(diffHours / 24);
+
+            if (diffDays > 0) return `<br><small style="color: #888;">${diffDays} روز پیش</small>`;
+            if (diffHours > 0) return `<br><small style="color: #888;">${diffHours} ساعت پیش</small>`;
+            if (diffMins > 0) return `<br><small style="color: #888;">${diffMins} دقیقه پیش</small>`;
+            return '';
         }
 
         function showCountryUsers(country) {
@@ -488,7 +525,7 @@
                     <div class="country-user-item">
                         <span style="font-family: monospace; font-size: 0.8rem;">${u.cardCode}</span>
                         <span>رتبه: ${u.rank}</span>
-                        <span class="badge badge-${u.badge}">${u.badge === 'golden' ? '🌟' : u.badge === 'silver' ? '' : '🥉'}</span>
+                        <span class="badge badge-${u.badge}">${u.badge === 'golden' ? '🌟' : u.badge === 'silver' ? '🥈' : '🥉'}</span>
                     </div>
                 `).join('')}
             `;
@@ -503,29 +540,31 @@
             let statusText = 'در انتظار';
             if (status === 'approved') statusText = 'تأیید شده';
             else if (status === 'rejected') statusText = 'رد شده';
-            else if (status === 'pending_edit') statusText = '⚠️ در انتظار تایید ویرایش';
+            else if (status === 'pending_edit') statusText = '️ در انتظار تایید ویرایش';
 
             document.getElementById('modalTitle').textContent = `جزئیات فرهنگی: ${user.cardCode}`;
             
+            // ⭐ بررسی فیلدهای تغییر یافته برای هایلایت
+            const changed = user.pendingChanges || [];
+            const hl = (field) => changed.includes(field) ? 'highlight-change' : '';
+
             const body = document.getElementById('modalBody');
             body.innerHTML = `
-                <div class="info-row"><div class="info-label">کد کارت:</div><div class="info-value" style="font-family: monospace;">${user.cardCode}</div></div>
-                <div class="info-row"><div class="info-label">کد اختیاری:</div><div class="info-value" style="font-family: monospace; color:#d4af37;">${user.optionalCode || 'ثبت نشده'}</div></div>
+                <div class="info-row ${hl('cardCode')}"><div class="info-label">کد کارت:</div><div class="info-value" style="font-family: monospace;">${user.cardCode}</div></div>
+                <div class="info-row ${hl('optionalCode')}"><div class="info-label">کد اختیاری:</div><div class="info-value" style="font-family: monospace; color:#d4af37;">${user.optionalCode || 'ثبت نشده'}</div></div>
                 <div class="info-row"><div class="info-label">رتبه ثبت‌نام:</div><div class="info-value">${user.rank}</div></div>
                 <div class="info-row"><div class="info-label">کشور (از IP):</div><div class="info-value">${user.country || '---'}</div></div>
                 <div class="info-row"><div class="info-label">تاریخ ثبت‌نام:</div><div class="info-value">${user.registrationDate ? new Date(user.registrationDate).toLocaleDateString('fa-IR') : '---'}</div></div>
                 ${user.lastEditRequest ? `<div class="info-row"><div class="info-label">تاریخ آخرین درخواست ویرایش:</div><div class="info-value">${new Date(user.lastEditRequest).toLocaleString('fa-IR')}</div></div>` : ''}
-                <div class="info-row"><div class="info-label">نشان:</div><div class="info-value"><span class="badge badge-${user.badge}">${user.badge === 'golden' ? '🌟 طلایی' : user.badge === 'silver' ? '🥈 نقره‌ای' : '🥉 برنزی'}</span></div></div>
+                <div class="info-row"><div class="info-label">نشان:</div><div class="info-value"><span class="badge badge-${user.badge}">${user.badge === 'golden' ? '🌟 طلایی' : user.badge === 'silver' ? '🥈 نقره‌ای' : ' برنزی'}</span></div></div>
                 <div class="info-row"><div class="info-label">وضعیت:</div><div class="info-value"><span class="badge ${status === 'pending_edit' ? 'badge-edit' : 'badge-' + status}">${statusText}</span></div></div>
-                <div class="info-row"><div class="info-label">ارزش‌های فرهنگی:</div><div class="info-value">${user.values ? user.values.join('، ') : '---'}</div></div>
-                <div class="info-row"><div class="info-label">ایمیل ارتباطی:</div><div class="info-value">${user.communicationEmail || 'ثبت نشده'}</div></div>
+                <div class="info-row ${hl('values')}"><div class="info-label">ارزش‌های فرهنگی:</div><div class="info-value">${user.values ? user.values.join('، ') : '---'}</div></div>
+                <div class="info-row ${hl('communicationEmail')}"><div class="info-label">ایمیل ارتباطی:</div><div class="info-value">${user.communicationEmail || 'ثبت نشده'}</div></div>
                 <div class="info-row"><div class="info-label">اجازه ارتباط:</div><div class="info-value">${user.allowConnection ? '✅ بله' : '❌ خیر'}</div></div>
                 ${user.culturalInfo ? `<div class="info-row"><div class="info-label">اطلاعات فرهنگی:</div><div class="info-value">${user.culturalInfo}</div></div>` : ''}
             `;
 
             const actions = document.getElementById('modalActions');
-            
-            // ⭐ اگر وضعیت pending_edit باشد، دکمه‌ها متن متفاوتی نشان می‌دهند
             if (status === 'pending_edit') {
                 actions.innerHTML = `
                     <button class="btn-modal approve" onclick="approveUser('${user.cardCode}')">✓ تأیید ویرایش</button>
@@ -559,7 +598,7 @@
                     throw new Error(result.error || 'خطا در بروزرسانی وضعیت');
                 }
 
-                alert(newStatus === 'approved' ? '✅ کاربر با موفقیت تأیید شد.' : ' کاربر با موفقیت رد شد.');
+                alert(newStatus === 'approved' ? '✅ کاربر با موفقیت تأیید شد.' : '❌ کاربر با موفقیت رد شد.');
                 closeModal();
                 loadUsers();
 
@@ -579,7 +618,6 @@
             await updateStatus(cardCode, 'rejected');
         }
 
-        // ⭐ تابع جدید برای رد درخواست ویرایش (بازگشت به وضعیت قبلی به جای حذف کاربر)
         async function rejectEditUser(cardCode) {
             if (!confirm(`آیا از رد درخواست ویرایش کاربر با کد ${cardCode} اطمینان دارید؟ اطلاعات قبلی کاربر حفظ می‌شود.`)) return;
             await updateStatus(cardCode, 'pending');
