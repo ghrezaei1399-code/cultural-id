@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>هم‌فرهنگان | کارت جهانی هویت هوشمند فرهنگی</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            background: linear-gradient(135deg, #fdf6e3 0%, #e8f4f8 50%, #f5e6d3 100%);
+            color: #2a1a0a;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 {
+            font-size: 1.8rem; font-weight: 800; color: #2a1a0a;
+            text-align: center; margin-bottom: 0.5rem;
+        }
+        .subtitle {
+            text-align: center; font-size: 0.9rem; color: #6a5a3a;
+            opacity: 0.8; margin-bottom: 2rem;
+        }
+        .request-card {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        .request-card h3 {
+            font-size: 1.1rem; color: #8a6d1f; margin-bottom: 0.5rem;
+        }
+        .request-card p {
+            font-size: 0.9rem; color: #3a2a1a; margin-bottom: 0.5rem; line-height: 1.6;
+        }
+        .request-card .meta {
+            font-size: 0.75rem; color: #6a5a3a; opacity: 0.7;
+        }
+        .btn-group {
+            display: flex; gap: 0.5rem; margin-top: 1rem;
+        }
+        .btn {
+            padding: 0.6rem 1.2rem; border-radius: 30px; font-weight: 700;
+            font-size: 0.85rem; border: none; cursor: pointer; transition: all 0.3s;
+        }
+        .btn-approve {
+            background: rgba(39, 174, 96, 0.2); color: #1e7a1e;
+        }
+        .btn-approve:hover { background: rgba(39, 174, 96, 0.3); }
+        .btn-reject {
+            background: rgba(220, 80, 60, 0.2); color: #a93226;
+        }
+        .btn-reject:hover { background: rgba(220, 80, 60, 0.3); }
+        .btn-back {
+            display: inline-block; margin-top: 2rem; padding: 0.8rem 1.5rem;
+            background: rgba(212, 175, 55, 0.2); color: #8a6d1f;
+            border-radius: 30px; text-decoration: none; font-weight: 700;
+        }
+        .empty-state {
+            text-align: center; padding: 3rem; color: #6a5a3a; opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1> درخواست‌های ارتباط با هم‌فرهنگان</h1>
+    <div class="subtitle">درخواست‌های در انتظار بررسی</div>
+
+    <div id="requestsList"></div>
+
+    <a href="admin.html" class="btn-back">↩ بازگشت به پنل ادمین</a>
+</div>
+
+<script>
+    async function loadRequests() {
+        try {
+            const response = await fetch('/api/get-connection-requests');
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'خطا در دریافت درخواست‌ها');
+            }
+
+            const requestsList = document.getElementById('requestsList');
+
+            if (data.requests.length === 0) {
+                requestsList.innerHTML = '<div class="empty-state">هیچ درخواست ارتباطی وجود ندارد</div>';
+                return;
+            }
+
+            requestsList.innerHTML = data.requests.map(req => `
+                <div class="request-card">
+                    <h3>کد کارت: ${req.cardCode}</h3>
+                    <p><strong>نوع درخواست:</strong> ${req.type === 'connection' ? 'ارتباط با هم‌فرهنگان' : req.type}</p>
+                    ${req.description ? `<p><strong>توضیحات:</strong> ${req.description}</p>` : ''}
+                    <div class="meta">تاریخ: ${new Date(req.requestDate).toLocaleString('fa-IR')}</div>
+                    <div class="btn-group">
+                        <button class="btn btn-approve" onclick="handleRequest('${req.fileName}', 'approve')">✓ تایید</button>
+                        <button class="btn btn-reject" onclick="handleRequest('${req.fileName}', 'reject')">✗ رد</button>
+                    </div>
+                </div>
+            `).join('');
+
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('requestsList').innerHTML = 
+                `<div class="empty-state" style="color: red;">خطا: ${error.message}</div>`;
+        }
+    }
+
+    async function handleRequest(fileName, action) {
+        if (!confirm(`آیا از ${action === 'approve' ? 'تایید' : 'رد'} این درخواست اطمینان دارید؟`)) return;
+
+        try {
+            const response = await fetch('/api/approve-connection', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fileName, action })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || 'خطا در پردازش درخواست');
+            }
+
+            alert(result.message);
+            loadRequests(); // بارگذاری مجدد
+
+        } catch (error) {
+            alert('خطا: ' + error.message);
+        }
+    }
+
+    loadRequests();
+</script>
+</body>
+</html>
