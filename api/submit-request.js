@@ -29,7 +29,7 @@ export default async function handler(req, res) {
   const content = Buffer.from(JSON.stringify(requestData, null, 2), 'utf8').toString('base64');
 
   try {
-    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -42,6 +42,11 @@ export default async function handler(req, res) {
         branch: 'main'
       })
     });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'خطا در ذخیره درخواست');
+    }
 
     return res.status(200).json({ success: true, message: 'درخواست با موفقیت ثبت شد' });
   } catch (error) {
