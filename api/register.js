@@ -5,13 +5,13 @@ export default async function handler(req, res) {
 
   const token = process.env.GH_TOKEN;
   if (!token) {
-    return res.status(500).json({ error: 'تنظیمات سرور ناقص است (GH_TOKEN)' });
+    return res.status(500).json({ error: 'GH_TOKEN is not configured' });
   }
 
   try {
     const data = req.body;
 
-    // ۱. تشخیص کشور از IP
+    // تشخیص کشور از IP
     const ip = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress;
     let country = 'Global';
     let countryCode = 'XX';
@@ -30,17 +30,17 @@ export default async function handler(req, res) {
           }
         }
       } catch (e) {
-        console.warn('IP detection failed, using fallback:', e.message);
+        console.warn('IP detection failed:', e.message);
       }
     }
 
-    // ۲. تولید کد کارت ۳ بخشی
+    // تولید کد کارت
     const part1 = Math.floor(1000 + Math.random() * 9000);
     const part2 = Math.floor(1000 + Math.random() * 9000);
     const part3 = Math.floor(10000 + Math.random() * 90000);
     const cardCode = `CIM-${part1}-${part2}-${part3}`;
 
-    // ۳. محاسبه رتبه
+    // محاسبه رتبه
     let rank = 1;
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
@@ -59,10 +59,15 @@ export default async function handler(req, res) {
         }
       }
     } catch (e) {
-      console.warn('Rank calculation failed, using default:', e.message);
+      console.warn('Rank calculation failed:', e.message);
     }
 
-    // ۴. ساخت داده‌های کاربر
+    // ساخت داده‌های کاربر
+    const optionalCode = data.optionalCode ? String(data.optionalCode).trim() : '';
+    const displayCode = optionalCode 
+      ? `CIM - ${part1} - ${part2} - ${optionalCode}` 
+      : `CIM - ${part1} - ${part2}`;
+
     const userData = {
       cardCode: cardCode,
       country: country,
@@ -70,7 +75,8 @@ export default async function handler(req, res) {
       rank: rank,
       values: Array.isArray(data.values) ? data.values : [],
       priorities: Array.isArray(data.priorities) && data.priorities.length === 7 ? data.priorities : [],
-      optionalCode: data.optionalCode ? String(data.optionalCode).trim() : '',
+      optionalCode: optionalCode,
+      displayCode: displayCode,
       communicationEmail: data.communicationEmail ? String(data.communicationEmail).trim() : '',
       registrationDate: new Date().toISOString(),
       status: 'pending',
@@ -79,36 +85,87 @@ export default async function handler(req, res) {
       culturalInfo: data.culturalInfo || ''
     };
 
-    // ۵. ارسال به گیت‌هاب (⭐ اصلاح حیاتی برای حفظ حروف فارسی)
-    const path = `data/active/${cardCode}.json`;
-    
-    // تبدیل ایمن و دقیق به Base64 با حفظ کامل حروف فارسی (UTF-8)
-    const jsonString = JSON.stringify(userData, null, 2);
-    const content = Buffer.from(jsonString, 'utf8').toString('base64');
+    // ذخیره فایل کاربر در گیت‌هاب
+    const userPath = `data/active/${cardCode}.json`;
+    const userContent = Buffer.from(JSON.stringify(userData, null, 2), 'utf8').toString('base64');
 
-    const commitData = {
-      message: `Register new user: ${cardCode} from ${country} (Rank #${rank}) - Status: Pending`,
-      content: content,
-      branch: 'main'
-    };
-
-    const commitResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+    const userCommit = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Accept': 'application/vnd.github.v3+json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(commitData)
+      body: JSON.stringify({
+        message: `Register new user: ${cardCode} from ${country}`,
+        content: userContent,
+        branch: 'main'
+      })
     });
 
-    if (!commitResponse.ok) {
-      throw new Error(`GitHub Error: ${commitResponse.status}`);
+    if (!userCommit.ok) {
+      throw new Error(`GitHub Error: ${userCommit.status}`);
     }
+
+    // ⭐ آپدیت خودکار index.json
+    const indexPath = 'data/index.json';
+    
+    // خواندن index.json فعلی
+    const indexResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${indexPath}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+
+    let indexData = [];
+    let indexSha = null;
+
+    if (indexResponse.ok) {
+      const indexFile = await indexResponse.json();
+      indexSha = indexFile.sha;
+      const jsonString = Buffer.from(indexFile.content, 'base64').toString('utf8');
+      indexData = JSON.parse(jsonString);
+    }
+
+    // اضافه کردن کاربر جدید به فهرست
+    indexData.push({
+      cardCode: cardCode,
+      optionalCode: optionalCode,
+      displayCode: displayCode,
+      status: 'pending',
+      rank: rank,
+      country: country,
+      registrationDate: userData.registrationDate
+    });
+
+    // ذخیره index.json جدید
+    const newIndexContent = Buffer.from(JSON.stringify(indexData, null, 2), 'utf8').toString('base64');
+    
+    const indexCommitBody = {
+      message: `Add user ${cardCode} to index`,
+      content: newIndexContent,
+      branch: 'main'
+    };
+    
+    if (indexSha) {
+      indexCommitBody.sha = indexSha;
+    }
+
+    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${indexPath}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(indexCommitBody)
+    });
 
     return res.status(200).json({
       success: true,
       cardCode: cardCode,
+      displayCode: displayCode,
       country: country,
       rank: rank,
       message: 'ثبت‌نام با موفقیت انجام شد و در انتظار تأیید ادمین است.'
