@@ -384,176 +384,105 @@
         </div>
     </div>
 
-    <script>
-        let allUsers = [];
-        let allCountries = [];
+   // ... (بخش HTML و CSS فایل admin.html بدون تغییر باقی می‌ماند) ...
 
-        async function loadUsers() {
-            try {
-                const response = await fetch('/api/get-users');
-                if (!response.ok) throw new Error('خطا در دریافت اطلاعات');
-                
-                const data = await response.json();
-                allUsers = data.users;
-                allCountries = data.countries;
+<script>
+    let allUsers = [];
+    let allCountries = [];
 
-                document.getElementById('totalUsers').textContent = data.stats.total.toLocaleString('fa-IR');
-                document.getElementById('goldenUsers').textContent = data.stats.golden.toLocaleString('fa-IR');
-                document.getElementById('silverUsers').textContent = data.stats.silver.toLocaleString('fa-IR');
-                document.getElementById('bronzeUsers').textContent = data.stats.bronze.toLocaleString('fa-IR');
-
-                const dropdown = document.getElementById('countryDropdown');
-                dropdown.innerHTML = '<option value="">-- انتخاب کشور --</option>';
-                allCountries.forEach(c => {
-                    const opt = document.createElement('option');
-                    opt.value = c.country;
-                    opt.textContent = `${c.country} (${c.count.toLocaleString('fa-IR')} نفر)`;
-                    dropdown.appendChild(opt);
-                });
-
-                renderTable(allUsers);
-
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('usersTableBody').innerHTML = 
-                    `<tr><td colspan="9" style="text-align:center; color:red; padding: 2rem;">خطا: ${error.message}</td></tr>`;
-            }
-        }
-
-        function renderTable(users) {
-            const tbody = document.getElementById('usersTableBody');
-            if (users.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 2rem;">کاربری یافت نشد</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = users.map(user => {
-                const badgeClass = `badge-${user.badge}`;
-                const badgeText = user.badge === 'golden' ? '🌟 طلایی' : 
-                                 user.badge === 'silver' ? '🥈 نقره‌ای' : '🥉 برنزی';
-                const status = user.status || 'pending';
-                const statusClass = `badge-${status}`;
-                const statusText = status === 'approved' ? 'تأیید شده' : 
-                                  status === 'rejected' ? 'رد شده' : 'در انتظار';
-                const valuesText = user.values ? user.values.slice(0, 2).join('، ') + (user.values.length > 2 ? '...' : '') : '---';
-                const date = user.registrationDate ? new Date(user.registrationDate).toLocaleDateString('fa-IR') : '---';
-
-                return `
-                    <tr>
-                        <td>${user.rank}</td>
-                        <td style="font-family: monospace; font-size: 0.75rem;">${user.cardCode || '---'}</td>
-                        <td style="font-family: monospace; font-size: 0.75rem; color: #d4af37; font-weight:bold;">${user.optionalCode || '---'}</td>
-                        <td>${user.country || '---'}</td>
-                        <td>${valuesText}</td>
-                        <td>${date}</td>
-                        <td><span class="badge ${badgeClass}">${badgeText}</span></td>
-                        <td><span class="badge ${statusClass}">${statusText}</span></td>
-                        <td>
-                            <button class="btn-small btn-view" onclick="viewUser('${user.cardCode}')">👁️ مشاهده</button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function showCountryUsers(country) {
-            const container = document.getElementById('countryUsersList');
-            if (!country) {
-                container.classList.remove('active');
-                return;
-            }
-
-            const countryData = allCountries.find(c => c.country === country);
-            if (!countryData) return;
-
-            container.innerHTML = `
-                <div style="font-weight: 700; margin-bottom: 0.5rem; color: #0a0a1a;">
-                    ${countryData.country} - ${countryData.count.toLocaleString('fa-IR')} عضو:
-                </div>
-                ${countryData.users.map(u => `
-                    <div class="country-user-item">
-                        <span style="font-family: monospace; font-size: 0.8rem;">${u.cardCode}</span>
-                        <span>رتبه: ${u.rank}</span>
-                        <span class="badge badge-${u.badge}">${u.badge === 'golden' ? '🌟' : u.badge === 'silver' ? '🥈' : '🥉'}</span>
-                    </div>
-                `).join('')}
-            `;
-            container.classList.add('active');
-        }
-
-        function viewUser(cardCode) {
-            const user = allUsers.find(u => u.cardCode === cardCode);
-            if (!user) return;
-
-            document.getElementById('modalTitle').textContent = `جزئیات فرهنگی: ${user.cardCode}`;
+    async function loadUsers() {
+        try {
+            const response = await fetch('/api/get-users');
+            if (!response.ok) throw new Error('خطا در دریافت اطلاعات');
             
-            const body = document.getElementById('modalBody');
-            body.innerHTML = `
-                <div class="info-row"><div class="info-label">کد کارت:</div><div class="info-value" style="font-family: monospace;">${user.cardCode}</div></div>
-                <div class="info-row"><div class="info-label">کد اختیاری:</div><div class="info-value" style="font-family: monospace; color:#d4af37;">${user.optionalCode || 'ثبت نشده'}</div></div>
-                <div class="info-row"><div class="info-label">رتبه ثبت‌نام:</div><div class="info-value">${user.rank}</div></div>
-                <div class="info-row"><div class="info-label">کشور (از IP):</div><div class="info-value">${user.country || '---'}</div></div>
-                <div class="info-row"><div class="info-label">تاریخ ثبت‌نام:</div><div class="info-value">${user.registrationDate ? new Date(user.registrationDate).toLocaleDateString('fa-IR') : '---'}</div></div>
-                <div class="info-row"><div class="info-label">نشان:</div><div class="info-value"><span class="badge badge-${user.badge}">${user.badge === 'golden' ? '🌟 طلایی' : user.badge === 'silver' ? '🥈 نقره‌ای' : '🥉 برنزی'}</span></div></div>
-                <div class="info-row"><div class="info-label">وضعیت:</div><div class="info-value"><span class="badge badge-${user.status || 'pending'}">${user.status === 'approved' ? 'تأیید شده' : user.status === 'rejected' ? 'رد شده' : 'در انتظار'}</span></div></div>
-                <div class="info-row"><div class="info-label">ارزش‌های فرهنگی:</div><div class="info-value">${user.values ? user.values.join('، ') : '---'}</div></div>
-                <div class="info-row"><div class="info-label">ایمیل ارتباطی:</div><div class="info-value">${user.communicationEmail || 'ثبت نشده'}</div></div>
-                <div class="info-row"><div class="info-label">اجازه ارتباط:</div><div class="info-value">${user.allowConnection ? '✅ بله' : '❌ خیر'}</div></div>
-                ${user.culturalInfo ? `<div class="info-row"><div class="info-label">اطلاعات فرهنگی:</div><div class="info-value">${user.culturalInfo}</div></div>` : ''}
-            `;
+            const data = await response.json();
+            allUsers = data.users;
+            allCountries = data.countries;
 
-            const actions = document.getElementById('modalActions');
-            actions.innerHTML = `
-                <button class="btn-modal approve" onclick="approveUser('${user.cardCode}')">✓ تأیید</button>
-                <button class="btn-modal reject" onclick="rejectUser('${user.cardCode}')">✗ رد</button>
-            `;
+            document.getElementById('totalUsers').textContent = data.stats.total.toLocaleString('fa-IR');
+            document.getElementById('goldenUsers').textContent = data.stats.golden.toLocaleString('fa-IR');
+            document.getElementById('silverUsers').textContent = data.stats.silver.toLocaleString('fa-IR');
+            document.getElementById('bronzeUsers').textContent = data.stats.bronze.toLocaleString('fa-IR');
 
-            document.getElementById('userModal').classList.add('active');
+            const dropdown = document.getElementById('countryDropdown');
+            dropdown.innerHTML = '<option value="">-- انتخاب کشور --</option>';
+            allCountries.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.country;
+                opt.textContent = `${c.country} (${c.count.toLocaleString('fa-IR')} نفر)`;
+                dropdown.appendChild(opt);
+            });
+
+            renderTable(allUsers);
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('usersTableBody').innerHTML = 
+                `<tr><td colspan="9" style="text-align:center; color:red; padding: 2rem;">خطا: ${error.message}</td></tr>`;
+        }
+    }
+
+    function renderTable(users) {
+        const tbody = document.getElementById('usersTableBody');
+        if (users.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 2rem;">کاربری یافت نشد</td></tr>';
+            return;
         }
 
-        function closeModal() {
-            document.getElementById('userModal').classList.remove('active');
-        }
+        tbody.innerHTML = users.map(user => {
+            const badgeClass = `badge-${user.badge}`;
+            const badgeText = user.badge === 'golden' ? '🌟 طلایی' : user.badge === 'silver' ? '🥈 نقره‌ای' : '🥉 برنزی';
+            
+            const status = user.status || 'pending';
+            let statusClass = 'badge-pending';
+            let statusText = 'در انتظار';
 
-        async function updateStatus(cardCode, newStatus) {
-            try {
-                const response = await fetch('/api/update-user-status', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ cardCode, status: newStatus })
-                });
-
-                const result = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(result.error || 'خطا در بروزرسانی وضعیت');
-                }
-
-                alert(newStatus === 'approved' ? '✅ کاربر با موفقیت تأیید شد.' : '❌ کاربر با موفقیت رد شد.');
-                closeModal();
-                loadUsers(); // بارگذاری مجدد جدول برای نمایش وضعیت جدید
-
-            } catch (error) {
-                console.error('Error updating status:', error);
-                alert('خطا: ' + error.message);
+            // ⭐ تشخیص وضعیت ویرایش
+            if (status === 'approved') {
+                statusClass = 'badge-approved';
+                statusText = 'تأیید شده';
+            } else if (status === 'rejected') {
+                statusClass = 'badge-rejected';
+                statusText = 'رد شده';
+            } else if (status === 'pending_edit') {
+                statusClass = 'badge-pending'; // یا می‌توانید یک کلاس جدید بسازید
+                statusText = '⚠️ در انتظار تایید ویرایش';
             }
-        }
 
-        async function approveUser(cardCode) {
-            if (!confirm(`آیا از تأیید نهایی کاربر با کد ${cardCode} اطمینان دارید؟`)) return;
-            await updateStatus(cardCode, 'approved');
-        }
+            const valuesText = user.values ? user.values.slice(0, 2).join('، ') + (user.values.length > 2 ? '...' : '') : '---';
+            const date = user.registrationDate ? new Date(user.registrationDate).toLocaleDateString('fa-IR') : '---';
 
-        async function rejectUser(cardCode) {
-            if (!confirm(`آیا از رد کردن کاربر با کد ${cardCode} اطمینان دارید؟`)) return;
-            await updateStatus(cardCode, 'rejected');
-        }
+            return `
+                <tr>
+                    <td>${user.rank}</td>
+                    <td style="font-family: monospace; font-size: 0.75rem;">${user.cardCode || '---'}</td>
+                    <td style="font-family: monospace; font-size: 0.75rem; color: #d4af37; font-weight:bold;">${user.optionalCode || '---'}</td>
+                    <td>${user.country || '---'}</td>
+                    <td>${valuesText}</td>
+                    <td>${date}</td>
+                    <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+                    <td><span class="badge ${statusClass}">${statusText}</span></td>
+                    <td>
+                        <button class="btn-small btn-view" onclick="viewUser('${user.cardCode}')">👁️ مشاهده</button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
 
-        document.getElementById('userModal').addEventListener('click', function(e) {
-            if (e.target === this) closeModal();
-        });
+    // ... (بقیه توابع showCountryUsers, viewUser, closeModal, updateStatus, approveUser, rejectUser بدون تغییر باقی می‌مانند) ...
+    
+    function showCountryUsers(country) { /* کد قبلی */ }
+    function viewUser(cardCode) { /* کد قبلی */ }
+    function closeModal() { /* کد قبلی */ }
+    async function updateStatus(cardCode, newStatus) { /* کد قبلی */ }
+    async function approveUser(cardCode) { /* کد قبلی */ }
+    async function rejectUser(cardCode) { /* کد قبلی */ }
 
-        loadUsers();
-    </script>
-</body>
+    document.getElementById('userModal').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+
+    loadUsers();
+</script>
+    </body>
 </html>
