@@ -489,7 +489,7 @@
 
         <!-- Value 2 -->
         <div class="value-box value-2">
-            <label class="value-title">📚 2. Individual Knowledge</label>
+            <label class="value-title"> 2. Individual Knowledge</label>
             <textarea id="v2" placeholder="e.g., Indigenous knowledge, traditional skills, work experience, personal expertise..." required></textarea>
         </div>
 
@@ -525,7 +525,7 @@
 
         <!-- Priority -->
         <div class="priority-section">
-            <div class="priority-title">🎯 Prioritize Your Cultural Values</div>
+            <div class="priority-title"> Prioritize Your Cultural Values</div>
             <div class="priority-desc">
                 Please assign a priority from 1 (most important) to 7 (least important) to each cultural value. These priorities help the system identify people with similar cultural values.
             </div>
@@ -646,7 +646,7 @@
     </form>
 
     <div class="note">
-        🔒 No personal info • Completely anonymous • Data stored in repository
+         No personal info • Completely anonymous • Data stored in repository
     </div>
 
 </div>
@@ -748,9 +748,13 @@
                 const generatedCode = result.cardCode;
                 showMessage(`✅ Registration successful. Your code: ${generatedCode}`, 'success');
                 submitBtn.textContent = '✅ Registered';
+                
+                // پاک کردن localStorage قدیمی و ذخیره کد جدید
+                localStorage.removeItem('culturalCardCode');
                 localStorage.setItem('culturalCardCode', generatedCode);
                 
                 setTimeout(() => {
+                    // انتقال به کارت با کد جدید
                     window.location.href = `card-en.html?code=${generatedCode}`;
                 }, 2000);
             } else {
