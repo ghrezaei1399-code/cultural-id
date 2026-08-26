@@ -14,60 +14,105 @@
             color: #2a1a0a;
         }
         .container { max-width: 900px; margin: 0 auto; }
-        h1 {
-            font-size: 1.8rem; font-weight: 800; color: #2a1a0a;
-            text-align: center; margin-bottom: 0.5rem;
-        }
-        .subtitle {
-            text-align: center; font-size: 0.9rem; color: #6a5a3a;
-            opacity: 0.8; margin-bottom: 2rem;
-        }
+        h1 { font-size: 1.8rem; font-weight: 800; color: #2a1a0a; text-align: center; margin-bottom: 0.5rem; }
+        .subtitle { text-align: center; font-size: 0.9rem; color: #6a5a3a; opacity: 0.8; margin-bottom: 2rem; }
+        
         .request-card {
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.8);
             border-radius: 16px;
             padding: 1.5rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             border: 2px solid rgba(212, 175, 55, 0.3);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
-        .request-card h3 {
-            font-size: 1.1rem; color: #8a6d1f; margin-bottom: 0.5rem;
+        .request-card h3 { font-size: 1.1rem; color: #8a6d1f; margin-bottom: 0.5rem; font-family: 'Courier New', monospace; }
+        .request-card p { font-size: 0.9rem; color: #3a2a1a; margin-bottom: 0.5rem; line-height: 1.6; }
+        .request-card .meta { font-size: 0.75rem; color: #6a5a3a; opacity: 0.7; }
+        
+        .requester-email-status {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(40, 167, 69, 0.1);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #1e7a1e;
+            font-weight: 700;
         }
-        .request-card p {
-            font-size: 0.9rem; color: #3a2a1a; margin-bottom: 0.5rem; line-height: 1.6;
+        .requester-email-status.no-email {
+            background: rgba(220, 53, 69, 0.1);
+            color: #a93226;
         }
-        .request-card .meta {
-            font-size: 0.75rem; color: #6a5a3a; opacity: 0.7;
+
+        .matches-section {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 2px dashed rgba(212, 175, 55, 0.3);
         }
-        .btn-group {
-            display: flex; gap: 0.5rem; margin-top: 1rem;
+        .matches-title { font-size: 1rem; font-weight: 800; color: #2874a6; margin-bottom: 1rem; }
+        
+        .match-item {
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
+        .match-info { flex: 1; min-width: 200px; }
+        .match-code { font-family: 'Courier New', monospace; font-size: 0.9rem; color: #8a6d1f; font-weight: 700; }
+        .match-details { font-size: 0.75rem; color: #6a5a3a; margin-top: 0.3rem; }
+        
+        .match-score {
+            background: linear-gradient(135deg, #d4af37, #f9e79f);
+            color: #2a1a0a;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            min-width: 60px;
+            text-align: center;
+        }
+        
+        .email-badge {
+            font-size: 0.75rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-weight: 700;
+            margin-top: 0.5rem;
+            display: inline-block;
+        }
+        .email-yes { background: rgba(40, 167, 69, 0.2); color: #1e7a1e; }
+        .email-no { background: rgba(220, 53, 69, 0.2); color: #a93226; }
+
+        .hidden-email { display: none; margin-top: 0.5rem; font-size: 0.8rem; color: #2874a6; font-family: monospace; }
+
+        .btn-group { display: flex; gap: 0.5rem; margin-top: 1.5rem; flex-wrap: wrap; }
         .btn {
-            padding: 0.6rem 1.2rem; border-radius: 30px; font-weight: 700;
-            font-size: 0.85rem; border: none; cursor: pointer; transition: all 0.3s;
+            padding: 0.7rem 1.5rem; border-radius: 30px; font-weight: 700;
+            font-size: 0.9rem; border: none; cursor: pointer; transition: all 0.3s;
         }
-        .btn-approve {
-            background: rgba(39, 174, 96, 0.2); color: #1e7a1e;
-        }
+        .btn-approve { background: rgba(39, 174, 96, 0.2); color: #1e7a1e; }
         .btn-approve:hover { background: rgba(39, 174, 96, 0.3); }
-        .btn-reject {
-            background: rgba(220, 80, 60, 0.2); color: #a93226;
-        }
+        .btn-reject { background: rgba(220, 80, 60, 0.2); color: #a93226; }
         .btn-reject:hover { background: rgba(220, 80, 60, 0.3); }
+        .btn-show-email { background: rgba(40, 167, 69, 0.2); color: #1e7a1e; font-size: 0.8rem; padding: 0.4rem 1rem; margin-top: 0.5rem;}
+        
         .btn-back {
             display: inline-block; margin-top: 2rem; padding: 0.8rem 1.5rem;
             background: rgba(212, 175, 55, 0.2); color: #8a6d1f;
             border-radius: 30px; text-decoration: none; font-weight: 700;
         }
-        .empty-state {
-            text-align: center; padding: 3rem; color: #6a5a3a; opacity: 0.6;
-        }
+        .empty-state { text-align: center; padding: 3rem; color: #6a5a3a; opacity: 0.6; }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1> درخواست‌های ارتباط با هم‌فرهنگان</h1>
-    <div class="subtitle">درخواست‌های در انتظار بررسی</div>
+    <h1>🤝 درخواست‌های ارتباط با هم‌فرهنگان</h1>
+    <div class="subtitle">تطابق بر اساس اولویت‌های فرهنگی • بررسی توسط ادمین</div>
 
     <div id="requestsList"></div>
 
@@ -79,36 +124,70 @@
         try {
             const response = await fetch('/api/get-connection-requests');
             const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || 'خطا در دریافت درخواست‌ها');
-            }
+            if (!response.ok) throw new Error(data.error || 'خطا در دریافت درخواست‌ها');
 
             const requestsList = document.getElementById('requestsList');
-
             if (data.requests.length === 0) {
                 requestsList.innerHTML = '<div class="empty-state">هیچ درخواست ارتباطی وجود ندارد</div>';
                 return;
             }
 
-            requestsList.innerHTML = data.requests.map(req => `
-                <div class="request-card">
-                    <h3>کد کارت: ${req.cardCode}</h3>
-                    <p><strong>نوع درخواست:</strong> ${req.type === 'connection' ? 'ارتباط با هم‌فرهنگان' : req.type}</p>
-                    ${req.description ? `<p><strong>توضیحات:</strong> ${req.description}</p>` : ''}
-                    <div class="meta">تاریخ: ${new Date(req.requestDate).toLocaleString('fa-IR')}</div>
-                    <div class="btn-group">
-                        <button class="btn btn-approve" onclick="handleRequest('${req.fileName}', 'approve')">✓ تایید</button>
-                        <button class="btn btn-reject" onclick="handleRequest('${req.fileName}', 'reject')">✗ رد</button>
+            requestsList.innerHTML = data.requests.map(req => {
+                // وضعیت ایمیل درخواست‌دهنده
+                const reqEmailStatus = req.requesterEmail 
+                    ? `<div class="requester-email-status">✅ درخواست‌دهنده ایمیل ارتباطی دارد: ${req.requesterEmail}</div>`
+                    : `<div class="requester-email-status no-email">❌ درخواست‌دهنده ایمیل ارتباطی ثبت نکرده است (امکان ارسال ایمیل نیست)</div>`;
+
+                // لیست هم‌فرهنگان پیشنهادی
+                const matchesHtml = req.culturalMatches && req.culturalMatches.length > 0 
+                    ? req.culturalMatches.map((match, idx) => `
+                        <div class="match-item">
+                            <div class="match-info">
+                                <div class="match-code">${match.displayCode}</div>
+                                <div class="match-details">🌍 ${match.country || 'نامشخص'} • رتبه #${match.rank}</div>
+                                <span class="email-badge ${match.hasEmail ? 'email-yes' : 'email-no'}">
+                                    ${match.hasEmail ? '✅ ایمیل دارد' : '❌ ایمیل ندارد'}
+                                </span>
+                                ${match.hasEmail ? `<button class="btn btn-show-email" onclick="toggleEmail('email-${req.fileName}-${idx}')">👁️ مشاهده ایمیل</button>
+                                <div id="email-${req.fileName}-${idx}" class="hidden-email">${match.email}</div>` : ''}
+                            </div>
+                            <div class="match-score">${match.similarityScore}% تطابق اولویت</div>
+                        </div>
+                    `).join('')
+                    : '<div class="empty-state">هم‌فرهنگی با اولویت‌های مشابه یافت نشد</div>';
+
+                return `
+                    <div class="request-card">
+                        <h3>کد کارت: ${req.displayCode}</h3>
+                        <p><strong>نوع درخواست:</strong> ${req.type === 'connection' ? 'ارتباط با هم‌فرهنگان' : req.type}</p>
+                        ${req.description ? `<p><strong>توضیحات:</strong> ${req.description}</p>` : ''}
+                        <div class="meta">تاریخ: ${new Date(req.requestDate).toLocaleString('fa-IR')}</div>
+                        
+                        ${reqEmailStatus}
+                        
+                        <div class="matches-section">
+                            <div class="matches-title">🎯 هم‌فرهنگان پیشنهادی (بر اساس تطابق اولویت‌ها):</div>
+                            ${matchesHtml}
+                        </div>
+
+                        ${req.status === 'pending' ? `
+                        <div class="btn-group">
+                            <button class="btn btn-approve" onclick="handleRequest('${req.fileName}', 'approve')">✓ تایید و برقراری ارتباط</button>
+                            <button class="btn btn-reject" onclick="handleRequest('${req.fileName}', 'reject')">✗ رد درخواست</button>
+                        </div>` : `<div class="meta" style="margin-top:1rem; font-weight:bold;">وضعیت: ${req.status === 'approved' ? '✅ تایید شده' : '❌ رد شده'}</div>`}
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
 
         } catch (error) {
             console.error('Error:', error);
-            document.getElementById('requestsList').innerHTML = 
-                `<div class="empty-state" style="color: red;">خطا: ${error.message}</div>`;
+            document.getElementById('requestsList').innerHTML = `<div class="empty-state" style="color: red;">خطا: ${error.message}</div>`;
         }
+    }
+
+    function toggleEmail(id) {
+        const el = document.getElementById(id);
+        el.style.display = el.style.display === 'block' ? 'none' : 'block';
     }
 
     async function handleRequest(fileName, action) {
@@ -120,16 +199,10 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ fileName, action })
             });
-
             const result = await response.json();
-
-            if (!response.ok) {
-                throw new Error(result.error || 'خطا در پردازش درخواست');
-            }
-
+            if (!response.ok) throw new Error(result.error || 'خطا در پردازش درخواست');
             alert(result.message);
-            loadRequests(); // بارگذاری مجدد
-
+            loadRequests();
         } catch (error) {
             alert('خطا: ' + error.message);
         }
