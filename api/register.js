@@ -108,60 +108,65 @@ export default async function handler(req, res) {
     }
 
     // ⭐ آپدیت خودکار index.json
-    const indexPath = 'data/index.json';
-    
-    // خواندن index.json فعلی
-    const indexResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${indexPath}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json'
-      }
-    });
+//  آپدیت خودکار index.json
+const indexPath = 'data/index.json';
 
-    let indexData = [];
-    let indexSha = null;
+// خواندن index.json فعلی
+const indexResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${indexPath}`, {
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Accept': 'application/vnd.github.v3+json'
+  }
+});
 
-    if (indexResponse.ok) {
-      const indexFile = await indexResponse.json();
-      indexSha = indexFile.sha;
-      const jsonString = Buffer.from(indexFile.content, 'base64').toString('utf8');
-      indexData = JSON.parse(jsonString);
-    }
+let indexData = [];
+let indexSha = null;
 
-    // اضافه کردن کاربر جدید به فهرست
-    indexData.push({
-      cardCode: cardCode,
-      optionalCode: optionalCode,
-      displayCode: displayCode,
-      status: 'pending',
-      rank: rank,
-      country: country,
-      registrationDate: userData.registrationDate
-    });
+if (indexResponse.ok) {
+  const indexFile = await indexResponse.json();
+  indexSha = indexFile.sha;
+  const jsonString = Buffer.from(indexFile.content, 'base64').toString('utf8');
+  indexData = JSON.parse(jsonString);
+}
 
-    // ذخیره index.json جدید
-    const newIndexContent = Buffer.from(JSON.stringify(indexData, null, 2), 'utf8').toString('base64');
-    
-    const indexCommitBody = {
-      message: `Add user ${cardCode} to index`,
-      content: newIndexContent,
-      branch: 'main'
-    };
-    
-    if (indexSha) {
-      indexCommitBody.sha = indexSha;
-    }
+// ساخت displayCode
+const displayCode = optionalCode 
+  ? `CIM - ${part1} - ${part2} - ${optionalCode}` 
+  : `CIM - ${part1} - ${part2}`;
 
-    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${indexPath}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(indexCommitBody)
-    });
+// اضافه کردن کاربر جدید به فهرست
+indexData.push({
+  cardCode: cardCode,
+  optionalCode: optionalCode,
+  displayCode: displayCode,
+  status: 'pending',
+  rank: rank,
+  country: country,
+  registrationDate: userData.registrationDate
+});
 
+// ذخیره index.json جدید
+const newIndexContent = Buffer.from(JSON.stringify(indexData, null, 2), 'utf8').toString('base64');
+
+const indexCommitBody = {
+  message: `Add user ${cardCode} to index`,
+  content: newIndexContent,
+  branch: 'main'
+};
+
+if (indexSha) {
+  indexCommitBody.sha = indexSha;
+}
+
+await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${indexPath}`, {
+  method: 'PUT',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Accept': 'application/vnd.github.v3+json',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(indexCommitBody)
+});
     return res.status(200).json({
       success: true,
       cardCode: cardCode,
