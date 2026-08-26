@@ -21,18 +21,31 @@
     2,
     1
   ],
-  "optionalCode": "میراث",
-  "displayCode": "CIM - 3909 - 2989 - میراث",
+  "optionalCode": "ایثار",
+  "displayCode": "CIM - 3909 - 2989 - ایثار",
   "communicationEmail": "ghrezaei1399@gmail.com",
   "registrationDate": "2026-08-26T16:46:11.615Z",
-  "status": "pending",
+  "status": "pending_edit",
   "allowConnection": true,
   "allowAchievements": false,
   "culturalInfo": "",
   "statusUpdatedAt": "2026-08-26T18:06:20.874Z",
-  "lastEditRequest": "2026-08-26T18:05:28.550Z",
+  "lastEditRequest": "2026-08-26T20:02:41.269Z",
   "pendingChanges": [
     "optionalCode"
   ],
-  "lastEditRejectedAt": "2026-08-26T18:06:20.874Z"
+  "lastEditRejectedAt": "2026-08-26T18:06:20.874Z",
+  "previousValues": {
+    "values": [
+      "آزمایشگاه",
+      "سپهر",
+      "خردمندی",
+      "چارچوب",
+      "تولید",
+      "اطلس",
+      "ظهور"
+    ],
+    "optionalCode": "میراث",
+    "communicationEmail": "ghrezaei1399@gmail.com"
+  }
 }
