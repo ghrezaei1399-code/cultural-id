@@ -271,8 +271,11 @@
         }
 
         // ===== Form Submission =====
+        let isSubmitting = false;
         document.getElementById('requestForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            if (isSubmitting) return;
+isSubmitting = true;
             hideMessage();
 
             const submitBtn = document.getElementById('submitBtn');
@@ -319,6 +322,7 @@
             } catch (error) {
                 console.error('Error:', error);
                 showMessage(`❌ خطا: ${error.message}`, 'error');
+                isSubmitting = false;
                 submitBtn.disabled = false;
                 submitBtn.textContent = '📨 ارسال درخواست';
             }
