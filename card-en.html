@@ -160,17 +160,19 @@
                 // Link to back of card
                 document.getElementById('backCardLink').href = `card-back-en.html?code=${cardCode}`;
 
-                // Display actual user values
+                // Display 7 symbolic cultural values (NOT the raw typed content)
                 const valuesContainer = document.getElementById('displayValues');
                 valuesContainer.innerHTML = '';
-                if (user.values && user.values.length > 0) {
-                    user.values.forEach(v => {
-                        const div = document.createElement('div');
-                        div.className = 'value-item';
-                        div.textContent = v;
-                        valuesContainer.appendChild(div);
-                    });
-                }
+                const symbolicValues = [
+                    'Indigenous Values', 'Individual Knowledge', 'Collective Cooperation', 
+                    'Cultural Diversity', 'Global Sustainable Peace', 'Elimination of Violence', 'Cultural Unity'
+                ];
+                symbolicValues.forEach(v => {
+                    const div = document.createElement('div');
+                    div.className = 'value-item';
+                    div.textContent = v;
+                    valuesContainer.appendChild(div);
+                });
 
                 document.getElementById('cardErrorMessage').style.display = 'none';
                 document.getElementById('cardContent').style.display = 'flex';
