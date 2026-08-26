@@ -1,0 +1,19 @@
+{
+  "cardCode": "CIM-3909-2989-27860",
+  "displayCode": "CIM - 3909 - 2989 - میراث",
+  "requesterEmail": "ghrezaei1399@gmail.com",
+  "requesterPriorities": [
+    7,
+    6,
+    5,
+    4,
+    3,
+    2,
+    1
+  ],
+  "type": "connection",
+  "description": "تشکیل شبکه",
+  "requestDate": "2026-08-26T22:08:35.493Z",
+  "status": "pending",
+  "culturalMatches": []
+}
