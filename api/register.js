@@ -11,7 +11,7 @@ export default async function handler(req, res) {
   try {
     const data = req.body;
 
-    // ۱. تشخیص کشور از IP (با Fallback)
+    // ۱. تشخیص کشور از IP
     const ip = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress;
     let country = 'Global';
     let countryCode = 'XX';
@@ -34,13 +34,13 @@ export default async function handler(req, res) {
       }
     }
 
-    // ۲. تولید کد کارت ۳ بخشی امن
+    // ۲. تولید کد کارت ۳ بخشی
     const part1 = Math.floor(1000 + Math.random() * 9000);
     const part2 = Math.floor(1000 + Math.random() * 9000);
     const part3 = Math.floor(10000 + Math.random() * 90000);
     const cardCode = `CIM-${part1}-${part2}-${part3}`;
 
-    // ۳. محاسبه رتبه در زمان ثبت‌نام
+    // ۳. محاسبه رتبه
     let rank = 1;
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
@@ -62,7 +62,7 @@ export default async function handler(req, res) {
       console.warn('Rank calculation failed, using default:', e.message);
     }
 
-    // ۴. ساخت داده‌های کاربر (با ذخیره اولویت‌ها)
+    // ۴. ساخت داده‌های کاربر (⭐ اینجا کد اختیاری به درستی ذخیره می‌شود)
     const userData = {
       cardCode: cardCode,
       country: country,
@@ -70,10 +70,10 @@ export default async function handler(req, res) {
       rank: rank,
       values: Array.isArray(data.values) ? data.values : [],
       priorities: Array.isArray(data.priorities) && data.priorities.length === 7 ? data.priorities : [],
-      optionalCode: data.optionalCode || '',
-      communicationEmail: data.communicationEmail || '',
+      optionalCode: data.optionalCode ? String(data.optionalCode).trim() : '', // ⭐ خط کلیدی ذخیره کد اختیاری
+      communicationEmail: data.communicationEmail ? String(data.communicationEmail).trim() : '',
       registrationDate: new Date().toISOString(),
-      status: 'pending', // ⭐ اصلاح شد: وضعیت پیش‌فرض "در انتظار تایید ادمین"
+      status: 'pending',
       allowConnection: !!data.communicationEmail,
       allowAchievements: false,
       culturalInfo: data.culturalInfo || ''
