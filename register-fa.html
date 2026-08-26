@@ -5,217 +5,326 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>ثبت‌نام | کارت جهانی هویت هوشمند فرهنگی</title>
     <style>
-        /* استایل‌ها دقیقاً همان استایل‌های زیبای قبلی هستند که برای اختصار اینجا خلاصه شده‌اند. 
-           لطفاً کل کد زیر را کپی کنید، استایل‌های کامل درون آن قرار دارد. */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif; min-height: 100vh; padding: 0.8rem; background: linear-gradient(135deg, #fdf6e3 0%, #e8f4f8 50%, #f5e6d3 100%); background-attachment: fixed; color: #2a1a0a; transition: background 0.5s ease, color 0.5s ease; }
-        body.dark { background: linear-gradient(135deg, #3a2f20 0%, #2a2418 50%, #4a3a28 100%); color: #f0e8d0; }
-        .container { max-width: 700px; width: 100%; margin: 0 auto; }
-        .header { text-align: center; padding: 1rem; background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(253, 246, 227, 0.8)); border-radius: 20px; border: 2px solid rgba(212, 175, 55, 0.4); box-shadow: 0 6px 20px rgba(212, 175, 55, 0.15); margin-bottom: 0.8rem; position: relative; overflow: hidden; }
-        body.dark .header { background: linear-gradient(135deg, rgba(74, 58, 40, 0.7), rgba(58, 47, 32, 0.8)); border-color: rgba(212, 175, 55, 0.5); }
-        .header::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(from 0deg, transparent, rgba(212, 175, 55, 0.08), transparent 30%); animation: rotateGlow 15s linear infinite; }
-        @keyframes rotateGlow { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .header > * { position: relative; z-index: 2; }
-        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; }
-        .theme-toggle { background: rgba(255, 255, 255, 0.6); border: 1px solid rgba(212, 175, 55, 0.3); font-size: 1rem; cursor: pointer; padding: 0.2rem 0.6rem; border-radius: 30px; color: #8a6d1f; }
-        body.dark .theme-toggle { background: rgba(0, 0, 0, 0.3); color: #f9e79f; border-color: rgba(212, 175, 55, 0.4); }
-        .logo-wrap { display: flex; align-items: center; justify-content: center; gap: 0.8rem; }
-        .main-logo { width: 60px; height: 60px; object-fit: contain; filter: drop-shadow(0 4px 12px rgba(212, 175, 55, 0.4)); }
-        .title-wrap h1 { font-size: 1.2rem; font-weight: 900; background: linear-gradient(135deg, #8a6d1f 0%, #d4af37 50%, #8a6d1f 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.3; }
-        body.dark .title-wrap h1 { background: linear-gradient(135deg, #f9e79f 0%, #d4af37 50%, #f9e79f 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .subtitle { font-size: 0.75rem; color: #6a5a3a; margin-top: 0.3rem; }
-        body.dark .subtitle { color: #c8b890; }
-        .message-box { display: none; padding: 0.8rem; border-radius: 16px; text-align: center; margin-bottom: 0.8rem; font-size: 0.85rem; font-weight: 600; }
-        .message-box.success { display: block; background: rgba(39, 174, 96, 0.15); border: 2px solid rgba(39, 174, 96, 0.4); color: #1e7a1e; }
-        body.dark .message-box.success { color: #82e0aa; }
-        .message-box.error { display: block; background: rgba(220, 80, 60, 0.15); border: 2px solid rgba(220, 80, 60, 0.4); color: #a93226; }
-        body.dark .message-box.error { color: #f1948a; }
-        .value-box { border-radius: 18px; padding: 0.9rem 1rem; margin-bottom: 0.6rem; border: 2px solid; transition: all 0.3s ease; }
-        .value-box:hover { transform: translateY(-2px); }
-        .value-box .value-title { font-weight: 800; font-size: 0.95rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
-        .value-box textarea { width: 100%; min-height: 90px; padding: 0.7rem; border-radius: 12px; border: 1px solid rgba(0, 0, 0, 0.1); background: rgba(255, 255, 255, 0.7); font-family: inherit; font-size: 0.85rem; color: #2a1a0a; resize: vertical; line-height: 1.7; }
-        body.dark .value-box textarea { background: rgba(0, 0, 0, 0.3); color: #f0e8d0; border-color: rgba(255, 255, 255, 0.1); }
-        .value-box textarea:focus { outline: none; border-color: rgba(212, 175, 55, 0.5); box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
-        .value-1 { background: linear-gradient(135deg, rgba(255, 248, 220, 0.85), rgba(253, 246, 227, 0.9)); border-color: rgba(212, 175, 55, 0.5); }
-        body.dark .value-1 { background: linear-gradient(135deg, rgba(74, 58, 40, 0.7), rgba(58, 47, 32, 0.8)); border-color: rgba(212, 175, 55, 0.5); }
-        .value-1 .value-title { color: #8a6d1f; }
-        body.dark .value-1 .value-title { color: #f9e79f; }
-        .value-2 { background: linear-gradient(135deg, rgba(220, 240, 255, 0.85), rgba(200, 230, 250, 0.9)); border-color: rgba(100, 170, 220, 0.5); }
-        body.dark .value-2 { background: linear-gradient(135deg, rgba(40, 60, 80, 0.7), rgba(50, 70, 90, 0.8)); border-color: rgba(133, 193, 233, 0.5); }
-        .value-2 .value-title { color: #2874a6; }
-        body.dark .value-2 .value-title { color: #85c1e9; }
-        .value-3 { background: linear-gradient(135deg, rgba(220, 245, 220, 0.85), rgba(200, 235, 200, 0.9)); border-color: rgba(100, 180, 100, 0.5); }
-        body.dark .value-3 { background: linear-gradient(135deg, rgba(40, 70, 40, 0.7), rgba(50, 80, 50, 0.8)); border-color: rgba(130, 224, 170, 0.5); }
-        .value-3 .value-title { color: #1e7a1e; }
-        body.dark .value-3 .value-title { color: #82e0aa; }
-        .value-4 { background: linear-gradient(135deg, rgba(240, 225, 250, 0.85), rgba(230, 215, 245, 0.9)); border-color: rgba(160, 120, 200, 0.5); }
-        body.dark .value-4 { background: linear-gradient(135deg, rgba(70, 50, 90, 0.7), rgba(80, 60, 100, 0.8)); border-color: rgba(210, 180, 222, 0.5); }
-        .value-4 .value-title { color: #6a3d9a; }
-        body.dark .value-4 .value-title { color: #d2b4de; }
-        .value-5 { background: linear-gradient(135deg, rgba(220, 245, 245, 0.85), rgba(200, 235, 235, 0.9)); border-color: rgba(80, 180, 180, 0.5); }
-        body.dark .value-5 { background: linear-gradient(135deg, rgba(40, 70, 70, 0.7), rgba(50, 80, 80, 0.8)); border-color: rgba(130, 220, 220, 0.5); }
-        .value-5 .value-title { color: #148f77; }
-        body.dark .value-5 .value-title { color: #76d7c4; }
-        .value-6 { background: linear-gradient(135deg, rgba(255, 225, 215, 0.85), rgba(250, 210, 200, 0.9)); border-color: rgba(220, 120, 100, 0.5); }
-        body.dark .value-6 { background: linear-gradient(135deg, rgba(90, 50, 50, 0.7), rgba(100, 60, 60, 0.8)); border-color: rgba(241, 148, 138, 0.5); }
-        .value-6 .value-title { color: #a93226; }
-        body.dark .value-6 .value-title { color: #f1948a; }
-        .value-7 { background: linear-gradient(135deg, rgba(255, 235, 200, 0.85), rgba(250, 225, 180, 0.9)); border-color: rgba(230, 160, 50, 0.5); }
-        body.dark .value-7 { background: linear-gradient(135deg, rgba(80, 60, 30, 0.7), rgba(90, 70, 40, 0.8)); border-color: rgba(243, 196, 106, 0.5); }
-        .value-7 .value-title { color: #b7791f; }
-        body.dark .value-7 .value-title { color: #f3c46a; }
-        .priority-section { background: linear-gradient(135deg, rgba(255, 248, 220, 0.85), rgba(253, 246, 227, 0.9)); border-radius: 18px; padding: 1rem; margin-bottom: 0.8rem; border: 2px solid rgba(212, 175, 55, 0.4); }
-        body.dark .priority-section { background: linear-gradient(135deg, rgba(74, 58, 40, 0.7), rgba(58, 47, 32, 0.8)); border-color: rgba(212, 175, 55, 0.5); }
-        .priority-title { font-weight: 800; font-size: 1rem; color: #8a6d1f; margin-bottom: 0.4rem; text-align: center; }
-        body.dark .priority-title { color: #f9e79f; }
-        .priority-desc { font-size: 0.75rem; color: #6a5a3a; text-align: center; margin-bottom: 0.8rem; line-height: 1.6; }
-        body.dark .priority-desc { color: #c8b890; }
-        .priority-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 0.5rem; }
-        .priority-item { display: flex; flex-direction: column; gap: 0.2rem; }
-        .priority-item label { font-size: 0.7rem; font-weight: 700; color: #3a2a1a; }
-        body.dark .priority-item label { color: #e8dcc0; }
-        .priority-item select { padding: 0.4rem; border-radius: 10px; border: 1px solid rgba(212, 175, 55, 0.3); background: rgba(255, 255, 255, 0.7); font-family: inherit; font-size: 0.8rem; color: #2a1a0a; cursor: pointer; font-weight: 600; }
-        body.dark .priority-item select { background: rgba(0, 0, 0, 0.3); color: #f0e8d0; border-color: rgba(212, 175, 55, 0.4); }
-        .form-group { background: linear-gradient(135deg, rgba(220, 240, 255, 0.85), rgba(200, 230, 250, 0.9)); border-radius: 18px; padding: 0.9rem 1rem; margin-bottom: 0.6rem; border: 2px solid rgba(100, 170, 220, 0.4); }
-        body.dark .form-group { background: linear-gradient(135deg, rgba(40, 60, 80, 0.7), rgba(50, 70, 90, 0.8)); border-color: rgba(133, 193, 233, 0.4); }
-        .form-group label { display: block; font-weight: 700; font-size: 0.85rem; color: #2874a6; margin-bottom: 0.4rem; }
-        body.dark .form-group label { color: #85c1e9; }
-        .form-group input { width: 100%; padding: 0.6rem 0.8rem; border-radius: 12px; border: 1px solid rgba(0, 0, 0, 0.1); background: rgba(255, 255, 255, 0.7); font-family: inherit; font-size: 0.85rem; color: #2a1a0a; }
-        body.dark .form-group input { background: rgba(0, 0, 0, 0.3); color: #f0e8d0; border-color: rgba(255, 255, 255, 0.1); }
-        .form-group input:focus { outline: none; border-color: rgba(212, 175, 55, 0.5); box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
-        .form-group small { display: block; margin-top: 0.3rem; font-size: 0.7rem; color: #6a5a3a; opacity: 0.8; }
-        body.dark .form-group small { color: #c8b890; }
-        .btn-group { display: flex; gap: 0.6rem; margin-top: 1rem; flex-wrap: wrap; }
-        .btn { flex: 1; padding: 0.8rem 1.2rem; border-radius: 40px; font-weight: 800; font-size: 0.9rem; text-decoration: none; text-align: center; border: none; cursor: pointer; transition: all 0.3s ease; min-width: 120px; }
-        .btn-primary { background: linear-gradient(135deg, #d4af37 0%, #f9e79f 50%, #d4af37 100%); color: #2a1a0a; box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4); }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5); }
-        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-        .btn-secondary { background: rgba(255, 255, 255, 0.6); color: #2a1a0a; border: 2px solid rgba(212, 175, 55, 0.4); }
-        body.dark .btn-secondary { background: rgba(0, 0, 0, 0.3); color: #f9e79f; border-color: rgba(212, 175, 55, 0.5); }
-        .btn-secondary:hover { transform: scale(1.02); }
-        .note { text-align: center; font-size: 0.7rem; color: #6a5a3a; margin-top: 1rem; padding-top: 0.8rem; border-top: 1px solid rgba(212, 175, 55, 0.2); }
-        body.dark .note { color: #c8b890; }
-        @media (min-width: 768px) {
-            body { padding: 1.5rem; }
-            .header { padding: 1.5rem; border-radius: 24px; margin-bottom: 1rem; }
-            .main-logo { width: 80px; height: 80px; }
-            .title-wrap h1 { font-size: 1.5rem; }
-            .subtitle { font-size: 0.85rem; }
-            .value-box { padding: 1.2rem 1.4rem; margin-bottom: 0.8rem; }
-            .value-box .value-title { font-size: 1.1rem; }
-            .value-box textarea { min-height: 110px; font-size: 0.9rem; }
-            .priority-section { padding: 1.2rem; }
-            .priority-title { font-size: 1.15rem; }
-            .priority-desc { font-size: 0.8rem; }
-            .form-group { padding: 1rem 1.2rem; }
-            .form-group label { font-size: 0.9rem; }
-            .form-group input { font-size: 0.9rem; }
-            .btn { font-size: 1rem; padding: 0.9rem 1.5rem; }
+        body {
+            font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+            background-image: url('assets/pisa.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #1a0a0a;
         }
+        body.dark { color: #f0e8e0; }
+        .container {
+            max-width: 700px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(0px);
+            border-radius: 48px;
+            padding: 2.5rem 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #2a1a0a;
+            text-align: center;
+            margin-bottom: 0.3rem;
+        }
+        body.dark h1 { color: #f9e79f; }
+        .subtitle {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #4a2a1a;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(30, 10, 0, 0.05);
+            padding-bottom: 1rem;
+        }
+        body.dark .subtitle { color: #d0c0b0; border-bottom-color: rgba(255, 255, 255, 0.02); }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #2a1a0a;
+            margin-bottom: 0.3rem;
+        }
+        body.dark .form-group label { color: #e8d8c8; }
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 16px;
+            border: 1px solid rgba(30, 10, 0, 0.02);
+            background: rgba(255, 255, 255, 0.02);
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: #1a0a0a;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        body.dark .form-group input,
+        body.dark .form-group textarea,
+        body.dark .form-group select {
+            background: rgba(255, 255, 255, 0.02);
+            color: #e8d8c8;
+            border-color: rgba(255, 255, 255, 0.02);
+        }
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: rgba(60, 30, 10, 0.05);
+            background: rgba(255, 255, 255, 0.03);
+        }
+        body.dark .form-group input:focus,
+        body.dark .form-group textarea:focus,
+        body.dark .form-group select:focus {
+            border-color: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .form-group textarea { min-height: 60px; resize: vertical; }
+        .form-group input::placeholder,
+        .form-group textarea::placeholder { color: #4a3a2a; opacity: 0.5; }
+        body.dark .form-group input::placeholder,
+        body.dark .form-group textarea::placeholder { color: #908070; }
+        .btn-group { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+        .btn {
+            flex: 1;
+            padding: 0.8rem 1.5rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 140px;
+        }
+        .btn-primary {
+            background: rgba(60, 30, 10, 0.02);
+            color: #2a1a0a;
+            border: 1px solid rgba(60, 30, 10, 0.02);
+        }
+        body.dark .btn-primary {
+            background: rgba(255, 255, 255, 0.02);
+            color: #f9e79f;
+            border-color: rgba(255, 255, 255, 0.02);
+        }
+        .btn-primary:hover { background: rgba(60, 30, 10, 0.04); transform: scale(1.02); }
+        body.dark .btn-primary:hover { background: rgba(255, 255, 255, 0.04); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-secondary {
+            background: rgba(60, 30, 10, 0.01);
+            color: #3a2a1a;
+            border: 1px solid rgba(60, 30, 10, 0.01);
+        }
+        body.dark .btn-secondary {
+            background: rgba(255, 255, 255, 0.01);
+            color: #a09080;
+            border-color: rgba(255, 255, 255, 0.01);
+        }
+        .btn-secondary:hover { background: rgba(60, 30, 10, 0.03); transform: scale(1.02); }
+        body.dark .btn-secondary:hover { background: rgba(255, 255, 255, 0.03); }
+        .note {
+            text-align: center;
+            font-size: 0.75rem;
+            opacity: 0.5;
+            margin-top: 1.5rem;
+            color: #1a0a0a;
+            border-top: 1px solid rgba(30, 10, 0, 0.02);
+            padding-top: 1rem;
+        }
+        body.dark .note { color: #b0a090; border-top-color: rgba(255, 255, 255, 0.02); }
+        .success-message {
+            display: none;
+            background: rgba(50, 200, 50, 0.02);
+            border: 1px solid rgba(50, 200, 50, 0.02);
+            border-radius: 16px;
+            padding: 1rem;
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #0a5a0a;
+        }
+        body.dark .success-message {
+            color: #80b080;
+            background: rgba(50, 200, 50, 0.01);
+            border-color: rgba(50, 200, 50, 0.01);
+        }
+        .success-message.show { display: block; }
+        .theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(30, 10, 0, 0.02);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.3rem 0.8rem;
+            border-radius: 40px;
+            transition: 0.3s;
+            color: #1a0a0a;
+        }
+        body.dark .theme-toggle {
+            color: #f9e79f;
+            background: rgba(0, 0, 0, 0.05);
+            border-color: rgba(255, 255, 255, 0.02);
+        }
+        .theme-toggle:hover { transform: scale(1.1); }
+        .value-item {
+            background: rgba(255, 255, 255, 0.01);
+            border-radius: 12px;
+            padding: 0.8rem;
+            margin-bottom: 0.8rem;
+            border: 1px solid rgba(30, 10, 0, 0.02);
+        }
+        body.dark .value-item { border-color: rgba(255, 255, 255, 0.02); }
+        .value-item .value-title {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #2a1a0a;
+            margin-bottom: 0.3rem;
+            display: block;
+        }
+        body.dark .value-item .value-title { color: #e8d8c8; }
+        @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="header">
-        <div class="top-bar">
-            <div></div>
-            <button class="theme-toggle" id="themeToggle">🌙</button>
-        </div>
-        <div class="logo-wrap">
-            <img src="assets/logo-fa.png" alt="لوگو" class="main-logo" />
-            <div class="title-wrap">
-                <h1>ثبت‌نام و دریافت شناسنامه</h1>
-                <div class="subtitle">کارت جهانی هویت هوشمند فرهنگی</div>
+    <button class="theme-toggle" id="themeToggle">🌙</button>
+
+    <div class="container">
+        <h1>📝 ثبت‌نام و دریافت شناسنامه</h1>
+        <div class="subtitle">کارت جهانی هویت هوشمند فرهنگی</div>
+
+        <form id="registerForm">
+            <!-- ۷ ارزش فرهنگی -->
+            <div class="value-item">
+                <label class="value-title">۱. ارزش‌های بومی</label>
+                <input type="text" id="v1" placeholder="مثلاً: صلح‌دوستی، مهمان‌نوازی" required />
             </div>
+
+            <div class="value-item">
+                <label class="value-title">۲. دانش فردی</label>
+                <input type="text" id="v2" placeholder="مثلاً: دانش بومی، مهارت‌های سنتی" required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">۳. همکاری جمعی</label>
+                <input type="text" id="v3" placeholder="مثلاً: کار گروهی، مشارکت اجتماعی" required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">۴. تنوع فرهنگی</label>
+                <input type="text" id="v4" placeholder="مثلاً: احترام به فرهنگ‌های مختلف" required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">۵. صلح پایدار جهانی</label>
+                <input type="text" id="v5" placeholder="مثلاً: گفت‌وگو، حل تعارض" required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">۶. محو خشونت</label>
+                <input type="text" id="v6" placeholder="مثلاً: کاهش تعصب، ترویج مدارا" required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">. اتحاد فرهنگی</label>
+                <input type="text" id="v7" placeholder="مثلاً: پل‌های ارتباطی میان فرهنگ‌ها" required />
+            </div>
+
+            <div class="form-group">
+                <label>کد اختیاری (۵ کاراکتر دلخواه)</label>
+                <input type="text" id="optionalCode" maxlength="5" placeholder="مثلاً: الف-ب-ج-د-ه" />
+                <small style="opacity:0.5; font-size:0.7rem;">اختیاری - می‌توانید خالی بگذارید</small>
+            </div>
+
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary" id="submitBtn">🎯 دریافت شناسنامه</button>
+                <a href="index.html" class="btn btn-secondary">↩ بازگشت</a>
+            </div>
+        </form>
+
+        <div class="success-message" id="successMessage">
+            ✅ اطلاعات شما با موفقیت ثبت شد. در حال انتقال به کارت...
+        </div>
+
+        <div class="note">
+            بدون اطلاعات شخصی • کاملاً ناشناس • ۳ دقیقه
         </div>
     </div>
 
-    <div id="messageBox" class="message-box"></div>
-
-    <form id="registerForm">
-        <div class="value-box value-1"><label class="value-title">🪪 ۱. ارزش‌های بومی</label><textarea id="v1" placeholder="مثلاً: صلح‌دوستی، مهمان‌نوازی..." required></textarea></div>
-        <div class="value-box value-2"><label class="value-title">📚 ۲. دانش فردی</label><textarea id="v2" placeholder="مثلاً: دانش بومی، مهارت‌های سنتی..." required></textarea></div>
-        <div class="value-box value-3"><label class="value-title">🤝 ۳. همکاری جمعی</label><textarea id="v3" placeholder="مثلاً: کار گروهی، مشارکت اجتماعی..." required></textarea></div>
-        <div class="value-box value-4"><label class="value-title">🌍 ۴. تنوع فرهنگی</label><textarea id="v4" placeholder="مثلاً: احترام به فرهنگ‌های مختلف..." required></textarea></div>
-        <div class="value-box value-5"><label class="value-title">☮️ ۵. صلح پایدار جهانی</label><textarea id="v5" placeholder="مثلاً: گفت‌وگو، حل تعارض..." required></textarea></div>
-        <div class="value-box value-6"><label class="value-title">🕊️ ۶. محو خشونت</label><textarea id="v6" placeholder="مثلاً: کاهش تعصب، ترویج مدارا..." required></textarea></div>
-        <div class="value-box value-7"><label class="value-title">🔗 ۷. اتحاد فرهنگی</label><textarea id="v7" placeholder="مثلاً: پل‌های ارتباطی میان فرهنگ‌ها..." required></textarea></div>
-
-        <div class="priority-section">
-            <div class="priority-title">🎯 اولویت‌بندی ارزش‌های فرهنگی شما</div>
-            <div class="priority-desc">لطفاً به هر ارزش فرهنگی یک اولویت از ۱ (بیشترین اهمیت) تا ۷ (کمترین اهمیت) بدهید.</div>
-            <div class="priority-grid">
-                <div class="priority-item"><label>ارزش ۱</label><select id="p1" required><option value="">انتخاب</option><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select></div>
-                <div class="priority-item"><label>ارزش ۲</label><select id="p2" required><option value="">انتخاب</option><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select></div>
-                <div class="priority-item"><label>ارزش ۳</label><select id="p3" required><option value="">انتخاب</option><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select></div>
-                <div class="priority-item"><label>ارزش ۴</label><select id="p4" required><option value="">انتخاب</option><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select></div>
-                <div class="priority-item"><label>ارزش ۵</label><select id="p5" required><option value="">انتخاب</option><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select></div>
-                <div class="priority-item"><label>ارزش ۶</label><select id="p6" required><option value="">انتخاب</option><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select></div>
-                <div class="priority-item"><label>ارزش ۷</label><select id="p7" required><option value="">انتخاب</option><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select></div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label>🔑 کد اختیاری (۵ کاراکتر دلخواه)</label>
-            <input type="text" id="optionalCode" maxlength="5" placeholder="مثلاً: الف-ب-ج-د-ه" />
-            <small>اختیاری - می‌توانید خالی بگذارید</small>
-        </div>
-
-        <div class="form-group">
-            <label>📧 ایمیل ارتباطی (اختیاری)</label>
-            <input type="email" id="communicationEmail" placeholder="ایمیل خود را وارد کنید" />
-            <small>فقط برای ارتباط با هم‌فرهنگان استفاده می‌شود</small>
-        </div>
-
-        <div class="btn-group">
-            <button type="submit" class="btn btn-primary" id="submitBtn">🎯 دریافت شناسنامه</button>
-            <a href="index.html" class="btn btn-secondary">↩ بازگشت</a>
-        </div>
-    </form>
-
-    <div class="note">🔒 بدون اطلاعات شخصی • کاملاً ناشناس • اطلاعات در مخزن ذخیره می‌شود</div>
-</div>
-<script>
-    // ... (کد تم تاریک/روشن بدون تغییر بماند) ...
-
-    document.getElementById('registerForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const submitBtn = document.getElementById('submitBtn');
-        submitBtn.disabled = true;
-        submitBtn.textContent = '⏳ در حال ثبت...';
-
-        try {
-            const values = [
-                document.getElementById('v1').value.trim(), document.getElementById('v2').value.trim(),
-                document.getElementById('v3').value.trim(), document.getElementById('v4').value.trim(),
-                document.getElementById('v5').value.trim(), document.getElementById('v6').value.trim(),
-                document.getElementById('v7').value.trim()
-            ];
-            const optionalCode = document.getElementById('optionalCode').value.trim();
-
-            const response = await fetch('/api/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ values, optionalCode })
+    <script>
+        (function() {
+            const toggle = document.getElementById('themeToggle');
+            const body = document.body;
+            if (localStorage.getItem('theme') === 'dark') {
+                body.classList.add('dark');
+                toggle.textContent = '☀️';
+            }
+            toggle.addEventListener('click', function() {
+                body.classList.toggle('dark');
+                if (body.classList.contains('dark')) {
+                    toggle.textContent = '☀️';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    toggle.textContent = '🌙';
+                    localStorage.setItem('theme', 'light');
+                }
             });
+        })();
 
-            const result = await response.json();
-            if (!response.ok) throw new Error(result.error || 'خطا در ثبت‌نام');
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
 
-            document.getElementById('successMessage').classList.add('show');
-            submitBtn.textContent = '✅ ثبت شد';
-            
-            setTimeout(() => {
-                window.location.href = `card-fa.html?code=${result.cardCode}`;
-            }, 1500);
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = ' در حال ثبت...';
 
-        } catch (error) {
-            alert('❌ ' + error.message);
-            submitBtn.disabled = false;
-            submitBtn.textContent = '🎯 دریافت شناسنامه';
-        }
-    });
-</script>
+            try {
+                const values = [
+                    document.getElementById('v1').value.trim(),
+                    document.getElementById('v2').value.trim(),
+                    document.getElementById('v3').value.trim(),
+                    document.getElementById('v4').value.trim(),
+                    document.getElementById('v5').value.trim(),
+                    document.getElementById('v6').value.trim(),
+                    document.getElementById('v7').value.trim()
+                ];
 
+                const optionalCode = document.getElementById('optionalCode').value.trim();
+
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ values, optionalCode })
+                });
+
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'خطا در ثبت‌نام');
+
+                document.getElementById('successMessage').classList.add('show');
+                submitBtn.textContent = '✅ ثبت شد';
+                
+                setTimeout(() => {
+                    window.location.href = `card-fa.html?code=${result.cardCode}`;
+                }, 1500);
+
+            } catch (error) {
+                alert('❌ ' + error.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🎯 دریافت شناسنامه';
+            }
+        });
+    </script>
 </body>
 </html>
