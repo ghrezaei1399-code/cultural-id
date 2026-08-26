@@ -1,9 +1,9 @@
 [
   {
     "cardCode": "CIM-3909-2989-27860",
-    "optionalCode": "تحلیل",
-    "displayCode": "CIM - 3909 - 2989 - تحلیل",
-    "status": "pending",
+    "optionalCode": "فرهنگ",
+    "displayCode": "CIM - 3909 - 2989 - فرهنگ",
+    "status": "pending_edit",
     "rank": 1,
     "country": "Iran",
     "registrationDate": "2026-08-26T16:46:11.615Z"
