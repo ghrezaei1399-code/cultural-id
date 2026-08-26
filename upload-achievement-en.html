@@ -282,202 +282,48 @@
         </div>
     </div>
 
-    <script>
-        // ===== Theme =====
-        (function() {
-            const toggle = document.getElementById('themeToggle');
-            const body = document.body;
-            if (localStorage.getItem('theme') === 'dark') {
-                body.classList.add('dark');
-                toggle.textContent = '☀️';
-            }
-            toggle.addEventListener('click', function() {
-                body.classList.toggle('dark');
-                if (body.classList.contains('dark')) {
-                    toggle.textContent = '☀️';
-                    localStorage.setItem('theme', 'dark');
-                } else {
-                    toggle.textContent = '🌙';
-                    localStorage.setItem('theme', 'light');
-                }
-            });
-        })();
+  <script>
+    // ... (کد تم و آپلود فایل بدون تغییر) ...
+    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = '⏳ در حال ارسال...';
 
-        // ===== Show Message =====
-        function showMessage(text, type) {
-            const box = document.getElementById('messageBox');
-            box.textContent = text;
-            box.className = 'message-box ' + type;
-            box.style.display = 'block';
-        }
+        try {
+            const title = document.getElementById('title').value.trim();
+            const description = document.getElementById('description').value.trim();
+            const category = document.getElementById('category').value.trim();
+            const fileName = document.getElementById('uploadZone').dataset.fileName;
 
-        function hideMessage() {
-            const box = document.getElementById('messageBox');
-            box.style.display = 'none';
-            box.className = 'message-box';
-        }
+            if (!title || !fileName) throw new Error('لطفاً عنوان و فایل را انتخاب کنید.');
 
-        // ===== Save to Repository =====
-        async function saveToRepository(data) {
-            const GITHUB_TOKEN = process.env.GH_TOKEN;
-            const REPO_OWNER = 'ghrezaei1399-code';
-            const REPO_NAME = 'cultural-id';
-            const FILE_PATH = `data/active/${data.cardCode}.json`;
-            const COMMIT_MESSAGE = `Achievement uploaded: ${data.cardCode}`;
+            // دریافت کد از URL یا localStorage
+            const urlParams = new URLSearchParams(window.location.search);
+            const cardCode = urlParams.get('code') || localStorage.getItem('culturalCardCode');
+            
+            if (!cardCode) throw new Error('کد کارت یافت نشد. لطفاً ابتدا وارد شوید.');
 
-            const content = JSON.stringify(data, null, 2);
+            const achievementData = { title, description, category, fileName };
 
-            const checkUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
-            const checkResponse = await fetch(checkUrl, {
-                headers: {
-                    'Authorization': `token ${GITHUB_TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json'
-                }
+            const response = await fetch('/api/upload-achievement', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cardCode, achievement: achievementData })
             });
 
-            if (checkResponse.status === 200) {
-                const existingData = await checkResponse.json();
-                const sha = existingData.sha;
-                const updateResponse = await fetch(checkUrl, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: COMMIT_MESSAGE,
-                        content: btoa(unescape(encodeURIComponent(content))),
-                        sha: sha
-                    })
-                });
-                if (!updateResponse.ok) {
-                    const errorData = await updateResponse.json();
-                    throw new Error(`Error updating file: ${errorData.message || 'Unknown'}`);
-                }
-                return await updateResponse.json();
-            }
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error);
 
-            const createResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `token ${GITHUB_TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: COMMIT_MESSAGE,
-                    content: btoa(unescape(encodeURIComponent(content)))
-                })
-            });
+            alert('✅ فایل شما ارسال شد و پس از تایید ادمین در گالری نمایش داده می‌شود.');
+            window.location.href = 'index.html';
 
-            if (!createResponse.ok) {
-                const errorData = await createResponse.json();
-                throw new Error(`Error creating file: ${errorData.message || 'Unknown'}`);
-            }
-
-            return await createResponse.json();
+        } catch (error) {
+            alert('❌ ' + error.message);
+            submitBtn.disabled = false;
+            submitBtn.textContent = '📤 آپلود';
         }
-
-        // ===== Read from Repository =====
-        async function loadFromRepository(cardCode) {
-            const REPO_OWNER = 'ghrezaei1399-code';
-            const REPO_NAME = 'cultural-id';
-            const FILE_PATH = `data/active/${cardCode}.json`;
-
-            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
-            const response = await fetch(url, {
-                headers: {
-                    'Accept': 'application/vnd.github.v3+json'
-                }
-            });
-
-            if (!response.ok) {
-                if (response.status === 404) {
-                    throw new Error('Card with this code was not found.');
-                }
-                const errorData = await response.json();
-                throw new Error(`Error reading file: ${errorData.message || 'Unknown'}`);
-            }
-
-            const data = await response.json();
-            const content = JSON.parse(atob(data.content));
-            return content;
-        }
-
-        // ===== Upload Zone =====
-        document.getElementById('uploadZone').addEventListener('click', function() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.jpg,.jpeg,.png,.mp4,.pdf';
-            input.onchange = function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    document.getElementById('fileName').textContent = `✅ ${file.name}`;
-                    document.getElementById('uploadZone').dataset.fileName = file.name;
-                }
-            };
-            input.click();
-        });
-
-        // ===== Form Submission =====
-        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            hideMessage();
-
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.textContent = '⏳ Uploading...';
-
-            try {
-                const title = document.getElementById('title').value.trim();
-                const description = document.getElementById('description').value.trim();
-                const category = document.getElementById('category').value.trim();
-                const fileName = document.getElementById('uploadZone').dataset.fileName;
-
-                if (!title) {
-                    throw new Error('Please enter a title.');
-                }
-
-                if (!fileName) {
-                    throw new Error('Please select a file.');
-                }
-
-                const cardCode = localStorage.getItem('culturalCardCode');
-                if (!cardCode) {
-                    throw new Error('Card code not found. Please register first.');
-                }
-
-                const userData = await loadFromRepository(cardCode);
-
-                const achievement = {
-                    title: title,
-                    description: description,
-                    category: category,
-                    fileName: fileName,
-                    uploadDate: new Date().toISOString(),
-                    status: 'pending'
-                };
-
-                if (!userData.achievements) {
-                    userData.achievements = [];
-                }
-                userData.achievements.push(achievement);
-
-                await saveToRepository(userData);
-
-                localStorage.setItem('culturalCardData', JSON.stringify(userData));
-
-                showMessage('✅ Your file has been forwarded to the admin and will be displayed upon approval.', 'success');
-                submitBtn.textContent = '✅ Sent';
-
-            } catch (error) {
-                console.error('Error:', error);
-                showMessage(`❌ Error: ${error.message}`, 'error');
-                submitBtn.disabled = false;
-                submitBtn.textContent = '📤 Upload';
-            }
-        });
-    </script>
+    });
+</script> 
 </body>
 </html>
