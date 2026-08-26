@@ -7,7 +7,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body {
             font-family: 'Vazir', 'IRANSans', sans-serif;
             min-height: 100vh;
@@ -23,7 +22,6 @@
             background-repeat: no-repeat;
             color: #f0f0f0;
         }
-        
         .card-container {
             width: 340px;
             min-height: 520px;
@@ -33,270 +31,66 @@
             border-radius: 20px;
             padding: 1.5rem 1.2rem;
             display: none;
-            color: #f0f0f0;
             flex-direction: column;
             align-items: center;
             text-align: center;
             gap: 1.2rem;
             position: relative;
         }
-        
         .logo-container {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            border: 3px solid #d4af37;
+            width: 90px; height: 90px; border-radius: 50%; border: 3px solid #d4af37;
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.6), inset 0 0 10px rgba(212, 175, 55, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: transparent;
+            display: flex; align-items: center; justify-content: center; background: transparent;
         }
-        
-        .card-logo {
-            width: 55px;
-            height: 55px;
-            object-fit: contain;
-            background: transparent !important;
-        }
-        
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: #d4af37;
-            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
-            line-height: 1.4;
-        }
-        
+        .card-logo { width: 55px; height: 55px; object-fit: contain; background: transparent !important; }
+        .card-title { font-size: 1.1rem; font-weight: 800; color: #d4af37; text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); line-height: 1.4; }
         .card-code-box {
-            width: 100%;
-            background: rgba(212, 175, 55, 0.08);
-            border: 1px solid #d4af37;
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
-            border-radius: 10px;
-            padding: 0.9rem;
-            text-align: center;
+            width: 100%; background: rgba(212, 175, 55, 0.08); border: 1px solid #d4af37;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); border-radius: 10px; padding: 0.9rem; text-align: center;
         }
-        
-        .optional-code-formatted {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 1.15rem;
-            color: #f0f0f0;
-            letter-spacing: 1.5px;
-            font-weight: bold;
-            direction: ltr;
+        .card-code-display {
+            font-family: 'Courier New', Courier, monospace; font-size: 1.1rem; color: #f0f0f0;
+            letter-spacing: 1px; font-weight: bold; direction: ltr;
         }
-        
         .values-section {
-            width: 100%;
-            background: rgba(212, 175, 55, 0.05);
-            border: 1px solid #d4af37;
-            border-radius: 10px;
-            padding: 0.8rem;
+            width: 100%; background: rgba(212, 175, 55, 0.05); border: 1px solid #d4af37;
+            border-radius: 10px; padding: 0.8rem;
         }
-        
-        .values-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            justify-content: center;
-        }
-        
+        .values-list { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
         .value-item {
-            background: rgba(212, 175, 55, 0.15);
-            border: 1px solid #d4af37;
-            border-radius: 6px;
-            padding: 4px 10px;
-            font-size: 0.72rem;
-            color: #d4af37;
-            white-space: nowrap;
-            font-weight: 600;
+            background: rgba(212, 175, 55, 0.15); border: 1px solid #d4af37; border-radius: 6px;
+            padding: 4px 10px; font-size: 0.72rem; color: #d4af37; white-space: nowrap; font-weight: 600;
         }
-        
         .hologram-box {
-            width: 65px;
-            height: 65px;
-            border: 2px solid #d4af37;
-            border-radius: 10px;
+            width: 65px; height: 65px; border: 2px solid #d4af37; border-radius: 10px;
             box-shadow: 0 0 12px rgba(212, 175, 55, 0.5), inset 0 0 10px rgba(212, 175, 55, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(212, 175, 55, 0.1);
-            margin-top: auto;
+            display: flex; align-items: center; justify-content: center; background: rgba(212, 175, 55, 0.1); margin-top: auto;
         }
-        
-        .hologram {
-            width: 42px;
-            height: 42px;
-            opacity: 0.9;
-        }
+        .hologram { width: 42px; height: 42px; opacity: 0.9; }
         
         .bottom-modules {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-            margin-top: 1.5rem;
-            width: 340px;
-            align-items: center;
+            display: flex; flex-direction: column; gap: 0.8rem; margin-top: 1.5rem; width: 340px; align-items: center;
         }
-        
         .action-btn {
-            width: 100%;
-            padding: 0.9rem;
-            background: linear-gradient(135deg, #d4af37 0%, #f4d03f 50%, #b8962e 100%);
-            color: #0a0a0a;
-            border: 1px solid #f9d976;
-            border-radius: 12px;
-            font-family: 'Vazir', 'IRANSans', sans-serif;
-            font-weight: 800;
-            font-size: 1rem;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4), inset 0 1px 0 rgba(255,255,255,0.4);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            width: 100%; padding: 0.9rem; background: linear-gradient(135deg, #d4af37 0%, #f4d03f 50%, #b8962e 100%);
+            color: #0a0a0a; border: 1px solid #f9d976; border-radius: 12px; font-family: 'Vazir', 'IRANSans', sans-serif;
+            font-weight: 800; font-size: 0.95rem; cursor: pointer; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+            transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;
         }
-        
-        .action-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-            transition: left 0.6s;
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(212, 175, 55, 0.6); }
+        .action-btn.secondary {
+            background: rgba(255, 255, 255, 0.1); color: #f0f0f0; border: 1px solid rgba(255, 255, 255, 0.3);
         }
-        
-        .action-btn:hover::before {
-            left: 100%;
-        }
-        
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.6), inset 0 1px 0 rgba(255,255,255,0.4);
-        }
-        
-        .notice-box {
-            width: 100%;
-            background: rgba(10, 10, 10, 0.85);
-            border: 1px solid #d4af37;
-            border-radius: 12px;
-            padding: 1rem;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
-            backdrop-filter: blur(5px);
-        }
-        
-        .notice-text {
-            font-size: 0.85rem;
-            color: #f0f0f0;
-            line-height: 1.7;
-        }
-        
-        .notice-text a {
-            color: #d4af37;
-            text-decoration: none;
-            font-weight: bold;
-            border-bottom: 1px dashed #d4af37;
-            transition: all 0.3s;
-        }
-        
-        .notice-text a:hover {
-            color: #f4d03f;
-            border-bottom-style: solid;
-        }
-        
-        .rejected-container {
-            width: 340px;
-            background: #0a0a0a;
-            border: 2px solid #dc2626;
-            box-shadow: 0 0 30px rgba(220, 38, 38, 0.5), inset 0 0 15px rgba(220, 38, 38, 0.15);
-            border-radius: 20px;
-            padding: 2rem 1.5rem;
-            display: none;
-            color: #f0f0f0;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 1.2rem;
-        }
-        
-        .rejected-icon {
-            font-size: 4rem;
-            filter: drop-shadow(0 0 15px rgba(220, 38, 38, 0.6));
-        }
-        
-        .rejected-title {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: #dc2626;
-            text-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
-        }
-        
-        .rejected-message {
-            font-size: 0.95rem;
-            color: #f0f0f0;
-            line-height: 1.8;
-            background: rgba(220, 38, 38, 0.08);
-            border: 1px solid rgba(220, 38, 38, 0.3);
-            border-radius: 12px;
-            padding: 1rem;
-        }
-        
-        .rejected-code {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.9rem;
-            color: #d4af37;
-            background: rgba(212, 175, 55, 0.1);
-            border: 1px solid #d4af37;
-            border-radius: 8px;
-            padding: 0.5rem 1rem;
-            letter-spacing: 1px;
-        }
-        
-        .btn-rejected {
-            width: 100%;
-            padding: 0.9rem;
-            background: linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #b91c1c 100%);
-            color: #fff;
-            border: 1px solid #fca5a5;
-            border-radius: 12px;
-            font-family: 'Vazir', 'IRANSans', sans-serif;
-            font-weight: 800;
-            font-size: 1rem;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        
-        .btn-rejected:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.6);
-        }
-        
+        .action-btn.secondary:hover { background: rgba(255, 255, 255, 0.2); }
+
         .error-message {
-            color: #dc2626;
-            background: rgba(0, 0, 0, 0.9);
-            padding: 1.5rem;
-            border-radius: 12px;
-            display: none;
-            text-align: center;
-            font-weight: 600;
-            max-width: 340px;
-            width: 100%;
-            border: 2px solid #dc2626;
-            box-shadow: 0 0 15px rgba(220, 38, 38, 0.5);
+            color: #dc2626; background: rgba(0, 0, 0, 0.9); padding: 1.5rem; border-radius: 12px;
+            display: none; text-align: center; font-weight: 600; max-width: 340px; width: 100%;
+            border: 2px solid #dc2626; box-shadow: 0 0 15px rgba(220, 38, 38, 0.5);
+        }
+        .rejected-container {
+            width: 340px; background: #0a0a0a; border: 2px solid #dc2626; border-radius: 20px;
+            padding: 2rem 1.5rem; display: none; flex-direction: column; align-items: center; text-align: center; gap: 1.2rem;
         }
     </style>
 </head>
@@ -306,11 +100,10 @@
         <div class="logo-container">
             <img src="assets/logo-fa.png" alt="Logo" class="card-logo" onerror="this.style.display='none'">
         </div>
-        
         <div class="card-title">کارت جهانی هویت هوشمند فرهنگی</div>
 
         <div class="card-code-box">
-            <div class="optional-code-formatted" id="displayOptionalCode">---</div>
+            <div class="card-code-display" id="displayCardCode">---</div>
         </div>
 
         <div class="values-section">
@@ -323,37 +116,21 @@
     </div>
 
     <div class="rejected-container" id="rejectedContent">
-        <div class="rejected-icon">❌</div>
-        <div class="rejected-title">عضویت شما پذیرفته نشد</div>
-        <div class="rejected-message">
-            متأسفانه درخواست عضویت شما توسط مدیر سیستم بررسی و <strong style="color:#dc2626;">تأیید نگردید</strong>.
-            <br><br>
-            در صورت نیاز به راهنمایی بیشتر، با پشتیبانی سایت تماس بگیرید.
+        <div style="font-size: 4rem;">❌</div>
+        <div style="font-size: 1.3rem; font-weight: 800; color: #dc2626;">عضویت شما پذیرفته نشد</div>
+        <div style="font-size: 0.95rem; color: #f0f0f0; line-height: 1.8;">
+            متأسفانه درخواست عضویت شما توسط مدیر سیستم بررسی و تأیید نگردید.
         </div>
-        <div class="rejected-code" id="rejectedCode">کد: ---</div>
-        <a href="index.html" class="btn-rejected">
-            <span>↩</span> بازگشت به صفحه اصلی
-        </a>
+        <a href="index.html" class="action-btn" style="background: #dc2626; color: white; border: none;">↩ بازگشت به صفحه اصلی</a>
     </div>
 
     <div class="bottom-modules" id="bottomModules" style="display: none;">
-        <button class="action-btn" onclick="window.location.href='/'">
-            <span>↩</span> بازگشت به صفحه ی اصلی
-        </button>
-        <button class="action-btn" onclick="saveCard()">
-            <span>💾</span> ذخیره ی کارت
-        </button>
-        
-        <div class="notice-box">
-            <div class="notice-text">
-                اگر جزو 200 نفر اول هستید به <a href="/">صفحه ی اصلی سایت</a> برگردید و دستاورد خود را آپلود کنید
-            </div>
-        </div>
+        <a id="backCardLink" href="#" class="action-btn secondary">🔄 پشت کارت</a>
+        <button class="action-btn" onclick="saveCard()">💾 ذخیره ی کارت</button>
+        <a href="index.html" class="action-btn secondary">↩ بازگشت به صفحه ی اصلی سایت</a
     </div>
 
-    <div class="error-message" id="cardErrorMessage">
-         کارت با این کد یافت نشد.
-    </div>
+    <div class="error-message" id="cardErrorMessage">❌ کارت با این کد یافت نشد.</div>
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
@@ -362,7 +139,6 @@
         async function loadCardData() {
             if (!cardCode || cardCode === 'undefined') {
                 document.getElementById('cardErrorMessage').style.display = 'block';
-                document.getElementById('cardErrorMessage').textContent = '❌ کد کارت نامعتبر است.';
                 return;
             }
 
@@ -370,55 +146,34 @@
                 const response = await fetch(`/api/get-user?code=${cardCode}`);
                 const data = await response.json();
 
-                if (!response.ok) {
-                    throw new Error(data.error || 'خطا در دریافت اطلاعات');
-                }
-
+                if (!response.ok) throw new Error(data.error || 'خطا در دریافت اطلاعات');
                 const user = data.user;
 
-                // بررسی وضعیت: اگر رد شده باشد، پیام رد نمایش داده شود
                 if (user.status === 'rejected') {
-                    document.getElementById('cardErrorMessage').style.display = 'none';
                     document.getElementById('cardContent').style.display = 'none';
                     document.getElementById('bottomModules').style.display = 'none';
                     document.getElementById('rejectedContent').style.display = 'flex';
-                    document.getElementById('rejectedCode').textContent = `کد: ${user.cardCode || cardCode}`;
                     return;
                 }
 
-                // در غیر این صورت کارت عادی نمایش داده شود
-                // نمایش کد اختیاری اگر وجود داشته باشد
+                // فرمت‌بندی دقیق کد: CIM - 4 رقم - 4 رقم - کد اختیاری
+                let finalCode = user.cardCode || '---';
                 if (user.optionalCode && user.optionalCode.trim() !== '') {
-                    const r1 = Math.floor(1000 + Math.random() * 9000);
-                    const r2 = Math.floor(1000 + Math.random() * 9000);
-                    document.getElementById('displayOptionalCode').textContent = `CIM - ${r1} - ${r2} - 66666`;
-                } else {
-                    document.getElementById('displayOptionalCode').textContent = 'CIM - ---- - ---- - 66666';
+                    const parts = user.cardCode.split('-');
+                    const p1 = parts[1] ? parts[1].substring(0, 4) : '0000';
+                    const p2 = parts[2] ? parts[2].substring(0, 4) : '0000';
+                    finalCode = `CIM - ${p1} - ${p2} - ${user.optionalCode}`;
                 }
+                document.getElementById('displayCardCode').textContent = finalCode;
 
-                // نمایش ارزش‌های فرهنگی از دیتابیس
+                // لینک پشت کارت
+                document.getElementById('backCardLink').href = `card-back-fa.html?code=${cardCode}`;
+
+                // نمایش ارزش‌های واقعی کاربر
                 const valuesContainer = document.getElementById('displayValues');
                 valuesContainer.innerHTML = '';
-                
                 if (user.values && user.values.length > 0) {
-                    // نمایش 5 ارزش اول به صورت فشرده
-                    user.values.slice(0, 5).forEach(v => {
-                        const div = document.createElement('div');
-                        div.className = 'value-item';
-                        div.textContent = v;
-                        valuesContainer.appendChild(div);
-                    });
-                } else {
-                    // مقادیر پیش‌فرض
-                    const hardcodedValues = [
-                        'ارزش‌های بومی',
-                        'دانش فردی',
-                        'همکاری جمعی',
-                        'تنوع فرهنگی',
-                        'صلح پایدار'
-                    ];
-                    
-                    hardcodedValues.forEach(v => {
+                    user.values.forEach(v => {
                         const div = document.createElement('div');
                         div.className = 'value-item';
                         div.textContent = v;
@@ -431,7 +186,6 @@
                 document.getElementById('bottomModules').style.display = 'flex';
 
             } catch (error) {
-                console.error('Error:', error);
                 document.getElementById('cardErrorMessage').style.display = 'block';
                 document.getElementById('cardErrorMessage').textContent = `❌ ${error.message}`;
             }
@@ -439,12 +193,9 @@
 
         function saveCard() {
             const cardElement = document.getElementById('cardContent');
-            html2canvas(cardElement, {
-                backgroundColor: '#0a0a0a',
-                scale: 2
-            }).then(canvas => {
+            html2canvas(cardElement, { backgroundColor: '#0a0a0a', scale: 2 }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = 'cultural-id-card.png';
+                link.download = 'cultural-id-card-front.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
             });
