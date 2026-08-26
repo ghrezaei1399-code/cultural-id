@@ -24,8 +24,9 @@
   "optionalCode": "offer",
   "communicationEmail": "ghrezaei1399@gmail.com",
   "registrationDate": "2026-08-26T15:57:37.834Z",
-  "status": "pending",
+  "status": "approved",
   "allowConnection": true,
   "allowAchievements": false,
-  "culturalInfo": ""
+  "culturalInfo": "",
+  "statusUpdatedAt": "2026-08-26T15:58:59.816Z"
 }
