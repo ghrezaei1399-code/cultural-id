@@ -3,5 +3,6 @@
   "type": "connection",
   "description": "دوستی و مودت",
   "requestDate": "2026-08-26T20:12:30.627Z",
-  "status": "pending"
+  "status": "rejected",
+  "rejectedAt": "2026-08-26T21:37:09.203Z"
 }
