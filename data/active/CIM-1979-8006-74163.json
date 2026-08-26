@@ -1,0 +1,32 @@
+{
+  "cardCode": "CIM-1979-8006-74163",
+  "country": "Iran",
+  "countryCode": "IR",
+  "rank": 5,
+  "values": [
+    "زبان",
+    "صنایع دستی",
+    "ان جی او",
+    "همزیستی اقوام عرب و ترک و کرد و گیلگ و مازنی و فاری و لز",
+    "یونسکو",
+    "#نه به خشونت",
+    "گفتگو به از سکوت و جنگ"
+  ],
+  "priorities": [
+    4,
+    5,
+    6,
+    7,
+    1,
+    2,
+    3
+  ],
+  "optionalCode": "ایثار",
+  "displayCode": "CIM - 1979 - 8006 - ایثار",
+  "communicationEmail": "",
+  "registrationDate": "2026-08-26T19:38:19.086Z",
+  "status": "pending",
+  "allowConnection": false,
+  "allowAchievements": false,
+  "culturalInfo": ""
+}
