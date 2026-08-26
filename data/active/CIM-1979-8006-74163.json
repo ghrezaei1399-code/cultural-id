@@ -25,8 +25,9 @@
   "displayCode": "CIM - 1979 - 8006 - ایثار",
   "communicationEmail": "",
   "registrationDate": "2026-08-26T19:38:19.086Z",
-  "status": "pending",
+  "status": "approved",
   "allowConnection": false,
   "allowAchievements": false,
-  "culturalInfo": ""
+  "culturalInfo": "",
+  "statusUpdatedAt": "2026-08-26T19:39:26.518Z"
 }
