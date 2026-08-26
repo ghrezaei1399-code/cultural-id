@@ -17,8 +17,9 @@
   "displayCode": "CIM - 8678 - 9997 - نظریه",
   "communicationEmail": "",
   "registrationDate": "2026-08-26T19:19:32.074Z",
-  "status": "pending",
+  "status": "approved",
   "allowConnection": false,
   "allowAchievements": false,
-  "culturalInfo": ""
+  "culturalInfo": "",
+  "statusUpdatedAt": "2026-08-26T20:16:58.533Z"
 }
