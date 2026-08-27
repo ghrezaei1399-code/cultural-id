@@ -41,8 +41,8 @@ export default async function handler(req, res) {
         const jsonString = Buffer.from(fileData.content, 'base64').toString('utf8');
         const requestData = JSON.parse(jsonString);
         
-        // فقط درخواست‌های ارتباط را نشان بده
-        if (requestData.type === 'connection') {
+        // فقط درخواست‌های ارتباط را نشان بده (یا همه را اگر خواستی)
+        if (requestData.type === 'connection' || requestData.type === 'delete') {
           requests.push({
             ...requestData,
             fileName: file.name
@@ -52,6 +52,9 @@ export default async function handler(req, res) {
         console.error('Error reading request file:', e);
       }
     }
+
+    // مرتب‌سازی بر اساس تاریخ (جدیدترین اول)
+    requests.sort((a, b) => new Date(b.requestDate) - new Date(a.requestDate));
 
     return res.status(200).json({ requests });
 
