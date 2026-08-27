@@ -17,7 +17,7 @@ export default async function handler(req, res) {
   const repo = 'cultural-id';
 
   try {
-    // ۱. خواندن index.json
+    // ۱. خواندن index.json برای یافتن کاربر
     const indexPath = 'data/index.json';
     const indexResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${indexPath}`, {
       headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
@@ -29,7 +29,7 @@ export default async function handler(req, res) {
     const jsonString = Buffer.from(indexFile.content, 'base64').toString('utf8');
     const indexData = JSON.parse(jsonString);
 
-    // پیدا کردن کاربر درخواست‌دهنده
+    // نرمال‌سازی کد ورودی
     const normalizedInput = cardCode.replace(/[\s\-]/g, '').toUpperCase();
     let userEntry = null;
     for (const entry of indexData) {
@@ -41,7 +41,7 @@ export default async function handler(req, res) {
 
     if (!userEntry) return res.status(404).json({ error: 'کاربر یافت نشد' });
 
-    // ۲. خواندن فایل کامل کاربر (برای گرفتن ایمیل و اولویت‌ها)
+    // ۲. خواندن فایل کامل کاربر (برای گرفتن اولویت‌ها و ایمیل)
     const userPath = `data/active/${userEntry.cardCode}.json`;
     const userResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
       headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
@@ -53,7 +53,7 @@ export default async function handler(req, res) {
     const userJsonString = Buffer.from(userFile.content, 'base64').toString('utf8');
     const userData = JSON.parse(userJsonString);
 
-    // ⭐ بررسی تکراری نبودن درخواست (جلوگیری از مشکل ۱)
+    // ⭐ بررسی تکراری نبودن درخواست (جلوگیری از اسپم)
     const requestsPath = 'data/requests';
     const requestsListResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${requestsPath}`, {
       headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
@@ -72,7 +72,6 @@ export default async function handler(req, res) {
             const contentStr = Buffer.from(fileData.content, 'base64').toString('utf8');
             const existingReq = JSON.parse(contentStr);
             
-            // اگر همین کاربر، همین نوع درخواست، و وضعیت pending دارد → رد کن
             if (existingReq.cardCode === userEntry.cardCode && 
                 existingReq.type === type && 
                 existingReq.status === 'pending') {
@@ -85,7 +84,7 @@ export default async function handler(req, res) {
       }
     }
 
-    // ۳. پیدا کردن هم‌فرهنگان با الگوریتم انعطاف‌پذیر (حل مشکل ۲)
+    // ۳. پیدا کردن هم‌فرهنگان با الگوریتم انعطاف‌پذیر (فقط بر اساس اولویت‌ها)
     const approvedUsers = indexData.filter(u => 
       u.status === 'approved' && 
       u.rank <= 200 && 
@@ -107,9 +106,10 @@ export default async function handler(req, res) {
         const otherJsonString = Buffer.from(otherFile.content, 'base64').toString('utf8');
         const otherData = JSON.parse(otherJsonString);
 
+        // محاسبه شباهت فقط بر اساس آرایه priorities
         const similarityScore = calculatePrioritySimilarity(userData.priorities, otherData.priorities);
 
-        // ⭐ آستانه را به ۲٪ کاهش دادیم (انعطاف‌پذیرتر)
+        // آستانه ۲۰٪ برای انعطاف‌پذیری بیشتر
         if (similarityScore >= 20) {
           culturalMatches.push({
             cardCode: otherEntry.cardCode,
@@ -126,6 +126,7 @@ export default async function handler(req, res) {
       }
     }
 
+    // مرتب‌سازی بر اساس بیشترین شباهت
     culturalMatches.sort((a, b) => b.similarityScore - a.similarityScore);
 
     // ۴. ذخیره درخواست
@@ -135,14 +136,13 @@ export default async function handler(req, res) {
     const requestData = {
       cardCode: userEntry.cardCode,
       displayCode: userEntry.displayCode || userEntry.cardCode,
-      // ⭐ ایمیل را مستقیماً از فایل کاربر می‌خوانیم (حل مشکل ۳)
       requesterEmail: userData.communicationEmail || null,
       requesterPriorities: userData.priorities || [],
       type,
       description: description || '',
       requestDate: new Date().toISOString(),
       status: 'pending',
-      culturalMatches: culturalMatches.slice(0, 10)
+      culturalMatches: culturalMatches.slice(0, 10) // ۱۰ هم‌فرهنگ برتر
     };
 
     const content = Buffer.from(JSON.stringify(requestData, null, 2), 'utf8').toString('base64');
@@ -173,10 +173,11 @@ export default async function handler(req, res) {
   }
 }
 
-//  الگوریتم انعطاف‌پذیر تطابق اولویت‌ها
+// ⭐ الگوریتم هوشمند تطابق اولویت‌ها (بدون توجه به متن)
 function calculatePrioritySimilarity(p1, p2) {
-  // اگر هر کدام اولویت ندارند، امتیاز 
   if (!p1 || !p2 || p1.length === 0 || p2.length === 0) return 0;
+  
+  let score = 0;
   
   // پیدا کردن ارزش‌هایی که هر دو کاربر به آن‌ها اولویت داده‌اند (غیر از ۰ یا null)
   const validIndices = [];
@@ -186,21 +187,15 @@ function calculatePrioritySimilarity(p1, p2) {
     }
   }
   
-  // اگر هیچ ارزش مشترکی ندارند که هر دو اولویت داده باشند
   if (validIndices.length === 0) return 0;
   
-  let score = 0;
-  
-  // برای هر ارزش مشترک، اختلاف رتبه را محاسبه کن
   for (const idx of validIndices) {
     const diff = Math.abs(p1[idx] - p2[idx]);
     if (diff === 0) score += 15;        // تطابق کامل
     else if (diff === 1) score += 10;   // نزدیک
     else if (diff === 2) score += 5;    // نسبتاً نزدیک
-    // diff >= 3: امتیازی نمی‌گیرد
   }
   
-  // نرمال‌سازی بر اساس تعداد ارزش‌های مشترک
   const maxPossible = validIndices.length * 15;
   const normalizedScore = Math.round((score / maxPossible) * 100);
   
