@@ -3,491 +3,89 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>بیشتر بدانید | کارت جهانی هویت هوشمند فرهنگی</title>
+    <title>درباره پروژه | کارت جهانی هویت هوشمند فرهنگی</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
-            font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
+            font-family: 'Vazir', 'IRANSans', serif;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 2rem 1rem;
-            background-image: url('assets/azadi.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            transition: background 0.3s, color 0.3s;
+            background: linear-gradient(135deg, #fdf6e3 0%, #e8f4f8 50%, #f5e6d3 100%);
+            color: #2a1a0a;
+            line-height: 1.8;
         }
-
-        .container {
-            max-width: 1100px;
-            width: 100%;
-            background: transparent;
-            backdrop-filter: blur(2px);
-            border-radius: 60px;
-            padding: 2rem;
-            box-shadow: none;
-            border: none;
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 {
+            font-size: 1.8rem; text-align: center; color: #8a6d1f;
+            margin-bottom: 0.5rem; border-bottom: 2px solid #d4af37; padding-bottom: 1rem;
         }
-
-        /* ===== TOP BAR ===== */
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .date-display {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #3a0a2a;
-            background: rgba(255,255,255,0.3);
-            padding: 0.2rem 1rem;
-            border-radius: 30px;
-            backdrop-filter: blur(4px);
-        }
-
-        body.dark .date-display { color: #f0d8e8; background: rgba(0,0,0,0.2); }
-
-        .theme-toggle {
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(0,0,0,0.1);
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0.2rem 0.8rem;
-            border-radius: 40px;
-            transition: 0.3s;
-            color: #4a0a5a;
-        }
-
-        body.dark .theme-toggle { color: #f9e79f; background: rgba(0,0,0,0.2); }
-        .theme-toggle:hover {
-            transform: scale(1.1);
-            background: rgba(255,255,255,0.3);
-        }
-
-        .lang-switch {
-            text-align: center;
-            margin: 1rem 0;
-        }
-
-        .lang-switch a {
-            display: inline-block;
-            background: rgba(255,255,255,0.2);
-            padding: 0.3rem 1.5rem;
-            border-radius: 40px;
-            text-decoration: none;
-            color: #4a0a5a;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: 0.2s;
-            border: 1px solid rgba(0,0,0,0.05);
-            backdrop-filter: blur(4px);
-        }
-
-        .lang-switch a:hover { background: rgba(255,255,255,0.3); }
-        body.dark .lang-switch a { color: #e8d0f0; background: rgba(0,0,0,0.2); }
-
-        .back-module {
-            display: inline-block;
-            background: rgba(255,255,255,0.2);
-            padding: 0.4rem 1.5rem;
-            border-radius: 40px;
-            text-decoration: none;
-            color: #4a0a5a;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: 0.2s;
-            border: 1px solid rgba(0,0,0,0.05);
-            margin-bottom: 1.5rem;
-            backdrop-filter: blur(4px);
-        }
-
-        body.dark .back-module { color: #e8d0f0; background: rgba(0,0,0,0.2); }
-
-        .back-module:hover {
-            background: rgba(255,255,255,0.3);
-            transform: translateX(-4px);
-        }
-
-        /* ===== INFO BOXES (بسیار شفاف) ===== */
-        .info-box {
-            border-radius: 28px;
-            padding: 1.8rem 2rem;
-            background: rgba(255, 255, 255, 0.0);
-            backdrop-filter: blur(6px);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03);
-            transition: all 0.3s ease;
-            margin-bottom: 1.5rem;
-        }
-
-        .info-box:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        body.dark .info-box {
-            background: rgba(0, 0, 0, 0.05);
-            border-color: rgba(255,255,255,0.02);
-        }
-
-        body.dark .info-box:hover {
-            background: rgba(0, 0, 0, 0.1);
-        }
-
-        /* ===== رنگ‌های جدید فونت‌ها ===== */
-        .box-goals .box-title { color: #4a0a5a; } /* بنفش سیر */
-        .box-goals p, .box-goals ul { color: #5a2a1a; } /* جگری */
-        .box-goals ul li::before { color: #7a1a1a; } /* قرمز تیره */
-
-        .box-principles .box-title { color: #3a0a4a; }
-        .box-principles p, .box-principles .principle-item .title { color: #5a1a2a; }
-        .box-principles .principle-item .desc { color: #4a2a1a; }
-
-        .box-radio .box-title { color: #4a0a5a; }
-        .box-radio p, .box-radio ul { color: #5a2a1a; }
-        .box-radio ul li::before { color: #7a1a1a; }
-
-        /* ===== حالت تاریک ===== */
-        body.dark .box-goals .box-title { color: #e8d0f0; }
-        body.dark .box-goals p, body.dark .box-goals ul { color: #f0d8c8; }
-        body.dark .box-goals ul li::before { color: #f9e79f; }
-
-        body.dark .box-principles .box-title { color: #d0c0e8; }
-        body.dark .box-principles p, body.dark .box-principles .principle-item .title { color: #e8d0d0; }
-        body.dark .box-principles .principle-item .desc { color: #c8b8a8; }
-
-        body.dark .box-radio .box-title { color: #e8d0f0; }
-        body.dark .box-radio p, body.dark .box-radio ul { color: #f0d8c8; }
-        body.dark .box-radio ul li::before { color: #f9e79f; }
-
-        .box-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            border-bottom: 2px solid rgba(0, 0, 0, 0.03);
-            padding-bottom: 0.4rem;
-            text-shadow: 0 2px 8px rgba(255,255,255,0.3);
-        }
-
-        body.dark .box-title {
-            border-bottom-color: rgba(255,255,255,0.03);
-            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        }
-
-        .info-box p {
-            font-size: 0.95rem;
-            line-height: 2;
-            opacity: 0.9;
-            text-shadow: 0 2px 8px rgba(255,255,255,0.2);
-        }
-
-        .info-box ul {
-            list-style: none;
-            line-height: 2.4;
-            font-size: 0.95rem;
-            opacity: 0.9;
-            margin-top: 0.5rem;
-            text-shadow: 0 2px 8px rgba(255,255,255,0.2);
-        }
-
-        body.dark .info-box p,
-        body.dark .info-box ul {
-            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        }
-
-        .info-box ul li::before {
-            content: "✦ ";
-            font-weight: bold;
-        }
-
-        .principles-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.8rem;
-            margin-top: 0.5rem;
-        }
-
-        .principle-item {
-            background: rgba(255,255,255,0.05);
+        .subtitle { text-align: center; font-size: 0.9rem; color: #6a5a3a; margin-bottom: 2rem; }
+        
+        .section {
+            background: rgba(255, 255, 255, 0.6);
             border-radius: 16px;
-            padding: 0.8rem 1rem;
-            border: 1px solid rgba(0,0,0,0.02);
-            transition: 0.2s;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(212, 175, 55, 0.3);
         }
-
-        .principle-item:hover {
-            background: rgba(255,255,255,0.1);
-            transform: translateY(-2px);
+        .section h2 {
+            font-size: 1.2rem; color: #2874a6; margin-bottom: 1rem;
+            border-right: 4px solid #2874a6; padding-right: 10px;
         }
-
-        body.dark .principle-item {
-            background: rgba(0,0,0,0.05);
-            border-color: rgba(255,255,255,0.02);
-        }
-
-        body.dark .principle-item:hover {
-            background: rgba(0,0,0,0.1);
-        }
-
-        .principle-item .icon { font-size: 1.2rem; margin-left: 0.3rem; }
-        .principle-item .title { font-weight: 700; font-size: 0.9rem; }
-        .principle-item .desc { font-size: 0.75rem; opacity: 0.7; }
-
-        .radio-showcase {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-top: 0.5rem;
-        }
-
-        .radio-item {
-            background: rgba(255,255,255,0.05);
-            border-radius: 16px;
-            padding: 0.8rem 1rem;
-            flex: 1;
-            min-width: 140px;
-            text-align: center;
-            border: 1px solid rgba(0,0,0,0.02);
-            transition: 0.2s;
-        }
-
-        .radio-item:hover {
-            background: rgba(255,255,255,0.1);
-            transform: translateY(-3px);
-        }
-
-        body.dark .radio-item {
-            background: rgba(0,0,0,0.05);
-            border-color: rgba(255,255,255,0.02);
-        }
-
-        body.dark .radio-item:hover {
-            background: rgba(0,0,0,0.1);
-        }
-
-        .radio-item a {
-            text-decoration: none;
-            font-weight: 600;
+        .section p { font-size: 0.95rem; color: #3a2a1a; margin-bottom: 1rem; }
+        
+        .theoretical-note {
             font-size: 0.85rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.3rem;
-            color: #4a0a5a;
-        }
-
-        body.dark .radio-item a { color: #e8d0f0; }
-
-        .radio-item .radio-icon { font-size: 2rem; }
-        .radio-item .radio-label { opacity: 0.8; }
-
-        .poster-links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.8rem;
+            color: #6a5a3a;
+            background: rgba(212, 175, 55, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
             margin-top: 1rem;
+            border-left: 3px solid #d4af37;
         }
-
-        .poster-link {
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            padding: 0.5rem 1rem;
-            border: 1px solid rgba(0,0,0,0.02);
-            transition: 0.2s;
-            text-decoration: none;
-            color: #4a0a5a;
-            font-size: 0.8rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
+        
+        .btn-back {
+            display: inline-block; margin-top: 2rem; padding: 0.8rem 1.5rem;
+            background: rgba(212, 175, 55, 0.2); color: #8a6d1f;
+            border-radius: 30px; text-decoration: none; font-weight: 700;
         }
-
-        .poster-link:hover {
-            background: rgba(255,255,255,0.1);
-            transform: translateY(-2px);
-        }
-
-        body.dark .poster-link { color: #e8d0f0; }
-        body.dark .poster-link:hover { background: rgba(0,0,0,0.1); }
-
-        @media (max-width: 768px) {
-            .container { padding: 1rem; border-radius: 40px; }
-            .info-box { padding: 1.2rem 1.2rem; }
-            .principles-grid { grid-template-columns: 1fr; }
-            .radio-item { min-width: 100%; }
-            .poster-links { flex-direction: column; }
-        }
-
-        @font-face {
-            font-family: 'Vazir';
-            src: local('Vazir'), local('IRANSans');
-        }
+        .btn-back:hover { background: rgba(212, 175, 55, 0.3); }
     </style>
 </head>
 <body>
 <div class="container">
+    <h1>📖 درباره پروژه</h1>
+    <div class="subtitle">فلسفه‌ی غیرمتمرکز و اهداف فرهنگی</div>
 
-    <!-- ===== TOP BAR ===== -->
-    <div class="top-bar">
-        <div class="date-display" id="dateDisplay">📅 جمعه ۲۰ مرداد ۱۴۰۵</div>
-        <button class="theme-toggle" id="themeToggle">🌙</button>
+    <div class="section">
+        <h2>چرا کارت هویت فرهنگی؟</h2>
+        <p>در عصری که مرزهای جغرافیایی پررنگ شده‌اند اما ارتباطات انسانی عمیق‌تر از همیشه مورد نیاز است، ما به هویتی فراتر از نام و ملیت نیاز داریم. این کارت، ابزاری برای شناسایی «هم‌فرهنگان» بر اساس ارزش‌های مشترک است، نه پیشینه‌ی سیاسی یا اقتصادی.</p>
+        <p>هدف ما ایجاد شبکه‌ای از مصلحان فرهنگی است که بدون وابستگی به نهادها، بر اساس خرد جمعی و ارزش‌های انسان‌محور با یکدیگر ارتباط برقرار کنند.</p>
     </div>
 
-    <!-- ===== LANGUAGE SWITCH ===== -->
-    <div class="lang-switch">
-        <a href="about-en.html">🇬🇧 English</a>
-    </div>
-
-    <a href="index.html" class="back-module">← بازگشت به صفحه‌ی اصلی</a>
-
-    <!-- ===== GOALS ===== -->
-    <div class="info-box box-goals">
-        <div class="box-title">🎯 اهداف پروژه</div>
-        <p>
-            این پروژه با هدف ایجاد یک <strong>هویت فرهنگی غیرمتمرکز و انتخابی</strong> برای هر انسان، بدون نیاز به اطلاعات شخصی، طراحی شده است.
-            ما به دنبال ساختن شبکه‌ای از <strong>مصلحان فرهنگی</strong> هستیم که بتوانند بدون وابستگی به نهادهای خاص،
-            هویت و ارزش‌های فرهنگی خود را حفظ کرده و با دیگر هم‌فکران خود در سراسر جهان ارتباط برقرار کنند.
-        </p>
-        <ul>
-            <li>ایجاد شبکه‌ای از مصلحان فرهنگی بدون مرز</li>
-            <li>حفاظت از تنوع فرهنگی به عنوان سرمایه‌ی مشترک بشری</li>
-            <li>ارتباط هم‌فکران بدون نیاز به شناسایی هویتی</li>
-            <li>ترویج صلح، محو خشونت و اتحاد فرهنگی</li>
+    <div class="section">
+        <h2>اصول بنیادین</h2>
+        <ul style="list-style-type: disc; padding-right: 1.5rem; color: #3a2a1a;">
+            <li><strong>غیرسیاسی و غیرحکومتی:</strong> تمرکز صرف بر میراث فرهنگی و ارزش‌های انسانی.</li>
+            <li><strong>ناشناس بودن:</strong> حفظ حریم خصوصی کاربران اولویت اول سیستم است.</li>
+            <li><strong>غیرمتمرکز:</strong> داده‌ها در هیچ سرور مرکزی ذخیره نمی‌شوند تا از هرگونه سانسور یا کنترل جلوگیری شود.</li>
         </ul>
     </div>
 
-    <!-- ===== PRINCIPLES ===== -->
-    <div class="info-box box-principles">
-        <div class="box-title">⚖️ اصول بنیادین</div>
-        <p style="margin-bottom:0.8rem; opacity:0.7;">
-            این اصول، هسته‌ی غیرقابل تغییر پروژه هستند و هیچ‌کس (حتی بنیان‌گذار) نمی‌تواند آنها را تغییر دهد.
-        </p>
-        <div class="principles-grid">
-            <div class="principle-item">
-                <span class="icon">🔄</span>
-                <div class="title">عدم مالکیت دائمی</div>
-                <div class="desc">بنیان‌گذار پس از ۱۰۰۰۰ عضو کنار می‌رود</div>
-            </div>
-            <div class="principle-item">
-                <span class="icon">🌐</span>
-                <div class="title">گذار به غیرمتمرکز</div>
-                <div class="desc">مدیریت موقت، معماری برای واگذاری</div>
-            </div>
-            <div class="principle-item">
-                <span class="icon">🔒</span>
-                <div class="title">حریم‌خصوصی محور</div>
-                <div class="desc">هیچ داده‌ی شناسایی‌کننده‌ای دریافت نمی‌شود</div>
-            </div>
-            <div class="principle-item">
-                <span class="icon">✅</span>
-                <div class="title">اختیاری بودن</div>
-                <div class="desc">همه‌ی فعالیت‌ها داوطلبانه است</div>
-            </div>
-            <div class="principle-item">
-                <span class="icon">🤝</span>
-                <div class="title">عدم تبعیض</div>
-                <div class="desc">هیچ فرهنگی بر دیگری برتری ندارد</div>
-            </div>
-            <div class="principle-item">
-                <span class="icon">📋</span>
-                <div class="title">قابلیت تکثیر</div>
-                <div class="desc">هر گروهی می‌تواند نسخه‌ی خود را راه‌اندازی کند</div>
-            </div>
-            <div class="principle-item" style="grid-column: 1 / -1;">
-                <span class="icon">🔍</span>
-                <div class="title">شفافیت</div>
-                <div class="desc">کدها باز هستند، اما داده‌های کاربران عمومی نیستند</div>
-            </div>
+    <div class="section">
+        <h2>پشتوانه‌ی نظری پروژه</h2>
+        <p>این پلتفرم خروجی عملیاتی بیش از دو دهه پژوهش در حوزه‌ی «گذار تمدنی»، «هوش مصنوعی انسان‌محور» و «مهندسی فرهنگی نامرئی» است. معماری این سامانه بر پایه‌ی چارچوب‌های نظری ثبت‌شده‌ی بین‌المللی بنا شده است که هدفشان گذار از عصر اطلاعات به عصر خرد است.</p>
+        
+        <div class="theoretical-note">
+            <strong>برای مطالعه‌ی مستندات علمی و نظری:</strong><br>
+            این پروژه مبتنی بر مجموعه‌ای از مقالات و کتب علمی ثبت‌شده در پایگاه‌های معتبر جهانی (مانند Zenodo) با موضوعاتی همچون «سپهر خردمندی»، «همراهان روشنایی» و «درهم‌تنیدگی کنترل‌شده» است. علاقه‌مندان به مبانی نظری می‌توانند از طریق پروفایل علمی نویسنده به این اسناد دسترسی پیدا کنند.<br><br>
+            <a href="https://orcid.org/0009-0007-5840-8833" target="_blank" style="color: #2874a6; font-weight: bold;">مشاهده پروفایل علمی و لیست مقالات در ORCID ↗</a>
         </div>
     </div>
 
-    <!-- ===== RADIO-TV ===== -->
-    <div class="info-box box-radio">
-        <div class="box-title">📡 رادیوتلویزیون هوشمند همگانی</div>
-        <p>
-            پس از تشکیل گروه‌های فرهنگی (حداقل ۵ نفر با شاخص‌های مشترک)، گروه می‌تواند یک <strong>رادیوتلویزیون هوشمند</strong> اختصاصی راه‌اندازی کند.
-            این پلتفرم، ابزاری برای <strong>شبکه‌سازی، تولید و انتشار محتوای فرهنگی</strong> گروه‌های شکل‌گرفته است.
-        </p>
-        <ul>
-            <li>انتشار متن، صوت، تصویر و ویدئو</li>
-            <li>هر گروه یک کانال اختصاصی دارد</li>
-            <li>محتوا توسط خود گروه تولید و مدیریت می‌شود</li>
-            <li>هوش مصنوعی برای پیشنهاد محتوا، اما نه برای تصمیم‌گیری انسانی</li>
-        </ul>
-
-        <div style="margin-top:1.2rem;">
-            <p style="font-weight:600; opacity:0.7; font-size:0.9rem;">🔹 پوسترهای نمونه:</p>
-            <div class="poster-links">
-                <a href="assets/Retirees Society.png" target="_blank" class="poster-link">📘 کانون بازنشستگان</a>
-                <a href="assets/PRINGTIN.png" target="_blank" class="poster-link">📙 انتشارات</a>
-                <a href="assets/NGO.png" target="_blank" class="poster-link">📗 انجمن‌های مردمی</a>
-            </div>
-        </div>
-
-        <div style="margin-top:1rem;">
-            <p style="font-weight:600; opacity:0.7; font-size:0.9rem;">🔹 نمونه‌های اجرایی:</p>
-            <div class="radio-showcase">
-                <div class="radio-item">
-                    <a href="https://ghrezaei1399-code.github.io/kanoon/" target="_blank">
-                        <span class="radio-icon">📻</span>
-                        <span class="radio-label">کانون پیشکسوتان</span>
-                    </a>
-                </div>
-                <div class="radio-item">
-                    <a href="https://ghrezaei1399-code.github.io/entesharat/" target="_blank">
-                        <span class="radio-icon">📚</span>
-                        <span class="radio-label">انتشارات کیمیا</span>
-                    </a>
-                </div>
-                <div class="radio-item">
-                    <a href="https://cassrango.github.io/casrango/" target="_blank">
-                        <span class="radio-icon">🌍</span>
-                        <span class="radio-label">انجمن مسئولیت اجتماعی</span>
-                    </a>
-                </div>
-            </div>
-        </div>
+    <div style="text-align: center;">
+        <a href="index.html" class="btn-back">↩ بازگشت به صفحه اصلی</a>
     </div>
-
 </div>
-
-<script>
-    (function() {
-        const now = new Date();
-        const opts = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
-        document.getElementById('dateDisplay').textContent = '📅 ' + now.toLocaleDateString('fa-IR', opts);
-    })();
-
-    (function() {
-        const toggle = document.getElementById('themeToggle');
-        const body = document.body;
-        if (localStorage.getItem('theme') === 'dark') {
-            body.classList.add('dark');
-            toggle.textContent = '☀️';
-        }
-        toggle.addEventListener('click', function() {
-            body.classList.toggle('dark');
-            if (body.classList.contains('dark')) {
-                toggle.textContent = '☀️';
-                localStorage.setItem('theme', 'dark');
-            } else {
-                toggle.textContent = '🌙';
-                localStorage.setItem('theme', 'light');
-            }
-        });
-    })();
-</script>
 </body>
 </html>
