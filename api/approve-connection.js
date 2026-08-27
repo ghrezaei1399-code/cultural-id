@@ -35,38 +35,12 @@ export default async function handler(req, res) {
     const requestData = JSON.parse(jsonString);
 
     if (action === 'approve') {
-      // پیدا کردن کاربر درخواست‌دهنده
-      const userPath = `data/active/${requestData.cardCode}.json`;
-      const userResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/vnd.github.v3+json'
-        }
-      });
-
-      if (!userResponse.ok) {
-        return res.status(404).json({ error: 'کاربر یافت نشد' });
-      }
-
-      const userData = await userResponse.json();
-      const userJsonString = Buffer.from(userData.content, 'base64').toString('utf8');
-      const userDataObj = JSON.parse(userJsonString);
-
-      // بررسی اینکه آیا ایمیل دارد
-      if (!userDataObj.communicationEmail) {
-        return res.status(400).json({ error: 'کاربر ایمیل ارتباطی ثبت نکرده است' });
-      }
-
-      // پیدا کردن هم‌فرهنگان (کاربرانی با ارزش‌های مشابه)
-      // این بخش ساده‌سازی شده - در نسخه کامل باید الگوریتم تطابق پیچیده‌تری باشد
-      const similarUsers = [];
-      
-      // ارسال ایمیل (در اینجا فقط شبیه‌سازی می‌کنیم)
-      // در نسخه واقعی باید از سرویس ایمیل استفاده شود
-      
       requestData.status = 'approved';
       requestData.approvedAt = new Date().toISOString();
-      requestData.similarUsers = similarUsers;
+      
+      // اینجا می‌توانید منطق ارسال ایمیل را اضافه کنید
+      // فعلاً فقط وضعیت را تغییر می‌دهیم تا ادمین بتواند ایمیل را ببیند و دستی بفرستد
+      
     } else if (action === 'reject') {
       requestData.status = 'rejected';
       requestData.rejectedAt = new Date().toISOString();
