@@ -1,110 +1,73 @@
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
   const token = process.env.GH_TOKEN;
-  if (!token) {
-    console.error('GH_TOKEN is missing');
-    return res.status(500).json({ error: 'Server configuration error' });
-  }
+  if (!token) return res.status(500).json({ error: 'Server config error' });
 
   try {
     const { values, priorities, optionalCode, communicationEmail } = req.body;
-
-    // اعتبارسنجی اولیه
-    if (!values || !Array.isArray(values) || values.length !== 7) {
-      return res.status(400).json({ error: 'لطفاً تمام ۷ ارزش فرهنگی را وارد کنید.' });
+    
+    // اعتبارسنجی ساده
+    if (!values || !Array.isArray(values)) {
+      return res.status(400).json({ error: 'Invalid data format' });
     }
 
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
+    const cardCode = `CIM-${Date.now().toString().slice(-6)}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
 
-    // تولید کد یکتا
-    const timestamp = Date.now().toString().slice(-6);
-    const randomPart = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-    const cardCode = `CIM-${timestamp}-${randomPart}`;
-
-    // ساخت آبجکت کاربر
     const userData = {
       cardCode,
       displayCode: optionalCode ? `${cardCode} - ${optionalCode}` : cardCode,
       values,
-      priorities: priorities && Array.isArray(priorities) ? priorities : [1, 2, 3, 4, 5, 6, 7],
+      priorities: priorities || [],
       communicationEmail: communicationEmail || null,
       registrationDate: new Date().toISOString(),
       status: 'pending',
       rank: 0
     };
 
-    // ۱. ذخیره فایل کاربر
-    const userPath = `data/active/${cardCode}.json`;
-    const userContent = Buffer.from(JSON.stringify(userData, null, 2), 'utf8').toString('base64');
-
-    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
+    // ذخیره کاربر
+    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/active/${cardCode}.json`, {
       method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        message: `New registration: ${cardCode}`,
-        content: userContent,
+        message: `New user: ${cardCode}`,
+        content: Buffer.from(JSON.stringify(userData)).toString('base64'),
         branch: 'main'
       })
     });
 
-    // . آپدیت index.json
-    const indexPath = 'data/index.json';
-    
-    let indexData = [];
+    // آپدیت ایندکس (با مدیریت خطای SHA)
     let sha = null;
-    
-    const indexRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${indexPath}`, {
-      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+    let indexData = [];
+    const idxRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/index.json`, {
+      headers: { 'Authorization': `Bearer ${token}` }
     });
     
-    if (indexRes.ok) {
-      const indexFile = await indexRes.json();
-      sha = indexFile.sha;
-      const jsonString = Buffer.from(indexFile.content, 'base64').toString('utf8');
-      indexData = JSON.parse(jsonString);
+    if (idxRes.ok) {
+      const idxFile = await idxRes.json();
+      sha = idxFile.sha;
+      indexData = JSON.parse(Buffer.from(idxFile.content, 'base64').toString());
     }
 
-    indexData.push({
-      cardCode,
-      displayCode: userData.displayCode,
-      country: 'Unknown',
-      rank: 0,
-      status: 'pending',
-      registrationDate: userData.registrationDate
-    });
+    indexData.push({ cardCode, displayCode: userData.displayCode, country: 'Unknown', rank: 0, status: 'pending', registrationDate: userData.registrationDate });
 
-    const newIndexContent = Buffer.from(JSON.stringify(indexData, null, 2), 'utf8').toString('base64');
-    
-    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${indexPath}`, {
+    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/index.json`, {
       method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        message: `Add user to index: ${cardCode}`,
-        content: newIndexContent,
+        message: `Update index: ${cardCode}`,
+        content: Buffer.from(JSON.stringify(indexData)).toString('base64'),
         sha: sha,
         branch: 'main'
       })
     });
 
-    return res.status(200).json({ 
-      success: true, 
-      cardCode,
-      message: 'ثبت‌نام موفقیت‌آمیز بود.'
-    });
+    return res.status(200).json({ success: true, cardCode });
 
   } catch (error) {
-    console.error('Registration Error:', error);
-    return res.status(500).json({ error: 'خطا در ثبت‌نام: ' + error.message });
+    console.error(error);
+    return res.status(500).json({ error: error.message });
   }
 }
