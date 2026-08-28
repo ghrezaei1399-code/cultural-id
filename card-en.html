@@ -49,7 +49,6 @@
         }
         body.dark .subtitle { color: #d0c0b0; border-bottom-color: rgba(255, 255, 255, 0.02); }
         
-        /* ===== Real Card Sample ===== */
         .real-card-sample {
             width: 100%; 
             background: #0a0a0a; 
@@ -64,26 +63,23 @@
             gap: 1rem;
             position: relative;
         }
-        .rc-header { display: flex; align-items: center; gap: 1rem; width: 100%; justify-content: center; }
-        .rc-logo-container { width: 60px; height: 60px; border-radius: 50%; border: 2px solid #d4af37; display: flex; align-items: center; justify-content: center; }
-        .rc-logo { width: 40px; height: 40px; object-fit: contain; }
-        .rc-title { font-size: 0.9rem; font-weight: 800; color: #d4af37; line-height: 1.3; text-align: left; }
         
-        /* ===== Code and QR Section ===== */
+        .rc-logo-container { 
+            width: 70px; height: 70px; 
+            border-radius: 50%; 
+            border: 2px solid #d4af37; 
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 0.5rem;
+        }
+        .rc-logo { width: 45px; height: 45px; object-fit: contain; }
+        .rc-title { font-size: 0.9rem; font-weight: 800; color: #d4af37; line-height: 1.3; }
+        
         .rc-code-section {
             width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
             background: rgba(212, 175, 55, 0.1);
             border: 1px solid #d4af37;
             border-radius: 12px;
             padding: 0.8rem;
-            gap: 1rem;
-        }
-        .rc-code-box {
-            flex: 1;
-            text-align: center;
         }
         .rc-code { 
             font-family: 'Courier New', monospace; 
@@ -91,23 +87,6 @@
             color: #f0f0f0; 
             letter-spacing: 1px; 
             font-weight: bold; 
-        }
-        .qr-container {
-            background: white;
-            padding: 4px;
-            border-radius: 6px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        #qrcode { width: 60px; height: 60px; }
-        .qr-label {
-            font-size: 0.55rem;
-            color: #0a0a0a;
-            margin-top: 2px;
-            font-weight: bold;
-            text-align: center;
-            line-height: 1.1;
         }
         
         .rc-values { 
@@ -128,37 +107,38 @@
             font-weight: 600; 
         }
 
-        .rc-footer {
-            width: 100%;
-            display: flex;
-            justify-content: center;
+        .qr-section {
             margin-top: 0.5rem;
-        }
-        .hologram-placeholder {
-            width: 50px;
-            height: 50px;
-            border: 1px solid #d4af37;
-            border-radius: 8px;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            background: rgba(212, 175, 55, 0.1);
+            gap: 0.3rem;
         }
-        .hologram-placeholder img { width: 35px; height: 35px; opacity: 0.9; }
+        #qrcode {
+            background: white;
+            padding: 4px;
+            border-radius: 6px;
+        }
+        .qr-label {
+            font-size: 0.55rem;
+            color: #d4af37;
+            opacity: 0.8;
+            text-align: center;
+        }
 
-        .btn-group { display: flex; gap: 1rem; margin-top: 2rem; flex-wrap: wrap; }
+        .btn-group { display: flex; gap: 0.8rem; margin-top: 2rem; flex-wrap: wrap; }
         .btn {
             flex: 1;
-            padding: 0.8rem 1.5rem;
+            padding: 0.7rem 1rem;
             border-radius: 60px;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.85rem;
             text-decoration: none;
             text-align: center;
             border: none;
             cursor: pointer;
             transition: all 0.3s ease;
-            min-width: 140px;
+            min-width: 120px;
         }
         .btn-primary {
             background: rgba(60, 30, 10, 0.02);
@@ -172,18 +152,6 @@
         }
         .btn-primary:hover { background: rgba(60, 30, 10, 0.04); transform: scale(1.02); }
         body.dark .btn-primary:hover { background: rgba(255, 255, 255, 0.04); }
-        .btn-secondary {
-            background: rgba(60, 30, 10, 0.01);
-            color: #3a2a1a;
-            border: 1px solid rgba(60, 30, 10, 0.01);
-        }
-        body.dark .btn-secondary {
-            background: rgba(255, 255, 255, 0.01);
-            color: #a09080;
-            border-color: rgba(255, 255, 255, 0.01);
-        }
-        .btn-secondary:hover { background: rgba(60, 30, 10, 0.03); transform: scale(1.02); }
-        body.dark .btn-secondary:hover { background: rgba(255, 255, 255, 0.03); }
         
         .note {
             text-align: center;
@@ -217,49 +185,45 @@
         .theme-toggle:hover { transform: scale(1.1); }
         @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
     </style>
-    <!-- QR Code Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
     <button class="theme-toggle" id="themeToggle">🌙</button>
 
     <div class="container">
-        <h1>🪪 Your Cultural ID</h1>
+        <h1> Your Cultural ID</h1>
         <div class="subtitle">Global Smart Cultural Identity Card</div>
 
         <div class="real-card-sample">
-            <div class="rc-header">
-                <div class="rc-logo-container">
-                    <img src="assets/logo-en.png" alt="Logo" class="rc-logo" onerror="this.style.display='none'">
-                </div>
-                <div class="rc-title">Global Smart Cultural<br>Identity Card</div>
+            <div class="rc-logo-container">
+                <img src="assets/logo-en.png" alt="Logo" class="rc-logo" onerror="this.style.display='none'">
             </div>
+            <div class="rc-title">Global Smart Cultural<br>Identity Card</div>
             
-            <!-- Code and QR Section -->
             <div class="rc-code-section">
-                <div class="rc-code-box">
-                    <div class="rc-code" id="cardCodeDisplay">CIM - .... - .... - ....</div>
-                </div>
-                <div class="qr-container">
-                    <div id="qrcode"></div>
-                    <div class="qr-label">View<br>Charter</div>
-                </div>
+                <div class="rc-code" id="cardCodeDisplay">CIM - .... - .... - ....</div>
             </div>
             
-            <div class="rc-values" id="valuesContainer">
-                <!-- Values will be loaded here -->
+            <div class="rc-values">
+                <span class="rc-tag">Native Values</span>
+                <span class="rc-tag">Personal Knowledge</span>
+                <span class="rc-tag">Collective Coop</span>
+                <span class="rc-tag">Cultural Diversity</span>
+                <span class="rc-tag">Sustainable Peace</span>
+                <span class="rc-tag">Non-Violence</span>
+                <span class="rc-tag">Cultural Unity</span>
             </div>
 
-            <div class="rc-footer">
-                <div class="hologram-placeholder">
-                    <img src="assets/hologram.png" alt="Hologram" onerror="this.style.display='none'">
-                </div>
+            <div class="qr-section">
+                <div id="qrcode"></div>
+                <div class="qr-label">View Charter & Documents</div>
             </div>
         </div>
 
         <div class="btn-group">
-            <a href="index-en.html" class="btn btn-primary">↩ Back to Home</a>
-            <a href="edit-en.html" class="btn btn-secondary">✏️ Edit Info</a>
+            <a href="#" class="btn btn-primary" onclick="alert('Back of card coming soon')">↩️ Back of Card</a>
+            <a href="index-en.html" class="btn btn-primary">🏠 Back to Home</a>
+            <button class="btn btn-primary" onclick="window.print()">💾 Save Card</button>
         </div>
 
         <div class="note">
@@ -268,7 +232,6 @@
     </div>
 
     <script>
-        // ===== Theme =====
         (function() {
             const toggle = document.getElementById('themeToggle');
             const body = document.body;
@@ -288,7 +251,6 @@
             });
         })();
 
-        // ===== Load Card Data =====
         window.addEventListener('DOMContentLoaded', () => {
             const params = new URLSearchParams(window.location.search);
             const code = params.get('code');
@@ -298,50 +260,28 @@
                 return;
             }
 
-            // Generate QR Code linking to "About Project" page
             const qrUrl = window.location.origin + '/about-en.html';
             new QRCode(document.getElementById("qrcode"), {
                 text: qrUrl,
-                width: 60,
-                height: 60,
+                width: 70,
+                height: 70,
                 colorDark : "#000000",
                 colorLight : "#ffffff",
                 correctLevel : QRCode.CorrectLevel.H
             });
 
-            // Fetch user data from API to display values and full code
             fetch(`/api/get-user?code=${encodeURIComponent(code)}`)
                 .then(res => res.json())
                 .then(data => {
-                    if (data.user) {
-                        // Display full code (including optional code if exists)
-                        const displayElement = document.getElementById('cardCodeDisplay');
-                        if (data.user.displayCode) {
-                            displayElement.textContent = data.user.displayCode;
-                        } else {
-                            displayElement.textContent = code.replace(/-/g, ' - ');
-                        }
-
-                        // Display cultural values
-                        if (data.user.values) {
-                            const container = document.getElementById('valuesContainer');
-                            container.innerHTML = '';
-                            data.user.values.forEach(val => {
-                                if (val) {
-                                    const span = document.createElement('span');
-                                    span.className = 'rc-tag';
-                                    span.textContent = val;
-                                    container.appendChild(span);
-                                }
-                            });
-                        }
+                    const displayElement = document.getElementById('cardCodeDisplay');
+                    if (data.user && data.user.displayCode) {
+                        displayElement.textContent = data.user.displayCode;
                     } else {
-                        // If user not found, at least show the URL code
-                        document.getElementById('cardCodeDisplay').textContent = code.replace(/-/g, ' - ');
+                        displayElement.textContent = code.replace(/-/g, ' - ');
                     }
                 })
                 .catch(err => {
-                    console.error('Error loading user data:', err);
+                    console.error('Error:', err);
                     document.getElementById('cardCodeDisplay').textContent = code.replace(/-/g, ' - ');
                 });
         });
