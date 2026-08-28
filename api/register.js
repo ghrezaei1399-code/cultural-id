@@ -44,8 +44,21 @@ module.exports = async function handler(req, res) {
       registrationDate: new Date().toISOString(),
       status: 'pending',
       rank: 0,
-      country: 'Unknown'
-    };
+     // دریافت کشور از هدر ورسل (رایگان و خودکار)
+const userCountry = req.headers['x-vercel-ip-country'] || 'Unknown';
+
+const userData = {
+  cardCode,
+  displayCode,
+  optionalCode: processedOptionalCode,
+  values,
+  priorities: priorities && Array.isArray(priorities) ? priorities.map(Number) : [1, 2, 3, 4, 5, 6, 7],
+  communicationEmail: communicationEmail || null,
+  registrationDate: new Date().toISOString(),
+  status: 'pending',
+  rank: 0,
+  country: userCountry // استفاده از آی‌پی واقعی کاربر
+};
 
     // ۱. ذخیره فایل اختصاصی کاربر در data/active/
     const userPath = `data/active/${cardCode}.json`;
