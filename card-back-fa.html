@@ -7,7 +7,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Vazir', 'IRANSans', sans-serif;
+            font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -19,124 +19,239 @@
             background-attachment: fixed;
             color: #1a0a0a;
         }
+        body.dark { color: #f0e8e0; }
         .container {
             max-width: 500px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 24px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(0px);
+            border-radius: 48px;
+            padding: 2.5rem 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #2a1a0a;
             text-align: center;
-        }
-        h2 { color: #8a6d1f; margin-bottom: 1.5rem; }
-        
-        /* طراحی پشت کارت */
-        .card-back {
-            background: #f8f9fa;
-            border: 2px dashed #d4af37;
-            border-radius: 16px;
-            padding: 2rem 1rem;
-            position: relative;
-        }
-        
-        .back-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: white;
-            padding: 1rem;
-            border-radius: 12px;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        
-        .code-display {
-            flex: 1;
-            text-align: right;
-            padding-left: 1rem;
-        }
-        .code-label {
-            font-size: 0.75rem;
-            color: #666;
             margin-bottom: 0.3rem;
         }
-        .cim-code {
-            font-family: 'Courier New', monospace;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #2a1a0a;
-            direction: ltr;
-            display: inline-block;
+        body.dark h1 { color: #f9e79f; }
+        .subtitle {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #4a2a1a;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(30, 10, 0, 0.05);
+            padding-bottom: 1rem;
+        }
+        body.dark .subtitle { color: #d0c0b0; border-bottom-color: rgba(255, 255, 255, 0.02); }
+        
+        .back-card-sample {
+            width: 100%; 
+            background: #0a0a0a; 
+            border: 2px solid #d4af37;
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.4), inset 0 0 15px rgba(212, 175, 55, 0.1);
+            border-radius: 18px; 
+            padding: 2rem 1.5rem; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            text-align: center; 
+            gap: 1.2rem;
         }
         
-        .qr-box {
-            width: 80px;
-            height: 80px;
+        .back-text {
+            font-size: 0.85rem;
+            color: #c8b890;
+            line-height: 1.8;
+            max-width: 90%;
+        }
+        
+        .rc-code-section {
+            width: 100%;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid #d4af37;
+            border-radius: 12px;
+            padding: 0.8rem;
+        }
+        .rc-code { 
+            font-family: 'Courier New', monospace; 
+            font-size: 1.1rem; 
+            color: #f0f0f0; 
+            letter-spacing: 1px; 
+            font-weight: bold; 
+            direction: ltr; 
+        }
+
+        .qr-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        #qrcode {
             background: white;
             padding: 4px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            border-radius: 6px;
         }
+        .qr-label {
+            font-size: 0.55rem;
+            color: #d4af37;
+            opacity: 0.8;
+            text-align: center;
+        }
+
+        .btn-group { display: flex; gap: 0.8rem; margin-top: 2rem; flex-wrap: wrap; }
+        .btn {
+            flex: 1;
+            padding: 0.7rem 1rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-decoration: none;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+        .btn-primary {
+            background: rgba(60, 30, 10, 0.02);
+            color: #2a1a0a;
+            border: 1px solid rgba(60, 30, 10, 0.02);
+        }
+        body.dark .btn-primary {
+            background: rgba(255, 255, 255, 0.02);
+            color: #f9e79f;
+            border-color: rgba(255, 255, 255, 0.02);
+        }
+        .btn-primary:hover { background: rgba(60, 30, 10, 0.04); transform: scale(1.02); }
+        body.dark .btn-primary:hover { background: rgba(255, 255, 255, 0.04); }
         
         .note {
+            text-align: center;
+            font-size: 0.75rem;
+            opacity: 0.5;
             margin-top: 1.5rem;
-            font-size: 0.8rem;
-            color: #555;
-            line-height: 1.6;
+            color: #1a0a0a;
+            border-top: 1px solid rgba(30, 10, 0, 0.02);
+            padding-top: 1rem;
         }
+        body.dark .note { color: #b0a090; border-top-color: rgba(255, 255, 255, 0.02); }
         
-        .btn-back {
-            display: inline-block;
-            margin-top: 2rem;
-            padding: 0.8rem 2rem;
-            background: #d4af37;
-            color: white;
-            text-decoration: none;
-            border-radius: 30px;
-            font-weight: bold;
+        .theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(30, 10, 0, 0.02);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.3rem 0.8rem;
+            border-radius: 40px;
+            transition: 0.3s;
+            color: #1a0a0a;
         }
+        body.dark .theme-toggle {
+            color: #f9e79f;
+            background: rgba(0, 0, 0, 0.05);
+            border-color: rgba(255, 255, 255, 0.02);
+        }
+        .theme-toggle:hover { transform: scale(1.1); }
+        @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
+    <button class="theme-toggle" id="themeToggle">🌙</button>
+
     <div class="container">
-        <h2>🪪 پشت کارت هویت فرهنگی</h2>
-        
-        <div class="card-back">
-            <div class="back-row">
-                <div class="code-display">
-                    <div class="code-label">کد یکتا فرهنگی:</div>
-                    <div class="cim-code" id="cardCode">CIM - .... - .... - ....</div>
-                </div>
-                <div class="qr-box" id="qrcode"></div>
+        <h1>🪪 پشت شناسنامه فرهنگی</h1>
+        <div class="subtitle">Global Smart Cultural Identity Card</div>
+
+        <div class="back-card-sample">
+            <div class="back-text">
+                این کارت هویت فرهنگی شما بر اساس نظریه «مهندسی فرهنگی نامرئی» صادر شده است.<br>
+                دارنده این کارت متعهد به حفظ ارزش‌های بومی، ترویج صلح پایدار و همکاری جمعی در شبکه هم‌فرهنگان است.<br>
+                برای مشاهده منشور و مستندات نظری، کد زیر را اسکن کنید.
             </div>
             
-            <div class="note">
-                این کارت متعلق به شبکه جهانی هویت هوشمند فرهنگی است.<br>
-                اسکن QR Code برای مشاهده منشور و مستندات نظری.
+            <div class="rc-code-section">
+                <div class="rc-code" id="cardCodeDisplay">CIM - .... - .... - ....</div>
+            </div>
+
+            <div class="qr-section">
+                <div id="qrcode"></div>
+                <div class="qr-label">مشاهده منشور و مستندات</div>
             </div>
         </div>
 
-        <a href="card-fa.html" class="btn-back">↩ بازگشت به روی کارت</a>
+        <div class="btn-group">
+            <a href="card-fa.html" class="btn btn-primary">↩️ روی کارت</a>
+            <a href="index.html" class="btn btn-primary">🏠 بازگشت به خانه</a>
+        </div>
+
+        <div class="note">
+             کاملاً ناشناس • بدون اطلاعات هویتی • فقط اطلاعات فرهنگی
+        </div>
     </div>
 
     <script>
+        (function() {
+            const toggle = document.getElementById('themeToggle');
+            const body = document.body;
+            if (localStorage.getItem('theme') === 'dark') {
+                body.classList.add('dark');
+                toggle.textContent = '☀️';
+            }
+            toggle.addEventListener('click', function() {
+                body.classList.toggle('dark');
+                if (body.classList.contains('dark')) {
+                    toggle.textContent = '☀️';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    toggle.textContent = '🌙';
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+        })();
+
         window.addEventListener('DOMContentLoaded', () => {
             const params = new URLSearchParams(window.location.search);
-            const code = params.get('code') || 'CIM-0000-0000-0000';
+            const code = params.get('code');
             
-            document.getElementById('cardCode').textContent = code.replace(/-/g, ' - ');
-            
-            // تولید QR Code که به صفحه "درباره پروژه" لینک می‌شود
+            if (!code) {
+                document.querySelector('.container').innerHTML = '<h2 style="text-align:center; color:red;">کد کارت یافت نشد!</h2>';
+                return;
+            }
+
             const qrUrl = window.location.origin + '/about-fa.html';
             new QRCode(document.getElementById("qrcode"), {
                 text: qrUrl,
-                width: 72,
-                height: 72,
+                width: 70,
+                height: 70,
                 colorDark : "#000000",
                 colorLight : "#ffffff",
                 correctLevel : QRCode.CorrectLevel.H
             });
+
+            fetch(`/api/get-user?code=${encodeURIComponent(code)}`)
+                .then(res => res.json())
+                .then(data => {
+                    const displayElement = document.getElementById('cardCodeDisplay');
+                    if (data.user && data.user.displayCode) {
+                        displayElement.textContent = data.user.displayCode;
+                    } else {
+                        displayElement.textContent = code.replace(/-/g, ' - ');
+                    }
+                })
+                .catch(err => {
+                    console.error('Error:', err);
+                    document.getElementById('cardCodeDisplay').textContent = code.replace(/-/g, ' - ');
+                });
         });
     </script>
 </body>
