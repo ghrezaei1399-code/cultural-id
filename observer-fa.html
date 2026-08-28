@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>اتاق فکر ظهور | آزمایشگاه سپهر خردمندی</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Vazir', sans-serif; min-height: 100vh; display: flex; justify-content: center; align-items: center;
+            background-image: url('assets/pisa.jpg'); background-size: cover; background-position: center; background-attachment: fixed;
+            color: #2a1a0a; position: relative;
+        }
+        body::before { content:''; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(253,246,227,0.85); backdrop-filter:blur(8px); z-index:0; }
+        .container { max-width: 600px; width: 90%; background: rgba(255,255,255,0.95); border-radius: 32px; padding: 3rem 2rem; 
+            border: 2px solid rgba(212,175,55,0.4); box-shadow: 0 20px 60px rgba(212,175,55,0.2); text-align: center; position: relative; z-index: 1; }
+        
+        .lab-logo { width: 60px; height: 60px; margin: 0 auto 1rem; opacity: 0.9; }
+        h1 { font-size: 1.5rem; font-weight: 900; color: #8a6d1f; margin-bottom: 0.5rem; line-height: 1.5; }
+        .subtitle { font-size: 0.85rem; color: #6a5a3a; margin-bottom: 2.5rem; opacity: 0.8; }
+        
+        .question-box { font-size: 1.1rem; font-weight: 700; color: #2a1a0a; margin-bottom: 1.5rem; line-height: 1.8; }
+        textarea { width: 100%; min-height: 120px; padding: 1.2rem; border-radius: 20px; border: 2px solid rgba(212,175,55,0.3); 
+            background: rgba(255,255,255,0.6); font-family: inherit; font-size: 1rem; resize: vertical; outline: none; transition: 0.3s; }
+        textarea:focus { border-color: #d4af37; background: #fff; box-shadow: 0 0 0 4px rgba(212,175,55,0.1); }
+        
+        .actions { display: flex; gap: 1rem; margin-top: 2rem; justify-content: center; }
+        .btn { padding: 0.9rem 2rem; border-radius: 40px; font-weight: 800; font-size: 0.95rem; cursor: pointer; transition: 0.3s; border: none; }
+        .btn-save { background: linear-gradient(135deg, #d4af37, #f9e79f); color: #2a1a0a; box-shadow: 0 6px 20px rgba(212,175,55,0.3); }
+        .btn-back { background: transparent; border: 2px solid rgba(212,175,55,0.4); color: #8a6d1f; }
+        .btn:hover { transform: translateY(-2px); }
+        
+        .note { font-size: 0.7rem; opacity: 0.6; margin-top: 2rem; line-height: 1.6; color: #4a3a2a; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="assets/logo-fa.png" alt="آزمایشگاه" class="lab-logo" onerror="this.style.display='none'">
+        <h1>آزمایشگاه سپهر خردمندی</h1>
+        <div class="subtitle">Global Smart Cultural Identity Lab</div>
+        
+        <div class="question-box">
+            چه گره‌ای در فرهنگ یا جامعه اطرافتان دیده‌اید که دیگران نادیده می‌گیرند؟<br>
+            <small style="font-weight:400; font-size:0.85rem; opacity:0.7;">(بدون قضاوت، فقط آنچه را که مشاهده کرده‌اید بنویسید)</small>
+        </div>
+        
+        <textarea id="observationInput" placeholder="مشاهده خود را اینجا ثبت کنید..."></textarea>
+        
+        <div class="actions">
+            <button class="btn btn-back" onclick="window.location.href='index.html'">↩ بازگشت به کارت</button>
+            <button class="btn btn-save" onclick="saveObservation()"> ذخیره در حافظه مشاهده</button>
+        </div>
+        
+        <div class="note">
+            این مشاهده وارد «اطلس ظهور» خواهد شد.<br>
+            پس از تحلیل سپهری، بسته کنشگری اختصاصی برای شما تولید می‌شود.
+        </div>
+    </div>
+
+<script>
+function saveObservation() {
+    const text = document.getElementById('observationInput').value.trim();
+    if (!text) { alert('لطفاً مشاهده خود را وارد کنید.'); return; }
+    
+    // شبیه‌سازی ذخیره و تولید بسته کنشگری
+    alert('✅ مشاهده شما با موفقیت در حافظه سپهری ثبت شد.\n\n در حال تحلیل سپهری...\n بسته کنشگری (سیاستی، شبکه‌سازی، تقنینی) به زودی در پنل کاربری شما نمایش داده خواهد شد.');
+    document.getElementById('observationInput').value = '';
+}
+</script>
+</body>
+</html>
