@@ -1,8 +1,6 @@
 {
-    "name": "cultural-id",
-    "version": "1.0.0",
-    "private": true,
-    "scripts": {
-        "vercel-build": "echo hello"
-    }
+  "name": "cultural-id",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Global Smart Cultural Identity Card"
 }
