@@ -5,38 +5,39 @@ export default async function handler(req, res) {
 
   const token = process.env.GH_TOKEN;
   if (!token) {
-    console.error('GH_TOKEN is missing in environment variables');
-    return res.status(500).json({ error: 'Server configuration error: Missing GH_TOKEN' });
+    console.error('GH_TOKEN is missing');
+    return res.status(500).json({ error: 'Server configuration error' });
   }
-
-  const { values, priorities, optionalCode, communicationEmail } = req.body;
-
-  if (!values || !Array.isArray(values) || values.length !== 7) {
-    return res.status(400).json({ error: 'لطفاً تمام ۷ ارزش فرهنگی را وارد کنید.' });
-  }
-
-  const owner = 'ghrezaei1399-code';
-  const repo = 'cultural-id';
 
   try {
-    // تولید کد کارت یکتا
+    const { values, priorities, optionalCode, communicationEmail } = req.body;
+
+    // اعتبارسنجی اولیه
+    if (!values || !Array.isArray(values) || values.length !== 7) {
+      return res.status(400).json({ error: 'لطفاً تمام ۷ ارزش فرهنگی را وارد کنید.' });
+    }
+
+    const owner = 'ghrezaei1399-code';
+    const repo = 'cultural-id';
+
+    // تولید کد یکتا
     const timestamp = Date.now().toString().slice(-6);
     const randomPart = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
     const cardCode = `CIM-${timestamp}-${randomPart}`;
 
-    // ساخت داده‌های کاربر
+    // ساخت آبجکت کاربر
     const userData = {
       cardCode,
       displayCode: optionalCode ? `${cardCode} - ${optionalCode}` : cardCode,
       values,
-      priorities: priorities || [1, 2, 3, 4, 5, 6, 7], // اولویت‌های پیش‌فرض اگر ارسال نشده باشد
+      priorities: priorities && Array.isArray(priorities) ? priorities : [1, 2, 3, 4, 5, 6, 7],
       communicationEmail: communicationEmail || null,
       registrationDate: new Date().toISOString(),
-      status: 'pending', // نیاز به تایید ادمین
+      status: 'pending',
       rank: 0
     };
 
-    // ۱. ذخیره فایل کاربر در data/active/
+    // ۱. ذخیره فایل کاربر
     const userPath = `data/active/${cardCode}.json`;
     const userContent = Buffer.from(JSON.stringify(userData, null, 2), 'utf8').toString('base64');
 
@@ -54,16 +55,15 @@ export default async function handler(req, res) {
       })
     });
 
-    // ۲. آپدیت کردن index.json
+    // . آپدیت index.json
     const indexPath = 'data/index.json';
-    
-    // خواندن index فعلی
-    const indexRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${indexPath}`, {
-      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
-    });
     
     let indexData = [];
     let sha = null;
+    
+    const indexRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${indexPath}`, {
+      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+    });
     
     if (indexRes.ok) {
       const indexFile = await indexRes.json();
@@ -72,17 +72,15 @@ export default async function handler(req, res) {
       indexData = JSON.parse(jsonString);
     }
 
-    // افزودن کاربر جدید به لیست
     indexData.push({
       cardCode,
       displayCode: userData.displayCode,
-      country: 'Unknown', // بعداً توسط کاربر یا ادمین تکمیل می‌شود
+      country: 'Unknown',
       rank: 0,
       status: 'pending',
       registrationDate: userData.registrationDate
     });
 
-    // ذخیره index.json جدید
     const newIndexContent = Buffer.from(JSON.stringify(indexData, null, 2), 'utf8').toString('base64');
     
     await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${indexPath}`, {
@@ -95,7 +93,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         message: `Add user to index: ${cardCode}`,
         content: newIndexContent,
-        sha: sha, // SHA ضروری است برای آپدیت فایل موجود
+        sha: sha,
         branch: 'main'
       })
     });
@@ -103,7 +101,7 @@ export default async function handler(req, res) {
     return res.status(200).json({ 
       success: true, 
       cardCode,
-      message: 'ثبت‌نام با موفقیت انجام شد. کارت شما پس از تایید ادمین فعال خواهد شد.'
+      message: 'ثبت‌نام موفقیت‌آمیز بود.'
     });
 
   } catch (error) {
