@@ -349,12 +349,7 @@
             <span class="label">ارتباط</span>
             <span class="desc">با هم‌فکران</span>
         </a>
-        <a href="#" id="inviteLinkBtn" class="module-btn module-invite">
-            <span class="icon">📣</span>
-            <span class="label">دعوت دوستان</span>
-            <span class="desc">سفیر فرهنگی شوید</span>
-        </a>
-        <a href="request-fa.html?type=delete" class="module-btn module-cancel">
+               <a href="request-fa.html?type=delete" class="module-btn module-cancel">
             <span class="icon">🚪</span>
             <span class="label">انصراف</span>
             <span class="desc">حذف حساب کاربری</span>
@@ -381,26 +376,5 @@
 
 </div>
   
-<script>
-  // Service Worker Registration
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/service-worker.js')
-        .then((registration) => { console.log('SW registered: ', registration); })
-        .catch((registrationError) => { console.log('SW registration failed: ', registrationError); });
-    });
-  }
-
-  // Dynamic Invite Link Logic
-  document.getElementById('inviteLinkBtn').addEventListener('click', function(e) {
-      e.preventDefault();
-      const code = localStorage.getItem('culturalCardCode');
-      if (code) {
-          window.location.href = `referral-fa.html?code=${encodeURIComponent(code)}`;
-      } else {
-          window.location.href = 'referral-fa.html';
-      }
-  });
-</script>  
 </body>
 </html>
