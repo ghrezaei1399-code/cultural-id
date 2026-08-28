@@ -10,30 +10,41 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // دریافت داده‌ها مستقیماً از req.body
     const { values, priorities, optionalCode, communicationEmail } = req.body;
 
-    // اعتبارسنجی اولیه
     if (!values || !Array.isArray(values) || values.length < 7) {
-      return res.status(400).json({ error: 'لطفاً تمام  ارزش فرهنگی را وارد کنید.' });
+      return res.status(400).json({ error: 'لطفاً تمام ۷ ارزش فرهنگی را وارد کنید.' });
     }
+
+    // ✅ شناسایی کشور از طریق هدر رایگان Vercel
+    const countryCode = req.headers['x-vercel-ip-country'] || 'XX';
+    
+    // ✅ دیکشنری تبدیل کد دو حرفی به نام کامل انگلیسی
+    const countryMap = {
+      'IR': 'Iran', 'US': 'United States', 'GB': 'United Kingdom', 
+      'DE': 'Germany', 'FR': 'France', 'CA': 'Canada', 
+      'AE': 'UAE', 'SA': 'Saudi Arabia', 'TR': 'Turkey',
+      'IQ': 'Iraq', 'AF': 'Afghanistan', 'PK': 'Pakistan',
+      'IN': 'India', 'CN': 'China', 'RU': 'Russia',
+      'IT': 'Italy', 'ES': 'Spain', 'NL': 'Netherlands',
+      'SE': 'Sweden', 'NO': 'Norway', 'AU': 'Australia',
+      'JP': 'Japan', 'KR': 'South Korea', 'BR': 'Brazil'
+    };
+    const detectedCountry = countryMap[countryCode] || 'Other';
 
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
 
-    // تولید کد کارت یکتا
     const part1 = Math.floor(1000 + Math.random() * 9000);
     const part2 = Math.floor(1000 + Math.random() * 9000);
     const part3 = Math.floor(10000 + Math.random() * 90000);
     const cardCode = `CIM-${part1}-${part2}-${part3}`;
 
-    // پردازش کد اختیاری و ساخت displayCode
     const processedOptionalCode = optionalCode ? String(optionalCode).trim() : '';
     const displayCode = processedOptionalCode 
       ? `CIM - ${part1} - ${part2} - ${processedOptionalCode}` 
       : `CIM - ${part1} - ${part2}`;
 
-    // ساخت آبجکت کامل کاربر
     const userData = {
       cardCode,
       displayCode,
@@ -44,23 +55,9 @@ module.exports = async function handler(req, res) {
       registrationDate: new Date().toISOString(),
       status: 'pending',
       rank: 0,
-     // دریافت کشور از هدر ورسل (رایگان و خودکار)
-const userCountry = req.headers['x-vercel-ip-country'] || 'Unknown';
+      country: detectedCountry // ✅ نام کامل کشور در فایل کاربر
+    };
 
-const userData = {
-  cardCode,
-  displayCode,
-  optionalCode: processedOptionalCode,
-  values,
-  priorities: priorities && Array.isArray(priorities) ? priorities.map(Number) : [1, 2, 3, 4, 5, 6, 7],
-  communicationEmail: communicationEmail || null,
-  registrationDate: new Date().toISOString(),
-  status: 'pending',
-  rank: 0,
-  country: userCountry // استفاده از آی‌پی واقعی کاربر
-};
-
-    // ۱. ذخیره فایل اختصاصی کاربر در data/active/
     const userPath = `data/active/${cardCode}.json`;
     const userContent = Buffer.from(JSON.stringify(userData, null, 2), 'utf8').toString('base64');
 
@@ -78,7 +75,6 @@ const userData = {
       })
     });
 
-    // ۲. آپدیت index.json با مدیریت صحیح SHA
     const indexPath = 'data/index.json';
     let indexData = [];
     let sha = null;
@@ -94,14 +90,13 @@ const userData = {
       indexData = JSON.parse(jsonString);
     }
 
-    // افزودن رکورد جدید به ایندکس
     indexData.push({
       cardCode,
       displayCode,
       optionalCode: processedOptionalCode,
       status: 'pending',
       rank: 0,
-      country: 'Unknown',
+      country: detectedCountry, // ✅ نام کامل کشور در ایندکس اصلی
       registrationDate: userData.registrationDate
     });
 
@@ -127,13 +122,12 @@ const userData = {
       body: JSON.stringify(indexCommitBody)
     });
 
-    // پاسخ موفقیت‌آمیز با تمام فیلدهای لازم برای فرانت‌اند
     return res.status(200).json({
       success: true,
       cardCode,
       displayCode,
       optionalCode: processedOptionalCode,
-      country: 'Unknown',
+      country: detectedCountry,
       rank: 0,
       message: 'ثبت‌نام با موفقیت انجام شد و در انتظار تأیید ادمین است.'
     });
