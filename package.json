@@ -1,5 +1,5 @@
 {
   "name": "cultural-id",
   "version": "1.0.0",
-   "description": "Global Smart Cultural Identity Card"
+  "dependencies": {}
 }
