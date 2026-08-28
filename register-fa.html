@@ -13,6 +13,7 @@
             justify-content: center;
             align-items: center;
             padding: 2rem 1rem;
+            /* بازگشت پس‌زمینه برج پیزا */
             background-image: url('assets/pisa.jpg');
             background-size: cover;
             background-position: center;
@@ -20,16 +21,20 @@
             color: #1a0a0a;
         }
         body.dark { color: #f0e8e0; }
+        
         .container {
             max-width: 700px;
             width: 100%;
+            /* استایل شیشه‌ای زیبا */
             background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(0px);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border-radius: 48px;
             padding: 2.5rem 2rem;
             border: 1px solid rgba(255, 255, 255, 0.02);
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1);
         }
+        
         h1 {
             font-size: 1.8rem;
             font-weight: 800;
@@ -38,6 +43,7 @@
             margin-bottom: 0.3rem;
         }
         body.dark h1 { color: #f9e79f; }
+        
         .subtitle {
             text-align: center;
             font-size: 0.9rem;
@@ -428,7 +434,16 @@
                     })
                 });
 
-                const result = await response.json();
+                // ⭐ اصلاح مدیریت خطا برای جلوگیری از کرش JSON
+                let result;
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    result = await response.json();
+                } else {
+                    const text = await response.text();
+                    throw new Error(`Server Error: ${text.substring(0, 100)}`);
+                }
+
                 if (!response.ok) throw new Error(result.error || 'خطا در ثبت‌نام');
 
                 document.getElementById('successMessage').classList.add('show');
@@ -439,6 +454,7 @@
                 }, 1500);
 
             } catch (error) {
+                console.error('Registration Error:', error);
                 alert('❌ ' + error.message);
                 submitBtn.disabled = false;
                 submitBtn.textContent = '🎯 دریافت شناسنامه';
