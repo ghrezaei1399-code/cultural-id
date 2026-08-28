@@ -164,6 +164,7 @@
         @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
     <button class="theme-toggle" id="themeToggle">🌙</button>
@@ -172,7 +173,7 @@
         <h1>🪪 پشت شناسنامه فرهنگی</h1>
         <div class="subtitle">Global Smart Cultural Identity Card</div>
 
-        <div class="back-card-sample">
+        <div class="back-card-sample" id="backCardToSave">
             <div class="back-text">
                 این کارت هویت فرهنگی شما بر اساس نظریه «مهندسی فرهنگی نامرئی» صادر شده است.<br>
                 دارنده این کارت متعهد به حفظ ارزش‌های بومی، ترویج صلح پایدار و همکاری جمعی در شبکه هم‌فرهنگان است.<br>
@@ -190,8 +191,9 @@
         </div>
 
         <div class="btn-group">
-            <a href="card-fa.html" class="btn btn-primary">↩️ روی کارت</a>
+            <a href="#" id="frontCardLink" class="btn btn-primary">↩️ روی کارت</a>
             <a href="index.html" class="btn btn-primary">🏠 بازگشت به خانه</a>
+            <button class="btn btn-primary" id="saveBackBtn">💾 ذخیره پشت کارت</button>
         </div>
 
         <div class="note">
@@ -213,7 +215,7 @@
                     toggle.textContent = '☀️';
                     localStorage.setItem('theme', 'dark');
                 } else {
-                    toggle.textContent = '🌙';
+                    toggle.textContent = '';
                     localStorage.setItem('theme', 'light');
                 }
             });
@@ -226,6 +228,12 @@
             if (!code) {
                 document.querySelector('.container').innerHTML = '<h2 style="text-align:center; color:red;">کد کارت یافت نشد!</h2>';
                 return;
+            }
+
+            // تنظیم لینک پویا برای بازگشت به روی کارت
+            const frontLink = document.getElementById('frontCardLink');
+            if (frontLink) {
+                frontLink.href = `card-fa.html?code=${encodeURIComponent(code)}`;
             }
 
             const qrUrl = window.location.origin + '/about-fa.html';
@@ -252,6 +260,22 @@
                     console.error('Error:', err);
                     document.getElementById('cardCodeDisplay').textContent = code.replace(/-/g, ' - ');
                 });
+
+            document.getElementById('saveBackBtn').addEventListener('click', async function() {
+                const cardElement = document.getElementById('backCardToSave');
+                try {
+                    const canvas = await html2canvas(cardElement, { 
+                        backgroundColor: '#0a0a0a',
+                        scale: 2 
+                    });
+                    const link = document.createElement('a');
+                    link.download = `Cultural-ID-Back-${code}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                } catch (err) {
+                    alert('خطا در ذخیره: ' + err.message);
+                }
+            });
         });
     </script>
 </body>
