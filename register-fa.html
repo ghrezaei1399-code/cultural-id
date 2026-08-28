@@ -122,6 +122,51 @@
             border-color: rgba(255, 255, 255, 0.02);
         }
 
+        /* استایل بخش اولویت‌بندی */
+        .priority-section {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 2px dashed rgba(212, 175, 55, 0.3);
+        }
+        .priority-title {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #2874a6;
+            margin-bottom: 1rem;
+        }
+        body.dark .priority-title { color: #85c1e9; }
+        
+        .priority-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+        .priority-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.8rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .priority-item label {
+            display: block;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+            color: #6a5a3a;
+        }
+        body.dark .priority-item label { color: #c8b890; }
+        .priority-item select {
+            width: 100%;
+            padding: 0.4rem;
+            border-radius: 8px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: #2a1a0a;
+            font-weight: bold;
+        }
+        body.dark .priority-item select { color: #f9e79f; }
+
         .btn-group { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
         .btn {
             flex: 1;
@@ -222,12 +267,6 @@
         <div class="subtitle">کارت جهانی هویت هوشمند فرهنگی</div>
 
         <form id="registerForm">
-            <!-- ایمیل اختیاری (حیاتی برای سیستم ارتباطات) -->
-            <div class="form-group">
-                <label>ایمیل ارتباطی (اختیاری - برای دریافت پیام هم‌فرهنگان)</label>
-                <input type="email" id="communicationEmail" placeholder="example@email.com" />
-            </div>
-
             <!-- ۷ ارزش فرهنگی با اشارات نامرئی به نظریه‌ها -->
             <div class="value-item">
                 <label class="value-title">۱. ارزش‌های بومی (مقاومت فرهنگی هوشمند)</label>
@@ -264,10 +303,51 @@
                 <input type="text" id="v7" placeholder="مثلاً: پل‌های ارتباطی میان فرهنگ‌ها، خرد جمعی، هم‌تکامل..." required />
             </div>
 
-            <div class="form-group">
+            <!-- بخش اولویت‌بندی ارزش‌ها -->
+            <div class="priority-section">
+                <div class="priority-title">🎯 اولویت‌بندی ارزش‌های شما (۱ مهم‌ترین، ۷ کم‌اهمیت‌ترین)</div>
+                <div class="priority-grid">
+                    <div class="priority-item">
+                        <label>ارزش ۱</label>
+                        <select id="p1"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select>
+                    </div>
+                    <div class="priority-item">
+                        <label>ارزش ۲</label>
+                        <select id="p2"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select>
+                    </div>
+                    <div class="priority-item">
+                        <label>ارزش ۳</label>
+                        <select id="p3"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select>
+                    </div>
+                    <div class="priority-item">
+                        <label>ارزش ۴</label>
+                        <select id="p4"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select>
+                    </div>
+                    <div class="priority-item">
+                        <label>ارزش ۵</label>
+                        <select id="p5"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select>
+                    </div>
+                    <div class="priority-item">
+                        <label>ارزش ۶</label>
+                        <select id="p6"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select>
+                    </div>
+                    <div class="priority-item">
+                        <label>ارزش ۷</label>
+                        <select id="p7"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 2rem;">
                 <label>کد اختیاری (۵ کاراکتر دلخواه)</label>
                 <input type="text" id="optionalCode" maxlength="5" placeholder="مثلاً: الف-ب-ج-د-ه" />
                 <small style="opacity:0.5; font-size:0.7rem;">اختیاری - می‌توانید خالی بگذارید</small>
+            </div>
+
+            <!-- ایمیل اختیاری در پایان صفحه -->
+            <div class="form-group">
+                <label>ایمیل ارتباطی (اختیاری - برای دریافت پیام هم‌فرهنگان)</label>
+                <input type="email" id="communicationEmail" placeholder="example@email.com" />
             </div>
 
             <div class="btn-group">
@@ -323,6 +403,17 @@
                     document.getElementById('v7').value.trim()
                 ];
 
+                // دریافت اولویت‌ها
+                const priorities = [
+                    parseInt(document.getElementById('p1').value),
+                    parseInt(document.getElementById('p2').value),
+                    parseInt(document.getElementById('p3').value),
+                    parseInt(document.getElementById('p4').value),
+                    parseInt(document.getElementById('p5').value),
+                    parseInt(document.getElementById('p6').value),
+                    parseInt(document.getElementById('p7').value)
+                ];
+
                 const optionalCode = document.getElementById('optionalCode').value.trim();
                 const communicationEmail = document.getElementById('communicationEmail').value.trim();
 
@@ -331,6 +422,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
                         values, 
+                        priorities, // ارسال اولویت‌ها به API
                         optionalCode,
                         communicationEmail // ارسال ایمیل به API
                     })
