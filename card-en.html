@@ -230,7 +230,7 @@
         </div>
 
         <div class="btn-group">
-           <a href="#" id="backCardLink" class="btn btn-primary">↩️ Back of Card</a>
+            <a href="#" id="backCardLink" class="btn btn-primary">↩️ Back of Card</a>
             <a href="index-en.html" class="btn btn-primary">🏠 Back to Home</a>
             <button class="btn btn-primary" id="saveBtn">💾 Save Card</button>
         </div>
@@ -254,7 +254,7 @@
                     toggle.textContent = '☀️';
                     localStorage.setItem('theme', 'dark');
                 } else {
-                    toggle.textContent = '';
+                    toggle.textContent = '🌙';
                     localStorage.setItem('theme', 'light');
                 }
             });
@@ -267,6 +267,11 @@
             if (!code) {
                 document.querySelector('.container').innerHTML = '<h2 style="text-align:center; color:red;">Card Code Not Found!</h2>';
                 return;
+            }
+
+            const backLink = document.getElementById('backCardLink');
+            if (backLink) {
+                backLink.href = `card-back-en.html?code=${encodeURIComponent(code)}`;
             }
 
             const qrUrl = window.location.origin + '/about-en.html';
@@ -293,11 +298,7 @@
                     console.error('Error:', err);
                     document.getElementById('cardCodeDisplay').textContent = code.replace(/-/g, ' - ');
                 });
-const backLink = document.getElementById('backCardLink');
-if (backLink && code) {
-    backLink.href = `card-back-en.html?code=${encodeURIComponent(code)}`;
-}
-            // Save Card as Image
+
             document.getElementById('saveBtn').addEventListener('click', async function() {
                 const cardElement = document.getElementById('cardToSave');
                 try {
