@@ -1,421 +1,205 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Register | Global Smart Cultural ID</title>
+    <title>دعوت به شبکه هم‌فرهنگان | Global Smart Cultural ID</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
-            font-family: 'Segoe UI', 'Vazir', sans-serif;
+            font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: flex; justify-content: center; align-items: center;
             padding: 2rem 1rem;
             background-image: url('assets/pisa.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: #1a0a0a;
+            background-size: cover; background-position: center; background-attachment: fixed;
+            color: #2a1a0a;
         }
-
-        body.dark {
-            color: #f0e8e0;
-        }
-
+        body.dark { color: #f0e8d0; }
+        
         .container {
-            max-width: 700px;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(0px);
-            -webkit-backdrop-filter: blur(0px);
-            border-radius: 48px;
-            padding: 2.5rem 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.02);
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1);
+            max-width: 650px; width: 100%;
+            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(15px);
+            border-radius: 32px; padding: 2.5rem 2rem;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15); text-align: center;
         }
+        body.dark .container { background: rgba(40, 30, 20, 0.9); border-color: rgba(212, 175, 55, 0.5); }
 
-        h1 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #2a1a0a;
-            text-align: center;
-            margin-bottom: 0.3rem;
-        }
+        .logo-area img { width: 80px; height: 80px; object-fit: contain; margin-bottom: 1rem; filter: drop-shadow(0 4px 10px rgba(212,175,55,0.4)); }
+        h1 { font-size: 1.6rem; font-weight: 900; color: #8a6d1f; margin-bottom: 0.5rem; line-height: 1.4; }
+        body.dark h1 { color: #f9e79f; }
+        .subtitle { font-size: 0.9rem; color: #6a5a3a; margin-bottom: 2rem; opacity: 0.8; }
+        body.dark .subtitle { color: #c8b890; }
 
-        body.dark h1 {
-            color: #f9e79f;
+        .form-group { margin-bottom: 1.5rem; text-align: right; }
+        .form-group label { display: block; font-weight: 800; font-size: 0.9rem; margin-bottom: 0.5rem; color: #2a1a0a; }
+        body.dark .form-group label { color: #e8dcc0; }
+        
+        input, textarea, select {
+            width: 100%; padding: 0.9rem 1rem; border-radius: 16px;
+            border: 2px solid rgba(212, 175, 55, 0.2); background: rgba(255,255,255,0.6);
+            font-family: inherit; font-size: 0.95rem; transition: all 0.3s; outline: none;
         }
+        body.dark input, body.dark textarea { background: rgba(0,0,0,0.3); border-color: rgba(212,175,55,0.3); color: #f0e8d0; }
+        input:focus, textarea:focus { border-color: #d4af37; background: #fff; }
+        body.dark input:focus { background: rgba(0,0,0,0.5); }
 
-        .subtitle {
-            text-align: center;
-            font-size: 0.9rem;
-            color: #4a2a1a;
-            opacity: 0.8;
-            margin-bottom: 2rem;
-            border-bottom: 1px solid rgba(30, 10, 0, 0.05);
-            padding-bottom: 1rem;
+        .link-box {
+            background: rgba(212, 175, 55, 0.1); border: 1px dashed #d4af37;
+            border-radius: 12px; padding: 1rem; margin-top: 1rem; word-break: break-all;
+            font-family: monospace; font-size: 0.85rem; color: #8a6d1f; direction: ltr;
         }
-
-        body.dark .subtitle {
-            color: #d0c0b0;
-            border-bottom-color: rgba(255, 255, 255, 0.02);
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: 700;
-            font-size: 0.9rem;
-            color: #2a1a0a;
-            margin-bottom: 0.3rem;
-        }
-
-        body.dark .form-group label {
-            color: #e8d8c8;
-        }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            border-radius: 16px;
-            border: 1px solid rgba(30, 10, 0, 0.02);
-            background: rgba(255, 255, 255, 0.02);
-            font-family: inherit;
-            font-size: 0.95rem;
-            color: #1a0a0a;
-            transition: all 0.3s ease;
-            outline: none;
-        }
-
-        body.dark .form-group input,
-        body.dark .form-group textarea,
-        body.dark .form-group select {
-            background: rgba(255, 255, 255, 0.02);
-            color: #e8d8c8;
-            border-color: rgba(255, 255, 255, 0.02);
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            border-color: rgba(60, 30, 10, 0.05);
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        body.dark .form-group input:focus,
-        body.dark .form-group textarea:focus,
-        body.dark .form-group select:focus {
-            border-color: rgba(255, 255, 255, 0.05);
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        .form-group textarea {
-            min-height: 60px;
-            resize: vertical;
-        }
-
-        .form-group input::placeholder,
-        .form-group textarea::placeholder {
-            color: #4a3a2a;
-            opacity: 0.5;
-        }
-
-        body.dark .form-group input::placeholder,
-        body.dark .form-group textarea::placeholder {
-            color: #908070;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-            flex-wrap: wrap;
-        }
+        body.dark .link-box { color: #f9e79f; background: rgba(212,175,55,0.05); }
 
         .btn {
-            flex: 1;
-            padding: 0.8rem 1.5rem;
-            border-radius: 60px;
-            font-weight: 700;
-            font-size: 1rem;
-            text-decoration: none;
-            text-align: center;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            min-width: 140px;
+            width: 100%; padding: 1rem; border-radius: 40px; border: none;
+            font-weight: 900; font-size: 1rem; cursor: pointer; transition: 0.3s; margin-top: 1rem;
         }
+        .btn-gold { background: linear-gradient(135deg, #d4af37, #f9e79f); color: #2a1a0a; box-shadow: 0 6px 20px rgba(212,175,55,0.4); }
+        .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(212,175,55,0.6); }
+        .btn-secondary { background: transparent; border: 2px solid rgba(212,175,55,0.4); color: #8a6d1f; margin-top: 0.5rem; }
+        body.dark .btn-secondary { color: #f9e79f; border-color: rgba(212,175,55,0.3); }
 
-        .btn-primary {
-            background: rgba(60, 30, 10, 0.02);
-            color: #2a1a0a;
-            border: 1px solid rgba(60, 30, 10, 0.02);
-        }
-
-        body.dark .btn-primary {
-            background: rgba(255, 255, 255, 0.02);
-            color: #f9e79f;
-            border-color: rgba(255, 255, 255, 0.02);
-        }
-
-        .btn-primary:hover {
-            background: rgba(60, 30, 10, 0.04);
-            transform: scale(1.02);
-        }
-
-        body.dark .btn-primary:hover {
-            background: rgba(255, 255, 255, 0.04);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .btn-secondary {
-            background: rgba(60, 30, 10, 0.01);
-            color: #3a2a1a;
-            border: 1px solid rgba(60, 30, 10, 0.01);
-        }
-
-        body.dark .btn-secondary {
-            background: rgba(255, 255, 255, 0.01);
-            color: #a09080;
-            border-color: rgba(255, 255, 255, 0.01);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(60, 30, 10, 0.03);
-            transform: scale(1.02);
-        }
-
-        body.dark .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        .note {
-            text-align: center;
-            font-size: 0.75rem;
-            opacity: 0.5;
-            margin-top: 1.5rem;
-            color: #1a0a0a;
-            border-top: 1px solid rgba(30, 10, 0, 0.02);
-            padding-top: 1rem;
-        }
-
-        body.dark .note {
-            color: #b0a090;
-            border-top-color: rgba(255, 255, 255, 0.02);
-        }
-
-        .success-message {
-            display: none;
-            background: rgba(50, 200, 50, 0.02);
-            border: 1px solid rgba(50, 200, 50, 0.02);
-            border-radius: 16px;
-            padding: 1rem;
-            text-align: center;
-            margin-top: 1.5rem;
-            color: #0a5a0a;
-        }
-
-        body.dark .success-message {
-            color: #80b080;
-            background: rgba(50, 200, 50, 0.01);
-            border-color: rgba(50, 200, 50, 0.01);
-        }
-
-        .success-message.show {
-            display: block;
-        }
-
-        .theme-toggle {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(30, 10, 0, 0.02);
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0.3rem 0.8rem;
-            border-radius: 40px;
-            transition: 0.3s;
-            color: #1a0a0a;
-        }
-
-        body.dark .theme-toggle {
-            color: #f9e79f;
-            background: rgba(0, 0, 0, 0.05);
-            border-color: rgba(255, 255, 255, 0.02);
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .value-item {
-            background: rgba(255, 255, 255, 0.01);
-            border-radius: 12px;
-            padding: 0.8rem;
-            margin-bottom: 0.8rem;
-            border: 1px solid rgba(30, 10, 0, 0.02);
-        }
-
-        body.dark .value-item {
-            border-color: rgba(255, 255, 255, 0.02);
-        }
-
-        .value-item .value-title {
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: #2a1a0a;
-            margin-bottom: 0.3rem;
-            display: block;
-        }
-
-        body.dark .value-item .value-title {
-            color: #e8d8c8;
-        }
-
-        @font-face {
-            font-family: 'Vazir';
-            src: local('Vazir'), local('IRANSans');
-        }
+        .success-msg { display: none; background: rgba(39, 174, 96, 0.1); border: 1px solid #27ae60; color: #1e7a1e; padding: 1rem; border-radius: 16px; margin-top: 1.5rem; font-weight: 700; }
+        body.dark .success-msg { color: #82e0aa; background: rgba(39,174,96,0.15); }
+        
+        .note { font-size: 0.75rem; opacity: 0.6; margin-top: 1.5rem; line-height: 1.6; }
     </style>
 </head>
 <body>
-    <button class="theme-toggle" id="themeToggle">🌙</button>
-
     <div class="container">
-        <h1>📝 Register & Get ID</h1>
+        <div class="logo-area">
+            <img src="assets/logo-fa.png" alt="لوگو" onerror="this.style.display='none'">
+        </div>
+        <h1>کارت جهانی هویت هوشمند فرهنگی</h1>
         <div class="subtitle">Global Smart Cultural Identity Card</div>
 
-        <form id="registerForm">
-            <div class="value-item">
-                <label class="value-title">1. Indigenous Values</label>
-                <input type="text" id="v1" placeholder="e.g. Peacefulness, Hospitality" required />
+        <form id="inviteForm">
+            <!-- بخش شناسایی دعوت کننده -->
+            <div class="form-group">
+                <label>🔑 کد اختصاصی شما (برای ردیابی دعوت)</label>
+                <input type="text" id="inviterCode" placeholder="مثال: CIM-1234-5678-A" required />
+                <small style="font-size:0.75rem; opacity:0.7;">اگر لینک دعوت دارید، این فیلد خودکار پر می‌شود.</small>
             </div>
 
-            <div class="value-item">
-                <label class="value-title">2. Individual Knowledge</label>
-                <input type="text" id="v2" placeholder="e.g. Traditional skills, Indigenous knowledge" required />
-            </div>
-
-            <div class="value-item">
-                <label class="value-title">3. Collective Collaboration</label>
-                <input type="text" id="v3" placeholder="e.g. Teamwork, Social participation" required />
-            </div>
-
-            <div class="value-item">
-                <label class="value-title">4. Cultural Diversity</label>
-                <input type="text" id="v4" placeholder="e.g. Respect for different cultures" required />
-            </div>
-
-            <div class="value-item">
-                <label class="value-title">5. Global Peace</label>
-                <input type="text" id="v5" placeholder="e.g. Dialogue, Conflict resolution" required />
-            </div>
-
-            <div class="value-item">
-                <label class="value-title">6. Eliminating Violence</label>
-                <input type="text" id="v6" placeholder="e.g. Reducing prejudice, Promoting tolerance" required />
-            </div>
-
-            <div class="value-item">
-                <label class="value-title">7. Cultural Unity</label>
-                <input type="text" id="v7" placeholder="e.g. Bridges between cultures" required />
+            <!-- سوالات انگیزشی -->
+            <div class="form-group">
+                <label>💡 علت اصلی شما برای دعوت دیگران چیست؟</label>
+                <select id="reason" required>
+                    <option value="">انتخاب کنید...</option>
+                    <option value="peace">ترویج صلح و اتحاد فرهنگی</option>
+                    <option value="heritage">حفظ میراث و تنوع فرهنگی</option>
+                    <option value="network">ایجاد شبکه ارتباطی با هم‌فکران</option>
+                    <option value="education">آموزش و آگاهی‌رسانی</option>
+                    <option value="other">سایر دلایل شخصی</option>
+                </select>
             </div>
 
             <div class="form-group">
-                <label>Optional Code (5 custom characters)</label>
-                <input type="text" id="optionalCode" maxlength="5" placeholder="e.g. A-B-C-D-E" />
-                <small style="opacity:0.5; font-size:0.7rem;">Optional - you can leave it empty</small>
+                <label>️ توضیح کوتاه (اختیاری)</label>
+                <textarea id="message" rows="3" placeholder="پیامی کوتاه برای دوستان خود بنویسید..."></textarea>
             </div>
 
-            <div class="btn-group">
-                <button type="submit" class="btn btn-primary" id="submitBtn">🎯 Get Your ID</button>
-                <a href="index.html" class="btn btn-secondary">↩ Back</a>
+            <!-- بخش ایمیل دوستان -->
+            <div class="form-group">
+                <label>📧 لیست ایمیل دوستان (هر ایمیل در یک خط)</label>
+                <textarea id="friendsEmails" rows="4" placeholder="friend1@example.com&#10;friend2@example.com"></textarea>
+                <small style="font-size:0.75rem; opacity:0.7;">در صورت وجود، دعوتنامه حاوی کد شما برای آن‌ها ارسال خواهد شد.</small>
             </div>
+
+            <!-- لینک اشتراک گذاری -->
+            <div class="form-group">
+                <label> لینک اختصاصی دعوت شما</label>
+                <div class="link-box" id="shareLink">https://cultural-id.vercel.app/register-fa.html?ref=YOUR_CODE</div>
+                <button type="button" class="btn btn-secondary" onclick="copyLink()"> کپی لینک</button>
+            </div>
+
+            <button type="submit" class="btn btn-gold">🚀 ارسال دعوتنامه‌ها</button>
         </form>
 
-        <div class="success-message" id="successMessage">
-            ✅ Your information has been saved. Redirecting to your card...
+        <div class="success-msg" id="successMsg">
+            ✅ دعوتنامه‌ها با موفقیت پردازش شدند!<br>
+            لینک اختصاصی شما آماده اشتراک‌گذاری است.
         </div>
 
         <div class="note">
-            No personal info • Completely anonymous • 3 minutes
+            بدون اطلاعات شخصی • کاملاً ناشناس • امنیت داده‌ها تضمین شده<br>
+            دوستان شما تنها در صورت تمایل و از طریق سایت اصلی به شبکه می‌پیوندند.
         </div>
     </div>
 
-    <script>
-        (function() {
-            const toggle = document.getElementById('themeToggle');
-            const body = document.body;
-            if (localStorage.getItem('theme') === 'dark') {
-                body.classList.add('dark');
-                toggle.textContent = '☀️';
-            }
-            toggle.addEventListener('click', function() {
-                body.classList.toggle('dark');
-                if (body.classList.contains('dark')) {
-                    toggle.textContent = '☀️';
-                    localStorage.setItem('theme', 'dark');
-                } else {
-                    toggle.textContent = '🌙';
-                    localStorage.setItem('theme', 'light');
-                }
-            });
-        })();
+<script>
+    // دریافت کد از URL اگر وجود داشته باشد
+    const urlParams = new URLSearchParams(window.location.search);
+    const refCode = urlParams.get('code') || urlParams.get('ref');
+    if (refCode) {
+        document.getElementById('inviterCode').value = refCode;
+        updateShareLink(refCode);
+    }
 
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+    // بروزرسانی لینک اشتراک گذاری
+    function updateShareLink(code) {
+        const link = `https://cultural-id.vercel.app/register-fa.html?ref=${encodeURIComponent(code)}`;
+        document.getElementById('shareLink').textContent = link;
+    }
 
-            const values = [
-                document.getElementById('v1').value,
-                document.getElementById('v2').value,
-                document.getElementById('v3').value,
-                document.getElementById('v4').value,
-                document.getElementById('v5').value,
-                document.getElementById('v6').value,
-                document.getElementById('v7').value
-            ];
+    // گوش دادن به تغییرات فیلد کد
+    document.getElementById('inviterCode').addEventListener('input', function(e) {
+        updateShareLink(e.target.value.trim());
+    });
 
-            const optionalCode = document.getElementById('optionalCode').value || '';
-
-            const randomPart1 = Math.floor(1000 + Math.random() * 9000);
-            const randomPart2 = Math.floor(1000 + Math.random() * 9000);
-            const randomChar = String.fromCharCode(65 + Math.floor(Math.random() * 26));
-            const cardCode = `CIM-${randomPart1}-${randomPart2}-${randomChar}`;
-
-            const userData = {
-                cardCode: cardCode,
-                optionalCode: optionalCode,
-                values: values,
-                registrationDate: new Date().toISOString(),
-                status: 'active',
-                referrals: 0,
-                achievements: []
-            };
-
-            localStorage.setItem('culturalCardData', JSON.stringify(userData));
-            localStorage.setItem('culturalCardCode', cardCode);
-
-            document.getElementById('successMessage').classList.add('show');
-            document.getElementById('submitBtn').disabled = true;
-            document.getElementById('submitBtn').textContent = '✅ Registered';
-
-            setTimeout(function() {
-                window.location.href = `card-en.html?code=${cardCode}`;
-            }, 1500);
+    // کپی لینک
+    function copyLink() {
+        const linkText = document.getElementById('shareLink').textContent;
+        navigator.clipboard.writeText(linkText).then(() => {
+            alert('لینک کپی شد!');
+        }).catch(() => {
+            // Fallback for older browsers
+            const tempInput = document.createElement("input");
+            tempInput.value = linkText;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            alert('لینک کپی شد!');
         });
-    </script>
+    }
+
+    // مدیریت فرم
+    document.getElementById('inviteForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn = e.target.querySelector('.btn-gold');
+        const originalText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = '⏳ در حال پردازش...';
+
+        const data = {
+            inviterCode: document.getElementById('inviterCode').value.trim(),
+            reason: document.getElementById('reason').value,
+            message: document.getElementById('message').value.trim(),
+            emails: document.getElementById('friendsEmails').value.split('\n').filter(e => e.trim() !== '')
+        };
+
+        try {
+            // شبیه‌سازی ارسال به سرور (بعداً با API واقعی جایگزین شود)
+            await new Promise(r => setTimeout(r, 1500));
+            
+            // ذخیره موقت در لاگ (برای دیباگ)
+            console.log('Invite Data:', data);
+            
+            document.getElementById('successMsg').style.display = 'block';
+            btn.textContent = '✅ انجام شد';
+            
+            // اسکرول به پیام موفقیت
+            document.getElementById('successMsg').scrollIntoView({ behavior: 'smooth' });
+            
+        } catch (err) {
+            alert('خطا در ارسال: ' + err.message);
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
+    });
+</script>
 </body>
 </html>
