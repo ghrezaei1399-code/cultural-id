@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Request Connection | Global Smart Cultural ID</title>
+    <title>Request | Global Smart Cultural ID</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -36,6 +36,7 @@
             color: #2a1a0a;
             text-align: center;
             margin-bottom: 0.3rem;
+            transition: all 0.3s ease;
         }
         body.dark h1 { color: #f9e79f; }
         .subtitle {
@@ -46,6 +47,7 @@
             margin-bottom: 2rem;
             border-bottom: 1px solid rgba(30, 10, 0, 0.05);
             padding-bottom: 1rem;
+            transition: all 0.3s ease;
         }
         body.dark .subtitle { color: #d0c0b0; border-bottom-color: rgba(255, 255, 255, 0.02); }
         .form-group { margin-bottom: 1.5rem; }
@@ -122,6 +124,18 @@
         .btn-primary:hover { background: rgba(60, 30, 10, 0.04); transform: scale(1.02); }
         body.dark .btn-primary:hover { background: rgba(255, 255, 255, 0.04); }
         .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-danger {
+            background: rgba(200, 50, 50, 0.02);
+            color: #8a1a1a;
+            border: 1px solid rgba(200, 50, 50, 0.02);
+        }
+        body.dark .btn-danger {
+            background: rgba(200, 50, 50, 0.02);
+            color: #f08080;
+            border-color: rgba(200, 50, 50, 0.02);
+        }
+        .btn-danger:hover { background: rgba(200, 50, 50, 0.04); transform: scale(1.02); }
+        body.dark .btn-danger:hover { background: rgba(200, 50, 50, 0.04); }
         .btn-secondary {
             background: rgba(60, 30, 10, 0.01);
             color: #3a2a1a;
@@ -196,27 +210,26 @@
     </style>
 </head>
 <body>
-    <button class="theme-toggle" id="themeToggle">🌙</button>
+    <button class="theme-toggle" id="themeToggle"></button>
 
     <div class="container">
-        <h1>🤝 Request Connection</h1>
-        <div class="subtitle">Connect with others based on shared cultural values</div>
+        <h1 id="pageTitle"> Request Connection</h1>
+        <div class="subtitle" id="pageSubtitle">Connect with others based on shared cultural values</div>
 
         <div id="messageBox" class="message-box"></div>
 
         <form id="requestForm">
+            <!-- Hidden field for request type (read from URL) -->
+            <input type="hidden" id="requestType" value="connection" />
+
             <div class="form-group">
-                <label>Your Card Code</label>
+                <label id="codeLabel">Your Card Code</label>
                 <input type="text" id="cardCode" placeholder="e.g. CIM-1234-5678-A" required />
             </div>
 
-            <div class="form-group">
-                <label>Request Type</label>
-                <select id="requestType" required>
-                    <option value="">Select...</option>
-                    <option value="connection">Connect with like-minded people</option>
-                    <option value="delete">Cancel membership</option>
-                </select>
+            <div class="form-group" id="targetGroup">
+                <label id="targetLabel">Target Card Code (Cultural Peer)</label>
+                <input type="text" id="targetCardCode" placeholder="e.g. CIM-9876-5432-B" />
             </div>
 
             <div class="form-group">
@@ -256,6 +269,50 @@
             });
         })();
 
+        // ===== Dynamic Content Based on URL Parameter =====
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const type = params.get('type'); // 'connection' or 'delete'
+            
+            const titleEl = document.getElementById('pageTitle');
+            const subtitleEl = document.getElementById('pageSubtitle');
+            const requestTypeInput = document.getElementById('requestType');
+            const submitBtn = document.getElementById('submitBtn');
+            const targetGroup = document.getElementById('targetGroup');
+            const codeLabel = document.getElementById('codeLabel');
+            const targetLabel = document.getElementById('targetLabel');
+            const descInput = document.getElementById('description');
+
+            if (type === 'delete') {
+                // Withdrawal / Cancellation Mode
+                titleEl.textContent = '⚠️ Membership Withdrawal Request';
+                subtitleEl.textContent = 'Remove your cultural data from the network';
+                requestTypeInput.value = 'delete';
+                
+                codeLabel.textContent = 'Your Cultural Identity Card Code';
+                targetGroup.style.display = 'none'; // Hide target card field
+                
+                descInput.placeholder = 'Please state your reason for withdrawal (optional)...';
+                
+                submitBtn.textContent = '🚪 Submit Withdrawal';
+                submitBtn.className = 'btn btn-danger';
+            } else {
+                // Default: Connection Request Mode
+                titleEl.textContent = ' Request Connection';
+                subtitleEl.textContent = 'Connect with others based on shared cultural values';
+                requestTypeInput.value = 'connection';
+                
+                codeLabel.textContent = 'Your Card Code';
+                targetGroup.style.display = 'block';
+                targetLabel.textContent = 'Target Card Code (Cultural Peer)';
+                
+                descInput.placeholder = 'Explain what kind of connection you are looking for...';
+                
+                submitBtn.textContent = '📨 Submit Request';
+                submitBtn.className = 'btn btn-primary';
+            }
+        });
+
         // ===== Show Message =====
         function showMessage(text, type) {
             const box = document.getElementById('messageBox');
@@ -271,8 +328,11 @@
         }
 
         // ===== Form Submission =====
+        let isSubmitting = false;
         document.getElementById('requestForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            if (isSubmitting) return;
+            isSubmitting = true;
             hideMessage();
 
             const submitBtn = document.getElementById('submitBtn');
@@ -283,22 +343,20 @@
                 const cardCode = document.getElementById('cardCode').value.trim();
                 const requestType = document.getElementById('requestType').value;
                 const description = document.getElementById('description').value.trim();
+                const targetCardCode = document.getElementById('targetCardCode')?.value.trim() || '';
 
                 if (!cardCode) {
                     throw new Error('Please enter your card code.');
                 }
 
-                if (!requestType) {
-                    throw new Error('Please select a request type.');
-                }
-
-                // ⭐ Send to secure API instead of direct GitHub access
+                // ⭐ Send to secure API
                 const response = await fetch('/api/submit-request', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         cardCode: cardCode,
                         type: requestType,
+                        targetCardCode: targetCardCode,
                         description: description
                     })
                 });
@@ -309,7 +367,11 @@
                     throw new Error(result.error || 'Error submitting request');
                 }
 
-                showMessage('✅ Your request has been successfully submitted to the admin.', 'success');
+                const successMsg = requestType === 'delete' 
+                    ? '✅ Your withdrawal request has been successfully submitted.' 
+                    : '✅ Your connection request has been successfully sent.';
+                    
+                showMessage(successMsg, 'success');
                 submitBtn.textContent = '✅ Sent';
 
                 setTimeout(() => {
@@ -319,8 +381,9 @@
             } catch (error) {
                 console.error('Error:', error);
                 showMessage(`❌ Error: ${error.message}`, 'error');
+                isSubmitting = false;
                 submitBtn.disabled = false;
-                submitBtn.textContent = '📨 Submit Request';
+                submitBtn.textContent = requestType === 'delete' ? '🚪 Submit Withdrawal' : '📨 Submit Request';
             }
         });
     </script>
