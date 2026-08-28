@@ -69,13 +69,21 @@
         .rc-logo { width: 40px; height: 40px; object-fit: contain; }
         .rc-title { font-size: 0.9rem; font-weight: 800; color: #d4af37; line-height: 1.3; text-align: right; }
         
-        .rc-code-box { 
-            width: 100%; 
-            background: rgba(212, 175, 55, 0.1); 
-            border: 1px solid #d4af37; 
-            border-radius: 8px; 
-            padding: 0.8rem; 
-            text-align: center; 
+        /* ===== بخش کد و QR Code ===== */
+        .rc-code-section {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid #d4af37;
+            border-radius: 12px;
+            padding: 0.8rem;
+            gap: 1rem;
+        }
+        .rc-code-box {
+            flex: 1;
+            text-align: center;
         }
         .rc-code { 
             font-family: 'Courier New', monospace; 
@@ -84,6 +92,23 @@
             letter-spacing: 1px; 
             font-weight: bold; 
             direction: ltr; 
+        }
+        .qr-container {
+            background: white;
+            padding: 4px;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #qrcode { width: 60px; height: 60px; }
+        .qr-label {
+            font-size: 0.55rem;
+            color: #0a0a0a;
+            margin-top: 2px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 1.1;
         }
         
         .rc-values { 
@@ -104,33 +129,11 @@
             font-weight: 600; 
         }
 
-        /* ===== بخش QR Code ===== */
         .rc-footer {
             width: 100%;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            justify-content: center;
             margin-top: 0.5rem;
-            padding-top: 0.5rem;
-            border-top: 1px solid rgba(212, 175, 55, 0.3);
-        }
-        .qr-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.3rem;
-        }
-        #qrcode {
-            background: white;
-            padding: 4px;
-            border-radius: 4px;
-        }
-        .qr-label {
-            font-size: 0.6rem;
-            color: #d4af37;
-            opacity: 0.8;
-            text-align: center;
-            max-width: 100px;
         }
         .hologram-placeholder {
             width: 50px;
@@ -233,8 +236,15 @@
                 <div class="rc-title">کارت جهانی هویت<br>هوشمند فرهنگی</div>
             </div>
             
-            <div class="rc-code-box">
-                <div class="rc-code" id="cardCodeDisplay">CIM - .... - .... - ....</div>
+            <!-- بخش کد و QR Code -->
+            <div class="rc-code-section">
+                <div class="rc-code-box">
+                    <div class="rc-code" id="cardCodeDisplay">CIM - .... - .... - ....</div>
+                </div>
+                <div class="qr-container">
+                    <div id="qrcode"></div>
+                    <div class="qr-label">مشاهده<br>منشور</div>
+                </div>
             </div>
             
             <div class="rc-values" id="valuesContainer">
@@ -244,11 +254,6 @@
             <div class="rc-footer">
                 <div class="hologram-placeholder">
                     <img src="assets/hologram.png" alt="Hologram" onerror="this.style.display='none'">
-                </div>
-                
-                <div class="qr-section">
-                    <div id="qrcode"></div>
-                    <div class="qr-label">مشاهده منشور و مستندات نظری</div>
                 </div>
             </div>
         </div>
@@ -294,11 +299,7 @@
                 return;
             }
 
-            // نمایش کد روی کارت
-            document.getElementById('cardCodeDisplay').textContent = code.replace(/-/g, ' - ');
-
             // تولید QR Code برای لینک به صفحه "درباره پروژه"
-            // این QR Code همیشه ثابت است و به about-fa.html لینک می‌شود تا کاربر با اسکن آن با پشتوانه نظری آشنا شود
             const qrUrl = window.location.origin + '/about-fa.html';
             new QRCode(document.getElementById("qrcode"), {
                 text: qrUrl,
@@ -309,24 +310,41 @@
                 correctLevel : QRCode.CorrectLevel.H
             });
 
-            // دریافت اطلاعات کاربر از API برای نمایش ارزش‌ها
+            // دریافت اطلاعات کاربر از API برای نمایش ارزش‌ها و کد کامل
             fetch(`/api/get-user?code=${encodeURIComponent(code)}`)
                 .then(res => res.json())
                 .then(data => {
-                    if (data.user && data.user.values) {
-                        const container = document.getElementById('valuesContainer');
-                        container.innerHTML = '';
-                        data.user.values.forEach(val => {
-                            if (val) {
-                                const span = document.createElement('span');
-                                span.className = 'rc-tag';
-                                span.textContent = val;
-                                container.appendChild(span);
-                            }
-                        });
+                    if (data.user) {
+                        // نمایش کد کامل (شامل کد اختیاری اگر وجود داشته باشد)
+                        const displayElement = document.getElementById('cardCodeDisplay');
+                        if (data.user.displayCode) {
+                            displayElement.textContent = data.user.displayCode;
+                        } else {
+                            displayElement.textContent = code.replace(/-/g, ' - ');
+                        }
+
+                        // نمایش ارزش‌های فرهنگی
+                        if (data.user.values) {
+                            const container = document.getElementById('valuesContainer');
+                            container.innerHTML = '';
+                            data.user.values.forEach(val => {
+                                if (val) {
+                                    const span = document.createElement('span');
+                                    span.className = 'rc-tag';
+                                    span.textContent = val;
+                                    container.appendChild(span);
+                                }
+                            });
+                        }
+                    } else {
+                        // اگر کاربر پیدا نشد، حداقل کد URL را نشان بده
+                        document.getElementById('cardCodeDisplay').textContent = code.replace(/-/g, ' - ');
                     }
                 })
-                .catch(err => console.error('Error loading user data:', err));
+                .catch(err => {
+                    console.error('Error loading user data:', err);
+                    document.getElementById('cardCodeDisplay').textContent = code.replace(/-/g, ' - ');
+                });
         });
     </script>
 </body>
