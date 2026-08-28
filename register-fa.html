@@ -48,6 +48,7 @@
             padding-bottom: 1rem;
         }
         body.dark .subtitle { color: #d0c0b0; border-bottom-color: rgba(255, 255, 255, 0.02); }
+        
         .form-group { margin-bottom: 1.5rem; }
         .form-group label {
             display: block;
@@ -57,9 +58,9 @@
             margin-bottom: 0.3rem;
         }
         body.dark .form-group label { color: #e8d8c8; }
+        
         .form-group input,
-        .form-group textarea,
-        .form-group select {
+        .form-group textarea {
             width: 100%;
             padding: 0.8rem 1rem;
             border-radius: 16px;
@@ -72,29 +73,55 @@
             outline: none;
         }
         body.dark .form-group input,
-        body.dark .form-group textarea,
-        body.dark .form-group select {
+        body.dark .form-group textarea {
             background: rgba(255, 255, 255, 0.02);
             color: #e8d8c8;
             border-color: rgba(255, 255, 255, 0.02);
         }
         .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
+        .form-group textarea:focus {
             border-color: rgba(60, 30, 10, 0.05);
             background: rgba(255, 255, 255, 0.03);
         }
         body.dark .form-group input:focus,
-        body.dark .form-group textarea:focus,
-        body.dark .form-group select:focus {
+        body.dark .form-group textarea:focus {
             border-color: rgba(255, 255, 255, 0.05);
             background: rgba(255, 255, 255, 0.03);
         }
-        .form-group textarea { min-height: 60px; resize: vertical; }
-        .form-group input::placeholder,
-        .form-group textarea::placeholder { color: #4a3a2a; opacity: 0.5; }
-        body.dark .form-group input::placeholder,
-        body.dark .form-group textarea::placeholder { color: #908070; }
+        
+        /* استایل خاص برای باکس‌های ارزش‌های فرهنگی */
+        .value-item {
+            background: rgba(255, 255, 255, 0.01);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(30, 10, 0, 0.02);
+        }
+        body.dark .value-item { border-color: rgba(255, 255, 255, 0.02); }
+        
+        .value-item .value-title {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #2a1a0a;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        body.dark .value-item .value-title { color: #e8d8c8; }
+        
+        .value-item input {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: 1px solid rgba(30, 10, 0, 0.02);
+            background: rgba(255, 255, 255, 0.02);
+            font-size: 0.9rem;
+        }
+        body.dark .value-item input {
+            background: rgba(255, 255, 255, 0.02);
+            color: #e8d8c8;
+            border-color: rgba(255, 255, 255, 0.02);
+        }
+
         .btn-group { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
         .btn {
             flex: 1;
@@ -122,6 +149,7 @@
         .btn-primary:hover { background: rgba(60, 30, 10, 0.04); transform: scale(1.02); }
         body.dark .btn-primary:hover { background: rgba(255, 255, 255, 0.04); }
         .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+        
         .btn-secondary {
             background: rgba(60, 30, 10, 0.01);
             color: #3a2a1a;
@@ -134,6 +162,7 @@
         }
         .btn-secondary:hover { background: rgba(60, 30, 10, 0.03); transform: scale(1.02); }
         body.dark .btn-secondary:hover { background: rgba(255, 255, 255, 0.03); }
+        
         .note {
             text-align: center;
             font-size: 0.75rem;
@@ -144,6 +173,7 @@
             padding-top: 1rem;
         }
         body.dark .note { color: #b0a090; border-top-color: rgba(255, 255, 255, 0.02); }
+        
         .success-message {
             display: none;
             background: rgba(50, 200, 50, 0.02);
@@ -160,6 +190,7 @@
             border-color: rgba(50, 200, 50, 0.01);
         }
         .success-message.show { display: block; }
+        
         .theme-toggle {
             position: fixed;
             top: 1rem;
@@ -179,22 +210,7 @@
             border-color: rgba(255, 255, 255, 0.02);
         }
         .theme-toggle:hover { transform: scale(1.1); }
-        .value-item {
-            background: rgba(255, 255, 255, 0.01);
-            border-radius: 12px;
-            padding: 0.8rem;
-            margin-bottom: 0.8rem;
-            border: 1px solid rgba(30, 10, 0, 0.02);
-        }
-        body.dark .value-item { border-color: rgba(255, 255, 255, 0.02); }
-        .value-item .value-title {
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: #2a1a0a;
-            margin-bottom: 0.3rem;
-            display: block;
-        }
-        body.dark .value-item .value-title { color: #e8d8c8; }
+        
         @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
     </style>
 </head>
@@ -206,6 +222,12 @@
         <div class="subtitle">کارت جهانی هویت هوشمند فرهنگی</div>
 
         <form id="registerForm">
+            <!-- ایمیل اختیاری (حیاتی برای سیستم ارتباطات) -->
+            <div class="form-group">
+                <label>ایمیل ارتباطی (اختیاری - برای دریافت پیام هم‌فرهنگان)</label>
+                <input type="email" id="communicationEmail" placeholder="example@email.com" />
+            </div>
+
             <!-- ۷ ارزش فرهنگی با اشارات نامرئی به نظریه‌ها -->
             <div class="value-item">
                 <label class="value-title">۱. ارزش‌های بومی (مقاومت فرهنگی هوشمند)</label>
@@ -302,11 +324,16 @@
                 ];
 
                 const optionalCode = document.getElementById('optionalCode').value.trim();
+                const communicationEmail = document.getElementById('communicationEmail').value.trim();
 
                 const response = await fetch('/api/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ values, optionalCode })
+                    body: JSON.stringify({ 
+                        values, 
+                        optionalCode,
+                        communicationEmail // ارسال ایمیل به API
+                    })
                 });
 
                 const result = await response.json();
