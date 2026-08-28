@@ -25,8 +25,9 @@
   "displayCode": "CIM - 9638 - 6588 - 04040",
   "communicationEmail": "ghrezaei1399@gmail.com",
   "registrationDate": "2026-08-28T12:02:21.237Z",
-  "status": "pending",
+  "status": "approved",
   "allowConnection": true,
   "allowAchievements": false,
-  "culturalInfo": ""
+  "culturalInfo": "",
+  "statusUpdatedAt": "2026-08-28T12:03:54.403Z"
 }
