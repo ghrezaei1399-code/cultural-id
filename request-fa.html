@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>درخواست ارتباط | کارت جهانی هویت هوشمند فرهنگی</title>
+    <title>درخواست | کارت جهانی هویت هوشمند فرهنگی</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -36,6 +36,7 @@
             color: #2a1a0a;
             text-align: center;
             margin-bottom: 0.3rem;
+            transition: all 0.3s ease;
         }
         body.dark h1 { color: #f9e79f; }
         .subtitle {
@@ -46,6 +47,7 @@
             margin-bottom: 2rem;
             border-bottom: 1px solid rgba(30, 10, 0, 0.05);
             padding-bottom: 1rem;
+            transition: all 0.3s ease;
         }
         body.dark .subtitle { color: #d0c0b0; border-bottom-color: rgba(255, 255, 255, 0.02); }
         .form-group { margin-bottom: 1.5rem; }
@@ -122,6 +124,18 @@
         .btn-primary:hover { background: rgba(60, 30, 10, 0.04); transform: scale(1.02); }
         body.dark .btn-primary:hover { background: rgba(255, 255, 255, 0.04); }
         .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-danger {
+            background: rgba(200, 50, 50, 0.02);
+            color: #8a1a1a;
+            border: 1px solid rgba(200, 50, 50, 0.02);
+        }
+        body.dark .btn-danger {
+            background: rgba(200, 50, 50, 0.02);
+            color: #f08080;
+            border-color: rgba(200, 50, 50, 0.02);
+        }
+        .btn-danger:hover { background: rgba(200, 50, 50, 0.04); transform: scale(1.02); }
+        body.dark .btn-danger:hover { background: rgba(200, 50, 50, 0.04); }
         .btn-secondary {
             background: rgba(60, 30, 10, 0.01);
             color: #3a2a1a;
@@ -196,27 +210,26 @@
     </style>
 </head>
 <body>
-    <button class="theme-toggle" id="themeToggle">🌙</button>
+    <button class="theme-toggle" id="themeToggle"></button>
 
     <div class="container">
-        <h1>🤝 درخواست ارتباط با هم‌فکران</h1>
-        <div class="subtitle">ارتباط با دیگران بر اساس ارزش‌های فرهنگی مشترک</div>
+        <h1 id="pageTitle"> درخواست ارتباط با هم‌فکران</h1>
+        <div class="subtitle" id="pageSubtitle">ارتباط با دیگران بر اساس ارزش‌های فرهنگی مشترک</div>
 
         <div id="messageBox" class="message-box"></div>
 
         <form id="requestForm">
+            <!-- فیلد نوع درخواست مخفی شد چون از URL خوانده می‌شود -->
+            <input type="hidden" id="requestType" value="connection" />
+
             <div class="form-group">
-                <label>کد کارت شما</label>
+                <label id="codeLabel">کد کارت شما</label>
                 <input type="text" id="cardCode" placeholder="مثلاً: CIM-1234-5678-A" required />
             </div>
 
-            <div class="form-group">
-                <label>نوع درخواست</label>
-                <select id="requestType" required>
-                    <option value="">انتخاب کنید...</option>
-                    <option value="connection">ارتباط با هم‌فکران</option>
-                    <option value="delete">انصراف از عضویت</option>
-                </select>
+            <div class="form-group" id="targetGroup">
+                <label id="targetLabel">کد کارت طرف مقابل (هم‌فرهنگ)</label>
+                <input type="text" id="targetCardCode" placeholder="مثلاً: CIM-9876-5432-B" />
             </div>
 
             <div class="form-group">
@@ -256,6 +269,50 @@
             });
         })();
 
+        // ===== Dynamic Content Based on URL Parameter =====
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const type = params.get('type'); // 'connection' or 'delete'
+            
+            const titleEl = document.getElementById('pageTitle');
+            const subtitleEl = document.getElementById('pageSubtitle');
+            const requestTypeInput = document.getElementById('requestType');
+            const submitBtn = document.getElementById('submitBtn');
+            const targetGroup = document.getElementById('targetGroup');
+            const codeLabel = document.getElementById('codeLabel');
+            const targetLabel = document.getElementById('targetLabel');
+            const descInput = document.getElementById('description');
+
+            if (type === 'delete') {
+                // حالت انصراف / حذف حساب
+                titleEl.textContent = '️ درخواست انصراف از عضویت';
+                subtitleEl.textContent = 'حذف اطلاعات فرهنگی شما از شبکه هم‌فرهنگان';
+                requestTypeInput.value = 'delete';
+                
+                codeLabel.textContent = 'کد کارت هویت فرهنگی شما';
+                targetGroup.style.display = 'none'; // مخفی کردن فیلد طرف مقابل
+                
+                descInput.placeholder = 'لطفاً دلیل انصراف خود را بنویسید (اختیاری)...';
+                
+                submitBtn.textContent = '🚪 ثبت درخواست انصراف';
+                submitBtn.className = 'btn btn-danger';
+            } else {
+                // حالت پیش‌فرض: ارتباط با هم‌فکران
+                titleEl.textContent = '🤝 درخواست ارتباط با هم‌فکران';
+                subtitleEl.textContent = 'ارتباط با دیگران بر اساس ارزش‌های فرهنگی مشترک';
+                requestTypeInput.value = 'connection';
+                
+                codeLabel.textContent = 'کد کارت شما';
+                targetGroup.style.display = 'block';
+                targetLabel.textContent = 'کد کارت طرف مقابل (هم‌فرهنگ)';
+                
+                descInput.placeholder = 'توضیح دهید که چه نوع ارتباطی مد نظر دارید...';
+                
+                submitBtn.textContent = '📨 ارسال درخواست';
+                submitBtn.className = 'btn btn-primary';
+            }
+        });
+
         // ===== Show Message =====
         function showMessage(text, type) {
             const box = document.getElementById('messageBox');
@@ -275,7 +332,7 @@
         document.getElementById('requestForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             if (isSubmitting) return;
-isSubmitting = true;
+            isSubmitting = true;
             hideMessage();
 
             const submitBtn = document.getElementById('submitBtn');
@@ -286,22 +343,20 @@ isSubmitting = true;
                 const cardCode = document.getElementById('cardCode').value.trim();
                 const requestType = document.getElementById('requestType').value;
                 const description = document.getElementById('description').value.trim();
+                const targetCardCode = document.getElementById('targetCardCode')?.value.trim() || '';
 
                 if (!cardCode) {
                     throw new Error('لطفاً کد کارت خود را وارد کنید.');
                 }
 
-                if (!requestType) {
-                    throw new Error('لطفاً نوع درخواست را انتخاب کنید.');
-                }
-
-                // ⭐ ارسال به API امن به جای دسترسی مستقیم به گیت‌هاب
+                // ⭐ ارسال به API امن
                 const response = await fetch('/api/submit-request', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         cardCode: cardCode,
                         type: requestType,
+                        targetCardCode: targetCardCode,
                         description: description
                     })
                 });
@@ -312,7 +367,11 @@ isSubmitting = true;
                     throw new Error(result.error || 'خطا در ارسال درخواست');
                 }
 
-                showMessage('✅ درخواست شما با موفقیت به ادمین ارسال شد.', 'success');
+                const successMsg = requestType === 'delete' 
+                    ? '✅ درخواست انصراف شما با موفقیت ثبت شد.' 
+                    : '✅ درخواست ارتباط شما با موفقیت ارسال شد.';
+                    
+                showMessage(successMsg, 'success');
                 submitBtn.textContent = '✅ ارسال شد';
 
                 setTimeout(() => {
@@ -324,7 +383,7 @@ isSubmitting = true;
                 showMessage(`❌ خطا: ${error.message}`, 'error');
                 isSubmitting = false;
                 submitBtn.disabled = false;
-                submitBtn.textContent = '📨 ارسال درخواست';
+                submitBtn.textContent = requestType === 'delete' ? '🚪 ثبت درخواست انصراف' : '📨 ارسال درخواست';
             }
         });
     </script>
