@@ -130,7 +130,7 @@ if (indexResponse.ok) {
 }
 
 // ساخت displayCode
-const displayCode = optionalCode 
+ displayCode = optionalCode 
   ? `CIM - ${part1} - ${part2} - ${optionalCode}` 
   : `CIM - ${part1} - ${part2}`;
 
