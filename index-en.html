@@ -237,6 +237,9 @@
             .bottom-modules-wrapper { grid-template-columns: 1fr; }
         }
     </style>
+    <!-- در بخش <head> -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#d4af37">
 </head>
 <body>
 <div class="container">
@@ -377,5 +380,18 @@
     </div>
 
 </div>
+ <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then((registration) => {
+          console.log('SW registered: ', registration);
+        })
+        .catch((registrationError) => {
+          console.log('SW registration failed: ', registrationError);
+        });
+    });
+  }
+</script>   
 </body>
 </html>
