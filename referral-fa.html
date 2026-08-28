@@ -6,7 +6,6 @@
     <title>ثبت‌نام | کارت جهانی هویت هوشمند فرهنگی</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
             min-height: 100vh;
@@ -20,23 +19,18 @@
             background-attachment: fixed;
             color: #1a0a0a;
         }
-
-        body.dark {
-            color: #f0e8e0;
-        }
-
+        body.dark { color: #f0e8e0; }
         .container {
             max-width: 700px;
             width: 100%;
             background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(0px);
-            -webkit-backdrop-filter: blur(0px);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border-radius: 48px;
             padding: 2.5rem 2rem;
             border: 1px solid rgba(255, 255, 255, 0.02);
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1);
         }
-
         h1 {
             font-size: 1.8rem;
             font-weight: 800;
@@ -44,11 +38,7 @@
             text-align: center;
             margin-bottom: 0.3rem;
         }
-
-        body.dark h1 {
-            color: #f9e79f;
-        }
-
+        body.dark h1 { color: #f9e79f; }
         .subtitle {
             text-align: center;
             font-size: 0.9rem;
@@ -58,16 +48,9 @@
             border-bottom: 1px solid rgba(30, 10, 0, 0.05);
             padding-bottom: 1rem;
         }
-
-        body.dark .subtitle {
-            color: #d0c0b0;
-            border-bottom-color: rgba(255, 255, 255, 0.02);
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
+        body.dark .subtitle { color: #d0c0b0; border-bottom-color: rgba(255, 255, 255, 0.02); }
+        
+        .form-group { margin-bottom: 1.5rem; }
         .form-group label {
             display: block;
             font-weight: 700;
@@ -75,14 +58,10 @@
             color: #2a1a0a;
             margin-bottom: 0.3rem;
         }
-
-        body.dark .form-group label {
-            color: #e8d8c8;
-        }
-
+        body.dark .form-group label { color: #e8d8c8; }
+        
         .form-group input,
-        .form-group textarea,
-        .form-group select {
+        .form-group textarea {
             width: 100%;
             padding: 0.8rem 1rem;
             border-radius: 16px;
@@ -94,52 +73,102 @@
             transition: all 0.3s ease;
             outline: none;
         }
-
         body.dark .form-group input,
-        body.dark .form-group textarea,
-        body.dark .form-group select {
+        body.dark .form-group textarea {
+            background: rgba(255, 255, 255, 0.02);
+            color: #e8d8c8;
+            border-color: rgba(255, 255, 255, 0.02);
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: rgba(60, 30, 10, 0.05);
+            background: rgba(255, 255, 255, 0.03);
+        }
+        body.dark .form-group input:focus,
+        body.dark .form-group textarea:focus {
+            border-color: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.03);
+        }
+        
+        /* استایل خاص برای باکس‌های ارزش‌های فرهنگی */
+        .value-item {
+            background: rgba(255, 255, 255, 0.01);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(30, 10, 0, 0.02);
+        }
+        body.dark .value-item { border-color: rgba(255, 255, 255, 0.02); }
+        
+        .value-item .value-title {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #2a1a0a;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        body.dark .value-item .value-title { color: #e8d8c8; }
+        
+        .value-item input {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: 1px solid rgba(30, 10, 0, 0.02);
+            background: rgba(255, 255, 255, 0.02);
+            font-size: 0.9rem;
+        }
+        body.dark .value-item input {
             background: rgba(255, 255, 255, 0.02);
             color: #e8d8c8;
             border-color: rgba(255, 255, 255, 0.02);
         }
 
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            border-color: rgba(60, 30, 10, 0.05);
-            background: rgba(255, 255, 255, 0.03);
+        /* استایل بخش اولویت‌بندی */
+        .priority-section {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 2px dashed rgba(212, 175, 55, 0.3);
         }
-
-        body.dark .form-group input:focus,
-        body.dark .form-group textarea:focus,
-        body.dark .form-group select:focus {
-            border-color: rgba(255, 255, 255, 0.05);
-            background: rgba(255, 255, 255, 0.03);
+        .priority-title {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #2874a6;
+            margin-bottom: 1rem;
         }
-
-        .form-group textarea {
-            min-height: 60px;
-            resize: vertical;
-        }
-
-        .form-group input::placeholder,
-        .form-group textarea::placeholder {
-            color: #4a3a2a;
-            opacity: 0.5;
-        }
-
-        body.dark .form-group input::placeholder,
-        body.dark .form-group textarea::placeholder {
-            color: #908070;
-        }
-
-        .btn-group {
-            display: flex;
+        body.dark .priority-title { color: #85c1e9; }
+        
+        .priority-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 1rem;
-            margin-top: 1.5rem;
-            flex-wrap: wrap;
         }
+        .priority-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.8rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .priority-item label {
+            display: block;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+            color: #6a5a3a;
+        }
+        body.dark .priority-item label { color: #c8b890; }
+        .priority-item select {
+            width: 100%;
+            padding: 0.4rem;
+            border-radius: 8px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: #2a1a0a;
+            font-weight: bold;
+        }
+        body.dark .priority-item select { color: #f9e79f; }
 
+        .btn-group { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
         .btn {
             flex: 1;
             padding: 0.8rem 1.5rem;
@@ -153,54 +182,33 @@
             transition: all 0.3s ease;
             min-width: 140px;
         }
-
         .btn-primary {
             background: rgba(60, 30, 10, 0.02);
             color: #2a1a0a;
             border: 1px solid rgba(60, 30, 10, 0.02);
         }
-
         body.dark .btn-primary {
             background: rgba(255, 255, 255, 0.02);
             color: #f9e79f;
             border-color: rgba(255, 255, 255, 0.02);
         }
-
-        .btn-primary:hover {
-            background: rgba(60, 30, 10, 0.04);
-            transform: scale(1.02);
-        }
-
-        body.dark .btn-primary:hover {
-            background: rgba(255, 255, 255, 0.04);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
+        .btn-primary:hover { background: rgba(60, 30, 10, 0.04); transform: scale(1.02); }
+        body.dark .btn-primary:hover { background: rgba(255, 255, 255, 0.04); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+        
         .btn-secondary {
             background: rgba(60, 30, 10, 0.01);
             color: #3a2a1a;
             border: 1px solid rgba(60, 30, 10, 0.01);
         }
-
         body.dark .btn-secondary {
             background: rgba(255, 255, 255, 0.01);
             color: #a09080;
             border-color: rgba(255, 255, 255, 0.01);
         }
-
-        .btn-secondary:hover {
-            background: rgba(60, 30, 10, 0.03);
-            transform: scale(1.02);
-        }
-
-        body.dark .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.03);
-        }
-
+        .btn-secondary:hover { background: rgba(60, 30, 10, 0.03); transform: scale(1.02); }
+        body.dark .btn-secondary:hover { background: rgba(255, 255, 255, 0.03); }
+        
         .note {
             text-align: center;
             font-size: 0.75rem;
@@ -210,12 +218,8 @@
             border-top: 1px solid rgba(30, 10, 0, 0.02);
             padding-top: 1rem;
         }
-
-        body.dark .note {
-            color: #b0a090;
-            border-top-color: rgba(255, 255, 255, 0.02);
-        }
-
+        body.dark .note { color: #b0a090; border-top-color: rgba(255, 255, 255, 0.02); }
+        
         .success-message {
             display: none;
             background: rgba(50, 200, 50, 0.02);
@@ -226,17 +230,13 @@
             margin-top: 1.5rem;
             color: #0a5a0a;
         }
-
         body.dark .success-message {
             color: #80b080;
             background: rgba(50, 200, 50, 0.01);
             border-color: rgba(50, 200, 50, 0.01);
         }
-
-        .success-message.show {
-            display: block;
-        }
-
+        .success-message.show { display: block; }
+        
         .theme-toggle {
             position: fixed;
             top: 1rem;
@@ -250,52 +250,21 @@
             transition: 0.3s;
             color: #1a0a0a;
         }
-
         body.dark .theme-toggle {
             color: #f9e79f;
             background: rgba(0, 0, 0, 0.05);
             border-color: rgba(255, 255, 255, 0.02);
         }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .value-item {
-            background: rgba(255, 255, 255, 0.01);
-            border-radius: 12px;
-            padding: 0.8rem;
-            margin-bottom: 0.8rem;
-            border: 1px solid rgba(30, 10, 0, 0.02);
-        }
-
-        body.dark .value-item {
-            border-color: rgba(255, 255, 255, 0.02);
-        }
-
-        .value-item .value-title {
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: #2a1a0a;
-            margin-bottom: 0.3rem;
-            display: block;
-        }
-
-        body.dark .value-item .value-title {
-            color: #e8d8c8;
-        }
-
-        @font-face {
-            font-family: 'Vazir';
-            src: local('Vazir'), local('IRANSans');
-        }
+        .theme-toggle:hover { transform: scale(1.1); }
+        
+        @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
     </style>
 </head>
 <body>
     <button class="theme-toggle" id="themeToggle">🌙</button>
 
     <div class="container">
-        <h1>📝 ثبت‌نام و دریافت شناسنامه</h1>
+        <h1> ثبت‌نام و دریافت شناسنامه</h1>
         <div class="subtitle">کارت جهانی هویت هوشمند فرهنگی</div>
 
         <form id="registerForm">
@@ -335,14 +304,34 @@
                 <input type="text" id="v7" placeholder="مثلاً: پل‌های ارتباطی میان فرهنگ‌ها" required />
             </div>
 
-            <div class="form-group">
+            <!-- بخش اولویت‌بندی ارزش‌ها -->
+            <div class="priority-section">
+                <div class="priority-title"> اولویت‌بندی ارزش‌های شما (۱ مهم‌ترین، ۷ کم‌اهمیت‌ترین)</div>
+                <div class="priority-grid">
+                    <div class="priority-item"><label>ارزش ۱</label><select id="p1"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select></div>
+                    <div class="priority-item"><label>ارزش ۲</label><select id="p2"><option value="1">۱</option><option value="2"></option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select></div>
+                    <div class="priority-item"><label>ارزش ۳</label><select id="p3"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select></div>
+                    <div class="priority-item"><label>ارزش ۴</label><select id="p4"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5"></option><option value="6">۶</option><option value="7">۷</option></select></div>
+                    <div class="priority-item"><label>ارزش ۵</label><select id="p5"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select></div>
+                    <div class="priority-item"><label>ارزش ۶</label><select id="p6"><option value="1">۱</option><option value="2"></option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select></div>
+                    <div class="priority-item"><label>ارزش ۷</label><select id="p7"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select></div>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 2rem;">
                 <label>کد اختیاری (۵ کاراکتر دلخواه)</label>
                 <input type="text" id="optionalCode" maxlength="5" placeholder="مثلاً: الف-ب-ج-د-ه" />
                 <small style="opacity:0.5; font-size:0.7rem;">اختیاری - می‌توانید خالی بگذارید</small>
             </div>
 
+            <!-- ایمیل اختیاری در پایان صفحه -->
+            <div class="form-group">
+                <label>ایمیل ارتباطی (اختیاری - برای دریافت پیام هم‌فرهنگان)</label>
+                <input type="email" id="communicationEmail" placeholder="example@email.com" />
+            </div>
+
             <div class="btn-group">
-                <button type="submit" class="btn btn-primary" id="submitBtn">🎯 دریافت شناسنامه</button>
+                <button type="submit" class="btn btn-primary" id="submitBtn"> دریافت شناسنامه</button>
                 <a href="index.html" class="btn btn-secondary">↩ بازگشت</a>
             </div>
         </form>
@@ -357,6 +346,7 @@
     </div>
 
     <script>
+        // Theme Toggle Logic
         (function() {
             const toggle = document.getElementById('themeToggle');
             const body = document.body;
@@ -376,51 +366,73 @@
             });
         })();
 
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
+        // Form Submission Logic (Connected to API)
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
-            const values = [
-                document.getElementById('v1').value,
-                document.getElementById('v2').value,
-                document.getElementById('v3').value,
-                document.getElementById('v4').value,
-                document.getElementById('v5').value,
-                document.getElementById('v6').value,
-                document.getElementById('v7').value
-            ];
+            const submitBtn = document.getElementById('submitBtn');
+            
+            // اعتبارسنجی اولیه
+            const values = [];
+            for (let i = 1; i <= 7; i++) {
+                const val = document.getElementById(`v${i}`).value.trim();
+                if (!val) {
+                    alert(`لطفاً ارزش شماره ${i} را وارد کنید.`);
+                    return;
+                }
+                values.push(val);
+            }
 
-            const optionalCode = document.getElementById('optionalCode').value || '';
+            submitBtn.disabled = true;
+            submitBtn.textContent = ' در حال ثبت...';
 
-            // تولید کد منحصربه‌فرد
-            const randomPart1 = Math.floor(1000 + Math.random() * 9000);
-            const randomPart2 = Math.floor(1000 + Math.random() * 9000);
-            const randomChar = String.fromCharCode(65 + Math.floor(Math.random() * 26));
-            const cardCode = `CIM-${randomPart1}-${randomPart2}-${randomChar}`;
+            try {
+                const priorities = [];
+                for (let i = 1; i <= 7; i++) {
+                    priorities.push(parseInt(document.getElementById(`p${i}`).value));
+                }
 
-            // ساخت داده‌های کاربر
-            const userData = {
-                cardCode: cardCode,
-                optionalCode: optionalCode,
-                values: values,
-                registrationDate: new Date().toISOString(),
-                status: 'active',
-                referrals: 0,
-                achievements: []
-            };
+                const optionalCode = document.getElementById('optionalCode').value.trim();
+                const communicationEmail = document.getElementById('communicationEmail').value.trim();
 
-            // ذخیره در localStorage (برای شبیه‌سازی)
-            localStorage.setItem('culturalCardData', JSON.stringify(userData));
-            localStorage.setItem('culturalCardCode', cardCode);
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        values, 
+                        priorities, 
+                        optionalCode,
+                        communicationEmail 
+                    })
+                });
 
-            // نمایش پیام موفقیت
-            document.getElementById('successMessage').classList.add('show');
-            document.getElementById('submitBtn').disabled = true;
-            document.getElementById('submitBtn').textContent = '✅ ثبت شد';
+                // مدیریت ایمن پاسخ سرور
+                let result;
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    result = await response.json();
+                } else {
+                    const text = await response.text();
+                    throw new Error(`خطای سرور: ${text.substring(0, 100)}`);
+                }
 
-            // هدایت به صفحه کارت پس از ۱ ثانیه
-            setTimeout(function() {
-                window.location.href = `card-fa.html?code=${cardCode}`;
-            }, 1500);
+                if (!response.ok) {
+                    throw new Error(result.error || 'خطا در ثبت‌نام');
+                }
+
+                document.getElementById('successMessage').classList.add('show');
+                submitBtn.textContent = '✅ ثبت شد';
+                
+                setTimeout(() => {
+                    window.location.href = `card-fa.html?code=${result.cardCode}`;
+                }, 1500);
+
+            } catch (error) {
+                console.error('Registration Error:', error);
+                alert('❌ ' + error.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🎯 دریافت شناسنامه';
+            }
         });
     </script>
 </body>
