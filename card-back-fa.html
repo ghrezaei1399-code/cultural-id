@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>پشت کارت هویت فرهنگی</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <title>پشت کارت | Global Smart Cultural ID</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Vazir', 'IRANSans', sans-serif;
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             padding: 2rem 1rem;
@@ -19,119 +17,127 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            color: #f0f0f0;
+            color: #1a0a0a;
         }
-        .card-back-container {
-            width: 340px; min-height: 520px; background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
-            border: 2px solid #d4af37; box-shadow: 0 0 30px rgba(212, 175, 55, 0.5), inset 0 0 15px rgba(212, 175, 55, 0.15);
-            border-radius: 20px; padding: 2rem 1.5rem; display: flex; flex-direction: column;
-            align-items: center; text-align: center; gap: 1.5rem; position: relative;
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
         }
-        .hologram-large {
-            width: 100px; height: 100px; border: 2px solid #d4af37; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; background: rgba(212, 175, 55, 0.1);
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
-        }
-        .hologram-large img { width: 70px; height: 70px; opacity: 0.9; }
+        h2 { color: #8a6d1f; margin-bottom: 1.5rem; }
         
-        .back-title {
-            font-size: 1.2rem; font-weight: 800; color: #d4af37; border-bottom: 1px solid rgba(212, 175, 55, 0.3);
-            padding-bottom: 0.5rem; width: 100%;
-        }
-        
-        .back-text {
-            font-size: 0.85rem; color: #e8e0f0; line-height: 1.8; text-align: justify;
+        /* طراحی پشت کارت */
+        .card-back {
+            background: #f8f9fa;
+            border: 2px dashed #d4af37;
+            border-radius: 16px;
+            padding: 2rem 1rem;
+            position: relative;
         }
         
-        .user-code-display {
-            font-family: 'Courier New', monospace; font-size: 1rem; color: #f9e79f;
-            background: rgba(212, 175, 55, 0.1); padding: 0.6rem 1rem; border-radius: 8px;
-            border: 1px solid #d4af37; margin-top: auto; width: 100%; text-align: center;
+        .back-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
-
-        .bottom-modules {
-            display: flex; flex-direction: column; gap: 0.8rem; margin-top: 1.5rem; width: 340px; align-items: center;
+        
+        .code-display {
+            flex: 1;
+            text-align: right;
+            padding-left: 1rem;
         }
-        .action-btn {
-            width: 100%; padding: 0.9rem; background: linear-gradient(135deg, #d4af37 0%, #f4d03f 50%, #b8962e 100%);
-            color: #0a0a0a; border: 1px solid #f9d976; border-radius: 12px; font-family: 'Vazir', 'IRANSans', sans-serif;
-            font-weight: 800; font-size: 0.95rem; cursor: pointer; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
-            transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;
+        .code-label {
+            font-size: 0.75rem;
+            color: #666;
+            margin-bottom: 0.3rem;
         }
-        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(212, 175, 55, 0.6); }
-        .action-btn.secondary {
-            background: rgba(255, 255, 255, 0.1); color: #f0f0f0; border: 1px solid rgba(255, 255, 255, 0.3);
+        .cim-code {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2a1a0a;
+            direction: ltr;
+            display: inline-block;
         }
-        .action-btn.secondary:hover { background: rgba(255, 255, 255, 0.2); }
+        
+        .qr-box {
+            width: 80px;
+            height: 80px;
+            background: white;
+            padding: 4px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        
+        .note {
+            margin-top: 1.5rem;
+            font-size: 0.8rem;
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .btn-back {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 0.8rem 2rem;
+            background: #d4af37;
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+        }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
-
-    <div class="card-back-container" id="cardBackContent">
-        <div class="hologram-large">
-            <img src="assets/hologram.png" alt="Hologram" onerror="this.style.display='none'">
-        </div>
+    <div class="container">
+        <h2>🪪 پشت کارت هویت فرهنگی</h2>
         
-        <div class="back-title">شرایط و قوانین استفاده</div>
-        
-        <div class="back-text">
-            این کارت هویت هوشمند فرهنگی، متعلق به عضو رسمی شبکه‌ی جهانی حفاظت از تنوع فرهنگی است. 
-            <br><br>
-            این کارت فاقد هرگونه ارزش مالی، سیاسی یا حقوقی بوده و صرفاً به عنوان نماد تعهد فرد به اصول صلح، تنوع فرهنگی و اتحاد جهانی صادر شده است.
-            <br><br>
-            هرگونه سوءاستفاده از این هویت فرهنگی، منجر به ابطال عضویت خواهد شد.
+        <div class="card-back">
+            <div class="back-row">
+                <div class="code-display">
+                    <div class="code-label">کد یکتا فرهنگی:</div>
+                    <div class="cim-code" id="cardCode">CIM - .... - .... - ....</div>
+                </div>
+                <div class="qr-box" id="qrcode"></div>
+            </div>
+            
+            <div class="note">
+                این کارت متعلق به شبکه جهانی هویت هوشمند فرهنگی است.<br>
+                اسکن QR Code برای مشاهده منشور و مستندات نظری.
+            </div>
         </div>
 
-        <div class="user-code-display" id="displayUserCode">در حال بارگذاری کد...</div>
-    </div>
-
-    <div class="bottom-modules">
-        <button class="action-btn" onclick="saveBackCard()">💾 ذخیره ی پشت کارت</button>
-        <a id="frontCardLink" href="#" class="action-btn secondary">🔄 بازگشت به روی کارت</a>
-        <a href="index.html" class="action-btn secondary">↩ بازگشت به صفحه ی اصلی سایت</a>
+        <a href="card-fa.html" class="btn-back">↩ بازگشت به روی کارت</a>
     </div>
 
     <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const cardCode = urlParams.get('code');
-
-        async function loadBackCardData() {
-            if (!cardCode) {
-                document.getElementById('displayUserCode').textContent = 'کد نامعتبر';
-                return;
-            }
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const code = params.get('code') || 'CIM-0000-0000-0000';
             
-            document.getElementById('frontCardLink').href = `card-fa.html?code=${cardCode}`;
-
-            try {
-                const response = await fetch(`/api/get-user?code=${cardCode}`);
-                const data = await response.json();
-                if (data.user) {
-                    let finalCode = data.user.cardCode || '---';
-                    if (data.user.optionalCode && data.user.optionalCode.trim() !== '') {
-                        const parts = data.user.cardCode.split('-');
-                        const p1 = parts[1] ? parts[1].substring(0, 4) : '0000';
-                        const p2 = parts[2] ? parts[2].substring(0, 4) : '0000';
-                        finalCode = `CIM - ${p1} - ${p2} - ${data.user.optionalCode}`;
-                    }
-                    document.getElementById('displayUserCode').textContent = `شماره عضویت: ${finalCode}`;
-                }
-            } catch (error) {
-                document.getElementById('displayUserCode').textContent = `شماره عضویت: ${cardCode}`;
-            }
-        }
-
-        function saveBackCard() {
-            const cardElement = document.getElementById('cardBackContent');
-            html2canvas(cardElement, { backgroundColor: '#0a0a0a', scale: 2 }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'cultural-id-card-back.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
+            document.getElementById('cardCode').textContent = code.replace(/-/g, ' - ');
+            
+            // تولید QR Code که به صفحه "درباره پروژه" لینک می‌شود
+            const qrUrl = window.location.origin + '/about-fa.html';
+            new QRCode(document.getElementById("qrcode"), {
+                text: qrUrl,
+                width: 72,
+                height: 72,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
             });
-        }
-
-        document.addEventListener('DOMContentLoaded', loadBackCardData);
+        });
     </script>
 </body>
 </html>
