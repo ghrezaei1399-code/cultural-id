@@ -1,0 +1,32 @@
+{
+  "cardCode": "CIM-9638-6588-22968",
+  "country": "Iran",
+  "countryCode": "IR",
+  "rank": 6,
+  "values": [
+    "ایرانی",
+    "تحول",
+    "سازمان",
+    "اقوام های مختلف",
+    "آشتی",
+    "خشونت پرهیزی",
+    "همبستگی"
+  ],
+  "priorities": [
+    2,
+    1,
+    4,
+    3,
+    7,
+    5,
+    6
+  ],
+  "optionalCode": "04040",
+  "displayCode": "CIM - 9638 - 6588 - 04040",
+  "communicationEmail": "ghrezaei1399@gmail.com",
+  "registrationDate": "2026-08-28T12:02:21.237Z",
+  "status": "pending",
+  "allowConnection": true,
+  "allowAchievements": false,
+  "culturalInfo": ""
+}
