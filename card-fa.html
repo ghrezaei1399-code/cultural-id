@@ -245,7 +245,7 @@
 
         <!-- سه ماژول: پشت کارت / بازگشت / ذخیره -->
         <div class="btn-group">
-            <a href="card-back-fa.html" class="btn btn-primary">↩️ پشت کارت</a>
+           <a href="#" id="backCardLink" class="btn btn-primary">↩️ پشت کارت</a>
             <a href="index.html" class="btn btn-primary">🏠 بازگشت به خانه</a>
             <button class="btn btn-primary" id="saveBtn">💾 ذخیره کارت</button>
         </div>
@@ -312,7 +312,11 @@
                     console.error('Error:', err);
                     document.getElementById('cardCodeDisplay').textContent = code.replace(/-/g, ' - ');
                 });
-
+// تنظیم لینک پویا برای پشت کارت
+const backLink = document.getElementById('backCardLink');
+if (backLink && code) {
+    backLink.href = `card-back-fa.html?code=${encodeURIComponent(code)}`;
+}
             // Save Card as Image (Not Print)
             document.getElementById('saveBtn').addEventListener('click', async function() {
                 const cardElement = document.getElementById('cardToSave');
