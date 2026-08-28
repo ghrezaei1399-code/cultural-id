@@ -65,18 +65,27 @@
             position: relative;
         }
         
-        /* لوگو در بالاترین نقطه */
+        /* لوگو بزرگتر */
         .rc-logo-container { 
-            width: 70px; height: 70px; 
+            width: 90px; height: 90px; 
             border-radius: 50%; 
-            border: 2px solid #d4af37; 
+            border: 3px solid #d4af37; 
             display: flex; align-items: center; justify-content: center;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.3rem;
+            background: rgba(212, 175, 55, 0.05);
         }
-        .rc-logo { width: 45px; height: 45px; object-fit: contain; }
-        .rc-title { font-size: 0.9rem; font-weight: 800; color: #d4af37; line-height: 1.3; }
+        .rc-logo { width: 60px; height: 60px; object-fit: contain; }
         
-        /* ===== بخش کد ===== */
+        /* عنوان تک‌خطی و زیبا */
+        .rc-title { 
+            font-size: 1.1rem; 
+            font-weight: 900; 
+            color: #d4af37; 
+            letter-spacing: 0.5px;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+        
+        /* بخش کد */
         .rc-code-section {
             width: 100%;
             background: rgba(212, 175, 55, 0.1);
@@ -112,7 +121,7 @@
             font-weight: 600; 
         }
 
-        /* QR Code جایگزین هولوگرام در پایین */
+        /* QR Code در پایین */
         .qr-section {
             margin-top: 0.5rem;
             display: flex;
@@ -193,6 +202,8 @@
         @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- کتابخانه تبدیل HTML به تصویر -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
     <button class="theme-toggle" id="themeToggle">🌙</button>
@@ -201,19 +212,20 @@
         <h1>🪪 شناسنامه فرهنگی شما</h1>
         <div class="subtitle">کارت جهانی هویت هوشمند فرهنگی</div>
 
-        <div class="real-card-sample">
-            <!-- لوگو در بالا -->
+        <div class="real-card-sample" id="cardToSave">
+            <!-- لوگو بزرگ -->
             <div class="rc-logo-container">
                 <img src="assets/logo-fa.png" alt="لوگو" class="rc-logo" onerror="this.style.display='none'">
             </div>
-            <div class="rc-title">کارت جهانی هویت<br>هوشمند فرهنگی</div>
+            <!-- عنوان تک‌خطی -->
+            <div class="rc-title">کارت جهانی هویت هوشمند فرهنگی</div>
             
             <!-- کد کارت -->
             <div class="rc-code-section">
                 <div class="rc-code" id="cardCodeDisplay">CIM - .... - .... - ....</div>
             </div>
             
-            <!-- عناوین کوتاه ارزش‌ها (بدون محتوا) -->
+            <!-- عناوین کوتاه ارزش‌ها -->
             <div class="rc-values">
                 <span class="rc-tag">ارزش‌های بومی</span>
                 <span class="rc-tag">دانش فردی</span>
@@ -224,7 +236,7 @@
                 <span class="rc-tag">اتحاد فرهنگی</span>
             </div>
 
-            <!-- QR Code در پایین (جای هولوگرام) -->
+            <!-- QR Code -->
             <div class="qr-section">
                 <div id="qrcode"></div>
                 <div class="qr-label">مشاهده منشور و مستندات</div>
@@ -233,9 +245,9 @@
 
         <!-- سه ماژول: پشت کارت / بازگشت / ذخیره -->
         <div class="btn-group">
-            <a href="#" class="btn btn-primary" onclick="alert('صفحه پشت کارت به زودی اضافه می‌شود')">↩️ پشت کارت</a>
+            <a href="card-back-fa.html" class="btn btn-primary">↩️ پشت کارت</a>
             <a href="index.html" class="btn btn-primary">🏠 بازگشت به خانه</a>
-            <button class="btn btn-primary" onclick="window.print()">💾 ذخیره کارت</button>
+            <button class="btn btn-primary" id="saveBtn">💾 ذخیره کارت</button>
         </div>
 
         <div class="note">
@@ -258,13 +270,13 @@
                     toggle.textContent = '☀️';
                     localStorage.setItem('theme', 'dark');
                 } else {
-                    toggle.textContent = '🌙';
+                    toggle.textContent = '';
                     localStorage.setItem('theme', 'light');
                 }
             });
         })();
 
-        // Load Card Data
+        // Load Card Data & Save Functionality
         window.addEventListener('DOMContentLoaded', () => {
             const params = new URLSearchParams(window.location.search);
             const code = params.get('code');
@@ -300,6 +312,23 @@
                     console.error('Error:', err);
                     document.getElementById('cardCodeDisplay').textContent = code.replace(/-/g, ' - ');
                 });
+
+            // Save Card as Image (Not Print)
+            document.getElementById('saveBtn').addEventListener('click', async function() {
+                const cardElement = document.getElementById('cardToSave');
+                try {
+                    const canvas = await html2canvas(cardElement, { 
+                        backgroundColor: '#0a0a0a',
+                        scale: 2 
+                    });
+                    const link = document.createElement('a');
+                    link.download = `Cultural-ID-${code}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                } catch (err) {
+                    alert('خطا در ذخیره کارت: ' + err.message);
+                }
+            });
         });
     </script>
 </body>
