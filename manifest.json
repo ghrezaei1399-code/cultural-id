@@ -1,0 +1,21 @@
+{
+  "name": "کارت جهانی هویت هوشمند فرهنگی",
+  "short_name": "Cultural ID",
+  "description": "هویت دیجیتال غیرمتمرکز بر اساس ارزش‌های فرهنگی",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#fdf6e3",
+  "theme_color": "#d4af37",
+  "icons": [
+    {
+      "src": "assets/logo-fa.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/logo-fa.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
