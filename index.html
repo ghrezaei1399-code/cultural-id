@@ -113,7 +113,7 @@
         .box-gold { background: linear-gradient(135deg, rgba(255, 248, 220, 0.85) 0%, rgba(253, 246, 227, 0.9) 100%); border: 2px solid rgba(212, 175, 55, 0.5); }
         body.dark .box-gold { background: linear-gradient(135deg, rgba(74, 58, 40, 0.7) 0%, rgba(58, 47, 32, 0.8) 100%); }
         .box-gold .box-title { color: #8a6d1f; } body.dark .box-gold .box-title { color: #f9e79f; }
-        .box-gold .box-title::before { content: "🪪 "; }
+        .box-gold .box-title::before { content: " "; }
 
         .box-blue { background: linear-gradient(135deg, rgba(220, 240, 255, 0.85) 0%, rgba(200, 230, 250, 0.9) 100%); border: 2px solid rgba(100, 170, 220, 0.5); }
         body.dark .box-blue { background: linear-gradient(135deg, rgba(40, 60, 80, 0.7) 0%, rgba(50, 70, 90, 0.8) 100%); }
@@ -186,19 +186,6 @@
         body.dark .module-connect { background: rgba(74, 58, 40, 0.7); border-color: rgba(212, 175, 55, 0.5); color: #f9e79f; }
         .module-cancel { background: rgba(255, 210, 200, 0.8); border: 2px solid rgba(220, 80, 60, 0.5); color: #a93226; }
         body.dark .module-cancel { background: rgba(90, 40, 40, 0.7); border-color: rgba(241, 148, 138, 0.5); color: #f1948a; }
-        
-        /* ⭐ ماژول جدید: ورود به آزمایشگاه */
-        .module-lab { 
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(249, 231, 159, 0.2)); 
-            border: 2px solid rgba(212, 175, 55, 0.6); 
-            color: #8a6d1f; 
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.15);
-        }
-        body.dark .module-lab { 
-            background: linear-gradient(135deg, rgba(138, 109, 31, 0.3), rgba(212, 175, 55, 0.1)); 
-            border-color: rgba(249, 231, 159, 0.5); 
-            color: #f9e79f; 
-        }
 
         .cta-area {
             text-align: center; margin: 1.2rem 0; padding: 1.2rem;
@@ -206,12 +193,24 @@
             border-radius: 24px; border: 2px solid rgba(212, 175, 55, 0.4);
         }
         body.dark .cta-area { background: linear-gradient(135deg, rgba(74, 58, 40, 0.7), rgba(58, 47, 32, 0.8)); }
-        .btn-main {
-            display: inline-block; background: linear-gradient(135deg, #d4af37 0%, #f9e79f 50%, #d4af37 100%);
-            color: #2a1a0a; padding: 0.8rem 2.5rem; border-radius: 40px; font-weight: 900; font-size: 1.05rem;
-            text-decoration: none; box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4); transition: all 0.3s;
+        
+        /* ⭐ استایل ردیف طلایی جدید */
+        .golden-row {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; 
+            margin: 0; padding: 0; background: transparent; border: none;
         }
-        .btn-main:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(212, 175, 55, 0.6); }
+        .golden-btn {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 1.2rem 1rem; border-radius: 40px; text-decoration: none; text-align: center;
+            font-weight: 900; font-size: 1.05rem; transition: all 0.3s; min-height: 80px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1); border: none;
+        }
+        .golden-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+        
+        .btn-register { background: linear-gradient(135deg, #d4af37 0%, #f9e79f 50%, #d4af37 100%); color: #2a1a0a; }
+        .btn-lab { background: linear-gradient(135deg, #8a6d1f 0%, #d4af37 50%, #8a6d1f 100%); color: #fff; }
+        .btn-gallery { background: linear-gradient(135deg, #2874a6 0%, #5dade2 50%, #2874a6 100%); color: #fff; }
+
         .cta-note { margin-top: 0.5rem; font-size: 0.7rem; color: #6a5a3a; }
         body.dark .cta-note { color: #c8b890; }
 
@@ -230,7 +229,6 @@
         body.dark .bottom-radio h3 { color: #d2b4de; }
         .bottom-radio p { color: #3a2a1a; font-size: 0.75rem; margin-bottom: 0.6rem; line-height: 1.5; }
         body.dark .bottom-radio p { color: #e8dcc0; }
-        
         .btn-bottom {
             display: inline-block; background: rgba(255, 255, 255, 0.6); color: #2a1a0a; padding: 0.4rem 1.2rem;
             border-radius: 30px; font-weight: 700; font-size: 0.75rem; text-decoration: none; border: 1px solid rgba(212, 175, 55, 0.4); transition: all 0.3s;
@@ -246,6 +244,7 @@
             .main-logo { width: 70px; height: 70px; }
             .site-title { font-size: 1.3rem; }
             .modules { grid-template-columns: 1fr 1fr; }
+            .golden-row { grid-template-columns: 1fr; }
             .bottom-modules-wrapper { grid-template-columns: 1fr; }
         }
     </style>
@@ -259,7 +258,7 @@
     <!-- ===== بنر فراخوان جهانی ===== -->
     <div class="global-call-banner">
         <div class="banner-slogan">
-            <span class="banner-icon">🌍</span>
+            <span class="banner-icon"></span>
             <span>هم‌فرهنگان جهان، برای حفظ میراث مشترکمان متحد شوید</span>
         </div>
         <div class="banner-slogan">
@@ -279,8 +278,8 @@
     </div>
 
     <div class="lang-bar">
-        <a href="#" class="active">🇮🇷 فارسی</a>
-        <a href="index-en.html">🇬🇧 English</a>
+        <a href="#" class="active">🇷 فارسی</a>
+        <a href="index-en.html">🇬 English</a>
     </div>
 
     <!-- ===== نوار متحرک شعارها ===== -->
@@ -288,8 +287,8 @@
         <div class="slogan-track">
             <span>✦ فرهنگ ما، ارتباط ما، آینده‌ی مشترک ما ✦</span>
             <span>✦ هویت فرهنگی، فراتر از مرزها ✦</span>
-            <span>✦ صلح، تنوع، اتحاد </span>
-            <span>✦ فرهنگ ما، ارتباط ما، آینده‌ی مشترک ما </span>
+            <span>✦ صلح، تنوع، اتحاد ✦</span>
+            <span>✦ فرهنگ ما، ارتباط ما، آینده‌ی مشترک ما ✦</span>
             <span>✦ هویت فرهنگی، فراتر از مرزها ✦</span>
             <span>✦ صلح، تنوع، اتحاد ✦</span>
         </div>
@@ -334,7 +333,7 @@
             </div>
             <div class="rc-title">کارت جهانی هویت هوشمند فرهنگی</div>
             <div class="rc-code-box">
-                <div class="rc-code">CIM - ۱۲۳۴ - ۵۶۷۸ - نمونه</div>
+                <div class="rc-code">CIM - ۱۲۳۴ - ۶۷۸ - نمونه</div>
             </div>
             <div class="rc-values">
                 <span class="rc-tag">ارزش‌های بومی</span>
@@ -367,22 +366,20 @@
         </a>
     </div>
 
-    <!-- ⭐ ردیف جدید: دکمه طلایی + ماژول‌های آزمایشگاه -->
-    <div class="cta-area" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; text-align: center; align-items: stretch;">
-        <a href="register-fa.html" class="btn-main" style="margin:0;">🎯 دریافت شناسنامه فرهنگی</a>
-        
-        <!-- ⭐ ماژول جدید: ورود به آزمایشگاه سپهر خردمندی -->
-        <a href="observer-fa.html" class="btn-main" style="margin:0; background: linear-gradient(135deg, #8a6d1f 0%, #d4af37 50%, #8a6d1f 100%); color: #fff;">
-             ورود به آزمایشگاه سپهر خردمندی
-        </a>
-        
-        <!-- ⭐ ماژول جدید: گالری دستاوردهای ظهور -->
-        <a href="achievements-fa.html" class="btn-main" style="margin:0; background: linear-gradient(135deg, #2874a6 0%, #5dade2 50%, #2874a6 100%); color: #fff;">
-            🏆 گالری دستاوردهای ظهور
-        </a>
-    </div>
-    <div class="cta-note" style="text-align:center; margin-top:-0.5rem; margin-bottom:1rem;">
-        بدون اطلاعات شخصی • کاملاً ناشناس • ۳ دقیقه
+    <!-- ⭐ ردیف طلایی جدید: سه دکمه اصلی -->
+    <div class="cta-area">
+        <div class="golden-row">
+            <a href="register-fa.html" class="golden-btn btn-register">
+                🎯 دریافت شناسنامه فرهنگی
+            </a>
+            <a href="observer-fa.html" class="golden-btn btn-lab">
+                 ورود به آزمایشگاه سپهر خردمندی
+            </a>
+            <a href="achievements-fa.html" class="golden-btn btn-gallery">
+                🏆 گالری دستاوردهای ظهور
+            </a>
+        </div>
+        <div class="cta-note">بدون اطلاعات شخصی • کاملاً ناشناس • ۳ دقیقه</div>
     </div>
 
     <div class="bottom-modules-wrapper">
