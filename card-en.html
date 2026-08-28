@@ -230,7 +230,7 @@
         </div>
 
         <div class="btn-group">
-            <a href="card-back-en.html" class="btn btn-primary">↩️ Back of Card</a>
+           <a href="#" id="backCardLink" class="btn btn-primary">↩️ Back of Card</a>
             <a href="index-en.html" class="btn btn-primary">🏠 Back to Home</a>
             <button class="btn btn-primary" id="saveBtn">💾 Save Card</button>
         </div>
@@ -293,7 +293,10 @@
                     console.error('Error:', err);
                     document.getElementById('cardCodeDisplay').textContent = code.replace(/-/g, ' - ');
                 });
-
+const backLink = document.getElementById('backCardLink');
+if (backLink && code) {
+    backLink.href = `card-back-en.html?code=${encodeURIComponent(code)}`;
+}
             // Save Card as Image
             document.getElementById('saveBtn').addEventListener('click', async function() {
                 const cardElement = document.getElementById('cardToSave');
