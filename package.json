@@ -1,6 +1,5 @@
 {
   "name": "cultural-id",
   "version": "1.0.0",
-  "type": "module",
-  "description": "Global Smart Cultural Identity Card"
+   "description": "Global Smart Cultural Identity Card"
 }
