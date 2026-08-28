@@ -24,7 +24,8 @@
             max-width: 700px;
             width: 100%;
             background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(0px);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border-radius: 48px;
             padding: 2.5rem 2rem;
             border: 1px solid rgba(255, 255, 255, 0.02);
@@ -263,7 +264,7 @@
     <button class="theme-toggle" id="themeToggle">🌙</button>
 
     <div class="container">
-        <h1>📝 ثبت‌نام و دریافت شناسنامه</h1>
+        <h1> ثبت‌نام و دریافت شناسنامه</h1>
         <div class="subtitle">کارت جهانی هویت هوشمند فرهنگی</div>
 
         <form id="registerForm">
@@ -313,7 +314,7 @@
                     </div>
                     <div class="priority-item">
                         <label>ارزش ۲</label>
-                        <select id="p2"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select>
+                        <select id="p2"><option value="1">۱</option><option value="2">۲</option><option value="3"></option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select>
                     </div>
                     <div class="priority-item">
                         <label>ارزش ۳</label>
@@ -364,95 +365,96 @@
             بدون اطلاعات شخصی • کاملاً ناشناس • ۳ دقیقه
         </div>
     </div>
-<script>
-    // Theme Toggle Logic (همان کد قبلی - بدون تغییر)
-    (function() {
-        const toggle = document.getElementById('themeToggle');
-        const body = document.body;
-        if (localStorage.getItem('theme') === 'dark') {
-            body.classList.add('dark');
-            toggle.textContent = '☀️';
-        }
-        toggle.addEventListener('click', function() {
-            body.classList.toggle('dark');
-            if (body.classList.contains('dark')) {
+
+    <script>
+        // Theme Toggle Logic
+        (function() {
+            const toggle = document.getElementById('themeToggle');
+            const body = document.body;
+            if (localStorage.getItem('theme') === 'dark') {
+                body.classList.add('dark');
                 toggle.textContent = '☀️';
-                localStorage.setItem('theme', 'dark');
-            } else {
-                toggle.textContent = '🌙';
-                localStorage.setItem('theme', 'light');
+            }
+            toggle.addEventListener('click', function() {
+                body.classList.toggle('dark');
+                if (body.classList.contains('dark')) {
+                    toggle.textContent = '☀️';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    toggle.textContent = '🌙';
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+        })();
+
+        // Form Submission Logic
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            
+            // اعتبارسنجی اولیه
+            const values = [];
+            for (let i = 1; i <= 7; i++) {
+                const val = document.getElementById(`v${i}`).value.trim();
+                if (!val) {
+                    alert(`لطفاً ارزش شماره ${i} را وارد کنید.`);
+                    return;
+                }
+                values.push(val);
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = ' در حال ثبت...';
+
+            try {
+                const priorities = [];
+                for (let i = 1; i <= 7; i++) {
+                    priorities.push(parseInt(document.getElementById(`p${i}`).value));
+                }
+
+                const optionalCode = document.getElementById('optionalCode').value.trim();
+                const communicationEmail = document.getElementById('communicationEmail').value.trim();
+
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        values, 
+                        priorities, 
+                        optionalCode,
+                        communicationEmail 
+                    })
+                });
+
+                // مدیریت ایمن پاسخ سرور
+                let result;
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    result = await response.json();
+                } else {
+                    const text = await response.text();
+                    throw new Error(`خطای سرور: ${text.substring(0, 100)}`);
+                }
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'خطا در ثبت‌نام');
+                }
+
+                document.getElementById('successMessage').classList.add('show');
+                submitBtn.textContent = '✅ ثبت شد';
+                
+                setTimeout(() => {
+                    window.location.href = `card-fa.html?code=${result.cardCode}`;
+                }, 1500);
+
+            } catch (error) {
+                console.error('Registration Error:', error);
+                alert('❌ ' + error.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🎯 دریافت شناسنامه';
             }
         });
-    })();
-
-    // Form Submission Logic (اصلاح شده)
-    document.getElementById('registerForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-
-        const submitBtn = document.getElementById('submitBtn');
-        
-        // اعتبارسنجی اولیه: اطمینان از پر بودن تمام ارزش‌ها
-        const values = [];
-        for (let i = 1; i <= 7; i++) {
-            const val = document.getElementById(`v${i}`).value.trim();
-            if (!val) {
-                alert(`لطفاً ارزش شماره ${i} را وارد کنید.`);
-                return; // توقف ارسال
-            }
-            values.push(val);
-        }
-
-        submitBtn.disabled = true;
-        submitBtn.textContent = '⏳ در حال ثبت...';
-
-        try {
-            const priorities = [];
-            for (let i = 1; i <= 7; i++) {
-                priorities.push(parseInt(document.getElementById(`p${i}`).value));
-            }
-
-            const optionalCode = document.getElementById('optionalCode').value.trim();
-            const communicationEmail = document.getElementById('communicationEmail').value.trim();
-
-            const response = await fetch('/api/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    values, 
-                    priorities, 
-                    optionalCode,
-                    communicationEmail 
-                })
-            });
-
-            // ⭐ مدیریت ایمن پاسخ سرور
-            let result;
-            const contentType = response.headers.get("content-type");
-            if (contentType && contentType.indexOf("application/json") !== -1) {
-                result = await response.json();
-            } else {
-                const text = await response.text();
-                throw new Error(`خطای سرور: ${text.substring(0, 100)}`);
-            }
-
-            if (!response.ok) {
-                throw new Error(result.error || 'خطا در ثبت‌نام');
-            }
-
-            document.getElementById('successMessage').classList.add('show');
-            submitBtn.textContent = '✅ ثبت شد';
-            
-            setTimeout(() => {
-                window.location.href = `card-fa.html?code=${result.cardCode}`;
-            }, 1500);
-
-        } catch (error) {
-            console.error('Registration Error:', error);
-            alert('❌ ' + error.message);
-            submitBtn.disabled = false;
-            submitBtn.textContent = '🎯 دریافت شناسنامه';
-        }
-    });
-</script>
+    </script>
 </body>
 </html>
