@@ -184,10 +184,21 @@
         body.dark .module-edit { background: rgba(40, 60, 80, 0.7); border-color: rgba(133, 193, 233, 0.5); color: #85c1e9; }
         .module-connect { background: rgba(255, 240, 200, 0.8); border: 2px solid rgba(212, 175, 55, 0.5); color: #8a6d1f; }
         body.dark .module-connect { background: rgba(74, 58, 40, 0.7); border-color: rgba(212, 175, 55, 0.5); color: #f9e79f; }
-        .module-invite { background: rgba(230, 200, 245, 0.8); border: 2px solid rgba(142, 68, 173, 0.5); color: #6a3d9a; }
-        body.dark .module-invite { background: rgba(70, 50, 90, 0.7); border-color: rgba(210, 180, 222, 0.5); color: #d2b4de; }
         .module-cancel { background: rgba(255, 210, 200, 0.8); border: 2px solid rgba(220, 80, 60, 0.5); color: #a93226; }
         body.dark .module-cancel { background: rgba(90, 40, 40, 0.7); border-color: rgba(241, 148, 138, 0.5); color: #f1948a; }
+        
+        /* ⭐ ماژول جدید: ورود به آزمایشگاه */
+        .module-lab { 
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(249, 231, 159, 0.2)); 
+            border: 2px solid rgba(212, 175, 55, 0.6); 
+            color: #8a6d1f; 
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.15);
+        }
+        body.dark .module-lab { 
+            background: linear-gradient(135deg, rgba(138, 109, 31, 0.3), rgba(212, 175, 55, 0.1)); 
+            border-color: rgba(249, 231, 159, 0.5); 
+            color: #f9e79f; 
+        }
 
         .cta-area {
             text-align: center; margin: 1.2rem 0; padding: 1.2rem;
@@ -219,6 +230,24 @@
         body.dark .bottom-radio h3 { color: #d2b4de; }
         .bottom-radio p { color: #3a2a1a; font-size: 0.75rem; margin-bottom: 0.6rem; line-height: 1.5; }
         body.dark .bottom-radio p { color: #e8dcc0; }
+        
+        /* ⭐ ماژول جدید: نام‌آوران ظهور */
+        .bottom-gold { 
+            background: linear-gradient(135deg, rgba(255, 248, 220, 0.9), rgba(253, 246, 227, 0.95)); 
+            border: 2px solid rgba(212, 175, 55, 0.6); 
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.15);
+        }
+        .bottom-gold h3 { color: #8a6d1f; font-size: 0.95rem; margin-bottom: 0.3rem; font-weight: 900; }
+        .bottom-gold p { color: #3a2a1a; font-size: 0.75rem; margin-bottom: 0.6rem; line-height: 1.5; }
+        .btn-bottom-gold {
+            display: inline-block; 
+            background: linear-gradient(135deg, #d4af37, #f9e79f); 
+            color: #2a1a0a; padding: 0.4rem 1.2rem; border-radius: 30px; 
+            font-weight: 800; font-size: 0.75rem; text-decoration: none; border: none; 
+            transition: all 0.3s; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+        .btn-bottom-gold:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5); }
+        
         .btn-bottom {
             display: inline-block; background: rgba(255, 255, 255, 0.6); color: #2a1a0a; padding: 0.4rem 1.2rem;
             border-radius: 30px; font-weight: 700; font-size: 0.75rem; text-decoration: none; border: 1px solid rgba(212, 175, 55, 0.4); transition: all 0.3s;
@@ -267,7 +296,7 @@
     </div>
 
     <div class="lang-bar">
-        <a href="#" class="active">🇮🇷 فارسی</a>
+        <a href="#" class="active">🇮 فارسی</a>
         <a href="index-en.html">🇬🇧 English</a>
     </div>
 
@@ -276,9 +305,9 @@
         <div class="slogan-track">
             <span>✦ فرهنگ ما، ارتباط ما، آینده‌ی مشترک ما ✦</span>
             <span>✦ هویت فرهنگی، فراتر از مرزها ✦</span>
-            <span>✦ صلح، تنوع، اتحاد ✦</span>
-            <span>✦ فرهنگ ما، ارتباط ما، آینده‌ی مشترک ما ✦</span>
-            <span>✦ هویت فرهنگی، فراتر از مرزها ✦</span>
+            <span>✦ صلح، تنوع، اتحاد </span>
+            <span>✦ فرهنگ ما، ارتباط ما، آینده‌ی مشترک ما </span>
+            <span>✦ هویت فرهنگی، فراتر از مرزها </span>
             <span>✦ صلح، تنوع، اتحاد ✦</span>
         </div>
     </div>
@@ -322,7 +351,7 @@
             </div>
             <div class="rc-title">کارت جهانی هویت هوشمند فرهنگی</div>
             <div class="rc-code-box">
-                <div class="rc-code">CIM - ۱۲۳۴ - ۵۶۷۸ - نمونه</div>
+                <div class="rc-code">CIM - ۱۲۳۴ - ۶۷۸ - نمونه</div>
             </div>
             <div class="rc-values">
                 <span class="rc-tag">ارزش‌های بومی</span>
@@ -338,7 +367,6 @@
     </div>
 
     <div class="modules">
-        <!-- ماژول ثبت‌نام حذف شد تا تکراری نباشد و دکمه طلایی پایین جایگزین آن است -->
         <a href="edit-fa.html" class="module-btn module-edit">
             <span class="icon">✏️</span>
             <span class="label">ویرایش اطلاعات</span>
@@ -349,7 +377,15 @@
             <span class="label">ارتباط</span>
             <span class="desc">با هم‌فکران</span>
         </a>
-               <a href="request-fa.html?type=delete" class="module-btn module-cancel">
+        
+        <!-- ⭐ ماژول جدید: ورود به آزمایشگاه سپهر خردمندی -->
+        <a href="observer-fa.html" class="module-btn module-lab">
+            <span class="icon"></span>
+            <span class="label">آزمایشگاه سپهر</span>
+            <span class="desc">اتاق فکر ظهور و مشاهده</span>
+        </a>
+        
+        <a href="request-fa.html?type=delete" class="module-btn module-cancel">
             <span class="icon">🚪</span>
             <span class="label">انصراف</span>
             <span class="desc">حذف حساب کاربری</span>
@@ -372,14 +408,26 @@
             <p>شبکه‌های فرهنگی و محتوای گروهی</p>
             <a href="about-fa.html#radio-tv" class="btn-bottom">مشاهده</a>
         </div>
+        
+        <!-- ⭐ ماژول جدید: نام‌آوران آزمایشگاه ظهور -->
+        <div class="bottom-module bottom-gold">
+            <h3> نام‌آوران آزمایشگاه ظهور</h3>
+            <p>هم‌فرهنگانی که از مسیر مشاهده به کنشگری عملی رسیدند</p>
+            <a href="achievements-fa.html" class="btn-bottom-gold">مشاهده دستاوردها</a>
+        </div>
     </div>
 
 </div>
-  <!-- این کد را در index.html داخل div.bottom-modules-wrapper اضافه کنید -->
-<div class="bottom-module bottom-gold" style="background: rgba(255, 248, 220, 0.8); border-color: rgba(212, 175, 55, 0.6);">
-    <h3 style="color: #8a6d1f;">🏆 نام‌آوران آزمایشگاه ظهور</h3>
-    <p style="color: #3a2a1a; font-size: 0.75rem;">هم‌فرهنگانی که از مسیر مشاهده به کنشگری عملی رسیدند</p>
-    <a href="achievements-fa.html" class="btn-bottom" style="background: linear-gradient(135deg, #d4af37, #f9e79f); color: #2a1a0a; border: none;">مشاهده دستاوردها</a>
-</div>
+  
+<script>
+  // Service Worker Registration
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then((registration) => { console.log('SW registered: ', registration); })
+        .catch((registrationError) => { console.log('SW registration failed: ', registrationError); });
+    });
+  }
+</script>  
 </body>
 </html>
