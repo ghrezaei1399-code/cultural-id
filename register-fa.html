@@ -258,6 +258,47 @@
         .theme-toggle:hover { transform: scale(1.1); }
         
         @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
+
+        /* --- استایل ماژول الحاقی (Pioneer Upload Module) --- */
+        .pioneer-module {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(255, 215, 0, 0.05);
+            border: 1px dashed rgba(212, 172, 13, 0.3);
+            border-radius: 20px;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+        body.dark .pioneer-module { background: rgba(255, 215, 0, 0.02); }
+        
+        .pioneer-text {
+            font-size: 0.85rem;
+            color: #4a2a1a;
+            margin-bottom: 0.8rem;
+            line-height: 1.5;
+        }
+        body.dark .pioneer-text { color: #d0c0b0; }
+
+        .btn-upload {
+            background: linear-gradient(135deg, #2a1a0a 0%, #5a3a2a 100%);
+            color: #fff !important;
+            box-shadow: 0 4px 15px rgba(42, 26, 10, 0.3);
+            display: inline-block;
+            width: auto;
+            min-width: 200px;
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        body.dark .btn-upload {
+            background: linear-gradient(135deg, #f9e79f 0%, #d4ac0d 100%);
+            color: #1a0a0a !important;
+        }
+        .btn-upload:hover { transform: translateY(-2px); opacity: 0.9; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -355,6 +396,12 @@
                 <button type="submit" class="btn btn-primary" id="submitBtn">🎯 دریافت شناسنامه</button>
                 <a href="index.html" class="btn btn-secondary">↩ بازگشت</a>
             </div>
+
+            <!-- --- ماژول الحاقی: هدایت به آپلود (آشکار و زیبا) --- -->
+            <div class="pioneer-module">
+                <p class="pioneer-text">✨ <strong>عضو پیشرو (۲۰۰ نفر اول):</strong> آیا مایلید دستاورد فرهنگی خود را برای نمایش در گالری اصلی سایت آپلود کنید؟</p>
+                <a href="upload-achievement-fa.html" class="btn-upload">🚀 بله، آپلود دستاورد</a>
+            </div>
         </form>
 
         <div class="success-message" id="successMessage">
@@ -444,9 +491,14 @@
                 document.getElementById('successMessage').classList.add('show');
                 submitBtn.textContent = '✅ ثبت شد';
                 
+                // --- منطق الحاقی: پیام اختیاری آپلود پس از ثبت موفق ---
+                // اینجا می‌توانیم به جای ریدایرکت فوری، کمی مکث کنیم تا کاربر ماژول آپلود را ببیند
+                // یا اگر مایل بود روی دکمه کلیک کند.
+                
+                // فعلاً ریدایرکت را نگه می‌داریم اما کاربر می‌تواند قبل از رفتن روی دکمه آپلود کلیک کند
                 setTimeout(() => {
                     window.location.href = `card-fa.html?code=${result.cardCode}`;
-                }, 1500);
+                }, 3000); // زمان را کمی بیشتر کردم (۳ ثانیه) تا فرصت دیدن ماژول باشد
 
             } catch (error) {
                 console.error('Registration Error:', error);
