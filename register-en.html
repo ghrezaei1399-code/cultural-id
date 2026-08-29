@@ -21,10 +21,11 @@
         }
         body.dark { color: #f0e8e0; }
         .container {
-            max-width: 700px;
+            max-width: 750px; /* کمی عریض‌تر برای جایگیری بهتر */
             width: 100%;
             background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(0px);
+            backdrop-filter: blur(12px); /* اصلاح برای نمایش صحیح در فایرفاکس */
+            -webkit-backdrop-filter: blur(12px);
             border-radius: 48px;
             padding: 2.5rem 2rem;
             border: 1px solid rgba(255, 255, 255, 0.02);
@@ -95,6 +96,17 @@
         .form-group textarea::placeholder { color: #4a3a2a; opacity: 0.5; }
         body.dark .form-group input::placeholder,
         body.dark .form-group textarea::placeholder { color: #908070; }
+        
+        /* استایل مخصوص ردیف اولویت‌بندی */
+        .priority-row {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .priority-row select {
+            flex: 0 0 100px; /* عرض ثابت برای منوی کشویی */
+        }
+
         .btn-group { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
         .btn {
             flex: 1;
@@ -134,6 +146,7 @@
         }
         .btn-secondary:hover { background: rgba(60, 30, 10, 0.03); transform: scale(1.02); }
         body.dark .btn-secondary:hover { background: rgba(255, 255, 255, 0.03); }
+        
         .note {
             text-align: center;
             font-size: 0.75rem;
@@ -197,42 +210,30 @@
         body.dark .value-item .value-title { color: #e8d8c8; }
         @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
 
-        /* --- استایل‌های ماژول الحاقی (Pioneer Upload Module) --- */
-        .pioneer-invite {
-            display: none;
-            margin-top: 1rem;
-            padding: 1.2rem;
-            background: rgba(212, 172, 13, 0.05);
+        /* --- استایل ماژول الحاقی (Pioneer Module) --- */
+        .pioneer-module {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(255, 215, 0, 0.05);
             border: 1px dashed rgba(212, 172, 13, 0.3);
-            border-radius: 16px;
+            border-radius: 20px;
             text-align: center;
-            animation: fadeIn 0.5s ease;
         }
-        body.dark .pioneer-invite { background: rgba(249, 231, 159, 0.03); }
-        
-        .pioneer-invite p {
-            font-size: 0.85rem;
-            color: #4a2a1a;
-            margin-bottom: 0.8rem;
-            line-height: 1.5;
-        }
-        body.dark .pioneer-invite p { color: #d0c0b0; }
-
-        .btn-upload-mini {
-            display: inline-block;
-            padding: 0.6rem 1.5rem;
-            background: #2a1a0a;
+        body.dark .pioneer-module { background: rgba(255, 215, 0, 0.02); }
+        .pioneer-text { font-size: 0.85rem; color: #4a2a1a; margin-bottom: 0.8rem; }
+        body.dark .pioneer-text { color: #d0c0b0; }
+        .btn-upload {
+            background: linear-gradient(135deg, #2a1a0a 0%, #5a3a2a 100%);
             color: #fff !important;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            text-decoration: none;
-            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(42, 26, 10, 0.3);
+            display: inline-block;
+            width: auto;
+            min-width: 200px;
         }
-        body.dark .btn-upload-mini { background: #f9e79f; color: #1a0a0a !important; }
-        .btn-upload-mini:hover { transform: translateY(-2px); opacity: 0.9; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        body.dark .btn-upload {
+            background: linear-gradient(135deg, #f9e79f 0%, #d4ac0d 100%);
+            color: #1a0a0a !important;
+        }
     </style>
 </head>
 <body>
@@ -243,62 +244,89 @@
         <div class="subtitle">Global Smart Cultural Identity Card</div>
 
         <form id="registerForm">
-            <!-- ۷ ارزش فرهنگی با اشارات نامرئی به نظریه‌ها -->
+            <!-- بخش ایمیل اختیاری -->
+            <div class="form-group">
+                <label>Email for Cultural Networking (Optional)</label>
+                <input type="email" id="userEmail" placeholder="If you wish to connect with like-minded cultural peers..." />
+                <small style="opacity:0.5; font-size:0.7rem;">Used only for finding cultural companions.</small>
+            </div>
+
+            <!-- ۷ ارزش فرهنگی همراه با اولویت‌بندی -->
             <div class="value-item">
-                <label class="value-title">1. Indigenous Values (Smart Cultural Resistance)</label>
-                <input type="text" id="v1" placeholder="e.g. Preserving heritage, local identity, rootedness..." required />
+                <label class="value-title">1. Indigenous Values</label>
+                <div class="priority-row">
+                    <input type="text" id="v1" placeholder="Description..." required />
+                    <select id="p1"><option value="">Priority</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select>
+                </div>
             </div>
 
             <div class="value-item">
-                <label class="value-title">2. Individual Knowledge (Enlightenment Companions)</label>
-                <input type="text" id="v2" placeholder="e.g. Lived experience, tacit wisdom, indigenous skills..." required />
+                <label class="value-title">2. Individual Knowledge</label>
+                <div class="priority-row">
+                    <input type="text" id="v2" placeholder="Description..." required />
+                    <select id="p2"><option value="">Priority</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select>
+                </div>
             </div>
 
             <div class="value-item">
-                <label class="value-title">3. Collective Collaboration (Entrepreneurial Nexus)</label>
-                <input type="text" id="v3" placeholder="e.g. Network synergy, distributed trust, teamwork..." required />
+                <label class="value-title">3. Collective Collaboration</label>
+                <div class="priority-row">
+                    <input type="text" id="v3" placeholder="Description..." required />
+                    <select id="p3"><option value="">Priority</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select>
+                </div>
             </div>
 
             <div class="value-item">
-                <label class="value-title">4. Cultural Diversity (Unity in Plurality)</label>
-                <input type="text" id="v4" placeholder="e.g. Respect for differences, dialogue of civilizations, tolerance..." required />
+                <label class="value-title">4. Cultural Diversity</label>
+                <div class="priority-row">
+                    <input type="text" id="v4" placeholder="Description..." required />
+                    <select id="p4"><option value="">Priority</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select>
+                </div>
             </div>
 
             <div class="value-item">
-                <label class="value-title">5. Global Peace (Intelligent Peace)</label>
-                <input type="text" id="v5" placeholder="e.g. Data-driven diplomacy, preemptive conflict resolution, active calm..." required />
+                <label class="value-title">5. Global Peace</label>
+                <div class="priority-row">
+                    <input type="text" id="v5" placeholder="Description..." required />
+                    <select id="p5"><option value="">Priority</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select>
+                </div>
             </div>
 
             <div class="value-item">
-                <label class="value-title">6. Eliminating Violence (Systemic Love)</label>
-                <input type="text" id="v6" placeholder="e.g. Reducing prejudice, promoting tolerance, invisible cultural engineering..." required />
+                <label class="value-title">6. Eliminating Violence</label>
+                <div class="priority-row">
+                    <input type="text" id="v6" placeholder="Description..." required />
+                    <select id="p6"><option value="">Priority</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select>
+                </div>
             </div>
 
             <div class="value-item">
-                <label class="value-title">7. Cultural Unity (Galaxy of Wisdom)</label>
-                <input type="text" id="v7" placeholder="e.g. Bridges between cultures, collective wisdom, co-evolution..." required />
+                <label class="value-title">7. Cultural Unity</label>
+                <div class="priority-row">
+                    <input type="text" id="v7" placeholder="Description..." required />
+                    <select id="p7"><option value="">Priority</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select>
+                </div>
             </div>
 
             <div class="form-group">
                 <label>Optional Code (5 custom characters)</label>
                 <input type="text" id="optionalCode" maxlength="5" placeholder="e.g. A-B-C-D-E" />
-                <small style="opacity:0.5; font-size:0.7rem;">Optional - you can leave it empty</small>
             </div>
 
             <div class="btn-group">
                 <button type="submit" class="btn btn-primary" id="submitBtn">🎯 Get Your ID</button>
                 <a href="index-en.html" class="btn btn-secondary">↩ Back</a>
             </div>
+
+            <!-- --- ماژول الحاقی: هدایت به آپلود (آشکار و زیبا) --- -->
+            <div class="pioneer-module">
+                <p class="pioneer-text">✨ <strong>Pioneer Member:</strong> Would you like to upload your cultural achievement to the global gallery?</p>
+                <a href="upload-achievement-fa.html" class="btn btn-upload">🚀 Upload Achievement</a>
+            </div>
         </form>
 
         <div class="success-message" id="successMessage">
             ✅ Your information has been saved. Redirecting to your card...
-        </div>
-
-        <!-- --- ماژول الحاقی: دعوت به آپلود دستاورد (نمایش پس از ثبت موفق) --- -->
-        <div id="pioneerInvite" class="pioneer-invite">
-            <p>✨ <strong>Pioneer Opportunity:</strong> As one of the first 200 members, would you like to upload your cultural achievement to be featured on our main gallery?</p>
-            <a href="upload-achievement-fa.html" class="btn-upload-mini">🚀 Yes, Upload My Achievement</a>
         </div>
 
         <div class="note">
@@ -334,22 +362,21 @@
             submitBtn.textContent = '⏳ Registering...';
 
             try {
-                const values = [
-                    document.getElementById('v1').value.trim(),
-                    document.getElementById('v2').value.trim(),
-                    document.getElementById('v3').value.trim(),
-                    document.getElementById('v4').value.trim(),
-                    document.getElementById('v5').value.trim(),
-                    document.getElementById('v6').value.trim(),
-                    document.getElementById('v7').value.trim()
-                ];
+                // جمع‌آوری اطلاعات جدید شامل ایمیل و اولویت‌ها
+                const values = [];
+                const priorities = [];
+                for(let i=1; i<=7; i++) {
+                    values.push(document.getElementById('v'+i).value.trim());
+                    priorities.push(document.getElementById('p'+i).value);
+                }
 
                 const optionalCode = document.getElementById('optionalCode').value.trim();
+                const userEmail = document.getElementById('userEmail').value.trim();
 
                 const response = await fetch('/api/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ values, optionalCode })
+                    body: JSON.stringify({ values, priorities, optionalCode, userEmail })
                 });
 
                 const result = await response.json();
@@ -358,22 +385,9 @@
                 document.getElementById('successMessage').classList.add('show');
                 submitBtn.textContent = '✅ Registered';
                 
-                // --- منطق الحاقی: نمایش ماژول آپلود برای ۲۰۰ نفر اول ---
-                // این بخش پس از ثبت موفق اجرا می‌شود و ریدایرکت خودکار را لغو می‌کند
-                // تا کاربر فرصت انتخاب آپلود دستاورد را داشته باشد
-                const pioneerInvite = document.getElementById('pioneerInvite');
-                const isFirst200 = true; // این مقدار بعداً از سمت سرور یا لوکال‌استوریج خوانده می‌شود
-                
-                if (isFirst200) {
-                    pioneerInvite.style.display = 'block';
-                    // جلوگیری از ریدایرکت خودکار قبلی تا کاربر بتواند تصمیم بگیرد
-                    // اگر کاربر روی دکمه آپلود کلیک نکرد، می‌تواند دستی به کارت برود
-                } else {
-                    setTimeout(() => {
-                        window.location.href = `card-en.html?code=${result.cardCode}`;
-                    }, 1500);
-                }
-                // --- پایان منطق الحاقی ---
+                setTimeout(() => {
+                    window.location.href = `card-en.html?code=${result.cardCode}`;
+                }, 1500);
 
             } catch (error) {
                 alert('❌ ' + error.message);
