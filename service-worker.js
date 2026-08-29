@@ -1,21 +1,14 @@
-```javascript
-const CACHE_NAME = 'cultural-id-v2';
+const CACHE_NAME = 'cultural-id-v3';
 
 const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/index-en.html',
-  '/card-fa.html',
-  '/card-en.html',
-  '/about-fa.html',
-  '/about-en.html',
-  '/assets/logo-fa.png',
+  '
+/assets/logo-fa.png',
   '/assets/logo-en.png',
   '/assets/hologram.png',
   '/assets/pisa.jpg'
 ];
 
-// نصب نسخه جدید Service Worker
+// نصب Service Worker جدید
 self.addEventListener('install', (event) => {
   self.skipWaiting();
 
@@ -26,34 +19,61 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// فعال‌سازی نسخه جدید و حذف کش‌های قدیمی
+// فعال‌سازی Service Worker جدید
+// و حذف تمام Cacheهای قدیمی
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keyList) => {
+    caches.keys().then((cacheNames) => {
       return Promise.all(
-        keyList.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
           }
+          return Promise.resolve();
         })
       );
-    }).then(() => self.clients.claim())
+    }).then(() => {
+      return self.clients.claim();
+    })
   );
 });
 
-// همیشه ابتدا نسخه جدید شبکه را امتحان کن
-// و فقط در صورت قطع شبکه از Cache استفاده کن.
+// درخواست‌های صفحات و فایل‌ها
 self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return;
+  if (event.request.method !== 'GET') {
+    return;
+  }
 
+  const requestUrl = new URL(event.request.url);
+
+  // فایل‌های HTML هرگز از Cache خوانده نشوند.
+  // همیشه آخرین نسخه از سرور دریافت شود.
+  if (
+    requestUrl.pathname === '/' ||
+    requestUrl.pathname.endsWith('.html')
+  ) {
+    event.respondWith(
+      fetch(event.request)
+        .catch(() => {
+          return caches.match(event.request);
+        })
+    );
+
+    return;
+  }
+
+  // برای سایر فایل‌ها:
+  // ابتدا شبکه، و در صورت قطع بودن شبکه Cache
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        const responseClone = response.clone();
+        if (response && response.ok) {
+          const responseClone = response.clone();
 
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseClone);
-        });
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+          });
+        }
 
         return response;
       })
@@ -62,4 +82,3 @@ self.addEventListener('fetch', (event) => {
       })
   );
 });
-```
