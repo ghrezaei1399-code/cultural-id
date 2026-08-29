@@ -180,42 +180,55 @@
         .cta-note { text-align: center; font-size: 0.75rem; color: #6a5a3a; margin-top: -0.8rem; margin-bottom: 1.5rem; font-weight: 600; }
         body.dark .cta-note { color: #c8b890; }
 
-        /* ⭐ بخش پایینی: گالری ۲۰۰ نفر اول و سایر ماژول‌ها */
+        /* ⭐ بخش نمایشی گالری ۲۰۰ نفر اول (تمام عرض) */
+        .achievers-display-section {
+            margin: 2rem 0; padding: 2rem;
+            background: linear-gradient(135deg, rgba(255, 248, 220, 0.6), rgba(253, 246, 227, 0.8));
+            border-radius: 32px; border: 2px solid rgba(212, 175, 55, 0.4);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.1); backdrop-filter: blur(10px);
+            text-align: center;
+        }
+        body.dark .achievers-display-section {
+            background: linear-gradient(135deg, rgba(74, 58, 40, 0.5), rgba(58, 47, 32, 0.7));
+            border-color: rgba(212, 175, 55, 0.5);
+        }
+        .achievers-title { font-size: 1.3rem; font-weight: 900; color: #8a6d1f; margin-bottom: 0.5rem; }
+        body.dark .achievers-title { color: #f9e79f; }
+        .achievers-desc { font-size: 0.9rem; color: #4a3a2a; margin-bottom: 1.5rem; line-height: 1.7; max-width: 800px; margin-left: auto; margin-right: auto; }
+        body.dark .achievers-desc { color: #c8b890; }
+        
+        /* گرید نمایش دستاوردها */
+        .achievements-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .achievement-card {
+            background: rgba(255,255,255,0.7); border-radius: 20px; overflow: hidden;
+            border: 1px solid rgba(212,175,55,0.3); transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        body.dark .achievement-card { background: rgba(0,0,0,0.3); border-color: rgba(212,175,55,0.2); }
+        .achievement-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(212,175,55,0.2); }
+        .achievement-media { width: 100%; height: 180px; background: #ddd; display: flex; align-items: center; justify-content: center; color: #888; font-size: 0.8rem; }
+        .achievement-info { padding: 1rem; text-align: right; }
+        .achievement-info h4 { font-size: 0.95rem; color: #2a1a0a; margin-bottom: 0.3rem; }
+        body.dark .achievement-info h4 { color: #f0e8d0; }
+        .achievement-info p { font-size: 0.75rem; color: #6a5a3a; line-height: 1.5; }
+        body.dark .achievement-info p { color: #a89a80; }
+        .achievement-type { display: inline-block; padding: 0.2rem 0.6rem; background: rgba(212,175,55,0.15); border-radius: 12px; font-size: 0.65rem; color: #8a6d1f; font-weight: 700; margin-top: 0.5rem; }
+
+        /* بخش پایینی: درباره پروژه + رادیوتلویزیون */
         .bottom-modules-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-top: 1rem; }
         .bottom-module { text-align: center; padding: 1rem 0.8rem; border-radius: 20px; transition: all 0.3s; backdrop-filter: blur(10px); }
         .bottom-module:hover { transform: translateY(-3px); }
-        
         .bottom-about { background: rgba(180, 220, 250, 0.8); border: 2px solid rgba(52, 152, 219, 0.5); }
         body.dark .bottom-about { background: rgba(40, 60, 80, 0.7); border-color: rgba(133, 193, 233, 0.5); }
         .bottom-about h3 { color: #2874a6; } body.dark .bottom-about h3 { color: #85c1e9; }
-        
         .bottom-radio { background: rgba(230, 200, 245, 0.8); border: 2px solid rgba(142, 68, 173, 0.5); }
         body.dark .bottom-radio { background: rgba(70, 50, 90, 0.7); border-color: rgba(210, 180, 222, 0.5); }
         .bottom-radio h3 { color: #6a3d9a; } body.dark .bottom-radio h3 { color: #d2b4de; }
-        
-        /* ⭐ استایل اختصاصی گالری ۲۰۰ نفر اول */
-        .bottom-achievers { 
-            background: linear-gradient(135deg, rgba(255, 248, 220, 0.9), rgba(253, 246, 227, 0.95)); 
-            border: 2px solid rgba(212, 175, 55, 0.6); 
-            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.15);
-            grid-column: span 2; /* در دسکتاپ کل عرض را بگیرد */
-        }
-        body.dark .bottom-achievers { 
-            background: linear-gradient(135deg, rgba(74, 58, 40, 0.7), rgba(58, 47, 32, 0.8)); 
-            border-color: rgba(212, 175, 55, 0.5); 
-        }
-        .bottom-achievers h3 { color: #8a6d1f; font-size: 1.1rem; margin-bottom: 0.4rem; font-weight: 900; }
-        .bottom-achievers p { color: #3a2a1a; font-size: 0.8rem; margin-bottom: 0.8rem; line-height: 1.6; }
-        body.dark .bottom-achievers p { color: #e8dcc0; }
-        .btn-achievers {
-            display: inline-block; 
-            background: linear-gradient(135deg, #d4af37, #f9e79f); 
-            color: #2a1a0a; padding: 0.5rem 1.5rem; border-radius: 30px; 
-            font-weight: 800; font-size: 0.85rem; text-decoration: none; border: none; 
-            transition: all 0.3s; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
-        }
-        .btn-achievers:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5); }
-
+        .bottom-module p { font-size: 0.75rem; margin-bottom: 0.6rem; line-height: 1.5; color: #3a2a1a; }
+        body.dark .bottom-module p { color: #e8dcc0; }
         .btn-bottom { display: inline-block; background: rgba(255, 255, 255, 0.6); color: #2a1a0a; padding: 0.4rem 1.2rem; border-radius: 30px; font-weight: 700; font-size: 0.75rem; text-decoration: none; border: 1px solid rgba(212, 175, 55, 0.4); transition: all 0.3s; }
         body.dark .btn-bottom { background: rgba(0, 0, 0, 0.3); color: #f9e79f; }
         .btn-bottom:hover { transform: scale(1.05); }
@@ -231,8 +244,8 @@
             .golden-row { grid-template-columns: 1fr; padding: 1rem; gap: 1rem; }
             .golden-btn { min-height: 100px; font-size: 1rem; padding: 1.2rem 0.8rem; }
             .bottom-modules-wrapper { grid-template-columns: 1fr; }
-            .bottom-achievers { grid-column: span 1; } /* در موبایل تک ستونه شود */
             .real-card-sample { transform: none; max-width: 100%; }
+            .achievements-grid { grid-template-columns: 1fr; }
         }
     </style>
     <link rel="manifest" href="/manifest.json">
@@ -269,8 +282,8 @@
             <span>✦ فرهنگ ما، ارتباط ما، آینده‌ی مشترک ما ✦</span>
             <span>✦ هویت فرهنگی، فراتر از مرزها ✦</span>
             <span>✦ صلح، تنوع، اتحاد ✦</span>
-            <span>✦ فرهنگ ما، ارتباط ما، آینده‌ی مشترک ما ✦</span>
-            <span>✦ هویت فرهنگی، فراتر از مرزها </span>
+            <span> فرهنگ ما، ارتباط ما، آینده‌ی مشترک ما ✦</span>
+            <span> هویت فرهنگی، فراتر از مرزها </span>
             <span>✦ صلح، تنوع، اتحاد ✦</span>
         </div>
     </div>
@@ -328,15 +341,50 @@
         <a href="request-fa.html?type=delete" class="module-btn module-cancel"><span class="icon"></span><span class="label">انصراف</span><span class="desc">حذف حساب کاربری</span></a>
     </div>
 
-    <!-- ⭐ بخش پایینی: گالری ۲۰۰ نفر اول + درباره پروژه + رادیوتلویزیون -->
-    <div class="bottom-modules-wrapper">
-        <!-- گالری ۲۰ نفر اول (بازگشته به جایگاه اصلی) -->
-        <div class="bottom-module bottom-achievers">
-            <h3>🏅 گالری دستاوردهای ۲۰۰ عضو اول</h3>
-            <p>اعضای پیشرو پس از ثبت‌نام، دستاوردهای علمی و فرهنگی خود را آپلود کرده و برای نمایش در اطلس ظهور ارسال می‌کنند.</p>
-            <a href="top200-fa.html" class="btn-achievers">مشاهده گالری و ارسال دستاورد</a>
-        </div>
+    <!-- ⭐ بخش نمایشی گالری ۲۰۰ نفر اول (خروجی آپلود دستاوردها) -->
+    <div class="achievers-display-section">
+        <h3 class="achievers-title">🏅 گالری دستاوردهای ۲۰۰ عضو اول</h3>
+        <p class="achievers-desc">
+            اعضای پیشرو پس از دریافت کارت، دستاوردهای علمی، هنری و فرهنگی خود را در صفحه ثبت‌نام آپلود کرده‌اند. 
+            این بخش نمایشگر خروجی واقعی کنشگری فرهنگی شامل مقالات، آثار هنری، پوسترها و مستندهای ویدیویی است.
+        </p>
         
+        <!-- گرید نمایش دستاوردها (نمونه ساختار) -->
+        <div class="achievements-grid">
+            <!-- آیتم نمونه ۱: مقاله -->
+            <div class="achievement-card">
+                <div class="achievement-media">📄 تصویر جلد مقاله</div>
+                <div class="achievement-info">
+                    <h4>تحلیل سپهری بحران آب در فلات مرکزی</h4>
+                    <p>مقاله پژوهشی مبتنی بر مشاهده خام و ماتریس ظهور</p>
+                    <span class="achievement-type">مقاله علمی</span>
+                </div>
+            </div>
+            
+            <!-- آیتم نمونه ۲: اثر هنری -->
+            <div class="achievement-card">
+                <div class="achievement-media">🎨 تصویر اثر هنری</div>
+                <div class="achievement-info">
+                    <h4>پوستر «ظهور ظرفیت‌های مغفول»</h4>
+                    <p>اثر گرافیکی برگرفته از پرونده فقر و آموزش</p>
+                    <span class="achievement-type">اثر هنری / پوستر</span>
+                </div>
+            </div>
+            
+            <!-- آیتم نمونه ۳: ویدیو -->
+            <div class="achievement-card">
+                <div class="achievement-media">🎬 کادر ویدیو</div>
+                <div class="achievement-info">
+                    <h4>مستند کوتاه: صدای نادیده‌ها</h4>
+                    <p>روایت تصویری از ظرفیت‌های پنهان در حاشیه شهر</p>
+                    <span class="achievement-type">مستند ویدیویی</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- بخش پایینی: درباره پروژه + رادیوتلویزیون -->
+    <div class="bottom-modules-wrapper">
         <div class="bottom-module bottom-about">
             <h3>📖 درباره پروژه</h3>
             <p>اهداف و فلسفه‌ی غیرمتمرکز</p>
