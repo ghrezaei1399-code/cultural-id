@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>اتاق فکر ظهور | آزمایشگاه سپهر خردمندی</title>
+    <title>اتاق فکر مجتمع ظهور | مجتمع هم‌اندیشی سپهر خردمندی</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -15,7 +15,7 @@
         .container { max-width: 700px; width: 90%; background: rgba(255,255,255,0.95); border-radius: 32px; padding: 3rem 2rem; 
             border: 2px solid rgba(212,175,55,0.4); box-shadow: 0 20px 60px rgba(212,175,55,0.2); text-align: center; position: relative; z-index: 1; }
         
-        /* خط راهنمای دو سطری */
+        /* خط راهنمای دو سطری اصلاح شده */
         .guide-banner { background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(249,231,159,0.2)); border: 1px solid rgba(212,175,55,0.3); 
             border-radius: 16px; padding: 1rem; margin-bottom: 2rem; line-height: 1.8; font-size: 0.9rem; color: #4a3a2a; }
         .guide-banner strong { color: #8a6d1f; }
@@ -43,7 +43,7 @@
         .btn:hover { transform: translateY(-2px); }
         .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-        /* بسته اقدام عملی (مخفی در ابتدا) */
+        /* بسته راهنمای اقدام عملی (مخفی در ابتدا) */
         .action-package { display: none; margin-top: 2rem; padding: 1.5rem; background: rgba(255,255,255,0.8); 
             border: 2px solid rgba(39,174,96,0.3); border-radius: 20px; text-align: right; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -59,14 +59,14 @@
 </head>
 <body>
     <div class="container">
-        <!-- خط راهنمای دو سطری -->
+        <!-- خط راهنمای دو سطری اصلاح شده -->
         <div class="guide-banner">
-            <strong>آزمایشگاه سپهر خردمندی چیست؟</strong> محیطی برای مشاهده پدیده‌های واقعی بدون قضاوت، جهت کشف ظرفیت‌ها و موانع ظهور.<br>
-            <strong>چه خروجی دریافت می‌کنید؟</strong> پس از ثبت مشاهده خام، یک «بسته اقدام عملی سه سطحی» متناسب با خوشه ظهور برای شما تولید می‌شود.
+            <strong>مجتمع هم‌اندیشی سپهر خردمندی چیست؟</strong> اینجا محیطی برای بیان پدیده‌های واقعی فرهنگی یا مشکلات و معضلات فرهنگی است که در مرحله نخست بدون قضاوت، جهت کشف ظرفیت‌ها و موانع ظهور بیان می‌شود.<br>
+            <strong>چه خروجی دریافت می‌کنید؟</strong> پس از ثبت مشاهده خام، یک «بسته راهنمای اقدام عملی یا کنشگری فرهنگی سه سطحی» متناسب با خوشه ظهور برای شما تولید می‌شود.
         </div>
 
-        <h1>اتاق فکر ظهور</h1>
-        <div class="subtitle">Global Smart Cultural Identity Lab</div>
+        <h1>اتاق فکر مجتمع ظهور</h1>
+        <div class="subtitle">Sahar Wisdom Community - Emergence Thinking Room</div>
         
         <!-- باکس کد اختصاصی -->
         <div class="code-input-group">
@@ -84,12 +84,12 @@
         
         <div class="actions">
             <button class="btn btn-back" onclick="window.location.href='index.html'">↩ بازگشت به صفحه اصلی</button>
-            <button class="btn btn-save" id="saveBtn" onclick="processObservation()"> ذخیره و دریافت بسته اقدام</button>
+            <button class="btn btn-save" id="saveBtn" onclick="processObservation()"> ذخیره و دریافت بسته راهنما</button>
         </div>
 
-        <!-- بسته اقدام عملی (نمایش پس از پردازش) -->
+        <!-- بسته راهنمای اقدام عملی (نمایش پس از پردازش) -->
         <div class="action-package" id="actionPackage">
-            <div class="package-title">📦 بسته اقدام عملی و کنشگرانه شما</div>
+            <div class="package-title">📦 بسته راهنمای اقدام عملی یا کنشگری فرهنگی شما</div>
             <div class="level-item">
                 <span class="level-label">سطح فردی (اقدام شخصی)</span>
                 <div class="level-text" id="levelIndividual">...</div>
@@ -139,7 +139,7 @@ function processObservation() {
             if (words.some(w => text.includes(w))) { cluster = c; break; }
         }
         
-        // ۲. تولید بسته اقدام سه سطحی (بر اساس خوشه تشخیص داده شده)
+        // ۲. تولید بسته راهنمای اقدام سه سطحی (بر اساس خوشه تشخیص داده شده)
         const packages = {
             'انسان': {
                 individual: 'روزانه یک ظهور مرتبط با این موضوع را در دفترچه مشاهده خود یادداشت کنید و از قضاوت بپرهیزید.',
@@ -148,7 +148,7 @@ function processObservation() {
             },
             'دانش و فناوری': {
                 individual: 'ظرفیت‌های مغفول دانشی در این پدیده را فهرست کنید بدون اینکه راه‌حل فناورانه پیشنهاد دهید.',
-                network: 'در شبکه آزمایشگاه، پرونده مشابهی جستجو کنید و الگوی تکرارشونده آن را گزارش دهید.',
+                network: 'در شبکه مجتمع هم‌اندیشی، پرونده مشابهی جستجو کنید و الگوی تکرارشونده آن را گزارش دهید.',
                 policy: 'خلأ نهادی در دسترسی به دانش مربوط به این ظهور را مستند کنید.'
             },
             'حکمرانی و تمدن': {
@@ -165,17 +165,17 @@ function processObservation() {
         
         const pkg = packages[cluster];
         
-        // ۳. نمایش بسته اقدام
+        // . نمایش بسته راهنما
         document.getElementById('levelIndividual').textContent = pkg.individual;
         document.getElementById('levelNetwork').textContent = pkg.network;
         document.getElementById('levelPolicy').textContent = pkg.policy;
         document.getElementById('clusterBadge').textContent = `خوشه تشخیص داده شده: ${cluster}`;
         document.getElementById('actionPackage').style.display = 'block';
         
-        // اسکرول نرم به بسته اقدام
+        // اسکرول نرم به بسته راهنما
         document.getElementById('actionPackage').scrollIntoView({ behavior: 'smooth', block: 'start' });
         
-        btn.textContent = '✅ بسته اقدام دریافت شد';
+        btn.textContent = '✅ بسته راهنما دریافت شد';
         
         // ⚠️ اینجا باید API واقعی فراخوانی شود:
         // fetch('/api/save-observation', { method:'POST', body: JSON.stringify({ code, text, cluster, package: pkg }) })
