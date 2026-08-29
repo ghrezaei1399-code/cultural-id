@@ -90,7 +90,6 @@
             background: rgba(255, 255, 255, 0.03);
         }
         
-        /* استایل خاص برای باکس‌های ارزش‌های فرهنگی */
         .value-item {
             background: rgba(255, 255, 255, 0.01);
             border-radius: 12px;
@@ -123,7 +122,6 @@
             border-color: rgba(255, 255, 255, 0.02);
         }
 
-        /* استایل بخش اولویت‌بندی */
         .priority-section {
             margin-top: 2rem;
             padding-top: 1.5rem;
@@ -259,7 +257,7 @@
         
         @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
 
-        /* --- استایل ماژول الحاقی (Pioneer Upload Module) --- */
+        /* --- استایل ماژول‌های الحاقی --- */
         .pioneer-module {
             margin-top: 1.5rem;
             padding: 1rem;
@@ -298,6 +296,20 @@
         }
         .btn-upload:hover { transform: translateY(-2px); opacity: 0.9; }
 
+        /* ماژول خوش‌آمدگویی پس از دریافت کارت */
+        .welcome-back-module {
+            display: none; /* پیش‌فرض مخفی */
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: rgba(40, 116, 166, 0.1);
+            border: 1px solid rgba(40, 116, 166, 0.3);
+            border-radius: 20px;
+            text-align: center;
+        }
+        body.dark .welcome-back-module { background: rgba(133, 193, 233, 0.05); }
+        .welcome-text { font-size: 1rem; color: #2874a6; margin-bottom: 1rem; font-weight: 700; }
+        body.dark .welcome-text { color: #85c1e9; }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -305,90 +317,47 @@
     <button class="theme-toggle" id="themeToggle">🌙</button>
 
     <div class="container">
+        <!-- ماژول خوش‌آمدگویی برای کسانی که کارت دارند -->
+        <div id="welcomeBackModule" class="welcome-back-module">
+            <div class="welcome-text">✨ خوش آمدید! کارت هویت شما فعال است.</div>
+            <p class="pioneer-text">حالا نوبت شماست که دستاورد فرهنگی خود را با جهان به اشتراک بگذارید.</p>
+            <a href="upload-achievement-fa.html" class="btn btn-upload">🚀 آپلود دستاورد فرهنگی</a>
+        </div>
+
         <h1> ثبت‌نام و دریافت شناسنامه</h1>
         <div class="subtitle">کارت جهانی هویت هوشمند فرهنگی</div>
 
         <form id="registerForm">
-            <!-- ۷ ارزش فرهنگی با اشارات نامرئی به نظریه‌ها -->
-            <div class="value-item">
-                <label class="value-title">۱. ارزش‌های بومی (مقاومت فرهنگی هوشمند)</label>
-                <input type="text" id="v1" placeholder="مثلاً: حفظ میراث، هویت محلی، ریشه‌دار بودن..." required />
-            </div>
+            <!-- ۷ ارزش فرهنگی -->
+            <div class="value-item"><label class="value-title">۱. ارزش‌های بومی (مقاومت فرهنگی هوشمند)</label><input type="text" id="v1" placeholder="مثلاً: حفظ میراث..." required /></div>
+            <div class="value-item"><label class="value-title">۲. دانش فردی (همراهان روشنایی)</label><input type="text" id="v2" placeholder="مثلاً: تجربه زیسته..." required /></div>
+            <div class="value-item"><label class="value-title">۳. همکاری جمعی (نکسوس کارآفرین)</label><input type="text" id="v3" placeholder="مثلاً: هم‌افزایی شبکه‌ای..." required /></div>
+            <div class="value-item"><label class="value-title">۴. تنوع فرهنگی (وحدت در کثرت)</label><input type="text" id="v4" placeholder="مثلاً: احترام به تفاوت‌ها..." required /></div>
+            <div class="value-item"><label class="value-title">۵. صلح پایدار جهانی (صلح هوشمند)</label><input type="text" id="v5" placeholder="مثلاً: دیپلماسی داده‌محور..." required /></div>
+            <div class="value-item"><label class="value-title">۶. محو خشونت (عشق‌ورزی سیستمی)</label><input type="text" id="v6" placeholder="مثلاً: کاهش تعصب..." required /></div>
+            <div class="value-item"><label class="value-title">۷. اتحاد فرهنگی (کهکشان خرد)</label><input type="text" id="v7" placeholder="مثلاً: پل‌های ارتباطی..." required /></div>
 
-            <div class="value-item">
-                <label class="value-title">۲. دانش فردی (همراهان روشنایی)</label>
-                <input type="text" id="v2" placeholder="مثلاً: تجربه زیسته، خرد ضمنی، مهارت‌های بومی..." required />
-            </div>
-
-            <div class="value-item">
-                <label class="value-title">۳. همکاری جمعی (نکسوس کارآفرین)</label>
-                <input type="text" id="v3" placeholder="مثلاً: هم‌افزایی شبکه‌ای، اعتماد توزیع‌شده، کار گروهی..." required />
-            </div>
-
-            <div class="value-item">
-                <label class="value-title">۴. تنوع فرهنگی (وحدت در کثرت)</label>
-                <input type="text" id="v4" placeholder="مثلاً: احترام به تفاوت‌ها، گفت‌وگوی تمدن‌ها، مدارا..." required />
-            </div>
-
-            <div class="value-item">
-                <label class="value-title">۵. صلح پایدار جهانی (صلح هوشمند)</label>
-                <input type="text" id="v5" placeholder="مثلاً: دیپلماسی داده‌محور، حل تعارض پیش‌دستانه، آرامش فعال..." required />
-            </div>
-
-            <div class="value-item">
-                <label class="value-title">۶. محو خشونت (عشق‌ورزی سیستمی)</label>
-                <input type="text" id="v6" placeholder="مثلاً: کاهش تعصب، ترویج مدارا، مهندسی فرهنگی نامرئی..." required />
-            </div>
-
-            <div class="value-item">
-                <label class="value-title">۷. اتحاد فرهنگی (کهکشان خرد)</label>
-                <input type="text" id="v7" placeholder="مثلاً: پل‌های ارتباطی میان فرهنگ‌ها، خرد جمعی، هم‌تکامل..." required />
-            </div>
-
-            <!-- بخش اولویت‌بندی ارزش‌ها -->
+            <!-- اولویت‌بندی -->
             <div class="priority-section">
-                <div class="priority-title">🎯 اولویت‌بندی ارزش‌های شما (۱ مهم‌ترین، ۷ کم‌اهمیت‌ترین)</div>
+                <div class="priority-title">🎯 اولویت‌بندی ارزش‌های شما</div>
                 <div class="priority-grid">
-                    <div class="priority-item">
-                        <label>ارزش ۱</label>
-                        <select id="p1"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select>
-                    </div>
-                    <div class="priority-item">
-                        <label>ارزش ۲</label>
-                        <select id="p2"><option value="1">۱</option><option value="2">۲</option><option value="3"></option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select>
-                    </div>
-                    <div class="priority-item">
-                        <label>ارزش ۳</label>
-                        <select id="p3"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select>
-                    </div>
-                    <div class="priority-item">
-                        <label>ارزش ۴</label>
-                        <select id="p4"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select>
-                    </div>
-                    <div class="priority-item">
-                        <label>ارزش ۵</label>
-                        <select id="p5"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select>
-                    </div>
-                    <div class="priority-item">
-                        <label>ارزش ۶</label>
-                        <select id="p6"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select>
-                    </div>
-                    <div class="priority-item">
-                        <label>ارزش ۷</label>
-                        <select id="p7"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select>
-                    </div>
+                    <div class="priority-item"><label>ارزش ۱</label><select id="p1"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select></div>
+                    <div class="priority-item"><label>ارزش ۲</label><select id="p2"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select></div>
+                    <div class="priority-item"><label>ارزش ۳</label><select id="p3"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select></div>
+                    <div class="priority-item"><label>ارزش ۴</label><select id="p4"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select></div>
+                    <div class="priority-item"><label>ارزش ۵</label><select id="p5"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select></div>
+                    <div class="priority-item"><label>ارزش ۶</label><select id="p6"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select></div>
+                    <div class="priority-item"><label>ارزش ۷</label><select id="p7"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select></div>
                 </div>
             </div>
 
             <div class="form-group" style="margin-top: 2rem;">
                 <label>کد اختیاری (۵ کاراکتر دلخواه)</label>
                 <input type="text" id="optionalCode" maxlength="5" placeholder="مثلاً: الف-ب-ج-د-ه" />
-                <small style="opacity:0.5; font-size:0.7rem;">اختیاری - می‌توانید خالی بگذارید</small>
             </div>
 
-            <!-- ایمیل اختیاری در پایان صفحه -->
             <div class="form-group">
-                <label>ایمیل ارتباطی (اختیاری - برای دریافت پیام هم‌فرهنگان)</label>
+                <label>ایمیل ارتباطی (اختیاری)</label>
                 <input type="email" id="communicationEmail" placeholder="example@email.com" />
             </div>
 
@@ -397,9 +366,9 @@
                 <a href="index.html" class="btn btn-secondary">↩ بازگشت</a>
             </div>
 
-            <!-- --- ماژول الحاقی: هدایت به آپلود (آشکار و زیبا) --- -->
+            <!-- ماژول هدایت برای ۲۰۰ نفر اول (در حین ثبت‌نام) -->
             <div class="pioneer-module">
-                <p class="pioneer-text">✨ <strong>عضو پیشرو (۲۰۰ نفر اول):</strong> آیا مایلید دستاورد فرهنگی خود را برای نمایش در گالری اصلی سایت آپلود کنید؟</p>
+                <p class="pioneer-text">✨ <strong>عضو پیشرو:</strong> آیا مایلید دستاورد فرهنگی خود را برای نمایش در گالری اصلی سایت آپلود کنید؟</p>
                 <a href="upload-achievement-fa.html" class="btn-upload">🚀 بله، آپلود دستاورد</a>
             </div>
         </form>
@@ -437,28 +406,16 @@
         // Form Submission Logic
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-
             const submitBtn = document.getElementById('submitBtn');
-            
-            // اعتبارسنجی اولیه
-            const values = [];
-            for (let i = 1; i <= 7; i++) {
-                const val = document.getElementById(`v${i}`).value.trim();
-                if (!val) {
-                    alert(`لطفاً ارزش شماره ${i} را وارد کنید.`);
-                    return;
-                }
-                values.push(val);
-            }
-
             submitBtn.disabled = true;
             submitBtn.textContent = ' در حال ثبت...';
 
             try {
+                const values = [];
+                for (let i = 1; i <= 7; i++) values.push(document.getElementById(`v${i}`).value.trim());
+                
                 const priorities = [];
-                for (let i = 1; i <= 7; i++) {
-                    priorities.push(parseInt(document.getElementById(`p${i}`).value));
-                }
+                for (let i = 1; i <= 7; i++) priorities.push(parseInt(document.getElementById(`p${i}`).value));
 
                 const optionalCode = document.getElementById('optionalCode').value.trim();
                 const communicationEmail = document.getElementById('communicationEmail').value.trim();
@@ -466,47 +423,41 @@
                 const response = await fetch('/api/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        values, 
-                        priorities, 
-                        optionalCode,
-                        communicationEmail 
-                    })
+                    body: JSON.stringify({ values, priorities, optionalCode, communicationEmail })
                 });
 
-                // مدیریت ایمن پاسخ سرور
                 let result;
                 const contentType = response.headers.get("content-type");
                 if (contentType && contentType.indexOf("application/json") !== -1) {
                     result = await response.json();
                 } else {
-                    const text = await response.text();
-                    throw new Error(`خطای سرور: ${text.substring(0, 100)}`);
+                    throw new Error('خطای سرور');
                 }
 
-                if (!response.ok) {
-                    throw new Error(result.error || 'خطا در ثبت‌نام');
-                }
+                if (!response.ok) throw new Error(result.error || 'خطا در ثبت‌نام');
 
                 document.getElementById('successMessage').classList.add('show');
                 submitBtn.textContent = '✅ ثبت شد';
                 
-                // --- منطق الحاقی: پیام اختیاری آپلود پس از ثبت موفق ---
-                // اینجا می‌توانیم به جای ریدایرکت فوری، کمی مکث کنیم تا کاربر ماژول آپلود را ببیند
-                // یا اگر مایل بود روی دکمه کلیک کند.
-                
-                // فعلاً ریدایرکت را نگه می‌داریم اما کاربر می‌تواند قبل از رفتن روی دکمه آپلود کلیک کند
                 setTimeout(() => {
                     window.location.href = `card-fa.html?code=${result.cardCode}`;
-                }, 3000); // زمان را کمی بیشتر کردم (۳ ثانیه) تا فرصت دیدن ماژول باشد
+                }, 1500);
 
             } catch (error) {
-                console.error('Registration Error:', error);
                 alert('❌ ' + error.message);
                 submitBtn.disabled = false;
                 submitBtn.textContent = '🎯 دریافت شناسنامه';
             }
         });
+
+        // --- منطق نمایش ماژول خوش‌آمدگویی پس از دریافت کارت ---
+        (function() {
+            // چک می‌کنیم آیا کاربر کدی در حافظه مرورگر دارد (یعنی قبلاً کارت گرفته)
+            const userCode = localStorage.getItem('userCardCode') || sessionStorage.getItem('userCardCode');
+            if (userCode) {
+                document.getElementById('welcomeBackModule').style.display = 'block';
+            }
+        })();
     </script>
 </body>
 </html>
