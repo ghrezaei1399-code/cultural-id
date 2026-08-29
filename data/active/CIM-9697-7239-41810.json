@@ -22,7 +22,8 @@
   ],
   "communicationEmail": "ghrezaei1399@gmail.com",
   "registrationDate": "2026-08-29T16:19:07.924Z",
-  "status": "pending",
+  "status": "approved",
   "rank": 0,
-  "country": "Iran"
+  "country": "Iran",
+  "statusUpdatedAt": "2026-08-29T16:45:59.295Z"
 }
