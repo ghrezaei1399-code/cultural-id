@@ -132,7 +132,7 @@
         .module-cancel { background: rgba(255, 210, 200, 0.8); border: 2px solid rgba(220, 80, 60, 0.5); color: #a93226; }
         body.dark .module-cancel { background: rgba(90, 40, 40, 0.7); border-color: rgba(241, 148, 138, 0.5); color: #f1948a; }
 
-        /* ⭐ ردیف طلایی خلاقانه و زیبا‌سازی شده */
+        /* ⭐ ردیف طلایی خلاقانه: سه دکمه اصلی (بعد از نمونه کارت) */
         .golden-row {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.2rem; 
             margin: 2rem 0; padding: 1.5rem; 
@@ -180,19 +180,42 @@
         .cta-note { text-align: center; font-size: 0.75rem; color: #6a5a3a; margin-top: -0.8rem; margin-bottom: 1.5rem; font-weight: 600; }
         body.dark .cta-note { color: #c8b890; }
 
-        /* بخش پایینی */
+        /* ⭐ بخش پایینی: گالری ۲۰۰ نفر اول و سایر ماژول‌ها */
         .bottom-modules-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-top: 1rem; }
         .bottom-module { text-align: center; padding: 1rem 0.8rem; border-radius: 20px; transition: all 0.3s; backdrop-filter: blur(10px); }
         .bottom-module:hover { transform: translateY(-3px); }
+        
         .bottom-about { background: rgba(180, 220, 250, 0.8); border: 2px solid rgba(52, 152, 219, 0.5); }
         body.dark .bottom-about { background: rgba(40, 60, 80, 0.7); border-color: rgba(133, 193, 233, 0.5); }
+        .bottom-about h3 { color: #2874a6; } body.dark .bottom-about h3 { color: #85c1e9; }
+        
         .bottom-radio { background: rgba(230, 200, 245, 0.8); border: 2px solid rgba(142, 68, 173, 0.5); }
         body.dark .bottom-radio { background: rgba(70, 50, 90, 0.7); border-color: rgba(210, 180, 222, 0.5); }
-        .bottom-module h3 { font-size: 0.95rem; margin-bottom: 0.3rem; }
-        .bottom-about h3 { color: #2874a6; } body.dark .bottom-about h3 { color: #85c1e9; }
         .bottom-radio h3 { color: #6a3d9a; } body.dark .bottom-radio h3 { color: #d2b4de; }
-        .bottom-module p { font-size: 0.75rem; margin-bottom: 0.6rem; line-height: 1.5; color: #3a2a1a; }
-        body.dark .bottom-module p { color: #e8dcc0; }
+        
+        /* ⭐ استایل اختصاصی گالری ۲۰۰ نفر اول */
+        .bottom-achievers { 
+            background: linear-gradient(135deg, rgba(255, 248, 220, 0.9), rgba(253, 246, 227, 0.95)); 
+            border: 2px solid rgba(212, 175, 55, 0.6); 
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.15);
+            grid-column: span 2; /* در دسکتاپ کل عرض را بگیرد */
+        }
+        body.dark .bottom-achievers { 
+            background: linear-gradient(135deg, rgba(74, 58, 40, 0.7), rgba(58, 47, 32, 0.8)); 
+            border-color: rgba(212, 175, 55, 0.5); 
+        }
+        .bottom-achievers h3 { color: #8a6d1f; font-size: 1.1rem; margin-bottom: 0.4rem; font-weight: 900; }
+        .bottom-achievers p { color: #3a2a1a; font-size: 0.8rem; margin-bottom: 0.8rem; line-height: 1.6; }
+        body.dark .bottom-achievers p { color: #e8dcc0; }
+        .btn-achievers {
+            display: inline-block; 
+            background: linear-gradient(135deg, #d4af37, #f9e79f); 
+            color: #2a1a0a; padding: 0.5rem 1.5rem; border-radius: 30px; 
+            font-weight: 800; font-size: 0.85rem; text-decoration: none; border: none; 
+            transition: all 0.3s; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+        .btn-achievers:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5); }
+
         .btn-bottom { display: inline-block; background: rgba(255, 255, 255, 0.6); color: #2a1a0a; padding: 0.4rem 1.2rem; border-radius: 30px; font-weight: 700; font-size: 0.75rem; text-decoration: none; border: 1px solid rgba(212, 175, 55, 0.4); transition: all 0.3s; }
         body.dark .btn-bottom { background: rgba(0, 0, 0, 0.3); color: #f9e79f; }
         .btn-bottom:hover { transform: scale(1.05); }
@@ -208,6 +231,7 @@
             .golden-row { grid-template-columns: 1fr; padding: 1rem; gap: 1rem; }
             .golden-btn { min-height: 100px; font-size: 1rem; padding: 1.2rem 0.8rem; }
             .bottom-modules-wrapper { grid-template-columns: 1fr; }
+            .bottom-achievers { grid-column: span 1; } /* در موبایل تک ستونه شود */
             .real-card-sample { transform: none; max-width: 100%; }
         }
     </style>
@@ -280,10 +304,10 @@
         <p style="text-align: center; margin-top: 1rem; font-size: 0.8rem; opacity: 0.8;">این دقیقاً همان کارت زیبایی است که پس از ثبت‌نام برای شما صادر می‌شود.</p>
     </div>
 
-    <!--  ردیف طلایی خلاقانه: سه دکمه اصلی (دقیقاً بعد از نمونه کارت) -->
+    <!-- ⭐ ردیف طلایی خلاقانه: سه دکمه اصلی (دقیقاً بعد از نمونه کارت) -->
     <div class="golden-row">
         <a href="register-fa.html" class="golden-btn btn-register">
-            <span style="font-size:1.8rem; margin-bottom:0.5rem;">🎯</span>
+            <span style="font-size:1.8rem; margin-bottom:0.5rem;"></span>
             دریافت شناسنامه فرهنگی
         </a>
         <a href="observer-fa.html" class="golden-btn btn-lab">
@@ -295,19 +319,26 @@
             گالری دستاوردهای ظهور
         </a>
     </div>
-    <div class="cta-note">بدون اطلاعات شخصی • کاملاً ناشناس • ۳ دقیقه</div>
+    <div class="cta-note">بدون اطلاعات شخصی • کاملاً ناشناس •  دقیقه</div>
 
     <!-- ماژول‌های کاربری (ویرایش، ارتباط، انصراف) -->
     <div class="modules">
         <a href="edit-fa.html" class="module-btn module-edit"><span class="icon">✏️</span><span class="label">ویرایش اطلاعات</span><span class="desc">فقط یک بار امکان تغییر دارد</span></a>
-        <a href="request-fa.html?type=connection" class="module-btn module-connect"><span class="icon"></span><span class="label">ارتباط</span><span class="desc">با هم‌فکران</span></a>
+        <a href="request-fa.html?type=connection" class="module-btn module-connect"><span class="icon">🤝</span><span class="label">ارتباط</span><span class="desc">با هم‌فکران</span></a>
         <a href="request-fa.html?type=delete" class="module-btn module-cancel"><span class="icon"></span><span class="label">انصراف</span><span class="desc">حذف حساب کاربری</span></a>
     </div>
 
-    <!-- بخش پایینی -->
+    <!-- ⭐ بخش پایینی: گالری ۲۰۰ نفر اول + درباره پروژه + رادیوتلویزیون -->
     <div class="bottom-modules-wrapper">
+        <!-- گالری ۲۰ نفر اول (بازگشته به جایگاه اصلی) -->
+        <div class="bottom-module bottom-achievers">
+            <h3>🏅 گالری دستاوردهای ۲۰۰ عضو اول</h3>
+            <p>اعضای پیشرو پس از ثبت‌نام، دستاوردهای علمی و فرهنگی خود را آپلود کرده و برای نمایش در اطلس ظهور ارسال می‌کنند.</p>
+            <a href="top200-fa.html" class="btn-achievers">مشاهده گالری و ارسال دستاورد</a>
+        </div>
+        
         <div class="bottom-module bottom-about">
-            <h3> درباره پروژه</h3>
+            <h3>📖 درباره پروژه</h3>
             <p>اهداف و فلسفه‌ی غیرمتمرکز</p>
             <a href="about-fa.html" class="btn-bottom">بیشتر بدانید</a>
         </div>
