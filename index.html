@@ -180,7 +180,7 @@
         .cta-note { text-align: center; font-size: 0.75rem; color: #6a5a3a; margin-top: -0.8rem; margin-bottom: 1.5rem; font-weight: 600; }
         body.dark .cta-note { color: #c8b890; }
 
-        /* ⭐ بخش نمایشی گالری ۲۰۰ نفر اول (تمام عرض) */
+        /* ⭐ بخش نمایشی گالری ۲۰۰ نفر اول (اصلاح شده برای نمایش بهتر) */
         .achievers-display-section {
             margin: 2rem 0; padding: 2rem;
             background: linear-gradient(135deg, rgba(255, 248, 220, 0.6), rgba(253, 246, 227, 0.8));
@@ -197,26 +197,44 @@
         .achievers-desc { font-size: 0.9rem; color: #4a3a2a; margin-bottom: 1.5rem; line-height: 1.7; max-width: 800px; margin-left: auto; margin-right: auto; }
         body.dark .achievers-desc { color: #c8b890; }
         
-        /* گرید نمایش دستاوردها */
+        /* گرید نمایش دستاوردها (بزرگ‌تر و خواناتر) */
         .achievements-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
+            gap: 2rem;
             margin-top: 1.5rem;
         }
         .achievement-card {
-            background: rgba(255,255,255,0.7); border-radius: 20px; overflow: hidden;
+            background: rgba(255,255,255,0.8); border-radius: 24px; overflow: hidden;
             border: 1px solid rgba(212,175,55,0.3); transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05); display: flex; flex-direction: column;
         }
-        body.dark .achievement-card { background: rgba(0,0,0,0.3); border-color: rgba(212,175,55,0.2); }
-        .achievement-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(212,175,55,0.2); }
-        .achievement-media { width: 100%; height: 180px; background: #ddd; display: flex; align-items: center; justify-content: center; color: #888; font-size: 0.8rem; overflow: hidden; }
-        .achievement-media img, .achievement-media video { width: 100%; height: 100%; object-fit: cover; }
-        .achievement-info { padding: 1rem; text-align: right; }
-        .achievement-info h4 { font-size: 0.95rem; color: #2a1a0a; margin-bottom: 0.3rem; }
+        body.dark .achievement-card { background: rgba(0,0,0,0.4); border-color: rgba(212,175,55,0.2); }
+        .achievement-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(212,175,55,0.15); }
+        
+        .achievement-media { 
+            width: 100%; height: 250px; 
+            background: #eee; display: flex; align-items: center; justify-content: center; 
+            overflow: hidden; position: relative;
+        }
+        .achievement-media img, .achievement-media video { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .achievement-card:hover .achievement-media img { transform: scale(1.05); }
+        
+        .achievement-info { padding: 1.5rem; text-align: right; flex-grow: 1; }
+        .achievement-info h4 { font-size: 1.1rem; color: #2a1a0a; margin-bottom: 0.8rem; font-weight: 800; }
         body.dark .achievement-info h4 { color: #f0e8d0; }
-        .achievement-info p { font-size: 0.75rem; color: #6a5a3a; line-height: 1.5; }
-        body.dark .achievement-info p { color: #a89a80; }
-        .achievement-type { display: inline-block; padding: 0.2rem 0.6rem; background: rgba(212,175,55,0.15); border-radius: 12px; font-size: 0.65rem; color: #8a6d1f; font-weight: 700; margin-top: 0.5rem; }
+        
+        .achievement-info p { 
+            font-size: 0.9rem; color: #4a3a2a; line-height: 1.8; 
+            white-space: pre-wrap; /* حفظ خطوط جدید متن */
+        }
+        body.dark .achievement-info p { color: #c8b890; }
+        
+        .achievement-type { 
+            display: inline-block; padding: 0.3rem 0.8rem; 
+            background: rgba(212,175,55,0.15); border-radius: 15px; 
+            font-size: 0.75rem; color: #8a6d1f; font-weight: 700; margin-top: 1rem; 
+        }
 
         /* بخش پایینی: درباره پروژه + رادیوتلویزیون */
         .bottom-modules-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-top: 1rem; }
@@ -381,7 +399,7 @@
     });
   }
 
-  // Load Approved Achievements
+  // Load Approved Achievements (اصلاح شده برای نمایش کامل)
   async function loadApprovedAchievements() {
     const grid = document.getElementById('dynamicAchievementsGrid');
     try {
@@ -426,7 +444,7 @@
             <div class="achievement-media">${mediaHtml}</div>
             <div class="achievement-info">
                 <h4>${ach.title}</h4>
-                <p>${ach.description ? ach.description.substring(0, 100) + '...' : ''}</p>
+                <p>${ach.description || ''}</p> <!-- نمایش کامل توضیحات -->
                 <span class="achievement-type">${ach.category || 'عمومی'}</span>
             </div>
         </div>`;
