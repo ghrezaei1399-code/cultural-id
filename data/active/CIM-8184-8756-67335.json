@@ -1,0 +1,28 @@
+{
+  "cardCode": "CIM-8184-8756-67335",
+  "displayCode": "CIM - 8184 - 8756 - 96396",
+  "optionalCode": "96396",
+  "values": [
+    "ایرانی",
+    "تحول",
+    "سازمان",
+    "اقوام های مختلف",
+    "آشتی",
+    "خشونت پرهیزی",
+    "همه با هم متحد شویم"
+  ],
+  "priorities": [
+    2,
+    1,
+    4,
+    3,
+    6,
+    7,
+    5
+  ],
+  "communicationEmail": "ghrezaei1399@gmail.com",
+  "registrationDate": "2026-08-29T11:10:33.940Z",
+  "status": "pending",
+  "rank": 0,
+  "country": "Iran"
+}
