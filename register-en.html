@@ -21,11 +21,11 @@
         }
         body.dark { color: #f0e8e0; }
         .container {
-            max-width: 750px; /* کمی عریض‌تر برای جایگیری بهتر */
+            max-width: 700px;
             width: 100%;
             background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(12px); /* اصلاح برای نمایش صحیح در فایرفاکس */
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border-radius: 48px;
             padding: 2.5rem 2rem;
             border: 1px solid rgba(255, 255, 255, 0.02);
@@ -49,6 +49,7 @@
             padding-bottom: 1rem;
         }
         body.dark .subtitle { color: #d0c0b0; border-bottom-color: rgba(255, 255, 255, 0.02); }
+        
         .form-group { margin-bottom: 1.5rem; }
         .form-group label {
             display: block;
@@ -58,9 +59,9 @@
             margin-bottom: 0.3rem;
         }
         body.dark .form-group label { color: #e8d8c8; }
+        
         .form-group input,
-        .form-group textarea,
-        .form-group select {
+        .form-group textarea {
             width: 100%;
             padding: 0.8rem 1rem;
             border-radius: 16px;
@@ -73,39 +74,99 @@
             outline: none;
         }
         body.dark .form-group input,
-        body.dark .form-group textarea,
-        body.dark .form-group select {
+        body.dark .form-group textarea {
             background: rgba(255, 255, 255, 0.02);
             color: #e8d8c8;
             border-color: rgba(255, 255, 255, 0.02);
         }
         .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
+        .form-group textarea:focus {
             border-color: rgba(60, 30, 10, 0.05);
             background: rgba(255, 255, 255, 0.03);
         }
         body.dark .form-group input:focus,
-        body.dark .form-group textarea:focus,
-        body.dark .form-group select:focus {
+        body.dark .form-group textarea:focus {
             border-color: rgba(255, 255, 255, 0.05);
             background: rgba(255, 255, 255, 0.03);
         }
-        .form-group textarea { min-height: 60px; resize: vertical; }
-        .form-group input::placeholder,
-        .form-group textarea::placeholder { color: #4a3a2a; opacity: 0.5; }
-        body.dark .form-group input::placeholder,
-        body.dark .form-group textarea::placeholder { color: #908070; }
         
-        /* استایل مخصوص ردیف اولویت‌بندی */
-        .priority-row {
-            display: flex;
+        /* Cultural Values Box Styles */
+        .value-item {
+            background: rgba(255, 255, 255, 0.01);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(30, 10, 0, 0.02);
+        }
+        body.dark .value-item { border-color: rgba(255, 255, 255, 0.02); }
+        
+        .value-item .value-title {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #2a1a0a;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        body.dark .value-item .value-title { color: #e8d8c8; }
+        
+        .value-item input {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: 1px solid rgba(30, 10, 0, 0.02);
+            background: rgba(255, 255, 255, 0.02);
+            font-size: 0.9rem;
+        }
+        body.dark .value-item input {
+            background: rgba(255, 255, 255, 0.02);
+            color: #e8d8c8;
+            border-color: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Priority Section Styles */
+        .priority-section {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 2px dashed rgba(212, 175, 55, 0.3);
+        }
+        .priority-title {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #2874a6;
+            margin-bottom: 1rem;
+        }
+        body.dark .priority-title { color: #85c1e9; }
+        
+        .priority-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 1rem;
-            align-items: center;
         }
-        .priority-row select {
-            flex: 0 0 100px; /* عرض ثابت برای منوی کشویی */
+        .priority-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.8rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(212, 175, 55, 0.2);
         }
+        .priority-item label {
+            display: block;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+            color: #6a5a3a;
+        }
+        body.dark .priority-item label { color: #c8b890; }
+        .priority-item select {
+            width: 100%;
+            padding: 0.4rem;
+            border-radius: 8px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: #2a1a0a;
+            font-weight: bold;
+        }
+        body.dark .priority-item select { color: #f9e79f; }
 
         .btn-group { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
         .btn {
@@ -134,6 +195,7 @@
         .btn-primary:hover { background: rgba(60, 30, 10, 0.04); transform: scale(1.02); }
         body.dark .btn-primary:hover { background: rgba(255, 255, 255, 0.04); }
         .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+        
         .btn-secondary {
             background: rgba(60, 30, 10, 0.01);
             color: #3a2a1a;
@@ -157,6 +219,7 @@
             padding-top: 1rem;
         }
         body.dark .note { color: #b0a090; border-top-color: rgba(255, 255, 255, 0.02); }
+        
         .success-message {
             display: none;
             background: rgba(50, 200, 50, 0.02);
@@ -173,6 +236,7 @@
             border-color: rgba(50, 200, 50, 0.01);
         }
         .success-message.show { display: block; }
+        
         .theme-toggle {
             position: fixed;
             top: 1rem;
@@ -192,25 +256,10 @@
             border-color: rgba(255, 255, 255, 0.02);
         }
         .theme-toggle:hover { transform: scale(1.1); }
-        .value-item {
-            background: rgba(255, 255, 255, 0.01);
-            border-radius: 12px;
-            padding: 0.8rem;
-            margin-bottom: 0.8rem;
-            border: 1px solid rgba(30, 10, 0, 0.02);
-        }
-        body.dark .value-item { border-color: rgba(255, 255, 255, 0.02); }
-        .value-item .value-title {
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: #2a1a0a;
-            margin-bottom: 0.3rem;
-            display: block;
-        }
-        body.dark .value-item .value-title { color: #e8d8c8; }
+        
         @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
 
-        /* --- استایل ماژول الحاقی (Pioneer Module) --- */
+        /* --- Added Module Styles (Pioneer & Welcome Back) --- */
         .pioneer-module {
             margin-top: 1.5rem;
             padding: 1rem;
@@ -218,10 +267,18 @@
             border: 1px dashed rgba(212, 172, 13, 0.3);
             border-radius: 20px;
             text-align: center;
+            animation: fadeIn 0.5s ease;
         }
         body.dark .pioneer-module { background: rgba(255, 215, 0, 0.02); }
-        .pioneer-text { font-size: 0.85rem; color: #4a2a1a; margin-bottom: 0.8rem; }
+        
+        .pioneer-text {
+            font-size: 0.85rem;
+            color: #4a2a1a;
+            margin-bottom: 0.8rem;
+            line-height: 1.5;
+        }
         body.dark .pioneer-text { color: #d0c0b0; }
+
         .btn-upload {
             background: linear-gradient(135deg, #2a1a0a 0%, #5a3a2a 100%);
             color: #fff !important;
@@ -229,88 +286,110 @@
             display: inline-block;
             width: auto;
             min-width: 200px;
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
         }
         body.dark .btn-upload {
             background: linear-gradient(135deg, #f9e79f 0%, #d4ac0d 100%);
             color: #1a0a0a !important;
         }
+        .btn-upload:hover { transform: translateY(-2px); opacity: 0.9; }
+
+        /* Welcome Back Module for users who already have a card */
+        .welcome-back-module {
+            display: none; /* Hidden by default */
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: rgba(40, 116, 166, 0.1);
+            border: 1px solid rgba(40, 116, 166, 0.3);
+            border-radius: 20px;
+            text-align: center;
+        }
+        body.dark .welcome-back-module { background: rgba(133, 193, 233, 0.05); }
+        .welcome-text { font-size: 1rem; color: #2874a6; margin-bottom: 1rem; font-weight: 700; }
+        body.dark .welcome-text { color: #85c1e9; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
     <button class="theme-toggle" id="themeToggle">🌙</button>
 
     <div class="container">
+        <!-- Welcome Back Module (Shown if user has a card code) -->
+        <div id="welcomeBackModule" class="welcome-back-module">
+            <div class="welcome-text">✨ Welcome Back! Your Identity Card is Active.</div>
+            <p class="pioneer-text">Now it's your turn to share your cultural achievement with the world.</p>
+            <a href="upload-achievement-en.html" class="btn btn-upload">🚀 Upload Achievement</a>
+        </div>
+
         <h1>📝 Register & Get ID</h1>
         <div class="subtitle">Global Smart Cultural Identity Card</div>
 
         <form id="registerForm">
-            <!-- بخش ایمیل اختیاری -->
-            <div class="form-group">
-                <label>Email for Cultural Networking (Optional)</label>
-                <input type="email" id="userEmail" placeholder="If you wish to connect with like-minded cultural peers..." />
-                <small style="opacity:0.5; font-size:0.7rem;">Used only for finding cultural companions.</small>
-            </div>
-
-            <!-- ۷ ارزش فرهنگی همراه با اولویت‌بندی -->
+            <!-- 7 Cultural Values -->
             <div class="value-item">
-                <label class="value-title">1. Indigenous Values</label>
-                <div class="priority-row">
-                    <input type="text" id="v1" placeholder="Description..." required />
-                    <select id="p1"><option value="">Priority</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select>
-                </div>
+                <label class="value-title">1. Indigenous Values (Smart Cultural Resistance)</label>
+                <input type="text" id="v1" placeholder="e.g. Preserving heritage, local identity..." required />
             </div>
 
             <div class="value-item">
-                <label class="value-title">2. Individual Knowledge</label>
-                <div class="priority-row">
-                    <input type="text" id="v2" placeholder="Description..." required />
-                    <select id="p2"><option value="">Priority</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select>
-                </div>
+                <label class="value-title">2. Individual Knowledge (Enlightenment Companions)</label>
+                <input type="text" id="v2" placeholder="e.g. Lived experience, tacit wisdom..." required />
             </div>
 
             <div class="value-item">
-                <label class="value-title">3. Collective Collaboration</label>
-                <div class="priority-row">
-                    <input type="text" id="v3" placeholder="Description..." required />
-                    <select id="p3"><option value="">Priority</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select>
-                </div>
+                <label class="value-title">3. Collective Collaboration (Entrepreneurial Nexus)</label>
+                <input type="text" id="v3" placeholder="e.g. Network synergy, distributed trust..." required />
             </div>
 
             <div class="value-item">
-                <label class="value-title">4. Cultural Diversity</label>
-                <div class="priority-row">
-                    <input type="text" id="v4" placeholder="Description..." required />
-                    <select id="p4"><option value="">Priority</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select>
-                </div>
+                <label class="value-title">4. Cultural Diversity (Unity in Plurality)</label>
+                <input type="text" id="v4" placeholder="e.g. Respect for differences, dialogue..." required />
             </div>
 
             <div class="value-item">
-                <label class="value-title">5. Global Peace</label>
-                <div class="priority-row">
-                    <input type="text" id="v5" placeholder="Description..." required />
-                    <select id="p5"><option value="">Priority</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select>
-                </div>
+                <label class="value-title">5. Global Peace (Intelligent Peace)</label>
+                <input type="text" id="v5" placeholder="e.g. Data-driven diplomacy, active calm..." required />
             </div>
 
             <div class="value-item">
-                <label class="value-title">6. Eliminating Violence</label>
-                <div class="priority-row">
-                    <input type="text" id="v6" placeholder="Description..." required />
-                    <select id="p6"><option value="">Priority</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select>
-                </div>
+                <label class="value-title">6. Eliminating Violence (Systemic Love)</label>
+                <input type="text" id="v6" placeholder="e.g. Reducing prejudice, promoting tolerance..." required />
             </div>
 
             <div class="value-item">
-                <label class="value-title">7. Cultural Unity</label>
-                <div class="priority-row">
-                    <input type="text" id="v7" placeholder="Description..." required />
-                    <select id="p7"><option value="">Priority</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select>
+                <label class="value-title">7. Cultural Unity (Galaxy of Wisdom)</label>
+                <input type="text" id="v7" placeholder="e.g. Bridges between cultures, co-evolution..." required />
+            </div>
+
+            <!-- Priority Section -->
+            <div class="priority-section">
+                <div class="priority-title">🎯 Prioritize Your Values (1 = Most Important)</div>
+                <div class="priority-grid">
+                    <div class="priority-item"><label>Value 1</label><select id="p1"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select></div>
+                    <div class="priority-item"><label>Value 2</label><select id="p2"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select></div>
+                    <div class="priority-item"><label>Value 3</label><select id="p3"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select></div>
+                    <div class="priority-item"><label>Value 4</label><select id="p4"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select></div>
+                    <div class="priority-item"><label>Value 5</label><select id="p5"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select></div>
+                    <div class="priority-item"><label>Value 6</label><select id="p6"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select></div>
+                    <div class="priority-item"><label>Value 7</label><select id="p7"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select></div>
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" style="margin-top: 2rem;">
                 <label>Optional Code (5 custom characters)</label>
                 <input type="text" id="optionalCode" maxlength="5" placeholder="e.g. A-B-C-D-E" />
+                <small style="opacity:0.5; font-size:0.7rem;">Optional - you can leave it empty</small>
+            </div>
+
+            <!-- Optional Email for Networking -->
+            <div class="form-group">
+                <label>Email for Cultural Networking (Optional)</label>
+                <input type="email" id="communicationEmail" placeholder="If you wish to connect with like-minded peers..." />
             </div>
 
             <div class="btn-group">
@@ -318,10 +397,10 @@
                 <a href="index-en.html" class="btn btn-secondary">↩ Back</a>
             </div>
 
-            <!-- --- ماژول الحاقی: هدایت به آپلود (آشکار و زیبا) --- -->
+            <!-- Pioneer Module (Visible during registration) -->
             <div class="pioneer-module">
                 <p class="pioneer-text">✨ <strong>Pioneer Member:</strong> Would you like to upload your cultural achievement to the global gallery?</p>
-                <a href="upload-achievement-fa.html" class="btn btn-upload">🚀 Upload Achievement</a>
+                <a href="upload-achievement-en.html" class="btn-upload">🚀 Yes, Upload Achievement</a>
             </div>
         </form>
 
@@ -335,6 +414,7 @@
     </div>
 
     <script>
+        // Theme Toggle Logic
         (function() {
             const toggle = document.getElementById('themeToggle');
             const body = document.body;
@@ -354,32 +434,37 @@
             });
         })();
 
+        // Form Submission Logic
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
             submitBtn.textContent = '⏳ Registering...';
 
             try {
-                // جمع‌آوری اطلاعات جدید شامل ایمیل و اولویت‌ها
                 const values = [];
+                for (let i = 1; i <= 7; i++) values.push(document.getElementById(`v${i}`).value.trim());
+                
                 const priorities = [];
-                for(let i=1; i<=7; i++) {
-                    values.push(document.getElementById('v'+i).value.trim());
-                    priorities.push(document.getElementById('p'+i).value);
-                }
+                for (let i = 1; i <= 7; i++) priorities.push(parseInt(document.getElementById(`p${i}`).value));
 
                 const optionalCode = document.getElementById('optionalCode').value.trim();
-                const userEmail = document.getElementById('userEmail').value.trim();
+                const communicationEmail = document.getElementById('communicationEmail').value.trim();
 
                 const response = await fetch('/api/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ values, priorities, optionalCode, userEmail })
+                    body: JSON.stringify({ values, priorities, optionalCode, communicationEmail })
                 });
 
-                const result = await response.json();
+                let result;
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    result = await response.json();
+                } else {
+                    throw new Error('Server error');
+                }
+
                 if (!response.ok) throw new Error(result.error || 'Registration error');
 
                 document.getElementById('successMessage').classList.add('show');
@@ -395,6 +480,14 @@
                 submitBtn.textContent = '🎯 Get Your ID';
             }
         });
+
+        // --- Logic to show Welcome Back Module if user has a card ---
+        (function() {
+            const userCode = localStorage.getItem('userCardCode') || sessionStorage.getItem('userCardCode');
+            if (userCode) {
+                document.getElementById('welcomeBackModule').style.display = 'block';
+            }
+        })();
     </script>
 </body>
 </html>
