@@ -1,0 +1,28 @@
+{
+  "cardCode": "CIM-5578-2026-44443",
+  "displayCode": "CIM - 5578 - 2026 - 32132",
+  "optionalCode": "32132",
+  "values": [
+    "qr",
+    "qw",
+    "qe",
+    "qt",
+    "qy",
+    "qu",
+    "qi"
+  ],
+  "priorities": [
+    3,
+    1,
+    2,
+    7,
+    4,
+    5,
+    6
+  ],
+  "communicationEmail": "ghrezaei1399@gmail.com",
+  "registrationDate": "2026-08-29T16:48:26.155Z",
+  "status": "pending",
+  "rank": 0,
+  "country": "Iran"
+}
