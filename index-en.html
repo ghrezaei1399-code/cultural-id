@@ -169,42 +169,6 @@
         .cta-note { text-align: center; font-size: 0.75rem; color: #6a5a3a; margin-top: -0.8rem; margin-bottom: 1.5rem; font-weight: 600; }
         body.dark .cta-note { color: #c8b890; }
 
-        /* ⭐ Top 200 Achievers Display Section */
-        .achievers-display-section {
-            margin: 2rem 0; padding: 2rem;
-            background: linear-gradient(135deg, rgba(255, 248, 220, 0.6), rgba(253, 246, 227, 0.8));
-            border-radius: 32px; border: 2px solid rgba(212, 175, 55, 0.4);
-            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.1); backdrop-filter: blur(10px);
-            text-align: center;
-        }
-        body.dark .achievers-display-section {
-            background: linear-gradient(135deg, rgba(74, 58, 40, 0.5), rgba(58, 47, 32, 0.7));
-            border-color: rgba(212, 175, 55, 0.5);
-        }
-        .achievers-title { font-size: 1.3rem; font-weight: 900; color: #8a6d1f; margin-bottom: 0.5rem; }
-        body.dark .achievers-title { color: #f9e79f; }
-        .achievers-desc { font-size: 0.9rem; color: #4a3a2a; margin-bottom: 1.5rem; line-height: 1.7; max-width: 800px; margin-left: auto; margin-right: auto; }
-        body.dark .achievers-desc { color: #c8b890; }
-        
-        .achievements-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-        .achievement-card {
-            background: rgba(255,255,255,0.7); border-radius: 20px; overflow: hidden;
-            border: 1px solid rgba(212,175,55,0.3); transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-        body.dark .achievement-card { background: rgba(0,0,0,0.3); border-color: rgba(212,175,55,0.2); }
-        .achievement-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(212,175,55,0.2); }
-        .achievement-media { width: 100%; height: 180px; background: #ddd; display: flex; align-items: center; justify-content: center; color: #888; font-size: 0.8rem; }
-        .achievement-info { padding: 1rem; text-align: left; }
-        .achievement-info h4 { font-size: 0.95rem; color: #2a1a0a; margin-bottom: 0.3rem; }
-        body.dark .achievement-info h4 { color: #f0e8d0; }
-        .achievement-info p { font-size: 0.75rem; color: #6a5a3a; line-height: 1.5; }
-        body.dark .achievement-info p { color: #a89a80; }
-        .achievement-type { display: inline-block; padding: 0.2rem 0.6rem; background: rgba(212,175,55,0.15); border-radius: 12px; font-size: 0.65rem; color: #8a6d1f; font-weight: 700; margin-top: 0.5rem; }
-
         /* Bottom Modules */
         .bottom-modules-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-top: 1rem; }
         .bottom-module { text-align: center; padding: 1rem 0.8rem; border-radius: 20px; transition: all 0.3s; backdrop-filter: blur(10px); }
@@ -221,6 +185,61 @@
         body.dark .btn-bottom { background: rgba(0, 0, 0, 0.3); color: #f9e79f; }
         .btn-bottom:hover { transform: scale(1.05); }
 
+        /* ⭐ Smart Gallery Styles (Added) */
+        .golden-gallery-box {
+            background: linear-gradient(135deg, #fffdf5 0%, #fff9e6 100%);
+            border: 3px double #d4af37; border-radius: 30px;
+            padding: 2rem; margin: 2rem 0;
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.15);
+            position: relative; overflow: hidden;
+        }
+        body.dark .golden-gallery-box { background: linear-gradient(135deg, #3a2f20, #2a2418); border-color: #d4af37; }
+        
+        .gallery-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+        .gallery-title { font-size: 1.4rem; font-weight: 900; color: #8a6d1f; display: flex; align-items: center; gap: 0.5rem; }
+        body.dark .gallery-title { color: #f9e79f; }
+        
+        .filter-select {
+            padding: 0.6rem 1.2rem; border-radius: 20px; border: 1px solid #d4af37;
+            background: #fff; color: #8a6d1f; font-weight: 700; cursor: pointer; outline: none;
+        }
+
+        .achievements-list { display: flex; flex-direction: column; gap: 0.8rem; max-height: 400px; overflow-y: auto; padding-right: 0.5rem; }
+        .achievement-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1rem 1.2rem; background: rgba(255,255,255,0.6);
+            border-radius: 16px; border-left: 4px solid #d4af37; /* Left for LTR */
+            cursor: pointer; transition: all 0.3s ease;
+        }
+        body.dark .achievement-item { background: rgba(0,0,0,0.2); }
+        .achievement-item:hover { background: #fff; transform: translateX(5px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        body.dark .achievement-item:hover { background: rgba(255,255,255,0.1); }
+        
+        .item-info h4 { font-size: 1rem; color: #2a1a0a; margin-bottom: 0.2rem; }
+        body.dark .item-info h4 { color: #f0e8d0; }
+        .item-meta { font-size: 0.75rem; color: #8a6d1f; font-weight: 600; }
+        
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.3s; }
+        .modal-content {
+            background: #fff; width: 90%; max-width: 800px; max-height: 90vh;
+            border-radius: 24px; overflow-y: auto; position: relative;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+        }
+        body.dark .modal-content { background: #2a2418; color: #f0e8d0; }
+        .modal-media { width: 100%; max-height: 400px; object-fit: contain; background: #000; }
+        .modal-body { padding: 2rem; }
+        .modal-close {
+            position: absolute; top: 1rem; left: 1rem; /* Left for LTR */
+            background: rgba(0,0,0,0.5); color: #fff; width: 40px; height: 40px;
+            border-radius: 50%; border: none; font-size: 1.5rem; cursor: pointer; z-index: 10;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
         @media (max-width: 768px) {
             body { padding: 1rem; }
             .global-call-banner { padding: 1rem 0.8rem; }
@@ -233,7 +252,7 @@
             .golden-btn { min-height: 100px; font-size: 1rem; padding: 1.2rem 0.8rem; }
             .bottom-modules-wrapper { grid-template-columns: 1fr; }
             .real-card-sample { transform: none; max-width: 100%; }
-            .achievements-grid { grid-template-columns: 1fr; }
+            .gallery-header { flex-direction: column; text-align: center; }
         }
     </style>
     <link rel="manifest" href="/manifest.json">
@@ -329,48 +348,6 @@
         <a href="request-en.html?type=delete" class="module-btn module-cancel"><span class="icon">🚪</span><span class="label">Withdraw</span><span class="desc">Delete account</span></a>
     </div>
 
-    <!-- ⭐ Top 200 Achievers Display Section (Output of Uploads) -->
-    <div class="achievers-display-section">
-        <h3 class="achievers-title">🏅 Top 200 Members' Achievements Gallery</h3>
-        <p class="achievers-desc">
-            Leading members have uploaded their scientific, artistic, and cultural achievements during registration. 
-            This section displays real outputs of cultural activism including articles, artworks, posters, and video documentaries.
-        </p>
-        
-        <!-- Achievements Grid (Sample Structure) -->
-        <div class="achievements-grid">
-            <!-- Item 1: Article -->
-            <div class="achievement-card">
-                <div class="achievement-media">📄 Article Cover Image</div>
-                <div class="achievement-info">
-                    <h4>Sahar Analysis of Water Crisis in Central Plateau</h4>
-                    <p>Research article based on raw observation and emergence matrix</p>
-                    <span class="achievement-type">Scientific Article</span>
-                </div>
-            </div>
-            
-            <!-- Item 2: Artwork -->
-            <div class="achievement-card">
-                <div class="achievement-media">🎨 Artwork Image</div>
-                <div class="achievement-info">
-                    <h4>Poster: "Emergence of Overlooked Capacities"</h4>
-                    <p>Graphic work derived from poverty and education file</p>
-                    <span class="achievement-type">Artwork / Poster</span>
-                </div>
-            </div>
-            
-            <!-- Item 3: Video -->
-            <div class="achievement-card">
-                <div class="achievement-media">🎬 Video Frame</div>
-                <div class="achievement-info">
-                    <h4>Short Doc: Voices of the Unseen</h4>
-                    <p>Visual narrative of hidden capacities in urban margins</p>
-                    <span class="achievement-type">Video Documentary</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Bottom Modules: About + Radio/TV -->
     <div class="bottom-modules-wrapper">
         <div class="bottom-module bottom-about">
@@ -384,6 +361,37 @@
             <a href="about-en.html#radio-tv" class="btn-bottom">View</a>
         </div>
     </div>
+
+    <!-- ⭐ Smart Golden Gallery Box (Added) -->
+    <div class="golden-gallery-box">
+        <div class="gallery-header">
+            <div class="gallery-title">🏆 Top 200 Members' Achievements</div>
+            <select id="categoryFilter" class="filter-select" onchange="filterAchievements()">
+                <option value="all">All Achievements</option>
+                <option value="science">Scientific Articles</option>
+                <option value="art">Artworks & Posters</option>
+                <option value="media">Video & Media</option>
+            </select>
+        </div>
+        
+        <div id="achievementsListContainer" class="achievements-list">
+            <p style="text-align:center;">Loading list...</p>
+        </div>
+    </div>
+
+    <!-- ⭐ Detail Modal -->
+    <div id="detailModal" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content">
+            <button class="modal-close" onclick="document.getElementById('detailModal').classList.remove('active')">✕</button>
+            <div id="modalMediaContainer"></div>
+            <div class="modal-body">
+                <h2 id="modalTitle" style="color:#8a6d1f; margin-bottom:1rem;"></h2>
+                <div id="modalDesc" style="line-height:1.8; color:#3a2a1a; white-space: pre-wrap;"></div>
+                <div id="modalMeta" style="margin-top:1.5rem; font-size:0.8rem; color:#888;"></div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script>
@@ -394,6 +402,77 @@
         .catch((err) => console.log('SW failed:', err));
     });
   }
+
+  // Smart Gallery Script
+  let allApproved = [];
+
+  async function loadAchievements() {
+    try {
+      const res = await fetch('/api/get-users');
+      const data = await res.json();
+      allApproved = [];
+      
+      data.users.forEach(user => {
+        if (user.achievements) {
+          user.achievements.forEach(ach => {
+            if (ach.status === 'approved') allApproved.push({ ...ach, owner: user.cardCode });
+          });
+        }
+      });
+      
+      renderList(allApproved);
+    } catch (e) { console.error(e); }
+  }
+
+  function renderList(items) {
+    const container = document.getElementById('achievementsListContainer');
+    if (items.length === 0) {
+      container.innerHTML = '<p style="text-align:center; padding:1rem;">No approved achievements yet.</p>';
+      return;
+    }
+    
+    container.innerHTML = items.map(item => `
+      <div class="achievement-item" onclick="openModal('${item.owner}', '${item.title}')">
+        <div class="item-info">
+            <h4>${item.title}</h4>
+            <span class="item-meta">${item.category === 'science' ? '📄 Article' : item.category === 'art' ? '🎨 Art' : '🎬 Media'}</span>
+        </div>
+        <span style="font-size:1.2rem; color:#d4af37;">👁️</span>
+      </div>
+    `).join('');
+  }
+
+  function filterAchievements() {
+    const cat = document.getElementById('categoryFilter').value;
+    if (cat === 'all') renderList(allApproved);
+    else renderList(allApproved.filter(i => i.category === cat));
+  }
+
+  function openModal(ownerCode, title) {
+    const item = allApproved.find(i => i.owner === ownerCode && i.title === title);
+    if (!item) return;
+
+    document.getElementById('modalTitle').textContent = item.title;
+    document.getElementById('modalDesc').textContent = item.description;
+    document.getElementById('modalMeta').textContent = `Contributor: ${item.owner} | Category: ${item.category}`;
+    
+    const mediaDiv = document.getElementById('modalMediaContainer');
+    if (item.fileData) {
+      if (item.type && item.type.startsWith('video')) mediaDiv.innerHTML = `<video controls src="${item.fileData}" class="modal-media"></video>`;
+      else if (item.type && item.type.startsWith('audio')) mediaDiv.innerHTML = `<audio controls src="${item.fileData}" style="width:100%"></audio>`;
+      else mediaDiv.innerHTML = `<img src="${item.fileData}" class="modal-media">`;
+    } else {
+      mediaDiv.innerHTML = '';
+    }
+
+    document.getElementById('detailModal').classList.add('active');
+  }
+
+  function closeModal(e) {
+    if (e.target.id === 'detailModal') e.target.classList.remove('active');
+  }
+
+  loadAchievements();
 </script>  
 </body>
 </html>
