@@ -1,8 +1,7 @@
-const CACHE_NAME = 'cultural-id-v3';
+const CACHE_NAME = 'cultural-id-v4';
 
 const ASSETS_TO_CACHE = [
-  '
-/assets/logo-fa.png',
+  '/assets/logo-fa.png',
   '/assets/logo-en.png',
   '/assets/hologram.png',
   '/assets/pisa.jpg'
@@ -19,8 +18,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// فعال‌سازی Service Worker جدید
-// و حذف تمام Cacheهای قدیمی
+// فعال‌سازی Service Worker جدید و حذف Cacheهای قبلی
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -38,7 +36,8 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// درخواست‌های صفحات و فایل‌ها
+// صفحات HTML هرگز از Cache خوانده نشوند.
+// همیشه آخرین نسخه از سرور دریافت شود.
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') {
     return;
@@ -46,24 +45,20 @@ self.addEventListener('fetch', (event) => {
 
   const requestUrl = new URL(event.request.url);
 
-  // فایل‌های HTML هرگز از Cache خوانده نشوند.
-  // همیشه آخرین نسخه از سرور دریافت شود.
   if (
     requestUrl.pathname === '/' ||
     requestUrl.pathname.endsWith('.html')
   ) {
     event.respondWith(
-      fetch(event.request)
-        .catch(() => {
-          return caches.match(event.request);
-        })
+      fetch(event.request).catch(() => {
+        return caches.match(event.request);
+      })
     );
 
     return;
   }
 
-  // برای سایر فایل‌ها:
-  // ابتدا شبکه، و در صورت قطع بودن شبکه Cache
+  // سایر فایل‌ها: ابتدا شبکه، سپس Cache در حالت آفلاین
   event.respondWith(
     fetch(event.request)
       .then((response) => {
