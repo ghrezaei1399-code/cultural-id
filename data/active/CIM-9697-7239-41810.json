@@ -1,0 +1,28 @@
+{
+  "cardCode": "CIM-9697-7239-41810",
+  "displayCode": "CIM - 9697 - 7239 - 74174",
+  "optionalCode": "74174",
+  "values": [
+    "مردانگی",
+    "شرف",
+    "غیرت",
+    "وطن دوستی",
+    "صلح دوستی",
+    "مبارزه با هر نوع خشونت",
+    "شبکه ی فرهنگ دوستان"
+  ],
+  "priorities": [
+    7,
+    6,
+    5,
+    4,
+    3,
+    2,
+    1
+  ],
+  "communicationEmail": "ghrezaei1399@gmail.com",
+  "registrationDate": "2026-08-29T16:19:07.924Z",
+  "status": "pending",
+  "rank": 0,
+  "country": "Iran"
+}
