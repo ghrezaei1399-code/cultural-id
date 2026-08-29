@@ -196,6 +196,43 @@
         }
         body.dark .value-item .value-title { color: #e8d8c8; }
         @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
+
+        /* --- استایل‌های ماژول الحاقی (Pioneer Upload Module) --- */
+        .pioneer-invite {
+            display: none;
+            margin-top: 1rem;
+            padding: 1.2rem;
+            background: rgba(212, 172, 13, 0.05);
+            border: 1px dashed rgba(212, 172, 13, 0.3);
+            border-radius: 16px;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+        body.dark .pioneer-invite { background: rgba(249, 231, 159, 0.03); }
+        
+        .pioneer-invite p {
+            font-size: 0.85rem;
+            color: #4a2a1a;
+            margin-bottom: 0.8rem;
+            line-height: 1.5;
+        }
+        body.dark .pioneer-invite p { color: #d0c0b0; }
+
+        .btn-upload-mini {
+            display: inline-block;
+            padding: 0.6rem 1.5rem;
+            background: #2a1a0a;
+            color: #fff !important;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        body.dark .btn-upload-mini { background: #f9e79f; color: #1a0a0a !important; }
+        .btn-upload-mini:hover { transform: translateY(-2px); opacity: 0.9; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -258,6 +295,12 @@
             ✅ Your information has been saved. Redirecting to your card...
         </div>
 
+        <!-- --- ماژول الحاقی: دعوت به آپلود دستاورد (نمایش پس از ثبت موفق) --- -->
+        <div id="pioneerInvite" class="pioneer-invite">
+            <p>✨ <strong>Pioneer Opportunity:</strong> As one of the first 200 members, would you like to upload your cultural achievement to be featured on our main gallery?</p>
+            <a href="upload-achievement-fa.html" class="btn-upload-mini">🚀 Yes, Upload My Achievement</a>
+        </div>
+
         <div class="note">
             No personal info • Completely anonymous • 3 minutes
         </div>
@@ -315,9 +358,22 @@
                 document.getElementById('successMessage').classList.add('show');
                 submitBtn.textContent = '✅ Registered';
                 
-                setTimeout(() => {
-                    window.location.href = `card-en.html?code=${result.cardCode}`;
-                }, 1500);
+                // --- منطق الحاقی: نمایش ماژول آپلود برای ۲۰۰ نفر اول ---
+                // این بخش پس از ثبت موفق اجرا می‌شود و ریدایرکت خودکار را لغو می‌کند
+                // تا کاربر فرصت انتخاب آپلود دستاورد را داشته باشد
+                const pioneerInvite = document.getElementById('pioneerInvite');
+                const isFirst200 = true; // این مقدار بعداً از سمت سرور یا لوکال‌استوریج خوانده می‌شود
+                
+                if (isFirst200) {
+                    pioneerInvite.style.display = 'block';
+                    // جلوگیری از ریدایرکت خودکار قبلی تا کاربر بتواند تصمیم بگیرد
+                    // اگر کاربر روی دکمه آپلود کلیک نکرد، می‌تواند دستی به کارت برود
+                } else {
+                    setTimeout(() => {
+                        window.location.href = `card-en.html?code=${result.cardCode}`;
+                    }, 1500);
+                }
+                // --- پایان منطق الحاقی ---
 
             } catch (error) {
                 alert('❌ ' + error.message);
