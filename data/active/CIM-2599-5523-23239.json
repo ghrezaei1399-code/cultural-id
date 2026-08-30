@@ -1,0 +1,28 @@
+{
+  "cardCode": "CIM-2599-5523-23239",
+  "displayCode": "CIM - 2599 - 5523 - 44444",
+  "optionalCode": "44444",
+  "values": [
+    "zx",
+    "cv",
+    "bn",
+    "MA",
+    "sd",
+    "FG",
+    "HJ"
+  ],
+  "priorities": [
+    6,
+    7,
+    2,
+    4,
+    1,
+    5,
+    3
+  ],
+  "communicationEmail": "ghrezaei1399@gmail.com",
+  "registrationDate": "2026-08-30T21:26:45.591Z",
+  "status": "pending",
+  "rank": 0,
+  "country": "Iran"
+}
