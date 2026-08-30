@@ -476,11 +476,24 @@
    <script>
   // ... (کدهای قبلی Service Worker) ...
 
+  <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then((reg) => console.log('SW registered'))
+        .catch((err) => console.log('SW failed:', err));
+    });
+  }
+
   let allApproved = [];
 
   async function loadAchievements() {
+    const container = document.getElementById('achievementsListContainer');
     try {
-      const res = await fetch('/api/get-users');
+      // اضافه کردن timestamp برای جلوگیری از کش شدن توسط مرورگر
+      const res = await fetch('/api/get-users?t=' + new Date().getTime());
+      if (!res.ok) throw new Error('Network response was not ok');
+      
       const data = await res.json();
       allApproved = [];
       
@@ -493,13 +506,16 @@
       });
       
       renderList(allApproved);
-    } catch (e) { console.error(e); }
+    } catch (e) { 
+      console.error('Error loading achievements:', e);
+      container.innerHTML = '<p style="text-align:center; color:red;">خطا در دریافت اطلاعات. لطفاً دوباره تلاش کنید.</p>';
+    }
   }
 
   function renderList(items) {
     const container = document.getElementById('achievementsListContainer');
     if (items.length === 0) {
-      container.innerHTML = '<p style="text-align:center; padding:1rem;">No approved achievements yet.</p>';
+      container.innerHTML = '<p style="text-align:center; padding:1rem;">هنوز اثری تایید نشده است.</p>';
       return;
     }
     
@@ -507,7 +523,7 @@
       <div class="achievement-item" onclick="openModal('${item.owner}', '${item.title}')">
         <div class="item-info">
             <h4>${item.title}</h4>
-            <span class="item-meta">${item.category === 'science' ? '📄 Article' : item.category === 'art' ? '🎨 Art' : '🎬 Media'}</span>
+            <span class="item-meta">${item.category === 'science' ? '📄 مقاله' : item.category === 'art' ? '🎨 هنری' : '🎬 رسانه'}</span>
         </div>
         <span style="font-size:1.2rem; color:#d4af37;">👁️</span>
       </div>
@@ -526,13 +542,12 @@
 
     document.getElementById('modalTitle').textContent = item.title;
     
-    // Convert links to clickable anchors
     let descText = item.description || '';
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     descText = descText.replace(urlRegex, url => `<a href="${url}" target="_blank" style="color:#2874a6; text-decoration:underline;">${url}</a>`);
     
     document.getElementById('modalDesc').innerHTML = descText;
-    document.getElementById('modalMeta').textContent = `Contributor: ${item.owner} | Category: ${item.category}`;
+    document.getElementById('modalMeta').textContent = `ارسال کننده: ${item.owner} | دسته: ${item.category}`;
     
     const mediaDiv = document.getElementById('modalMediaContainer');
     if (item.fileData) {
@@ -548,7 +563,8 @@
     if (e.target.id === 'detailModal') e.target.classList.remove('active');
   }
 
-  loadAchievements();
-</script> 
+  // اجرای تابع به محض لود شدن صفحه
+  document.addEventListener('DOMContentLoaded', loadAchievements);
+</script>
 </body>
 </html>
