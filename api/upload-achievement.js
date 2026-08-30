@@ -29,7 +29,10 @@ module.exports = async function handler(req, res) {
     // ۳. اگر فایلی آپلود شده باشد، آن را در پوشه uploads ذخیره کن
     if (achievement.fileData && achievement.fileName) {
       // فراخوانی داخلی API آپلود فایل
-      const uploadRes = await fetch(`${req.headers.origin || 'https://cultural-id.vercel.app'}/api/upload-file`, {
+      // نکته: در محیط Vercel باید از آدرس کامل یا نسبی صحیح استفاده شود
+      const baseUrl = req.headers.host ? `https://${req.headers.host}` : 'https://cultural-id.vercel.app';
+      
+      const uploadRes = await fetch(`${baseUrl}/api/upload-file`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -41,6 +44,8 @@ module.exports = async function handler(req, res) {
       const uploadResult = await uploadRes.json();
       if (uploadResult.success) {
         fileUrl = uploadResult.url;
+      } else {
+        throw new Error(uploadResult.error || 'خطا در آپلود فایل');
       }
     }
 
