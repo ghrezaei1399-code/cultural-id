@@ -10,13 +10,16 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: 'GH_TOKEN not configured' });
   }
 
-  let cardCode, achievement;
-  
   try {
-    // ۲. خواندن ایمن بدنه درخواست (جلوگیری از خطای Body unusable)
+    // ۲. بررسی حجم درخواست (جلوگیری از کرش سرور با فایل‌های خیلی بزرگ)
+    const contentLength = req.headers['content-length'];
+    if (contentLength && parseInt(contentLength) > 5000000) { // محدودیت ۵ مگابایت
+      return res.status(413).json({ error: 'حجم فایل آپلودی بسیار زیاد است. لطفاً از فایل‌های کم‌حجم‌تر استفاده کنید.' });
+    }
+
     const body = req.body;
-    cardCode = body.cardCode;
-    achievement = body.achievement;
+    const cardCode = body.cardCode;
+    const achievement = body.achievement;
 
     if (!cardCode || !achievement) {
       return res.status(400).json({ error: 'اطلاعات ناقص است' });
@@ -26,7 +29,7 @@ module.exports = async function handler(req, res) {
     const repo = 'cultural-id';
     const userPath = `data/active/${cardCode}.json`;
 
-    // ۳. بررسی وضعیت کاربر در گیت‌هاب
+    // ۳. دریافت اطلاعات کاربر از گیت‌هاب
     const userRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
       headers: { 
         'Authorization': `Bearer ${token}`, 
@@ -35,24 +38,24 @@ module.exports = async function handler(req, res) {
     });
 
     if (!userRes.ok) {
-      return res.status(404).json({ error: 'کاربر یافت نشد' });
+      const errText = await userRes.text();
+      console.error('GitHub User Fetch Error:', errText);
+      return res.status(404).json({ error: 'کاربر یافت نشد یا دسترسی محدود است.' });
     }
 
     const userDataRaw = await userRes.json();
-    // تبدیل محتوای Base64 گیت‌هاب به متن
     const userData = JSON.parse(Buffer.from(userDataRaw.content, 'base64').toString('utf8'));
 
-    // ⭐ بررسی امنیتی: فقط کاربران تایید شده و ۲۰۰ نفر اول
+    // ⭐ بررسی امنیتی
     if (userData.status !== 'approved') {
       return res.status(403).json({ error: 'حساب کاربری شما هنوز توسط ادمین تایید نشده است.' });
     }
     
-    // فرض می‌کنیم فیلد rank در دیتای کاربر وجود دارد
     if (userData.rank && userData.rank > 200) {
       return res.status(403).json({ error: 'امکان آپلود دستاورد فقط برای ۲۰۰ سفیر اول فعال است.' });
     }
 
-    // ۴. افزودن دستاورد به لیست
+    // ۴. افزودن دستاورد
     if (!userData.achievements) userData.achievements = [];
     
     achievement.status = 'pending';
@@ -61,8 +64,8 @@ module.exports = async function handler(req, res) {
 
     const newContent = Buffer.from(JSON.stringify(userData, null, 2), 'utf8').toString('base64');
     
-    // ۵. آپدیت فایل در گیت‌هاب (نیاز به sha فعلی فایل)
-    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
+    // ۵. ذخیره در گیت‌هاب
+    const updateRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
       method: 'PUT',
       headers: { 
         'Authorization': `Bearer ${token}`, 
@@ -76,6 +79,12 @@ module.exports = async function handler(req, res) {
         branch: 'main' 
       })
     });
+
+    if (!updateRes.ok) {
+      const errText = await updateRes.text();
+      console.error('GitHub Update Error:', errText);
+      throw new Error('خطا در ذخیره‌سازی فایل در گیت‌هاب');
+    }
 
     return res.status(200).json({ success: true });
 
