@@ -21,5 +21,17 @@
   "allowConnection": false,
   "allowAchievements": false,
   "culturalInfo": "",
-  "statusUpdatedAt": "2026-08-26T20:16:58.533Z"
+  "statusUpdatedAt": "2026-08-26T20:16:58.533Z",
+  "achievements": [
+    {
+      "title": "هنر هوشمند نگاری",
+      "description": "آموزش",
+      "category": "cultural",
+      "fileUrl": "",
+      "fileName": "1788094663842-2iy5mc.JPG",
+      "status": "pending",
+      "uploadDate": "2026-08-30T12:57:45.324Z",
+      "section": "identity-card"
+    }
+  ]
 }
