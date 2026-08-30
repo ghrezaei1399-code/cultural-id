@@ -2,7 +2,7 @@
   "version": 2,
   "functions": {
     "api/*.js": {
-      "maxDuration": 30,
+      "maxDuration": 60,
       "memory": 1024
     }
   },
@@ -11,5 +11,8 @@
       "src": "/api/(.*)",
       "dest": "/api/$1"
     }
-  ]
+  ],
+  "bodyParser": {
+    "sizeLimit": "10mb"
+  }
 }
