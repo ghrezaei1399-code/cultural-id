@@ -13,7 +13,7 @@ module.exports = async function handler(req, res) {
     const repo = 'cultural-id';
     const userPath = `data/active/${cardCode}.json`;
 
-    // ۱. دریافت اطلاعات کاربر
+    // دریافت اطلاعات کاربر
     const userRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -22,15 +22,13 @@ module.exports = async function handler(req, res) {
     const userDataRaw = await userRes.json();
     const userData = JSON.parse(Buffer.from(userDataRaw.content, 'base64').toString('utf8'));
 
-    // ۲. بررسی امنیتی
     if (userData.status !== 'approved') return res.status(403).json({ error: 'حساب کاربری تایید نشده است.' });
 
     let fileUrl = '';
-    // ۳. اگر فایلی آپلود شده باشد، آن را در پوشه uploads ذخیره کن
+    // اگر فایلی وجود دارد، آن را آپلود کن
     if (achievement.fileData && achievement.fileName) {
-      // فراخوانی داخلی API آپلود فایل
-      // نکته: در محیط Vercel باید از آدرس کامل یا نسبی صحیح استفاده شود
-    const baseUrl = 'https://cultural-id.vercel.app/?utm_source=chatgpt.com'; // آدرس سایت خودتان را اینجا بگذارید
+      // استفاده از آدرس ثابت سایت برای فراخوانی داخلی
+      const baseUrl = 'https://cultural-id.vercel.app'; 
       
       const uploadRes = await fetch(`${baseUrl}/api/upload-file`, {
         method: 'POST',
@@ -49,23 +47,22 @@ module.exports = async function handler(req, res) {
       }
     }
 
-    // ۴. افزودن دستاورد به لیست (فقط لینک فایل ذخیره می‌شود)
+    // ذخیره اطلاعات در JSON کاربر
     if (!userData.achievements) userData.achievements = [];
     
     userData.achievements.push({
       title: achievement.title,
       description: achievement.description,
       category: achievement.category,
-      fileUrl: fileUrl, // لینک فایل به جای کد Base64
+      fileUrl: fileUrl,
       fileName: achievement.fileName,
       status: 'pending',
       uploadDate: new Date().toISOString(),
-      section: achievement.section || 'identity-card' // برای تفکیک بخش کارت هویت و مجتمع ظهور
+      section: achievement.section || 'identity-card'
     });
 
     const newContent = Buffer.from(JSON.stringify(userData, null, 2), 'utf8').toString('base64');
     
-    // ۵. ذخیره نهایی در گیت‌هاب
     await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
       method: 'PUT',
       headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
