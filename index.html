@@ -484,6 +484,82 @@
   }
 
   loadAchievements();
+   <script>
+  // ... (کدهای قبلی Service Worker) ...
+
+  let allApproved = [];
+
+  async function loadAchievements() {
+    try {
+      const res = await fetch('/api/get-users');
+      const data = await res.json();
+      allApproved = [];
+      
+      data.users.forEach(user => {
+        if (user.achievements) {
+          user.achievements.forEach(ach => {
+            if (ach.status === 'approved') allApproved.push({ ...ach, owner: user.cardCode });
+          });
+        }
+      });
+      
+      renderList(allApproved);
+    } catch (e) { console.error(e); }
+  }
+
+  function renderList(items) {
+    const container = document.getElementById('achievementsListContainer');
+    if (items.length === 0) {
+      container.innerHTML = '<p style="text-align:center; padding:1rem;">هنوز اثری تایید نشده است.</p>';
+      return;
+    }
+    
+    container.innerHTML = items.map(item => `
+      <div class="achievement-item" onclick="openModal('${item.owner}', '${item.title}')">
+        <div class="item-info">
+            <h4>${item.title}</h4>
+            <span class="item-meta">${item.category === 'science' ? '📄 مقاله' : item.category === 'art' ? '🎨 هنری' : '🎬 رسانه'}</span>
+        </div>
+        <span style="font-size:1.2rem; color:#d4af37;">👁️</span>
+      </div>
+    `).join('');
+  }
+
+  function filterAchievements() {
+    const cat = document.getElementById('categoryFilter').value;
+    if (cat === 'all') renderList(allApproved);
+    else renderList(allApproved.filter(i => i.category === cat));
+  }
+
+  function openModal(ownerCode, title) {
+    const item = allApproved.find(i => i.owner === ownerCode && i.title === title);
+    if (!item) return;
+
+    document.getElementById('modalTitle').textContent = item.title;
+    
+    // تبدیل لینک‌های داخل متن به لینک قابل کلیک
+    let descText = item.description || '';
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    descText = descText.replace(urlRegex, url => `<a href="${url}" target="_blank" style="color:#2874a6; text-decoration:underline;">${url}</a>`);
+    
+    document.getElementById('modalDesc').innerHTML = descText;
+    document.getElementById('modalMeta').textContent = `ارسال کننده: ${item.owner} | دسته: ${item.category}`;
+    
+    const mediaDiv = document.getElementById('modalMediaContainer');
+    if (item.fileData) {
+      mediaDiv.innerHTML = `<img src="${item.fileData}" class="modal-media">`;
+    } else {
+      mediaDiv.innerHTML = '';
+    }
+
+    document.getElementById('detailModal').classList.add('active');
+  }
+
+  function closeModal(e) {
+    if (e.target.id === 'detailModal') e.target.classList.remove('active');
+  }
+
+  loadAchievements();
 </script>  
 </body>
 </html>
