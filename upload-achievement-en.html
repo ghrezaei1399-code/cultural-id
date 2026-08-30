@@ -49,6 +49,30 @@
             padding-bottom: 1rem;
         }
         body.dark .subtitle { color: #d0c0b0; border-bottom-color: rgba(255, 255, 255, 0.02); }
+        
+        /* Code Check Box Styles */
+        .code-check-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 24px;
+            border: 1px dashed rgba(212, 175, 55, 0.3);
+            text-align: center;
+            margin-top: 2rem;
+        }
+        .code-input {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(30, 10, 0, 0.1);
+            background: rgba(255, 255, 255, 0.1);
+            font-size: 1.2rem;
+            text-align: center;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+            color: #1a0a0a;
+        }
+        body.dark .code-input { color: #f0e8e0; border-color: rgba(255,255,255,0.1); }
+        
         .form-group {
             margin-bottom: 1.5rem;
         }
@@ -197,59 +221,78 @@
         @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
         .hidden { display: none !important; }
         .file-name { font-size: 0.85rem; color: #2874a6; margin-top: 0.5rem; display: block; font-weight: bold; }
+        .error-msg { color: #a00; margin-top: 1rem; font-size: 0.9rem; display: none; text-align: center; }
     </style>
 </head>
 <body>
     <button class="theme-toggle" id="themeToggle">🌙</button>
 
     <div class="container">
-        <h1>📤 Upload Achievement</h1>
-        <div class="subtitle">Gallery of First 200 Ambassadors</div>
-
-        <div id="messageBox" class="message-box"></div>
-
-        <div class="upload-zone" id="dropZone">
-            <span class="icon">📁</span>
-            <p>Drag & drop your file here or click to select</p>
-            <p class="small">Allowed formats: JPG, PNG (Max 3MB)</p>
-            <input type="file" id="fileInput" class="hidden" accept="image/*" />
-            <span class="file-name" id="fileName"></span>
+        <!-- Section 1: Verification -->
+        <div id="codeCheckSection">
+            <h1>🔐 Ambassador Verification</h1>
+            <div class="subtitle">Enter your membership code to access the upload gallery</div>
+            
+            <div class="code-check-box">
+                <input type="text" id="memberCode" class="code-input" placeholder="Membership Code (e.g., A1B2C)" />
+                <button onclick="verifyCode()" class="btn btn-primary" style="width:100%">Verify & Enter</button>
+                <div id="errorMsg" class="error-msg">❌ Invalid code or you are not among the first 200.</div>
+            </div>
+            <div class="note">
+                This section is active only for the first 200 ambassadors.
+            </div>
         </div>
 
-        <form id="uploadForm">
-            <div class="form-group">
-                <label>Title</label>
-                <input type="text" id="title" placeholder="e.g. Peace Painting" required />
+        <!-- Section 2: Upload Form -->
+        <div id="uploadSection" class="hidden">
+            <h1>📤 Upload Achievement</h1>
+            <div class="subtitle">Gallery of First 200 Ambassadors</div>
+
+            <div id="messageBox" class="message-box"></div>
+
+            <div class="upload-zone" id="dropZone">
+                <span class="icon">📁</span>
+                <p>Drag & drop your file here or click to select</p>
+                <p class="small">Allowed formats: JPG, PNG (Max 3MB)</p>
+                <input type="file" id="fileInput" class="hidden" accept="image/*" />
+                <span class="file-name" id="fileName"></span>
             </div>
 
-            <div class="form-group">
-                <label>Description (You can paste video/media links here)</label>
-                <textarea id="description" rows="4" placeholder="Describe your achievement..."></textarea>
-            </div>
+            <form id="uploadForm">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="title" placeholder="e.g. Peace Painting" required />
+                </div>
 
-            <div class="form-group">
-                <label>Category</label>
-                <select id="category">
-                    <option value="art">Art</option>
-                    <option value="science">Science</option>
-                    <option value="cultural">Cultural</option>
-                    <option value="media">Media</option>
-                </select>
-            </div>
+                <div class="form-group">
+                    <label>Description (You can paste video/media links here)</label>
+                    <textarea id="description" rows="4" placeholder="Describe your achievement..."></textarea>
+                </div>
 
-            <div class="helper-text">
-                💡 <strong>Compression Tip:</strong> To avoid errors, please keep images under 1MB. 
-                You can use free tools like <a href="https://tinypng.com" target="_blank">TinyPNG</a> or <a href="https://squoosh.app" target="_blank">Squoosh</a>.
-            </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="category">
+                        <option value="art">Art</option>
+                        <option value="science">Science</option>
+                        <option value="cultural">Cultural</option>
+                        <option value="media">Media</option>
+                    </select>
+                </div>
 
-            <div class="btn-group">
-                <button type="submit" class="btn btn-primary" id="submitBtn">📤 Upload</button>
-                <a href="index.html" class="btn btn-secondary">↩ Back</a>
-            </div>
-        </form>
+                <div class="helper-text">
+                    💡 <strong>Compression Tip:</strong> To avoid errors, please keep images under 1MB. 
+                    You can use free tools like <a href="https://tinypng.com" target="_blank">TinyPNG</a> or <a href="https://squoosh.app" target="_blank">Squoosh</a>.
+                </div>
 
-        <div class="note">
-            🏆 Only first 200 ambassadors can upload. Featured works will appear in the main gallery.
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">📤 Upload</button>
+                    <a href="index.html" class="btn btn-secondary">↩ Back</a>
+                </div>
+            </form>
+
+            <div class="note">
+                🏆 Only first 200 ambassadors can upload. Featured works will appear in the main gallery.
+            </div>
         </div>
     </div>
 
@@ -264,6 +307,21 @@
             body.classList.toggle('dark');
             toggle.textContent = body.classList.contains('dark') ? '☀️' : '🌙';
         });
+
+        // Verification Logic
+        function verifyCode() {
+            const code = document.getElementById('memberCode').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+            
+            // Basic validation (Real check happens at API level)
+            if (code.length > 3) {
+                document.getElementById('codeCheckSection').classList.add('hidden');
+                document.getElementById('uploadSection').classList.remove('hidden');
+                localStorage.setItem('verifiedCode', code);
+            } else {
+                errorMsg.style.display = 'block';
+            }
+        }
 
         // File Handling
         const dropZone = document.getElementById('dropZone');
@@ -302,9 +360,9 @@
                     });
                 }
 
-                // Get card code from URL or LocalStorage
+                // Get card code from verified session or URL
                 const urlParams = new URLSearchParams(window.location.search);
-                const cardCode = urlParams.get('code') || localStorage.getItem('culturalCardCode');
+                const cardCode = localStorage.getItem('verifiedCode') || urlParams.get('code') || localStorage.getItem('culturalCardCode');
                 
                 if (!cardCode) throw new Error('Member code not found. Please login first.');
 
