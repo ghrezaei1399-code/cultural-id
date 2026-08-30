@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Upload Emergence Achievement | Global Smart Cultural ID</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', 'Vazir', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+            background-image: url('assets/pisa.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #1a0a0a;
+        }
+        body.dark { color: #f0e8e0; }
+        .container {
+            max-width: 700px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 48px;
+            padding: 2.5rem 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #2a1a0a;
+            text-align: center;
+            margin-bottom: 0.3rem;
+        }
+        body.dark h1 { color: #f9e79f; }
+        .subtitle {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #4a2a1a;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(30, 10, 0, 0.05);
+            padding-bottom: 1rem;
+        }
+        body.dark .subtitle { color: #d0c0b0; border-bottom-color: rgba(255, 255, 255, 0.02); }
+        
+        /* Code Check Box */
+        .code-check-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 24px;
+            border: 1px dashed rgba(212, 175, 55, 0.3);
+            text-align: center;
+            margin-top: 2rem;
+        }
+        .code-input {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(30, 10, 0, 0.1);
+            background: rgba(255, 255, 255, 0.1);
+            font-size: 1.2rem;
+            text-align: center;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+            color: #1a0a0a;
+        }
+        
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #2a1a0a;
+            margin-bottom: 0.3rem;
+        }
+        body.dark .form-group label { color: #e8d8c8; }
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 16px;
+            border: 1px solid rgba(30, 10, 0, 0.02);
+            background: rgba(255, 255, 255, 0.02);
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: #1a0a0a;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        body.dark .form-group input,
+        body.dark .form-group textarea,
+        body.dark .form-group select {
+            background: rgba(255, 255, 255, 0.02);
+            color: #e8d8c8;
+            border-color: rgba(255, 255, 255, 0.02);
+        }
+        
+        .upload-zone {
+            border: 2px dashed rgba(212, 175, 55, 0.3);
+            border-radius: 16px;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: 0.3s;
+            background: rgba(255, 255, 255, 0.01);
+        }
+        .upload-zone:hover { background: rgba(212, 175, 55, 0.05); border-color: #d4ac0d; }
+        .upload-zone .icon { font-size: 2.5rem; display: block; margin-bottom: 0.3rem; }
+        
+        .btn-group { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+        .btn {
+            flex: 1;
+            padding: 0.8rem 1.5rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 140px;
+        }
+        .btn-primary {
+            background: rgba(60, 30, 10, 0.02);
+            color: #2a1a0a;
+            border: 1px solid rgba(60, 30, 10, 0.02);
+        }
+        body.dark .btn-primary {
+            background: rgba(255, 255, 255, 0.02);
+            color: #f9e79f;
+            border-color: rgba(255, 255, 255, 0.02);
+        }
+        .btn-primary:hover { background: rgba(60, 30, 10, 0.04); transform: scale(1.02); }
+        
+        .btn-secondary {
+            background: rgba(60, 30, 10, 0.01);
+            color: #3a2a1a;
+            border: 1px solid rgba(60, 30, 10, 0.01);
+        }
+        body.dark .btn-secondary {
+            background: rgba(255, 255, 255, 0.01);
+            color: #a09080;
+            border-color: rgba(255, 255, 255, 0.01);
+        }
+        
+        .note {
+            text-align: center;
+            font-size: 0.75rem;
+            opacity: 0.5;
+            margin-top: 1.5rem;
+            color: #1a0a0a;
+            border-top: 1px solid rgba(30, 10, 0, 0.02);
+            padding-top: 1rem;
+        }
+        
+        .theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(30, 10, 0, 0.02);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.3rem 0.8rem;
+            border-radius: 40px;
+            transition: 0.3s;
+            color: #1a0a0a;
+        }
+        body.dark .theme-toggle { color: #f9e79f; background: rgba(0, 0, 0, 0.05); }
+        
+        @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
+        .hidden { display: none !important; }
+        .error-msg { color: #a00; margin-top: 1rem; font-size: 0.9rem; display: none; text-align: center; }
+        .file-name { font-size: 0.85rem; color: #2874a6; margin-top: 0.5rem; display: block; font-weight: bold; }
+        
+        .status-msg {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            text-align: center;
+            display: none;
+        }
+        .status-msg.success { background: rgba(0,200,0,0.1); color: #006400; border: 1px solid #006400; }
+        .status-msg.error { background: rgba(200,0,0,0.1); color: #8b0000; border: 1px solid #8b0000; }
+        
+        .helper-text {
+            font-size: 0.8rem;
+            color: #6a5a3a;
+            margin-top: 1rem;
+            line-height: 1.6;
+            text-align: center;
+            background: rgba(255,255,255,0.05);
+            padding: 1rem;
+            border-radius: 12px;
+        }
+        body.dark .helper-text { color: #c8b890; }
+        .helper-text a { color: #2874a6; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" id="themeToggle">🌙</button>
+
+    <div class="container">
+        <!-- Section 1: Verification -->
+        <div id="codeCheckSection">
+            <h1>🔐 Ambassador Verification</h1>
+            <div class="subtitle">Enter your membership code to access the upload gallery</div>
+            
+            <div class="code-check-box">
+                <input type="text" id="memberCode" class="code-input" placeholder="Membership Code (e.g., A1B2C)" />
+                <button onclick="verifyCode()" class="btn btn-primary" style="width:100%">Verify & Enter</button>
+                <div id="errorMsg" class="error-msg">❌ Invalid code or you are not among the first 200.</div>
+            </div>
+            <div class="note">
+                This section is active only for the first 200 ambassadors.
+            </div>
+        </div>
+
+        <!-- Section 2: Upload Form -->
+        <div id="uploadSection" class="hidden">
+            <h1>📤 Upload Emergence Achievement</h1>
+            <div class="subtitle">Gallery of First 200 Ambassadors</div>
+
+            <div id="statusBox" class="status-msg"></div>
+
+            <div class="upload-zone" id="dropZone">
+                <span class="icon">📁</span>
+                <p>Drag & drop your file here or click to select</p>
+                <p class="small" style="font-size:0.7rem; opacity:0.5;">Allowed formats: JPG, PNG, MP4 (No size limit)</p>
+                <input type="file" id="fileInput" class="hidden" accept="image/*,video/*,audio/*" />
+                <span class="file-name" id="fileName"></span>
+            </div>
+
+            <form id="uploadForm">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="title" placeholder="e.g. Peace Painting" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Description (You can paste video/media links here)</label>
+                    <textarea id="description" rows="4" placeholder="Describe your achievement..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="category">
+                        <option value="art">Art</option>
+                        <option value="science">Science</option>
+                        <option value="cultural">Cultural</option>
+                        <option value="media">Media</option>
+                    </select>
+                </div>
+
+                <div class="helper-text">
+                    💡 <strong>Compression Tip:</strong> Although there is no size limit, for faster loading we recommend keeping images under 1MB. 
+                    You can use free tools like <a href="https://tinypng.com" target="_blank">TinyPNG</a> or <a href="https://squoosh.app" target="_blank">Squoosh</a>.
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">📤 Upload</button>
+                    <a href="index-en.html" class="btn btn-secondary">↩ Back to Home</a>
+                </div>
+            </form>
+
+            <div class="note">
+                🏆 Only first 200 ambassadors can upload. Featured works will appear in the main gallery.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Logic
+        const toggle = document.getElementById('themeToggle');
+        const body = document.body;
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark'); toggle.textContent = '☀️';
+        }
+        toggle.addEventListener('click', () => {
+            body.classList.toggle('dark');
+            toggle.textContent = body.classList.contains('dark') ? '☀️' : '🌙';
+        });
+
+        // File Handling
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        dropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => {
+            if(e.target.files[0]) document.getElementById('fileName').textContent = "✅ " + e.target.files[0].name;
+        });
+
+        // Verification Logic
+        function verifyCode() {
+            const code = document.getElementById('memberCode').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+            
+            // Basic validation (Real check happens at API level)
+            if (code.length > 3) {
+                document.getElementById('codeCheckSection').classList.add('hidden');
+                document.getElementById('uploadSection').classList.remove('hidden');
+                localStorage.setItem('verifiedCode', code);
+            } else {
+                errorMsg.style.display = 'block';
+            }
+        }
+
+        // Upload Logic
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const statusBox = document.getElementById('statusBox');
+            const file = fileInput.files[0];
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ Uploading file...';
+            statusBox.style.display = 'none';
+
+            try {
+                let fileUrl = '';
+                let fileName = '';
+
+                // 1. If a file is selected, upload it to the uploads folder first
+                if (file) {
+                    const fileData = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.readAsDataURL(file);
+                    });
+
+                    const uploadRes = await fetch('/api/upload-file', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ fileData, fileName: file.name })
+                    });
+
+                    const uploadResult = await uploadRes.json();
+                    if (!uploadRes.ok) throw new Error(uploadResult.error || 'File upload failed');
+                    
+                    fileUrl = uploadResult.url;
+                    fileName = uploadResult.fileName;
+                }
+
+                btn.textContent = '⏳ Registering info...';
+                // Get card code from verified session or URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const cardCode = localStorage.getItem('verifiedCode') || urlParams.get('code') || localStorage.getItem('culturalCardCode');
+                
+                if (!cardCode) throw new Error('Member code not found. Please login first.');
+
+                // 2. Send final info to main API
+                const achievementData = {
+                    title: document.getElementById('title').value,
+                    description: document.getElementById('description').value,
+                    category: document.getElementById('category').value,
+                    fileName: fileName,
+                    fileUrl: fileUrl, // Sending link instead of Base64
+                    section: 'emergence' // Specifying the section
+                };
+
+                const response = await fetch('/api/upload-achievement', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cardCode, achievement: achievementData })
+                });
+
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error);
+
+                statusBox.className = 'status-msg success';
+                statusBox.textContent = '✅ Achievement submitted successfully. It will appear after admin approval.';
+                statusBox.style.display = 'block';
+                btn.textContent = '✅ Sent';
+                
+                setTimeout(() => {
+                    window.location.href = 'index-en.html';
+                }, 3000);
+
+            } catch (error) {
+                statusBox.className = 'status-msg error';
+                statusBox.textContent = '❌ ' + error.message;
+                statusBox.style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = '📤 Upload';
+            }
+        });
+    </script> 
+</body>
+</html>
