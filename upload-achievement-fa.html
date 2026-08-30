@@ -190,7 +190,7 @@
         .error-msg { color: #a00; margin-top: 1rem; font-size: 0.9rem; display: none; text-align: center; }
         .file-name { font-size: 0.85rem; color: #2874a6; margin-top: 0.5rem; display: block; font-weight: bold; }
         
-        /* استایل پیام وضعیت */
+        /* استایل پیام وضعیت و راهنما */
         .status-msg {
             padding: 1rem;
             border-radius: 12px;
@@ -200,6 +200,19 @@
         }
         .status-msg.success { background: rgba(0,200,0,0.1); color: #006400; border: 1px solid #006400; }
         .status-msg.error { background: rgba(200,0,0,0.1); color: #8b0000; border: 1px solid #8b0000; }
+        
+        .helper-text {
+            font-size: 0.8rem;
+            color: #6a5a3a;
+            margin-top: 1rem;
+            line-height: 1.6;
+            text-align: center;
+            background: rgba(255,255,255,0.05);
+            padding: 1rem;
+            border-radius: 12px;
+        }
+        body.dark .helper-text { color: #c8b890; }
+        .helper-text a { color: #2874a6; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -231,8 +244,8 @@
             <div class="upload-zone" id="dropZone">
                 <span class="icon">📂</span>
                 <p>فایل خود را اینجا بکشید یا کلیک کنید</p>
-                <p class="small" style="font-size:0.7rem; opacity:0.5;">فرمت‌های مجاز: JPG, PNG, PDF, MP4</p>
-                <input type="file" id="fileInput" class="hidden" />
+                <p class="small" style="font-size:0.7rem; opacity:0.5;">فرمت‌های مجاز: JPG, PNG (حداکثر ۳ مگابایت)</p>
+                <input type="file" id="fileInput" class="hidden" accept="image/*" />
                 <span id="fileName" class="file-name"></span>
             </div>
 
@@ -243,7 +256,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>توضیحات کوتاه</label>
+                    <label>توضیحات کوتاه (لینک ویدئو یا مدیا را اینجا بگذارید)</label>
                     <textarea id="description" rows="4" placeholder="درباره‌ی اثر خود توضیح دهید..."></textarea>
                 </div>
 
@@ -255,6 +268,11 @@
                         <option value="cultural">فرهنگی و اجتماعی</option>
                         <option value="media">رسانه و ویدئو</option>
                     </select>
+                </div>
+
+                <div class="helper-text">
+                    💡 <strong>راهنمای فشرده‌سازی:</strong> برای جلوگیری از خطا، لطفاً حجم عکس‌ها را زیر ۱ مگابایت نگه دارید. 
+                    کاربران جهانی می‌توانند از ابزارهای رایگان مانند <a href="https://tinypng.com" target="_blank">TinyPNG</a> یا <a href="https://squoosh.app" target="_blank">Squoosh</a> استفاده کنند.
                 </div>
 
                 <div class="btn-group">
@@ -290,7 +308,6 @@
             const code = document.getElementById('memberCode').value.trim();
             const errorMsg = document.getElementById('errorMsg');
             
-            // در نسخه نهایی، این کد باید با API چک شود. فعلاً برای تست:
             if (code.length > 3) {
                 document.getElementById('codeCheckSection').classList.add('hidden');
                 document.getElementById('uploadSection').classList.remove('hidden');
@@ -307,6 +324,14 @@
             const statusBox = document.getElementById('statusBox');
             const file = fileInput.files[0];
             
+            // چک کردن حجم فایل (حداکثر ۳ مگابایت)
+            if (file && file.size > 3 * 1024 * 1024) {
+                statusBox.className = 'status-msg error';
+                statusBox.textContent = '❌ حجم فایل بسیار زیاد است. لطفاً از ابزارهای فشرده‌سازی استفاده کنید.';
+                statusBox.style.display = 'block';
+                return;
+            }
+
             btn.disabled = true;
             btn.textContent = '⏳ در حال ارسال...';
             statusBox.style.display = 'none';
@@ -314,7 +339,6 @@
             try {
                 let fileData = '';
                 if (file) {
-                    // تبدیل فایل به Base64 برای ارسال در JSON
                     fileData = await new Promise((resolve) => {
                         const reader = new FileReader();
                         reader.onload = () => resolve(reader.result);
@@ -324,13 +348,13 @@
 
                 const cardCode = localStorage.getItem('verifiedCode') || document.getElementById('memberCode').value;
 
-                // ساخت آبجکت دقیقاً مطابق با نیاز upload-achievement.js شما
                 const achievementData = {
                     title: document.getElementById('title').value,
                     description: document.getElementById('description').value,
                     category: document.getElementById('category').value,
                     fileName: file ? file.name : 'No File',
-                    fileData: fileData
+                    fileData: fileData,
+                    type: file ? file.type : 'text'
                 };
 
                 const response = await fetch('/api/upload-achievement', {
