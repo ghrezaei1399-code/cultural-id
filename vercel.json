@@ -11,8 +11,5 @@
       "src": "/api/(.*)",
       "dest": "/api/$1"
     }
-  ],
-  "bodyParser": {
-    "sizeLimit": "10mb"
-  }
+  ]
 }
