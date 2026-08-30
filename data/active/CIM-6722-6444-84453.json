@@ -1,0 +1,28 @@
+{
+  "cardCode": "CIM-6722-6444-84453",
+  "displayCode": "CIM - 6722 - 6444 - سلامت",
+  "optionalCode": "سلامت",
+  "values": [
+    "برادری",
+    "تحول",
+    "شبکه سازی",
+    "فرهنگی سازی",
+    "صلح با همه ی مردم دنیا",
+    "خشونت پرهیزی",
+    "همبستگی"
+  ],
+  "priorities": [
+    7,
+    6,
+    5,
+    4,
+    3,
+    2,
+    1
+  ],
+  "communicationEmail": "ghrezaei1399@gmail.com",
+  "registrationDate": "2026-08-30T20:23:24.107Z",
+  "status": "pending",
+  "rank": 0,
+  "country": "Iran"
+}
