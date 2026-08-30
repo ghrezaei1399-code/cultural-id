@@ -24,7 +24,8 @@
             max-width: 700px;
             width: 100%;
             background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(0px);
+            backdrop-filter: blur(12px); /* افکت شیشه‌ای فعال شد */
+            -webkit-backdrop-filter: blur(12px);
             border-radius: 48px;
             padding: 2.5rem 2rem;
             border: 1px solid rgba(255, 255, 255, 0.02);
@@ -60,7 +61,8 @@
         }
         body.dark .form-group label { color: #e8d8c8; }
         .form-group input,
-        .form-group textarea {
+        .form-group textarea,
+        .form-group select {
             width: 100%;
             padding: 0.8rem 1rem;
             border-radius: 16px;
@@ -73,7 +75,8 @@
             outline: none;
         }
         body.dark .form-group input,
-        body.dark .form-group textarea {
+        body.dark .form-group textarea,
+        body.dark .form-group select {
             background: rgba(255, 255, 255, 0.02);
             color: #e8d8c8;
             border-color: rgba(255, 255, 255, 0.02);
@@ -83,38 +86,22 @@
             border-color: rgba(60, 30, 10, 0.05);
             background: rgba(255, 255, 255, 0.03);
         }
-        body.dark .form-group input:focus,
-        body.dark .form-group textarea:focus {
-            border-color: rgba(255, 255, 255, 0.05);
-            background: rgba(255, 255, 255, 0.03);
-        }
-        .form-group textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-        .form-group input::placeholder,
-        .form-group textarea::placeholder {
-            color: #4a3a2a;
-            opacity: 0.5;
-        }
-        body.dark .form-group input::placeholder,
-        body.dark .form-group textarea::placeholder {
-            color: #908070;
-        }
         .upload-zone {
-            border: 2px dashed rgba(60, 30, 10, 0.02);
+            border: 2px dashed rgba(212, 175, 55, 0.3);
             border-radius: 16px;
             padding: 2rem 1rem;
             text-align: center;
             margin-bottom: 1.5rem;
             cursor: pointer;
             transition: 0.3s;
+            background: rgba(255, 255, 255, 0.01);
         }
-        body.dark .upload-zone { border-color: rgba(255, 255, 255, 0.02); }
-        .upload-zone:hover { background: rgba(255, 255, 255, 0.01); }
+        body.dark .upload-zone { border-color: rgba(255, 255, 255, 0.1); }
+        .upload-zone:hover { background: rgba(212, 175, 55, 0.05); border-color: #d4ac0d; }
         .upload-zone .icon { font-size: 2.5rem; display: block; margin-bottom: 0.3rem; }
-        .upload-zone p { font-size: 0.85rem; opacity: 0.6; }
-        .upload-zone .small { font-size: 0.7rem; opacity: 0.3; margin-top: 0.2rem; }
+        .upload-zone p { font-size: 0.85rem; opacity: 0.8; }
+        .upload-zone .small { font-size: 0.7rem; opacity: 0.5; margin-top: 0.2rem; }
+        
         .btn-group {
             display: flex;
             gap: 1rem;
@@ -148,13 +135,6 @@
             background: rgba(60, 30, 10, 0.04);
             transform: scale(1.02);
         }
-        body.dark .btn-primary:hover {
-            background: rgba(255, 255, 255, 0.04);
-        }
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
         .btn-secondary {
             background: rgba(60, 30, 10, 0.01);
             color: #3a2a1a;
@@ -164,13 +144,6 @@
             background: rgba(255, 255, 255, 0.01);
             color: #a09080;
             border-color: rgba(255, 255, 255, 0.01);
-        }
-        .btn-secondary:hover {
-            background: rgba(60, 30, 10, 0.03);
-            transform: scale(1.02);
-        }
-        body.dark .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.03);
         }
         .note {
             text-align: center;
@@ -182,35 +155,17 @@
             padding-top: 1rem;
         }
         body.dark .note { color: #b0a090; border-top-color: rgba(255, 255, 255, 0.02); }
+        
         .message-box {
-            display: none;
             padding: 1rem;
-            border-radius: 16px;
+            border-radius: 12px;
             text-align: center;
-            margin-top: 1.5rem;
+            margin-top: 1rem;
+            display: none;
         }
-        .message-box.success {
-            display: block;
-            background: rgba(50, 200, 50, 0.05);
-            border: 1px solid rgba(50, 200, 50, 0.05);
-            color: #0a5a0a;
-        }
-        body.dark .message-box.success {
-            color: #80b080;
-            background: rgba(50, 200, 50, 0.01);
-            border-color: rgba(50, 200, 50, 0.01);
-        }
-        .message-box.error {
-            display: block;
-            background: rgba(200, 50, 50, 0.05);
-            border: 1px solid rgba(200, 50, 50, 0.05);
-            color: #5a0a0a;
-        }
-        body.dark .message-box.error {
-            color: #b08080;
-            background: rgba(200, 50, 50, 0.01);
-            border-color: rgba(200, 50, 50, 0.01);
-        }
+        .message-box.success { background: rgba(0,200,0,0.1); color: #006400; border: 1px solid #006400; }
+        .message-box.error { background: rgba(200,0,0,0.1); color: #8b0000; border: 1px solid #8b0000; }
+        
         .theme-toggle {
             position: fixed;
             top: 1rem;
@@ -224,18 +179,24 @@
             transition: 0.3s;
             color: #1a0a0a;
         }
-        body.dark .theme-toggle {
-            color: #f9e79f;
-            background: rgba(0, 0, 0, 0.05);
-            border-color: rgba(255, 255, 255, 0.02);
+        body.dark .theme-toggle { color: #f9e79f; background: rgba(0, 0, 0, 0.05); }
+        
+        .helper-text {
+            font-size: 0.8rem;
+            color: #6a5a3a;
+            margin-top: 1rem;
+            line-height: 1.6;
+            text-align: center;
+            background: rgba(255,255,255,0.05);
+            padding: 1rem;
+            border-radius: 12px;
         }
-        .theme-toggle:hover { transform: scale(1.1); }
-        @font-face {
-            font-family: 'Vazir';
-            src: local('Vazir'), local('IRANSans');
-        }
-        .hidden { display: none; }
-        .file-name { font-size: 0.8rem; opacity: 0.6; margin-top: 0.3rem; display: block; }
+        body.dark .helper-text { color: #c8b890; }
+        .helper-text a { color: #2874a6; text-decoration: none; font-weight: bold; }
+        
+        @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
+        .hidden { display: none !important; }
+        .file-name { font-size: 0.85rem; color: #2874a6; margin-top: 0.5rem; display: block; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -247,11 +208,11 @@
 
         <div id="messageBox" class="message-box"></div>
 
-        <div class="upload-zone" id="uploadZone">
+        <div class="upload-zone" id="dropZone">
             <span class="icon">📁</span>
-            <p>Drag & drop your file here</p>
-            <p class="small">or click to select</p>
-            <p class="small" style="margin-top:0.5rem;">Allowed formats: JPG, PNG, MP4, PDF (Max 10MB)</p>
+            <p>Drag & drop your file here or click to select</p>
+            <p class="small">Allowed formats: JPG, PNG (Max 3MB)</p>
+            <input type="file" id="fileInput" class="hidden" accept="image/*" />
             <span class="file-name" id="fileName"></span>
         </div>
 
@@ -262,13 +223,23 @@
             </div>
 
             <div class="form-group">
-                <label>Description</label>
-                <textarea id="description" placeholder="Describe your achievement..."></textarea>
+                <label>Description (You can paste video/media links here)</label>
+                <textarea id="description" rows="4" placeholder="Describe your achievement..."></textarea>
             </div>
 
             <div class="form-group">
                 <label>Category</label>
-                <input type="text" id="category" placeholder="e.g. Art, Science, Culture" />
+                <select id="category">
+                    <option value="art">Art</option>
+                    <option value="science">Science</option>
+                    <option value="cultural">Cultural</option>
+                    <option value="media">Media</option>
+                </select>
+            </div>
+
+            <div class="helper-text">
+                💡 <strong>Compression Tip:</strong> To avoid errors, please keep images under 1MB. 
+                You can use free tools like <a href="https://tinypng.com" target="_blank">TinyPNG</a> or <a href="https://squoosh.app" target="_blank">Squoosh</a>.
             </div>
 
             <div class="btn-group">
@@ -282,48 +253,96 @@
         </div>
     </div>
 
-  <script>
-    // ... (کد تم و آپلود فایل بدون تغییر) ...
-    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const submitBtn = document.getElementById('submitBtn');
-        submitBtn.disabled = true;
-        submitBtn.textContent = '⏳ در حال ارسال...';
-
-        try {
-            const title = document.getElementById('title').value.trim();
-            const description = document.getElementById('description').value.trim();
-            const category = document.getElementById('category').value.trim();
-            const fileName = document.getElementById('uploadZone').dataset.fileName;
-
-            if (!title || !fileName) throw new Error('لطفاً عنوان و فایل را انتخاب کنید.');
-
-            // دریافت کد از URL یا localStorage
-            const urlParams = new URLSearchParams(window.location.search);
-            const cardCode = urlParams.get('code') || localStorage.getItem('culturalCardCode');
-            
-            if (!cardCode) throw new Error('کد کارت یافت نشد. لطفاً ابتدا وارد شوید.');
-
-            const achievementData = { title, description, category, fileName };
-
-            const response = await fetch('/api/upload-achievement', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ cardCode, achievement: achievementData })
-            });
-
-            const result = await response.json();
-            if (!response.ok) throw new Error(result.error);
-
-            alert('✅ فایل شما ارسال شد و پس از تایید ادمین در گالری نمایش داده می‌شود.');
-            window.location.href = 'index.html';
-
-        } catch (error) {
-            alert('❌ ' + error.message);
-            submitBtn.disabled = false;
-            submitBtn.textContent = '📤 آپلود';
+    <script>
+        // Theme Logic
+        const toggle = document.getElementById('themeToggle');
+        const body = document.body;
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark'); toggle.textContent = '☀️';
         }
-    });
-</script> 
+        toggle.addEventListener('click', () => {
+            body.classList.toggle('dark');
+            toggle.textContent = body.classList.contains('dark') ? '☀️' : '🌙';
+        });
+
+        // File Handling
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        dropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => {
+            if(e.target.files[0]) document.getElementById('fileName').textContent = "✅ " + e.target.files[0].name;
+        });
+
+        // Upload Logic
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const msgBox = document.getElementById('messageBox');
+            const file = fileInput.files[0];
+            
+            // Check file size (Max 3MB)
+            if (file && file.size > 3 * 1024 * 1024) {
+                msgBox.className = 'message-box error';
+                msgBox.textContent = '❌ File is too large. Please use compression tools.';
+                msgBox.style.display = 'block';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = '⏳ Sending...';
+            msgBox.style.display = 'none';
+
+            try {
+                let fileData = '';
+                if (file) {
+                    fileData = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.readAsDataURL(file);
+                    });
+                }
+
+                // Get card code from URL or LocalStorage
+                const urlParams = new URLSearchParams(window.location.search);
+                const cardCode = urlParams.get('code') || localStorage.getItem('culturalCardCode');
+                
+                if (!cardCode) throw new Error('Member code not found. Please login first.');
+
+                const achievementData = {
+                    title: document.getElementById('title').value,
+                    description: document.getElementById('description').value,
+                    category: document.getElementById('category').value,
+                    fileName: file ? file.name : 'No File',
+                    fileData: fileData,
+                    type: file ? file.type : 'text'
+                };
+
+                const response = await fetch('/api/upload-achievement', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cardCode, achievement: achievementData })
+                });
+
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error);
+
+                msgBox.className = 'message-box success';
+                msgBox.textContent = '✅ Achievement submitted successfully. It will appear after admin approval.';
+                msgBox.style.display = 'block';
+                btn.textContent = '✅ Sent';
+                
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 3000);
+
+            } catch (error) {
+                msgBox.className = 'message-box error';
+                msgBox.textContent = '❌ ' + error.message;
+                msgBox.style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = '📤 Upload';
+            }
+        });
+    </script> 
 </body>
 </html>
