@@ -3,10 +3,11 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
   
   const token = process.env.GH_TOKEN;
-  const { cardCode, achIndex, status } = req.body;
+  // دریافت fileName به جای achIndex برای دقت بیشتر
+  const { cardCode, fileName, status } = req.body;
   
-  if (!token || !cardCode || achIndex === undefined) {
-    return res.status(400).json({ error: 'اطلاعات ناقص است' });
+  if (!token || !cardCode || !fileName) {
+    return res.status(400).json({ error: 'اطلاعات ناقص است (نام فایل الزامی است)' });
   }
 
   const owner = 'ghrezaei1399-code';
@@ -24,8 +25,41 @@ module.exports = async function handler(req, res) {
     const fileData = await fileRes.json();
     const userData = JSON.parse(Buffer.from(fileData.content, 'base64').toString('utf8'));
 
-    // ۲. تغییر وضعیت دستاورد مورد نظر
-    if (userData.achievements && userData.achievements[achIndex]) {
+    // ۲. پیدا کردن دستاورد مورد نظر بر اساس نام فایل
+    const achIndex = userData.achievements ? userData.achievements.findIndex(a => a.fileName === fileName) : -1;
+
+    if (achIndex !== -1 && userData.achievements[achIndex]) {
+      const achievement = userData.achievements[achIndex];
+      
+      // اگر وضعیت "رد شده" باشد، فایل مدیا را هم از گیت‌هاب پاک کن
+      if (status === 'rejected' && achievement.fileUrl) {
+        // استخراج نام فایل از آدرس URL برای حذف از پوشه uploads
+        const filePath = `uploads/${achievement.fileName}`;
+        
+        // دریافت sha فایل مدیا برای حذف
+        const mediaRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (mediaRes.ok) {
+          const mediaData = await mediaRes.json();
+          // درخواست حذف فایل مدیا
+          await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`, {
+            method: 'DELETE',
+            headers: { 
+              'Authorization': `Bearer ${token}`, 
+              'Content-Type': 'application/json' 
+            },
+            body: JSON.stringify({ 
+              message: `Delete rejected media: ${achievement.fileName}`, 
+              sha: mediaData.sha, 
+              branch: 'main' 
+            })
+          });
+        }
+      }
+
+      // تغییر وضعیت در JSON کاربر
       userData.achievements[achIndex].status = status;
       
       // ۳. ذخیره مجدد فایل آپدیت شده در گیت‌هاب
@@ -38,7 +72,7 @@ module.exports = async function handler(req, res) {
           'Content-Type': 'application/json' 
         },
         body: JSON.stringify({ 
-          message: `Admin ${status} achievement #${achIndex}`, 
+          message: `Admin ${status} achievement: ${fileName}`, 
           content: newContent, 
           sha: fileData.sha, 
           branch: 'main' 
@@ -47,7 +81,7 @@ module.exports = async function handler(req, res) {
       
       return res.status(200).json({ success: true });
     } else {
-      return res.status(404).json({ error: 'دستاورد یافت نشد' });
+      return res.status(404).json({ error: 'دستاورد با این نام فایل یافت نشد' });
     }
 
   } catch (error) {
