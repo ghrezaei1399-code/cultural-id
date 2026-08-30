@@ -30,7 +30,7 @@ module.exports = async function handler(req, res) {
     if (achievement.fileData && achievement.fileName) {
       // فراخوانی داخلی API آپلود فایل
       // نکته: در محیط Vercel باید از آدرس کامل یا نسبی صحیح استفاده شود
-      const baseUrl = req.headers.host ? `https://${req.headers.host}` : 'https://cultural-id.vercel.app';
+    const baseUrl = 'https://cultural-id.vercel.app/?utm_source=chatgpt.com'; // آدرس سایت خودتان را اینجا بگذارید
       
       const uploadRes = await fetch(`${baseUrl}/api/upload-file`, {
         method: 'POST',
