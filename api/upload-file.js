@@ -17,7 +17,7 @@ module.exports = async function handler(req, res) {
     const repo = 'cultural-id';
     const filePath = `uploads/${uniqueName}`;
 
-    // حذف هدر Base64 (data:image/png;base64,...)
+    // حذف هدر Base64 برای ذخیره خالص
     const base64Content = fileData.replace(/^data:[^;]+;base64,/, '');
 
     // آپلود به گیت‌هاب
@@ -25,6 +25,7 @@ module.exports = async function handler(req, res) {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -34,11 +35,12 @@ module.exports = async function handler(req, res) {
       })
     });
 
-    // برگرداندن آدرس مستقیم فایل
+    // برگرداندن آدرس عمومی
     const publicUrl = `https://raw.githubusercontent.com/${owner}/${repo}/main/${filePath}`;
     return res.status(200).json({ success: true, url: publicUrl, fileName: uniqueName });
 
   } catch (error) {
+    console.error('Upload Error:', error);
     return res.status(500).json({ error: error.message });
   }
 }
