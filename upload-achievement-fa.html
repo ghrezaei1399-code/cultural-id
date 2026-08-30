@@ -244,8 +244,8 @@
             <div class="upload-zone" id="dropZone">
                 <span class="icon">📂</span>
                 <p>فایل خود را اینجا بکشید یا کلیک کنید</p>
-                <p class="small" style="font-size:0.7rem; opacity:0.5;">فرمت‌های مجاز: JPG, PNG (حداکثر ۳ مگابایت)</p>
-                <input type="file" id="fileInput" class="hidden" accept="image/*" />
+                <p class="small" style="font-size:0.7rem; opacity:0.5;">فرمت‌های مجاز: JPG, PNG, MP4 (بدون محدودیت حجم)</p>
+                <input type="file" id="fileInput" class="hidden" accept="image/*,video/*,audio/*" />
                 <span id="fileName" class="file-name"></span>
             </div>
 
@@ -271,7 +271,7 @@
                 </div>
 
                 <div class="helper-text">
-                    💡 <strong>راهنمای فشرده‌سازی:</strong> برای جلوگیری از خطا، لطفاً حجم عکس‌ها را زیر ۱ مگابایت نگه دارید. 
+                    💡 <strong>راهنمای فشرده‌سازی:</strong> اگرچه محدودیت حجم برداشته شده، اما برای سرعت بیشتر پیشنهاد می‌شود عکس‌ها را زیر ۱ مگابایت نگه دارید. 
                     کاربران جهانی می‌توانند از ابزارهای رایگان مانند <a href="https://tinypng.com" target="_blank">TinyPNG</a> یا <a href="https://squoosh.app" target="_blank">Squoosh</a> استفاده کنند.
                 </div>
 
@@ -317,44 +317,53 @@
             }
         }
 
-        // Upload Logic (Connected to your API)
+        // Upload Logic (New System: Upload to separate folder)
         document.getElementById('uploadForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
             const statusBox = document.getElementById('statusBox');
             const file = fileInput.files[0];
             
-            // چک کردن حجم فایل (حداکثر ۳ مگابایت)
-            if (file && file.size > 3 * 1024 * 1024) {
-                statusBox.className = 'status-msg error';
-                statusBox.textContent = '❌ حجم فایل بسیار زیاد است. لطفاً از ابزارهای فشرده‌سازی استفاده کنید.';
-                statusBox.style.display = 'block';
-                return;
-            }
-
             btn.disabled = true;
-            btn.textContent = '⏳ در حال ارسال...';
+            btn.textContent = '⏳ در حال آپلود فایل...';
             statusBox.style.display = 'none';
 
             try {
-                let fileData = '';
+                let fileUrl = '';
+                let fileName = '';
+
+                // ۱. اگر فایلی انتخاب شده باشد، ابتدا آن را در پوشه uploads ذخیره کن
                 if (file) {
-                    fileData = await new Promise((resolve) => {
+                    const fileData = await new Promise((resolve) => {
                         const reader = new FileReader();
                         reader.onload = () => resolve(reader.result);
                         reader.readAsDataURL(file);
                     });
+
+                    const uploadRes = await fetch('/api/upload-file', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ fileData, fileName: file.name })
+                    });
+
+                    const uploadResult = await uploadRes.json();
+                    if (!uploadRes.ok) throw new Error(uploadResult.error || 'خطا در آپلود فایل');
+                    
+                    fileUrl = uploadResult.url;
+                    fileName = uploadResult.fileName;
                 }
 
+                btn.textContent = '⏳ در حال ثبت اطلاعات...';
                 const cardCode = localStorage.getItem('verifiedCode') || document.getElementById('memberCode').value;
 
+                // ۲. اطلاعات نهایی را به API اصلی بفرست
                 const achievementData = {
                     title: document.getElementById('title').value,
                     description: document.getElementById('description').value,
                     category: document.getElementById('category').value,
-                    fileName: file ? file.name : 'No File',
-                    fileData: fileData,
-                    type: file ? file.type : 'text'
+                    fileName: fileName,
+                    fileUrl: fileUrl, // ارسال لینک به جای کد Base64
+                    section: 'identity-card' // مشخص کردن بخش مربوطه
                 };
 
                 const response = await fetch('/api/upload-achievement', {
@@ -367,10 +376,7 @@
                 });
 
                 const result = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(result.error || 'خطا در ارتباط با سرور');
-                }
+                if (!response.ok) throw new Error(result.error || 'خطا در ارتباط با سرور');
 
                 statusBox.className = 'status-msg success';
                 statusBox.textContent = '✅ دستاورد شما با موفقیت ثبت شد و پس از تایید ادمین نمایش داده می‌شود.';
