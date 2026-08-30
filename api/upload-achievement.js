@@ -27,7 +27,6 @@ module.exports = async function handler(req, res) {
     let fileUrl = '';
     // اگر فایلی وجود دارد، آن را آپلود کن
     if (achievement.fileData && achievement.fileName) {
-      // استفاده از آدرس ثابت سایت برای فراخوانی داخلی
       const baseUrl = 'https://cultural-id.vercel.app'; 
       
       const uploadRes = await fetch(`${baseUrl}/api/upload-file`, {
