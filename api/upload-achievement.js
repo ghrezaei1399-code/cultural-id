@@ -25,7 +25,7 @@ module.exports = async function handler(req, res) {
     if (userData.status !== 'approved') return res.status(403).json({ error: 'حساب کاربری تایید نشده است.' });
 
     let fileUrl = '';
-    // اگر فایلی وجود دارد، آن را آپلود کن
+    // اگر فایلی آپلود شده باشد، ابتدا آن را در پوشه uploads ذخیره کن
     if (achievement.fileData && achievement.fileName) {
       const baseUrl = 'https://cultural-id.vercel.app'; 
       
@@ -46,22 +46,23 @@ module.exports = async function handler(req, res) {
       }
     }
 
-    // ذخیره اطلاعات در JSON کاربر
+    // افزودن دستاورد به لیست (فقط لینک فایل ذخیره می‌شود)
     if (!userData.achievements) userData.achievements = [];
     
     userData.achievements.push({
       title: achievement.title,
       description: achievement.description,
       category: achievement.category,
-      fileUrl: fileUrl,
+      fileUrl: fileUrl, // لینک فایل به جای کد Base64
       fileName: achievement.fileName,
       status: 'pending',
       uploadDate: new Date().toISOString(),
-      section: achievement.section || 'identity-card'
+      section: achievement.section || 'identity-card' // برای تفکیک بخش کارت هویت و مجتمع ظهور
     });
 
     const newContent = Buffer.from(JSON.stringify(userData, null, 2), 'utf8').toString('base64');
     
+    // ذخیره نهایی در گیت‌هاب
     await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
       method: 'PUT',
       headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
