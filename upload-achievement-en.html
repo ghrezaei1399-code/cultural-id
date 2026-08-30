@@ -253,8 +253,8 @@
             <div class="upload-zone" id="dropZone">
                 <span class="icon">📁</span>
                 <p>Drag & drop your file here or click to select</p>
-                <p class="small">Allowed formats: JPG, PNG (Max 3MB)</p>
-                <input type="file" id="fileInput" class="hidden" accept="image/*" />
+                <p class="small">Allowed formats: JPG, PNG, MP4 (No size limit)</p>
+                <input type="file" id="fileInput" class="hidden" accept="image/*,video/*,audio/*" />
                 <span class="file-name" id="fileName"></span>
             </div>
 
@@ -280,7 +280,7 @@
                 </div>
 
                 <div class="helper-text">
-                    💡 <strong>Compression Tip:</strong> To avoid errors, please keep images under 1MB. 
+                    💡 <strong>Compression Tip:</strong> Although there is no size limit, for faster loading we recommend keeping images under 1MB. 
                     You can use free tools like <a href="https://tinypng.com" target="_blank">TinyPNG</a> or <a href="https://squoosh.app" target="_blank">Squoosh</a>.
                 </div>
 
@@ -331,48 +331,57 @@
             if(e.target.files[0]) document.getElementById('fileName').textContent = "✅ " + e.target.files[0].name;
         });
 
-        // Upload Logic
+        // Upload Logic (New System: Upload to separate folder)
         document.getElementById('uploadForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
             const msgBox = document.getElementById('messageBox');
             const file = fileInput.files[0];
             
-            // Check file size (Max 3MB)
-            if (file && file.size > 3 * 1024 * 1024) {
-                msgBox.className = 'message-box error';
-                msgBox.textContent = '❌ File is too large. Please use compression tools.';
-                msgBox.style.display = 'block';
-                return;
-            }
-
             btn.disabled = true;
-            btn.textContent = '⏳ Sending...';
+            btn.textContent = '⏳ Uploading file...';
             msgBox.style.display = 'none';
 
             try {
-                let fileData = '';
+                let fileUrl = '';
+                let fileName = '';
+
+                // 1. If a file is selected, upload it to the uploads folder first
                 if (file) {
-                    fileData = await new Promise((resolve) => {
+                    const fileData = await new Promise((resolve) => {
                         const reader = new FileReader();
                         reader.onload = () => resolve(reader.result);
                         reader.readAsDataURL(file);
                     });
+
+                    const uploadRes = await fetch('/api/upload-file', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ fileData, fileName: file.name })
+                    });
+
+                    const uploadResult = await uploadRes.json();
+                    if (!uploadRes.ok) throw new Error(uploadResult.error || 'File upload failed');
+                    
+                    fileUrl = uploadResult.url;
+                    fileName = uploadResult.fileName;
                 }
 
+                btn.textContent = '⏳ Registering info...';
                 // Get card code from verified session or URL
                 const urlParams = new URLSearchParams(window.location.search);
                 const cardCode = localStorage.getItem('verifiedCode') || urlParams.get('code') || localStorage.getItem('culturalCardCode');
                 
                 if (!cardCode) throw new Error('Member code not found. Please login first.');
 
+                // 2. Send final info to main API
                 const achievementData = {
                     title: document.getElementById('title').value,
                     description: document.getElementById('description').value,
                     category: document.getElementById('category').value,
-                    fileName: file ? file.name : 'No File',
-                    fileData: fileData,
-                    type: file ? file.type : 'text'
+                    fileName: fileName,
+                    fileUrl: fileUrl, // Sending link instead of Base64
+                    section: 'identity-card' // Specifying the section
                 };
 
                 const response = await fetch('/api/upload-achievement', {
