@@ -500,32 +500,35 @@
   async function loadAchievements() {
     const container = document.getElementById('achievementsListContainer');
     try {
-      // اضافه کردن timestamp برای جلوگیری از کش شدن توسط مرورگر
+      // اضافه کردن timestamp برای اطمینان از دریافت جدیدترین اطلاعات
       const res = await fetch('/api/get-users?t=' + new Date().getTime());
-      if (!res.ok) throw new Error('Network response was not ok');
+      if (!res.ok) throw new Error('خطا در ارتباط با سرور');
       
       const data = await res.json();
       allApproved = [];
       
+      // استخراج دستاوردهای تایید شده از بین تمام کاربران
       data.users.forEach(user => {
         if (user.achievements) {
           user.achievements.forEach(ach => {
-            if (ach.status === 'approved') allApproved.push({ ...ach, owner: user.cardCode });
+            if (ach.status === 'approved') {
+              allApproved.push({ ...ach, owner: user.cardCode });
+            }
           });
         }
       });
       
       renderList(allApproved);
     } catch (e) { 
-      console.error('Error loading achievements:', e);
-      container.innerHTML = '<p style="text-align:center; color:red;">خطا در دریافت اطلاعات. لطفاً دوباره تلاش کنید.</p>';
+      console.error('Gallery Error:', e);
+      container.innerHTML = '<p style="text-align:center; color:red;">خطا در دریافت اطلاعات. لطفاً صفحه را رفرش کنید.</p>';
     }
   }
 
   function renderList(items) {
     const container = document.getElementById('achievementsListContainer');
     if (items.length === 0) {
-      container.innerHTML = '<p style="text-align:center; padding:1rem;">هنوز اثری تایید نشده است.</p>';
+      container.innerHTML = '<p style="text-align:center; padding:1rem;">هنوز اثری توسط ادمین تایید نشده است.</p>';
       return;
     }
     
@@ -552,6 +555,7 @@
 
     document.getElementById('modalTitle').textContent = item.title;
     
+    // تبدیل لینک‌ها به لینک قابل کلیک
     let descText = item.description || '';
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     descText = descText.replace(urlRegex, url => `<a href="${url}" target="_blank" style="color:#2874a6; text-decoration:underline;">${url}</a>`);
@@ -573,8 +577,9 @@
     if (e.target.id === 'detailModal') e.target.classList.remove('active');
   }
 
-  // اجرای تابع به محض لود شدن صفحه
+  // اجرای تابع به محض لود شدن ساختار صفحه
   document.addEventListener('DOMContentLoaded', loadAchievements);
 </script>
+  
 </body>
 </html>
