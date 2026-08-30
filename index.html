@@ -452,7 +452,7 @@
     }
     
     container.innerHTML = items.map(item => `
-      <div class="achievement-item" onclick="openModal('${item.owner}', '${item.title}')">
+      <div class="achievement-item" onclick="openModal('${item.owner}', '${item.fileName}')">
         <div class="item-info">
             <h4>${item.title}</h4>
             <span class="item-meta">${item.category === 'science' ? '📄 مقاله' : item.category === 'art' ? '🎨 هنری' : '🎬 رسانه'}</span>
@@ -468,8 +468,8 @@
     else renderList(allApproved.filter(i => i.category === cat));
   }
 
-  function openModal(ownerCode, title) {
-    const item = allApproved.find(i => i.owner === ownerCode && i.title === title);
+  function openModal(ownerCode, fileName) {
+    const item = allApproved.find(i => i.owner === ownerCode && i.fileName === fileName);
     if (!item) return;
 
     document.getElementById('modalTitle').textContent = item.title;
@@ -483,8 +483,13 @@
     document.getElementById('modalMeta').textContent = `ارسال کننده: ${item.owner} | دسته: ${item.category}`;
     
     const mediaDiv = document.getElementById('modalMediaContainer');
-    if (item.fileData) {
-      mediaDiv.innerHTML = `<img src="${item.fileData}" class="modal-media">`;
+    // استفاده از fileUrl (لینک مستقیم) به جای fileData (Base64)
+    if (item.fileUrl) {
+      if (item.fileName && (item.fileName.endsWith('.mp4') || item.fileName.endsWith('.webm'))) {
+         mediaDiv.innerHTML = `<video controls src="${item.fileUrl}" class="modal-media"></video>`;
+      } else {
+         mediaDiv.innerHTML = `<img src="${item.fileUrl}" class="modal-media">`;
+      }
     } else {
       mediaDiv.innerHTML = '';
     }
