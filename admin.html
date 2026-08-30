@@ -457,6 +457,16 @@
                     <div class="label">⏳ در انتظار بررسی</div>
                 </div>
             </div>
+            
+            <!-- فیلتر بخش‌ها -->
+            <div style="margin-bottom: 1rem; text-align: center;">
+                <select id="sectionFilter" onchange="renderAchievements()" style="padding: 0.5rem; border-radius: 10px;">
+                    <option value="all">همه بخش‌ها</option>
+                    <option value="identity-card">کارت هویت فرهنگی</option>
+                    <option value="emergence">مجتمع هم‌اندیشی ظهور</option>
+                </select>
+            </div>
+
             <div class="section-title"> گالری دستاوردهای ارسالی</div>
             <div id="achievementsGrid" class="achievements-grid">
                 <!-- کارت‌ها اینجا ساخته می‌شوند -->
@@ -706,7 +716,7 @@
             if (e.target === this) closeModal();
         });
 
-        // --- توابع جدید برای تب دستاوردها ---
+        // --- توابع جدید برای تب دستاوردها (اصلاح شده برای سیستم جدید) ---
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -734,20 +744,29 @@
 
         function renderAchievements() {
             const grid = document.getElementById('achievementsGrid');
-            if (allAchievements.length === 0) {
-                grid.innerHTML = '<p style="text-align:center; width:100%;">هنوز دستاوردی ثبت نشده است.</p>';
+            const sectionFilter = document.getElementById('sectionFilter').value;
+            
+            // فیلتر کردن بر اساس بخش (کارت هویت یا مجتمع ظهور)
+            let filteredAch = allAchievements;
+            if (sectionFilter !== 'all') {
+                filteredAch = allAchievements.filter(a => a.section === sectionFilter);
+            }
+
+            if (filteredAch.length === 0) {
+                grid.innerHTML = '<p style="text-align:center; width:100%;">هنوز دستاوردی در این بخش ثبت نشده است.</p>';
                 return;
             }
 
-            grid.innerHTML = allAchievements.map((ach, index) => {
+            grid.innerHTML = filteredAch.map((ach) => {
                 let mediaHtml = '';
-                if (ach.fileData) {
-                    if (ach.type && ach.type.startsWith('video')) {
-                        mediaHtml = `<video controls src="${ach.fileData}"></video>`;
-                    } else if (ach.type && ach.type.startsWith('audio')) {
-                        mediaHtml = `<audio controls src="${ach.fileData}" style="width:90%"></audio>`;
+                // استفاده از fileUrl (لینک) به جای fileData (Base64)
+                if (ach.fileUrl) {
+                    if (ach.fileName && (ach.fileName.endsWith('.mp4') || ach.fileName.endsWith('.webm'))) {
+                        mediaHtml = `<video controls src="${ach.fileUrl}"></video>`;
+                    } else if (ach.fileName && (ach.fileName.endsWith('.mp3') || ach.fileName.endsWith('.wav'))) {
+                        mediaHtml = `<audio controls src="${ach.fileUrl}" style="width:90%"></audio>`;
                     } else {
-                        mediaHtml = `<img src="${ach.fileData}" alt="${ach.title}">`;
+                        mediaHtml = `<img src="${ach.fileUrl}" alt="${ach.title}">`;
                     }
                 } else {
                     mediaHtml = '<span style="font-size:3rem;">📄</span>';
@@ -762,20 +781,20 @@
                     <div class="ach-content">
                         <div class="ach-title">${ach.title}</div>
                         <div class="ach-desc">${ach.description.substring(0, 120)}...</div>
-                        <div class="ach-meta">ارسال کننده: ${ach.ownerCode} (رتبه ${ach.ownerRank})</div>
+                        <div class="ach-meta">ارسال کننده: ${ach.ownerCode} | بخش: ${ach.section === 'emergence' ? 'مجتمع ظهور' : 'کارت هویت'}</div>
                         <div style="margin-bottom:1rem;">${statusBadge}</div>
                         
                         ${ach.status === 'pending' ? `
                         <div class="ach-actions">
-                            <button class="btn-small btn-view" style="background:rgba(50,200,50,0.2); color:#0a6a0a;" onclick="updateAchStatus('${ach.ownerCode}', ${index}, 'approved')">✅ تایید و نمایش</button>
-                            <button class="btn-small btn-view" style="background:rgba(200,50,50,0.2); color:#6a1a1a;" onclick="updateAchStatus('${ach.ownerCode}', ${index}, 'rejected')">❌ رد کردن</button>
+                            <button class="btn-small btn-view" style="background:rgba(50,200,50,0.2); color:#0a6a0a;" onclick="updateAchStatus('${ach.ownerCode}', '${ach.fileName}', 'approved')">✅ تایید و نمایش</button>
+                            <button class="btn-small btn-view" style="background:rgba(200,50,50,0.2); color:#6a1a1a;" onclick="updateAchStatus('${ach.ownerCode}', '${ach.fileName}', 'rejected')">❌ رد کردن</button>
                         </div>` : ''}
                     </div>
                 </div>`;
             }).join('');
         }
 
-        async function updateAchStatus(cardCode, achIndex, newStatus) {
+        async function updateAchStatus(cardCode, fileName, newStatus) {
             if(!confirm(`آیا از ${newStatus === 'approved' ? 'تایید' : 'رد'} این اثر مطمئن هستید؟`)) return;
             
             try {
@@ -783,7 +802,7 @@
                 const response = await fetch('/api/update-achievement-status', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ cardCode, achIndex, status: newStatus })
+                    body: JSON.stringify({ cardCode, fileName, status: newStatus })
                 });
                 
                 if(!response.ok) throw new Error('خطا در سرور');
