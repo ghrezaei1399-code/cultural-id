@@ -23,6 +23,46 @@
         .subtitle { text-align: center; font-size: 0.9rem; color: #6a5a3a; opacity: 0.8; margin-bottom: 1.5rem; }
         body.dark .subtitle { color: #c8b890; }
         
+        .lang-switch {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1rem;
+        }
+        .lang-switch .lang-group {
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.3rem;
+            border-radius: 30px;
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+        .lang-switch .lang-btn {
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            border: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: transparent;
+            color: #888;
+        }
+        .lang-switch .lang-btn.active {
+            background: rgba(212,175,55,0.3);
+            color: #2a1a0a;
+        }
+        body.dark .lang-switch .lang-btn.active {
+            background: rgba(212,175,55,0.2);
+            color: #f9e79f;
+        }
+        .lang-switch .lang-btn:not(.active):hover {
+            background: rgba(212,175,55,0.1);
+            color: #2a1a0a;
+        }
+        body.dark .lang-switch .lang-btn:not(.active):hover {
+            color: #f0e8d0;
+        }
+        
         #notificationBanner {
             display: none;
             background: linear-gradient(135deg, #d4af37, #f9e79f);
@@ -235,16 +275,6 @@
         .empty-state { text-align: center; padding: 3rem; color: #6a5a3a; opacity: 0.6; }
         body.dark .empty-state { color: #c8b890; }
         
-        .badge-count {
-            display: inline-block;
-            background: #d4af37;
-            color: #2a1a0a;
-            border-radius: 50%;
-            padding: 0.05rem 0.5rem;
-            font-size: 0.7rem;
-        }
-        body.dark .badge-count { color: #2a1a0a; }
-        
         .pagination {
             display: flex;
             justify-content: center;
@@ -275,34 +305,39 @@
 </head>
 <body>
 <div class="container">
-    <h1>🤝 Cultural Connection Requests</h1>
-    <div class="subtitle">Requests pending admin review</div>
+    <!-- ===== Language Switch Button ===== -->
+    <div class="lang-switch">
+        <div class="lang-group">
+            <button onclick="setLanguage('fa')" id="langFa" class="lang-btn">🇮🇷 فارسی</button>
+            <button onclick="setLanguage('en')" id="langEn" class="lang-btn active">🇬🇧 English</button>
+        </div>
+    </div>
 
-    <!-- ===== Notification Banner ===== -->
+    <h1 id="pageTitle">🤝 Cultural Connection Requests</h1>
+    <div class="subtitle" id="pageSubtitle">Requests pending admin review</div>
+
     <div id="notificationBanner"></div>
 
-    <!-- ===== Filter Bar ===== -->
     <div class="filter-bar">
         <button class="filter-btn active" data-filter="pending" onclick="setFilter('pending')">
-            ⏳ Pending <span class="badge" id="pendingCount">0</span>
+            <span id="filterPending">⏳ Pending</span> <span class="badge" id="pendingCount">0</span>
         </button>
         <button class="filter-btn" data-filter="approved" onclick="setFilter('approved')">
-            ✅ Approved <span class="badge" id="approvedCount">0</span>
+            <span id="filterApproved">✅ Approved</span> <span class="badge" id="approvedCount">0</span>
         </button>
         <button class="filter-btn" data-filter="rejected" onclick="setFilter('rejected')">
-            ❌ Rejected <span class="badge" id="rejectedCount">0</span>
+            <span id="filterRejected">❌ Rejected</span> <span class="badge" id="rejectedCount">0</span>
         </button>
         <button class="filter-btn" data-filter="all" onclick="setFilter('all')">
-            📋 All <span class="badge" id="allCount">0</span>
+            <span id="filterAll">📋 All</span> <span class="badge" id="allCount">0</span>
         </button>
     </div>
 
     <div id="requestsList"></div>
 
-    <!-- ===== Pagination ===== -->
     <div id="pagination" class="pagination"></div>
 
-    <a href="admin.html" class="btn-back">↩ Back to Admin Panel</a>
+    <a href="admin.html" class="btn-back" id="backLink">↩ Back to Admin Panel</a>
 </div>
 
 <script>
@@ -310,6 +345,34 @@
     let currentFilter = 'pending';
     let currentPage = 1;
     const pageSize = 5;
+
+    // ===== Change Language =====
+    function setLanguage(lang) {
+        const faBtn = document.getElementById('langFa');
+        const enBtn = document.getElementById('langEn');
+        
+        if (lang === 'fa') {
+            faBtn.className = 'lang-btn active';
+            enBtn.className = 'lang-btn';
+            document.getElementById('pageTitle').textContent = '🤝 درخواست‌های ارتباط با هم‌فرهنگان';
+            document.getElementById('pageSubtitle').textContent = 'تطابق بر اساس اولویت‌های فرهنگی • بررسی توسط ادمین';
+            document.getElementById('filterPending').textContent = '⏳ در انتظار';
+            document.getElementById('filterApproved').textContent = '✅ تایید شده';
+            document.getElementById('filterRejected').textContent = '❌ رد شده';
+            document.getElementById('filterAll').textContent = '📋 همه';
+            document.getElementById('backLink').textContent = '↩ بازگشت به پنل ادمین';
+        } else {
+            enBtn.className = 'lang-btn active';
+            faBtn.className = 'lang-btn';
+            document.getElementById('pageTitle').textContent = '🤝 Cultural Connection Requests';
+            document.getElementById('pageSubtitle').textContent = 'Requests pending admin review';
+            document.getElementById('filterPending').textContent = '⏳ Pending';
+            document.getElementById('filterApproved').textContent = '✅ Approved';
+            document.getElementById('filterRejected').textContent = '❌ Rejected';
+            document.getElementById('filterAll').textContent = '📋 All';
+            document.getElementById('backLink').textContent = '↩ Back to Admin Panel';
+        }
+    }
 
     // ===== Load Requests =====
     async function loadRequests() {
@@ -335,9 +398,12 @@
     function updateNotification() {
         const pending = allRequests.filter(r => r.status === 'pending').length;
         const banner = document.getElementById('notificationBanner');
+        const isFa = document.getElementById('langFa').classList.contains('active');
         
         if (pending > 0) {
-            banner.innerHTML = `🔔 ${pending} new request(s) need review.`;
+            banner.innerHTML = isFa 
+                ? `🔔 ${pending} درخواست جدید نیاز به بررسی دارد.`
+                : `🔔 ${pending} new request(s) need review.`;
             banner.style.display = 'block';
         } else {
             banner.style.display = 'none';
@@ -382,17 +448,18 @@
         const paginated = filtered.slice(start, start + pageSize);
 
         const container = document.getElementById('requestsList');
+        const isFa = document.getElementById('langFa').classList.contains('active');
         
         if (paginated.length === 0) {
-            container.innerHTML = `<div class="empty-state">No requests with this status</div>`;
+            container.innerHTML = `<div class="empty-state">${isFa ? 'هیچ درخواستی با این وضعیت وجود ندارد' : 'No requests with this status'}</div>`;
             renderPagination(totalPages);
             return;
         }
 
         container.innerHTML = paginated.map(req => {
             const reqEmailStatus = req.senderEmail 
-                ? `<div class="requester-email-status">✅ Requester has email: ${req.senderEmail}</div>`
-                : `<div class="requester-email-status no-email">❌ Requester has no registered email</div>`;
+                ? `<div class="requester-email-status">✅ ${isFa ? 'درخواست‌دهنده ایمیل دارد:' : 'Requester has email:'} ${req.senderEmail}</div>`
+                : `<div class="requester-email-status no-email">❌ ${isFa ? 'درخواست‌دهنده ایمیل ثبت نکرده است' : 'Requester has no registered email'}</div>`;
 
             const connectionsHtml = req.connections && req.connections.length > 0
                 ? req.connections.map(email => `
@@ -400,20 +467,20 @@
                         <div class="match-info">
                             <div style="font-family: monospace; font-size: 0.85rem; color: #1e7a1e;">📧 ${email}</div>
                         </div>
-                        <span class="email-badge email-yes">✅ Has Email</span>
+                        <span class="email-badge email-yes">✅ ${isFa ? 'ایمیل دارد' : 'Has Email'}</span>
                     </div>
                 `).join('')
-                : '<div class="empty-state" style="padding:0.5rem;">No like-minded people with registered emails found</div>';
+                : `<div class="empty-state" style="padding:0.5rem;">${isFa ? 'هیچ هم‌فکری با ایمیل ثبت‌شده یافت نشد' : 'No like-minded people with registered emails found'}</div>`;
 
             const statusClass = req.status === 'approved' ? 'status-approved' : 
                                req.status === 'rejected' ? 'status-rejected' : 'status-pending';
-            const statusText = req.status === 'approved' ? '✅ Approved' : 
-                              req.status === 'rejected' ? '❌ Rejected' : '⏳ Pending';
+            const statusText = req.status === 'approved' ? (isFa ? '✅ تایید شده' : '✅ Approved') : 
+                              req.status === 'rejected' ? (isFa ? '❌ رد شده' : '❌ Rejected') : (isFa ? '⏳ در انتظار' : '⏳ Pending');
 
             const actionButtons = req.status === 'pending' ? `
                 <div class="btn-group">
-                    <button class="btn btn-approve" onclick="handleRequest('${req.fileName}', 'approve')">✓ Approve & Send List</button>
-                    <button class="btn btn-reject" onclick="handleRequest('${req.fileName}', 'reject')">✗ Reject Request</button>
+                    <button class="btn btn-approve" onclick="handleRequest('${req.fileName}', 'approve')">${isFa ? '✓ تایید و ارسال لیست' : '✓ Approve & Send List'}</button>
+                    <button class="btn btn-reject" onclick="handleRequest('${req.fileName}', 'reject')">${isFa ? '✗ رد درخواست' : '✗ Reject Request'}</button>
                 </div>
             ` : '';
 
@@ -421,20 +488,20 @@
                 <div class="request-card">
                     <div class="header">
                         <div>
-                            <h3>Card Code: ${req.senderCode}</h3>
+                            <h3>${isFa ? 'کد کارت:' : 'Card Code:'} ${req.senderCode}</h3>
                             <span class="status-badge ${statusClass}">${statusText}</span>
                             ${req.connections && req.connections.length > 0 ? 
-                                `<span class="connections-count">👥 ${req.connections.length} like-minded</span>` : ''}
+                                `<span class="connections-count">👥 ${req.connections.length} ${isFa ? 'هم‌فکر' : 'like-minded'}</span>` : ''}
                         </div>
-                        <div class="meta">${new Date(req.createdAt || req.requestDate).toLocaleString('en-US')}</div>
+                        <div class="meta">${new Date(req.createdAt || req.requestDate).toLocaleString(isFa ? 'fa-IR' : 'en-US')}</div>
                     </div>
                     <div class="body">
-                        ${req.reason || req.description ? `<p><strong>Reason:</strong> ${req.reason || req.description}</p>` : ''}
+                        ${req.reason || req.description ? `<p><strong>${isFa ? 'دلیل:' : 'Reason:'}</strong> ${req.reason || req.description}</p>` : ''}
                         ${reqEmailStatus}
                     </div>
                     
                     <div class="matches-section" style="border-top-color: #27ae60;">
-                        <div class="matches-title" style="color: #27ae60;">📧 Like-minded Emails (${req.connections ? req.connections.length : 0} people):</div>
+                        <div class="matches-title" style="color: #27ae60;">📧 ${isFa ? 'ایمیل‌های هم‌فکران' : 'Like-minded Emails'} (${req.connections ? req.connections.length : 0} ${isFa ? 'نفر' : 'people'}):</div>
                         ${connectionsHtml}
                     </div>
                     
@@ -468,7 +535,11 @@
 
     // ===== Handle Request (Approve/Reject) =====
     async function handleRequest(fileName, action) {
-        if (!confirm(`Are you sure you want to ${action === 'approve' ? 'approve' : 'reject'} this request?`)) return;
+        const isFa = document.getElementById('langFa').classList.contains('active');
+        if (!confirm(isFa 
+            ? `آیا از ${action === 'approve' ? 'تایید' : 'رد'} این درخواست اطمینان دارید؟` 
+            : `Are you sure you want to ${action === 'approve' ? 'approve' : 'reject'} this request?`
+        )) return;
 
         const buttons = event.target.parentElement.querySelectorAll('button');
         buttons.forEach(btn => btn.disabled = true);
@@ -480,11 +551,11 @@
                 body: JSON.stringify({ fileName, action })
             });
             const result = await response.json();
-            if (!response.ok) throw new Error(result.error || 'Error processing request');
+            if (!response.ok) throw new Error(result.error || (isFa ? 'خطا در پردازش درخواست' : 'Error processing request'));
             alert(result.message);
             loadRequests();
         } catch (error) {
-            alert('Error: ' + error.message);
+            alert((isFa ? 'خطا: ' : 'Error: ') + error.message);
             buttons.forEach(btn => btn.disabled = false);
         }
     }
