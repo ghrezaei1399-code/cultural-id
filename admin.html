@@ -354,16 +354,16 @@
 
         <div class="stats-actions">
             <button class="btn-stats" onclick="saveFullStats()">
-                <span class="icon">📊</span> <span id="saveFullText">ذخیره آمار کلی</span>
+                <span class="icon">📊</span> <span id="saveFullBtnText">ذخیره آمار کلی</span>
             </button>
             <button class="btn-stats" onclick="saveDetailedStats()">
-                <span class="icon">📋</span> <span id="saveDetailedText">ذخیره آمار تفکیکی</span>
+                <span class="icon">📋</span> <span id="saveDetailedBtnText">ذخیره آمار تفکیکی</span>
             </button>
             <span id="statsSaveResult"></span>
         </div>
 
         <div class="back-row">
-            <a href="index.html" class="btn-back" id="backHomeBtn">↩ بازگشت به صفحه اصلی</a>
+            <a href="index.html" class="btn-back" id="backHomeBtnText">↩ بازگشت به صفحه اصلی</a>
         </div>
     </div>
 
@@ -378,7 +378,7 @@
                 pageSubtitle: 'مدیریت کارت‌های جهانی هویت هوشمند فرهنگی • کاملاً ناشناس',
                 modUsers: 'مدیریت کاربران',
                 modUsersDesc: 'مشاهده و تأیید کاربران',
-                modAchievements: 'مدیریت دستاوردها',
+                modAchievements: 'مدirیت دستاوردها',
                 modAchievementsDesc: 'بررسی دستاوردهای ارسالی',
                 modRequests: 'درخواست‌های ارتباط',
                 modRequestsDesc: 'مدیریت درخواست‌های هم‌فکران',
@@ -393,9 +393,9 @@
                 rangeBronze: '(۱۰۰۱-۱۰۰۰۰)',
                 countryTitle: '🌍 آمار بر اساس کشور',
                 selectCountryText: 'انتخاب کشور',
-                saveFullText: '📊 ذخیره آمار کلی',
-                saveDetailedText: '📋 ذخیره آمار تفکیکی',
-                backHomeBtn: '↩ بازگشت به صفحه اصلی',
+                saveFullBtnText: '📊 ذخیره آمار کلی',
+                saveDetailedBtnText: '📋 ذخیره آمار تفکیکی',
+                backHomeBtnText: '↩ بازگشت به صفحه اصلی',
                 statsSaved: '✅ آمار ذخیره شد',
                 statsError: '❌ خطا در ذخیره آمار'
             },
@@ -419,9 +419,9 @@
                 rangeBronze: '(1001-10000)',
                 countryTitle: '🌍 Statistics by Country',
                 selectCountryText: 'Select Country',
-                saveFullText: '📊 Save Full Statistics',
-                saveDetailedText: '📋 Save Detailed Statistics',
-                backHomeBtn: '↩ Back to Home',
+                saveFullBtnText: '📊 Save Full Statistics',
+                saveDetailedBtnText: '📋 Save Detailed Statistics',
+                backHomeBtnText: '↩ Back to Home',
                 statsSaved: '✅ Statistics saved',
                 statsError: '❌ Error saving statistics'
             }
@@ -455,9 +455,11 @@
             document.getElementById('rangeBronze').textContent = tr('rangeBronze');
             document.getElementById('countryTitle').textContent = tr('countryTitle');
             document.getElementById('selectCountryText').textContent = tr('selectCountryText');
-            document.getElementById('saveFullText').textContent = tr('saveFullText');
-            document.getElementById('saveDetailedText').textContent = tr('saveDetailedText');
-            document.getElementById('backHomeBtn').textContent = tr('backHomeBtn');
+            
+            // ===== اصلاح اصلی =====
+            document.getElementById('saveFullBtnText').textContent = tr('saveFullBtnText');
+            document.getElementById('saveDetailedBtnText').textContent = tr('saveDetailedBtnText');
+            document.getElementById('backHomeBtnText').textContent = tr('backHomeBtnText');
         }
 
         function toggleTheme() {
