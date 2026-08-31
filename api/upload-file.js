@@ -1,4 +1,4 @@
-// api/upload-achievement.js
+// api/upload-file.js
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
@@ -6,78 +6,52 @@ module.exports = async function handler(req, res) {
   if (!token) return res.status(500).json({ error: 'GH_TOKEN not configured' });
 
   try {
-    const { cardCode, achievement } = req.body;
-    if (!cardCode || !achievement) return res.status(400).json({ error: 'اطلاعات ناقص است' });
+    // خواندن صحیح داده‌های JSON از بدنه درخواست
+    const body = await req.json();
+    const { fileData, fileName } = body;
+
+    // اعتبارسنجی ورودی‌ها
+    if (!fileData || !fileName) {
+      return res.status(400).json({ error: 'Missing fileData or fileName in request body' });
+    }
 
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
-    const userPath = `data/active/${cardCode}.json`;
-
-    // دریافت اطلاعات کاربر
-    const userRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    if (!userRes.ok) return res.status(404).json({ error: 'کاربر یافت نشد' });
-
-    const userDataRaw = await userRes.json();
-    const userData = JSON.parse(Buffer.from(userDataRaw.content, 'base64').toString('utf8'));
-
-    if (userData.status !== 'approved') return res.status(403).json({ error: 'حساب کاربری تایید نشده است.' });
-
-    let fileUrl = '';
-    // اگر فایلی آپلود شده باشد، ابتدا آن را در پوشه uploads ذخیره کن
-    if (achievement.fileData && achievement.fileName) {
-      const baseUrl = 'https://cultural-id.vercel.app'; 
-      
-      const uploadRes = await fetch(`${baseUrl}/api/upload-file`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fileData: achievement.fileData,
-          fileName: achievement.fileName
-        })
-      });
-      
-      const uploadResult = await uploadRes.json();
-      if (uploadResult.success) {
-        fileUrl = uploadResult.url;
-      } else {
-        throw new Error(uploadResult.error || 'خطا در آپلود فایل');
-      }
-    }
-
-    // افزودن دستاورد به لیست (فقط لینک فایل ذخیره می‌شود)
-    if (!userData.achievements) userData.achievements = [];
     
-    userData.achievements.push({
-      title: achievement.title,
-      description: achievement.description,
-      category: achievement.category,
-      fileUrl: fileUrl, // لینک فایل به جای کد Base64
-      fileName: achievement.fileName,
-      status: 'pending',
-      uploadDate: new Date().toISOString(),
-      section: achievement.section || 'identity-card' // برای تفکیک بخش کارت هویت و مجتمع ظهور
-    });
+    // ساخت نام یکتا برای جلوگیری از تداخل
+    const ext = fileName.split('.').pop();
+    const uniqueName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
+    const filePath = `uploads/${uniqueName}`;
 
-    const newContent = Buffer.from(JSON.stringify(userData, null, 2), 'utf8').toString('base64');
-    
-    // ذخیره نهایی در گیت‌هاب
-    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
+    // حذف هدر Base64 برای ذخیره خالص باینری
+    const base64Content = fileData.replace(/^data:[^;]+;base64,/, '');
+
+    // آپلود به گیت‌هاب
+    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`, {
       method: 'PUT',
-      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        message: `Achievement uploaded by ${cardCode}`, 
-        content: newContent, 
-        sha: userDataRaw.sha, 
-        branch: 'main' 
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: `Upload media: ${uniqueName}`,
+        content: base64Content,
+        branch: 'main'
       })
     });
 
-    return res.status(200).json({ success: true });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to upload to GitHub');
+    }
+
+    // برگرداندن آدرس عمومی فایل
+    const publicUrl = `https://raw.githubusercontent.com/${owner}/${repo}/main/${filePath}`;
+    return res.status(200).json({ success: true, url: publicUrl, fileName: uniqueName });
 
   } catch (error) {
-    console.error('Upload Error:', error);
+    console.error('Upload File Error:', error);
     return res.status(500).json({ error: error.message });
   }
 }
