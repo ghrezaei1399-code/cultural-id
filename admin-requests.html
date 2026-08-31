@@ -504,10 +504,19 @@
             }
 
             container.innerHTML = filtered.map(req => {
+                // ===== ترجمه وضعیت =====
+                const statusMap = {
+                    approved: `<span class="badge badge-approved">${t('approved')}</span>`,
+                    rejected: `<span class="badge badge-rejected">${t('rejected')}</span>`,
+                    pending: `<span class="badge badge-pending">${t('pending')}</span>`
+                };
+
+                // ===== ترجمه وضعیت ایمیل =====
                 const emailStatus = req.senderEmail 
                     ? `<div class="req-email-status has-email">${t('hasEmail')}: ${req.senderEmail}</div>`
                     : `<div class="req-email-status no-email">${t('noEmail')}</div>`;
 
+                // ===== ترجمه لیست ایمیل‌های هم‌فکران =====
                 const connectionsHtml = req.connections && req.connections.length > 0
                     ? `<div class="req-connections">
                         <div class="label">${t('connectionsLabel')} (${req.connections.length})</div>
@@ -516,12 +525,6 @@
                         </div>
                     </div>`
                     : '';
-
-                const statusMap = {
-                    approved: `<span class="badge badge-approved">${t('approved')}</span>`,
-                    rejected: `<span class="badge badge-rejected">${t('rejected')}</span>`,
-                    pending: `<span class="badge badge-pending">${t('pending')}</span>`
-                };
 
                 const actionButtons = req.status === 'pending' ? `
                     <div style="margin-top:0.8rem; display:flex; gap:0.3rem; flex-wrap:wrap;">
