@@ -1,5 +1,4 @@
-// api/get-request-by-tracking.js
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -31,14 +30,13 @@ module.exports = async function handler(req, res) {
 
     const files = await listResponse.json();
     
-    // اطمینان از اینکه files یک آرایه است
     if (!Array.isArray(files)) {
       return res.status(500).json({ error: 'خطا در ساختار فایل‌های درخواست' });
     }
 
-    const requestFiles = files.filter(f => f.name && f.name.startsWith('request-') && f.name.endsWith('.json'));
-
-    for (const file of requestFiles) {
+    for (const file of files) {
+      if (!file.name || !file.name.startsWith('request-') || !file.name.endsWith('.json')) continue;
+      
       try {
         const fileRes = await fetch(file.url, {
           headers: {
@@ -67,7 +65,7 @@ module.exports = async function handler(req, res) {
           });
         }
       } catch (e) {
-        console.error('Error reading request file:', e);
+        console.error('Error reading request file:', file.name, e);
         continue;
       }
     }
@@ -78,4 +76,4 @@ module.exports = async function handler(req, res) {
     console.error('Get Request By Tracking Error:', error);
     return res.status(500).json({ error: error.message });
   }
-};
+}
