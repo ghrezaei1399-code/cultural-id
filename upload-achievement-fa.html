@@ -282,119 +282,122 @@
             </form>
         </div>
     </div>
+<script>
+    // Theme Logic
+    const toggle = document.getElementById('themeToggle');
+    const body = document.body;
+    if (localStorage.getItem('theme') === 'dark') {
+        body.classList.add('dark'); toggle.textContent = '☀️';
+    }
+    toggle.addEventListener('click', () => {
+        body.classList.toggle('dark');
+        toggle.textContent = body.classList.contains('dark') ? '☀️' : '🌙';
+    });
 
-    <script>
-        // Theme Logic
-        const toggle = document.getElementById('themeToggle');
-        const body = document.body;
-        if (localStorage.getItem('theme') === 'dark') {
-            body.classList.add('dark'); toggle.textContent = '☀️';
+    // File Handling
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    dropZone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+        if(e.target.files[0]) document.getElementById('fileName').textContent = e.target.files[0].name;
+    });
+
+    // Verification Logic
+    function verifyCode() {
+        const code = document.getElementById('memberCode').value.trim();
+        const errorMsg = document.getElementById('errorMsg');
+        
+        if (code.length > 3) {
+            document.getElementById('codeCheckSection').classList.add('hidden');
+            document.getElementById('uploadSection').classList.remove('hidden');
+            localStorage.setItem('verifiedCode', code);
+        } else {
+            errorMsg.style.display = 'block';
         }
-        toggle.addEventListener('click', () => {
-            body.classList.toggle('dark');
-            toggle.textContent = body.classList.contains('dark') ? '☀️' : '🌙';
-        });
+    }
 
-        // File Handling
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('fileInput');
-        dropZone.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', (e) => {
-            if(e.target.files[0]) document.getElementById('fileName').textContent = e.target.files[0].name;
-        });
+    // Upload Logic (New System: Upload to separate folder)
+    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        const statusBox = document.getElementById('statusBox');
+        const file = fileInput.files[0];
+        
+        btn.disabled = true;
+        btn.textContent = '⏳ در حال آپلود فایل...';
+        statusBox.style.display = 'none';
 
-        // Verification Logic
-        function verifyCode() {
-            const code = document.getElementById('memberCode').value.trim();
-            const errorMsg = document.getElementById('errorMsg');
-            
-            if (code.length > 3) {
-                document.getElementById('codeCheckSection').classList.add('hidden');
-                document.getElementById('uploadSection').classList.remove('hidden');
-                localStorage.setItem('verifiedCode', code);
-            } else {
-                errorMsg.style.display = 'block';
-            }
-        }
+        try {
+            let fileUrl = '';
+            let fileName = '';
 
-        // Upload Logic (New System: Upload to separate folder)
-        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            const statusBox = document.getElementById('statusBox');
-            const file = fileInput.files[0];
-            
-            btn.disabled = true;
-            btn.textContent = '⏳ در حال آپلود فایل...';
-            statusBox.style.display = 'none';
-
-            try {
-                let fileUrl = '';
-                let fileName = '';
-
-                // ۱. اگر فایلی انتخاب شده باشد، ابتدا آن را در پوشه uploads ذخیره کن
-                if (file) {
-                    const fileData = await new Promise((resolve) => {
-                        const reader = new FileReader();
-                        reader.onload = () => resolve(reader.result);
-                        reader.readAsDataURL(file);
-                    });
-
-                    const uploadRes = await fetch('/api/upload-file', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ fileData, fileName: file.name })
-                    });
-
-                    const uploadResult = await uploadRes.json();
-                    if (!uploadRes.ok) throw new Error(uploadResult.error || 'خطا در آپلود فایل');
-                    
-                    fileUrl = uploadResult.url;
-                    fileName = uploadResult.fileName;
-                }
-
-                btn.textContent = '⏳ در حال ثبت اطلاعات...';
-                const cardCode = localStorage.getItem('verifiedCode') || document.getElementById('memberCode').value;
-
-                // ۲. اطلاعات نهایی را به API اصلی بفرست
-                const achievementData = {
-                    title: document.getElementById('title').value,
-                    description: document.getElementById('description').value,
-                    category: document.getElementById('category').value,
-                    fileName: fileName,
-                    fileUrl: fileUrl, // ارسال لینک به جای کد Base64
-                    section: 'identity-card' // مشخص کردن بخش مربوطه
-                };
-
-                const response = await fetch('/api/upload-achievement', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        cardCode: cardCode, 
-                        achievement: achievementData 
-                    })
+            // ۱. اگر فایلی انتخاب شده باشد، ابتدا آن را در پوشه uploads ذخیره کن
+            if (file) {
+                const fileData = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.readAsDataURL(file);
                 });
 
-                const result = await response.json();
-                if (!response.ok) throw new Error(result.error || 'خطا در ارتباط با سرور');
+                const uploadRes = await fetch('/api/upload-file', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fileData, fileName: file.name })
+                });
 
-                statusBox.className = 'status-msg success';
-                statusBox.textContent = '✅ دستاورد شما با موفقیت ثبت شد و پس از تایید ادمین نمایش داده می‌شود.';
-                statusBox.style.display = 'block';
-                btn.textContent = '✅ ارسال شد';
+                const uploadResult = await uploadRes.json();
+                if (!uploadRes.ok) throw new Error(uploadResult.error || 'خطا در آپلود فایل');
                 
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 3000);
-
-            } catch (error) {
-                statusBox.className = 'status-msg error';
-                statusBox.textContent = '❌ ' + error.message;
-                statusBox.style.display = 'block';
-                btn.disabled = false;
-                btn.textContent = '📤 ارسال مجدد';
+                fileUrl = uploadResult.url;
+                fileName = uploadResult.fileName;
             }
-        });
-    </script>
+
+            btn.textContent = '⏳ در حال ثبت اطلاعات...';
+            const cardCode = localStorage.getItem('verifiedCode') || document.getElementById('memberCode').value;
+
+            // ۲. اطلاعات نهایی را به API اصلی بفرست
+            const achievementData = {
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                category: document.getElementById('category').value,
+                fileName: fileName,
+                fileUrl: fileUrl, // ارسال لینک به جای Base64
+                section: 'identity-card' // ⭐ مهم: تعیین بخش کارت هویت برای تفکیک در داشبورد
+            };
+
+            const response = await fetch('/api/upload-achievement', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    cardCode: cardCode, 
+                    achievement: achievementData 
+                })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || 'خطا در ارتباط با سرور');
+            }
+
+            statusBox.className = 'status-msg success';
+            statusBox.textContent = '✅ دستاورد شما با موفقیت ثبت شد و پس از تایید ادمین نمایش داده می‌شود.';
+            statusBox.style.display = 'block';
+            btn.textContent = '✅ ارسال شد';
+            
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 3000);
+
+        } catch (error) {
+            statusBox.className = 'status-msg error';
+            statusBox.textContent = '❌ ' + error.message;
+            statusBox.style.display = 'block';
+            btn.disabled = false;
+            btn.textContent = '📤 ارسال مجدد';
+        }
+    });
+</script>
+   
 </body>
 </html>
