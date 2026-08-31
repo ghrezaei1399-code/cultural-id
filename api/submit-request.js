@@ -9,19 +9,8 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    let body = '';
-    for await (const chunk of req) {
-      body += chunk;
-    }
-    
-    let parsedBody;
-    try {
-      parsedBody = JSON.parse(body);
-    } catch (e) {
-      return res.status(400).json({ error: 'Invalid JSON in request body' });
-    }
-
-    const { cardCode, description } = parsedBody;
+    // ===== تغییر: استفاده از req.body به جای for await =====
+    const { cardCode, description } = req.body;
 
     if (!cardCode) {
       return res.status(400).json({ error: 'کد کارت الزامی است' });
