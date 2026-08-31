@@ -61,18 +61,26 @@ module.exports = async function handler(req, res) {
     }
 
     const allUsersList = await allUsersRes.json();
+    
+    // اطمینان از اینکه allUsersList یک آرایه است
+    if (!Array.isArray(allUsersList)) {
+      return res.status(500).json({ error: 'خطا در ساختار لیست کاربران' });
+    }
+
     const allUsers = [];
 
     for (const file of allUsersList) {
-      if (file.name.endsWith('.json')) {
+      if (file.name && file.name.endsWith('.json')) {
         try {
           const userFileRes = await fetch(file.download_url);
+          if (!userFileRes.ok) continue;
           const userData = await userFileRes.json();
           if (userData.status === 'approved' && userData.cardCode !== cardCode) {
             allUsers.push(userData);
           }
         } catch (e) {
-          console.error('Error reading user file:', file.name);
+          console.error('Error reading user file:', file.name, e);
+          continue;
         }
       }
     }
@@ -84,7 +92,7 @@ module.exports = async function handler(req, res) {
 
     const senderPriorityList = senderValues.map((value, index) => ({
       value: value,
-      priority: senderPriorities[index] || 999
+      priority: (senderPriorities && senderPriorities[index]) || 999
     })).sort((a, b) => a.priority - b.priority);
 
     const scoredUsers = allUsers.map(user => {
@@ -94,10 +102,10 @@ module.exports = async function handler(req, res) {
       let score = 0;
       let matchCount = 0;
       
-      senderPriorityList.forEach((senderItem, idx) => {
+      senderPriorityList.forEach((senderItem) => {
         const userIndex = userValues.indexOf(senderItem.value);
         if (userIndex !== -1) {
-          const userPriority = userPriorities[userIndex] || 999;
+          const userPriority = (userPriorities && userPriorities[userIndex]) || 999;
           const priorityDiff = Math.abs(senderItem.priority - userPriority);
           score += Math.max(0, 10 - priorityDiff);
           matchCount++;
@@ -105,15 +113,15 @@ module.exports = async function handler(req, res) {
       });
       
       return {
-        cardCode: user.cardCode,
-        displayCode: user.displayCode || user.cardCode,
+        cardCode: user.cardCode || '---',
+        displayCode: user.displayCode || user.cardCode || '---',
         country: user.country || 'نامشخص',
         rank: user.rank || 0,
         email: user.communicationEmail || '',
         hasEmail: !!(user.communicationEmail && user.communicationEmail.length > 5),
         matchScore: score,
         matchCount: matchCount,
-        similarityScore: Math.round((matchCount / Math.min(senderValues.length, userValues.length)) * 100) || 0
+        similarityScore: Math.round((matchCount / Math.max(1, Math.min(senderValues.length, userValues.length))) * 100) || 0
       };
     });
 
@@ -141,11 +149,12 @@ module.exports = async function handler(req, res) {
       const requestFiles = await requestsListResponse.json();
       if (Array.isArray(requestFiles)) {
         for (const file of requestFiles) {
-          if (!file.name.endsWith('.json')) continue;
+          if (!file.name || !file.name.endsWith('.json')) continue;
           try {
             const fileRes = await fetch(file.url, {
               headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
             });
+            if (!fileRes.ok) continue;
             const fileData = await fileRes.json();
             const contentStr = Buffer.from(fileData.content, 'base64').toString('utf8');
             const existingReq = JSON.parse(contentStr);
@@ -157,7 +166,10 @@ module.exports = async function handler(req, res) {
                 error: 'شما قبلاً این درخواست را ثبت کرده‌اید و در انتظار بررسی است.' 
               });
             }
-          } catch (e) { /* ignore */ }
+          } catch (e) { 
+            console.error('Error checking existing request:', e);
+            continue;
+          }
         }
       }
     }
@@ -215,4 +227,4 @@ module.exports = async function handler(req, res) {
     console.error('Submit Request Error:', error);
     return res.status(500).json({ error: error.message });
   }
-}
+};
