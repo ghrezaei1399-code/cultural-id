@@ -14,12 +14,15 @@
             color: #2a1a0a;
             line-height: 1.8;
         }
+        body.dark { background: linear-gradient(135deg, #3a2f20 0%, #2a2418 50%, #4a3a28 100%); color: #f0e8d0; }
         .container { max-width: 900px; margin: 0 auto; }
         h1 {
             font-size: 1.8rem; text-align: center; color: #8a6d1f;
             margin-bottom: 0.5rem; border-bottom: 2px solid #d4af37; padding-bottom: 1rem;
         }
+        body.dark h1 { color: #f9e79f; border-bottom-color: #8a6d1f; }
         .subtitle { text-align: center; font-size: 0.9rem; color: #6a5a3a; margin-bottom: 2rem; }
+        body.dark .subtitle { color: #c8b890; }
         
         .section {
             background: rgba(255, 255, 255, 0.6);
@@ -28,11 +31,17 @@
             margin-bottom: 1.5rem;
             border: 1px solid rgba(212, 175, 55, 0.3);
         }
+        body.dark .section { background: rgba(0, 0, 0, 0.2); border-color: rgba(212, 175, 55, 0.2); }
         .section h2 {
             font-size: 1.2rem; color: #2874a6; margin-bottom: 1rem;
             border-left: 4px solid #2874a6; padding-left: 10px;
         }
+        body.dark .section h2 { color: #85c1e9; border-left-color: #85c1e9; }
         .section p { font-size: 0.95rem; color: #3a2a1a; margin-bottom: 1rem; }
+        body.dark .section p { color: #e8dcc0; }
+        .section ul { padding-left: 1.5rem; color: #3a2a1a; }
+        body.dark .section ul { color: #e8dcc0; }
+        .section ul li { margin-bottom: 0.5rem; }
         
         .theoretical-note {
             font-size: 0.85rem;
@@ -41,14 +50,16 @@
             padding: 1rem;
             border-radius: 8px;
             margin-top: 1rem;
-            border-right: 3px solid #d4af37;
+            border-left: 3px solid #d4af37;
         }
+        body.dark .theoretical-note { color: #c8b890; background: rgba(212, 175, 55, 0.05); }
         
         .btn-back {
             display: inline-block; margin-top: 2rem; padding: 0.8rem 1.5rem;
             background: rgba(212, 175, 55, 0.2); color: #8a6d1f;
             border-radius: 30px; text-decoration: none; font-weight: 700;
         }
+        body.dark .btn-back { color: #f9e79f; background: rgba(212, 175, 55, 0.15); }
         .btn-back:hover { background: rgba(212, 175, 55, 0.3); }
         
         .academic-link {
@@ -60,6 +71,90 @@
             border-bottom: 1px dashed #2874a6;
         }
         .academic-link:hover { color: #8a6d1f; border-color: #8a6d1f; }
+        body.dark .academic-link { color: #85c1e9; border-bottom-color: #85c1e9; }
+        
+        /* ====== Radio & TV Section ====== */
+        .radio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        .radio-card {
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            text-align: center;
+            transition: 0.3s;
+        }
+        body.dark .radio-card { background: rgba(0, 0, 0, 0.2); border-color: rgba(212, 175, 55, 0.2); }
+        .radio-card:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.8); }
+        body.dark .radio-card:hover { background: rgba(255, 255, 255, 0.05); }
+        
+        .radio-card .poster {
+            width: 100%;
+            border-radius: 12px;
+            margin-bottom: 0.8rem;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .radio-card h3 { color: #8a6d1f; margin-bottom: 0.3rem; }
+        body.dark .radio-card h3 { color: #f9e79f; }
+        .radio-card p { font-size: 0.85rem; color: #4a3a2a; line-height: 1.8; }
+        body.dark .radio-card p { color: #d0c0b0; }
+        .radio-card .tag {
+            display: inline-block;
+            padding: 0.2rem 1rem;
+            border-radius: 20px;
+            background: rgba(212, 175, 55, 0.15);
+            color: #8a6d1f;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-top: 0.5rem;
+        }
+        body.dark .radio-card .tag { color: #f9e79f; background: rgba(212, 175, 55, 0.2); }
+        
+        .radio-player {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 0.8rem;
+        }
+        body.dark .radio-player { background: rgba(0, 0, 0, 0.2); }
+        .radio-player audio, .radio-player video {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 8px;
+        }
+        
+        .channel-desc {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: rgba(212, 175, 55, 0.08);
+            border-radius: 16px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            text-align: center;
+        }
+        body.dark .channel-desc { background: rgba(212, 175, 55, 0.05); }
+        .channel-desc h3 { color: #8a6d1f; margin-bottom: 0.5rem; }
+        body.dark .channel-desc h3 { color: #f9e79f; }
+        .channel-desc p { font-size: 0.9rem; color: #4a3a2a; line-height: 2; }
+        body.dark .channel-desc p { color: #d0c0b0; }
+        
+        .coming-soon {
+            text-align: center;
+            padding: 1.5rem;
+            color: #8a6d1f;
+            font-size: 1rem;
+            opacity: 0.6;
+        }
+        body.dark .coming-soon { color: #c8b890; }
+        
+        @media (max-width: 768px) {
+            .radio-grid { grid-template-columns: 1fr; }
+            .poster { max-height: 200px; object-fit: cover; }
+        }
+        /* ====== End Radio & TV Section ====== */
     </style>
 </head>
 <body>
@@ -75,8 +170,8 @@
 
     <div class="section">
         <h2>Core Principles</h2>
-        <ul style="list-style-type: disc; padding-left: 1.5rem; color: #3a2a1a;">
-            <li><strong>Non-Political & Non-Governmental:</strong> Focus solely on cultural heritage and human values.</li>
+        <ul>
+            <li><strong>Non-Political &amp; Non-Governmental:</strong> Focus solely on cultural heritage and human values.</li>
             <li><strong>Anonymity:</strong> Protecting user privacy is the system's top priority.</li>
             <li><strong>Decentralized:</strong> Data is not stored on any central server to prevent censorship or control.</li>
         </ul>
@@ -90,13 +185,87 @@
             <strong>For studying scientific and theoretical documents:</strong><br>
             This project is based on a collection of scientific articles and books registered in international databases (such as Zenodo) on topics such as "Sphere of Wisdom", "Enlightenment Companions", and "Controlled Entanglement". Those interested in the theoretical foundations can access these documents through the author's scientific profile.<br><br>
             
-            <a href="https://orcid.org/0009-0007-5840-8833" target="_blank" class="academic-link">View Scientific Profile & Articles on ORCID ↗</a>
+            <a href="https://orcid.org/0009-0007-5840-8833" target="_blank" class="academic-link">View Scientific Profile &amp; Articles on ORCID ↗</a>
         </div>
     </div>
+
+    <!-- ====== Smart Radio & TV Section ====== -->
+    <div id="radio-tv" class="section" style="border-color: #d4af37; border-width: 2px;">
+        <h2 style="color: #8a6d1f; border-left-color: #d4af37; font-size: 1.4rem;">📡 Smart Cultural Radio &amp; TV</h2>
+        <p style="text-align: center; font-size: 0.95rem; color: #6a5a3a;">Cultural networks and group content</p>
+
+        <div class="channel-desc">
+            <h3>🌍 About Smart Radio &amp; TV</h3>
+            <p>
+                Smart Cultural Radio &amp; TV is a platform for sharing cultural, artistic, and social content 
+                by members of the Global Smart Cultural Identity Card. This network provides a space for 
+                dialogue, education, and cultural exchange among members worldwide.
+            </p>
+        </div>
+
+        <div class="radio-grid">
+            <!-- Network 1: PRINGTIN -->
+            <div class="radio-card">
+                <img src="assets/PRINGTIN.png" alt="PRINGTIN" class="poster" onerror="this.style.display='none'"/>
+                <h3>🎵 PRINGTIN Network</h3>
+                <p>Cultural, artistic, and local music network</p>
+                <span class="tag">📡 Live Stream</span>
+                <div class="radio-player">
+                    <p style="font-size:0.7rem; color:#888;">🔴 Now Playing...</p>
+                    <audio controls>
+                        <source src="#" type="audio/mpeg">
+                        Your browser does not support audio playback.
+                    </audio>
+                </div>
+            </div>
+
+            <!-- Network 2: Retirees Society -->
+            <div class="radio-card">
+                <img src="assets/Retirees Society.png" alt="Retirees Society" class="poster" onerror="this.style.display='none'"/>
+                <h3>👴 Retirees Society Network</h3>
+                <p>Retirees community, experiences, and cultural heritage</p>
+                <span class="tag">🎙️ Expert Talks</span>
+                <div class="radio-player">
+                    <p style="font-size:0.7rem; color:#888;">🎙️ Broadcasting...</p>
+                    <audio controls>
+                        <source src="#" type="audio/mpeg">
+                        Your browser does not support audio playback.
+                    </audio>
+                </div>
+            </div>
+
+            <!-- Network 3: Preview -->
+            <div class="radio-card">
+                <div style="width:100%;height:180px;background:rgba(212,175,55,0.1);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:3rem;margin-bottom:0.8rem;">🎬</div>
+                <h3>World Heritage Network</h3>
+                <p>Cultural documentaries, oral history, and education</p>
+                <span class="tag">📺 Coming Soon</span>
+                <div class="radio-player">
+                    <p style="font-size:0.7rem; color:#888;">🎬 Coming Soon...</p>
+                    <video controls>
+                        <source src="#" type="video/mp4">
+                        Your browser does not support video playback.
+                    </video>
+                </div>
+            </div>
+        </div>
+
+        <div class="coming-soon">
+            🌍 More cultural networks coming soon...
+        </div>
+    </div>
+    <!-- ====== End Radio & TV Section ====== -->
 
     <div style="text-align: center;">
         <a href="index-en.html" class="btn-back">↩ Back to Home</a>
     </div>
 </div>
+
+<script>
+    // Theme
+    if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark');
+    }
+</script>
 </body>
 </html>
