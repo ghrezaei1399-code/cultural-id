@@ -17,45 +17,105 @@
             background: linear-gradient(135deg, #3a2f20 0%, #2a2418 50%, #4a3a28 100%);
             color: #f0e8d0;
         }
-        .container { max-width: 900px; margin: 0 auto; }
-        h1 {
-            font-size: 1.8rem; font-weight: 800; color: #2a1a0a;
-            text-align: center; margin-bottom: 0.5rem;
-        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { font-size: 1.8rem; font-weight: 800; color: #2a1a0a; text-align: center; margin-bottom: 0.5rem; }
         body.dark h1 { color: #f9e79f; }
-        .subtitle {
-            text-align: center; font-size: 0.9rem; color: #6a5a3a;
-            opacity: 0.8; margin-bottom: 2rem;
-        }
+        .subtitle { text-align: center; font-size: 0.9rem; color: #6a5a3a; opacity: 0.8; margin-bottom: 1.5rem; }
         body.dark .subtitle { color: #c8b890; }
         
+        #notificationBanner {
+            display: none;
+            background: linear-gradient(135deg, #d4af37, #f9e79f);
+            color: #2a1a0a;
+            padding: 0.8rem 1.5rem;
+            border-radius: 16px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            border: 2px solid #8a6d1f;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+            animation: pulse 2s infinite;
+        }
+        body.dark #notificationBanner {
+            background: linear-gradient(135deg, #8a6d1f, #d4af37);
+            color: #fff;
+            border-color: #f9e79f;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        
+        .filter-bar {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+        }
+        .filter-btn {
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            color: #2a1a0a;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        body.dark .filter-btn { color: #f0e8d0; border-color: rgba(212, 175, 55, 0.2); }
+        .filter-btn:hover { background: rgba(212, 175, 55, 0.1); }
+        .filter-btn.active {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: #d4af37;
+        }
+        body.dark .filter-btn.active { background: rgba(212, 175, 55, 0.15); border-color: #f9e79f; }
+        .filter-btn .badge {
+            display: inline-block;
+            background: #d4af37;
+            color: #2a1a0a;
+            border-radius: 50%;
+            padding: 0.05rem 0.5rem;
+            font-size: 0.7rem;
+            margin-left: 0.3rem;
+        }
+        body.dark .filter-btn .badge { color: #2a1a0a; }
+        
         .request-card {
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.8);
             border-radius: 16px;
             padding: 1.5rem;
             margin-bottom: 1rem;
             border: 2px solid rgba(212, 175, 55, 0.3);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
             transition: all 0.3s;
+            cursor: pointer;
         }
         body.dark .request-card {
             background: rgba(74, 58, 40, 0.7);
             border-color: rgba(212, 175, 55, 0.5);
         }
         .request-card:hover { transform: translateY(-2px); }
+        .request-card .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
         .request-card h3 {
-            font-size: 1.1rem; color: #8a6d1f; margin-bottom: 0.5rem;
+            font-size: 1.1rem; color: #8a6d1f; margin-bottom: 0.3rem;
             font-family: 'Courier New', monospace;
         }
         body.dark .request-card h3 { color: #f9e79f; }
-        .request-card p {
-            font-size: 0.9rem; color: #3a2a1a; margin-bottom: 0.5rem; line-height: 1.6;
-        }
-        body.dark .request-card p { color: #e8dcc0; }
-        .request-card .meta {
-            font-size: 0.75rem; color: #6a5a3a; opacity: 0.7;
-        }
+        .request-card .meta { font-size: 0.75rem; color: #6a5a3a; opacity: 0.7; }
         body.dark .request-card .meta { color: #c8b890; }
+        .request-card .body { margin-top: 0.5rem; }
+        .request-card .body p { font-size: 0.9rem; color: #3a2a1a; line-height: 1.6; }
+        body.dark .request-card .body p { color: #e8dcc0; }
         
         .requester-email-status {
             margin-top: 0.5rem;
@@ -85,39 +145,37 @@
             background: rgba(212, 175, 55, 0.08);
             border: 1px solid rgba(212, 175, 55, 0.3);
             border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 0.8rem;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.6rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 1rem;
+            gap: 0.5rem;
         }
         body.dark .match-item { background: rgba(212, 175, 55, 0.05); border-color: rgba(212, 175, 55, 0.15); }
-        .match-info { flex: 1; min-width: 200px; }
-        .match-code { font-family: 'Courier New', monospace; font-size: 0.9rem; color: #8a6d1f; font-weight: 700; }
+        .match-info { flex: 1; min-width: 150px; }
+        .match-code { font-family: 'Courier New', monospace; font-size: 0.85rem; color: #8a6d1f; font-weight: 700; }
         body.dark .match-code { color: #f9e79f; }
-        .match-details { font-size: 0.75rem; color: #6a5a3a; margin-top: 0.3rem; }
+        .match-details { font-size: 0.7rem; color: #6a5a3a; margin-top: 0.2rem; }
         body.dark .match-details { color: #c8b890; }
-        
         .match-score {
             background: linear-gradient(135deg, #d4af37, #f9e79f);
             color: #2a1a0a;
-            padding: 0.4rem 1rem;
+            padding: 0.2rem 0.8rem;
             border-radius: 20px;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             font-weight: 800;
-            min-width: 60px;
             text-align: center;
+            min-width: 50px;
         }
         body.dark .match-score { background: linear-gradient(135deg, #8a6d1f, #d4af37); color: #fff; }
         
         .email-badge {
-            font-size: 0.75rem;
-            padding: 0.3rem 0.8rem;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
             border-radius: 15px;
             font-weight: 700;
-            margin-top: 0.5rem;
             display: inline-block;
         }
         .email-yes { background: rgba(40, 167, 69, 0.2); color: #1e7a1e; }
@@ -125,13 +183,13 @@
         .email-no { background: rgba(220, 53, 69, 0.2); color: #a93226; }
         body.dark .email-no { background: rgba(220, 53, 69, 0.15); color: #f1948a; }
 
-        .hidden-email { display: none; margin-top: 0.5rem; font-size: 0.8rem; color: #2874a6; font-family: monospace; }
+        .hidden-email { display: none; margin-top: 0.3rem; font-size: 0.75rem; color: #2874a6; font-family: monospace; }
         body.dark .hidden-email { color: #85c1e9; }
 
-        .btn-group { display: flex; gap: 0.5rem; margin-top: 1.5rem; flex-wrap: wrap; }
+        .btn-group { display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; }
         .btn {
-            padding: 0.7rem 1.5rem; border-radius: 30px; font-weight: 700;
-            font-size: 0.9rem; border: none; cursor: pointer; transition: all 0.3s;
+            padding: 0.6rem 1.2rem; border-radius: 30px; font-weight: 700;
+            font-size: 0.85rem; border: none; cursor: pointer; transition: all 0.3s;
         }
         .btn-approve { background: rgba(39, 174, 96, 0.2); color: #1e7a1e; }
         body.dark .btn-approve { background: rgba(39, 174, 96, 0.2); color: #82e0aa; }
@@ -139,9 +197,32 @@
         .btn-reject { background: rgba(220, 80, 60, 0.2); color: #a93226; }
         body.dark .btn-reject { background: rgba(220, 80, 60, 0.2); color: #f1948a; }
         .btn-reject:hover { background: rgba(220, 80, 60, 0.3); }
-        .btn-show-email { background: rgba(40, 167, 69, 0.2); color: #1e7a1e; font-size: 0.8rem; padding: 0.4rem 1rem; margin-top: 0.5rem; }
-        body.dark .btn-show-email { background: rgba(40, 167, 69, 0.15); color: #82e0aa; }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.15rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        .status-pending { background: rgba(255, 200, 50, 0.2); color: #8a7a0a; }
+        body.dark .status-pending { background: rgba(255, 200, 50, 0.15); color: #f9e79f; }
+        .status-approved { background: rgba(50, 200, 50, 0.2); color: #0a6a0a; }
+        body.dark .status-approved { background: rgba(50, 200, 50, 0.15); color: #82e0aa; }
+        .status-rejected { background: rgba(200, 50, 50, 0.2); color: #6a1a1a; }
+        body.dark .status-rejected { background: rgba(200, 50, 50, 0.15); color: #f1948a; }
+        
+        .connections-count {
+            display: inline-block;
+            background: rgba(212, 175, 55, 0.15);
+            padding: 0.1rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #8a6d1f;
+        }
+        body.dark .connections-count { background: rgba(212, 175, 55, 0.1); color: #f9e79f; }
         
         .btn-back {
             display: inline-block; margin-top: 2rem; padding: 0.8rem 1.5rem;
@@ -154,31 +235,42 @@
         .empty-state { text-align: center; padding: 3rem; color: #6a5a3a; opacity: 0.6; }
         body.dark .empty-state { color: #c8b890; }
         
-        .status-badge {
+        .badge-count {
             display: inline-block;
-            padding: 0.2rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            margin-top: 0.5rem;
+            background: #d4af37;
+            color: #2a1a0a;
+            border-radius: 50%;
+            padding: 0.05rem 0.5rem;
+            font-size: 0.7rem;
         }
-        .status-pending { background: rgba(255, 200, 50, 0.2); color: #8a7a0a; }
-        body.dark .status-pending { background: rgba(255, 200, 50, 0.15); color: #f9e79f; }
-        .status-approved { background: rgba(50, 200, 50, 0.2); color: #0a6a0a; }
-        body.dark .status-approved { background: rgba(50, 200, 50, 0.15); color: #82e0aa; }
-        .status-rejected { background: rgba(200, 50, 50, 0.2); color: #6a1a1a; }
-        body.dark .status-rejected { background: rgba(200, 50, 50, 0.15); color: #f1948a; }
+        body.dark .badge-count { color: #2a1a0a; }
         
-        .connections-count {
-            display: inline-block;
-            background: rgba(212, 175, 55, 0.15);
-            padding: 0.2rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #8a6d1f;
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
         }
-        body.dark .connections-count { background: rgba(212, 175, 55, 0.1); color: #f9e79f; }
+        .pagination button {
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            color: #2a1a0a;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        body.dark .pagination button { color: #f0e8d0; border-color: rgba(212, 175, 55, 0.2); }
+        .pagination button:hover { background: rgba(212, 175, 55, 0.1); }
+        .pagination button.active {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: #d4af37;
+        }
+        body.dark .pagination button.active { background: rgba(212, 175, 55, 0.15); border-color: #f9e79f; }
+        .pagination button:disabled { opacity: 0.3; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -186,110 +278,51 @@
     <h1>🤝 Cultural Connection Requests</h1>
     <div class="subtitle">Requests pending admin review</div>
 
+    <!-- ===== Notification Banner ===== -->
+    <div id="notificationBanner"></div>
+
+    <!-- ===== Filter Bar ===== -->
+    <div class="filter-bar">
+        <button class="filter-btn active" data-filter="pending" onclick="setFilter('pending')">
+            ⏳ Pending <span class="badge" id="pendingCount">0</span>
+        </button>
+        <button class="filter-btn" data-filter="approved" onclick="setFilter('approved')">
+            ✅ Approved <span class="badge" id="approvedCount">0</span>
+        </button>
+        <button class="filter-btn" data-filter="rejected" onclick="setFilter('rejected')">
+            ❌ Rejected <span class="badge" id="rejectedCount">0</span>
+        </button>
+        <button class="filter-btn" data-filter="all" onclick="setFilter('all')">
+            📋 All <span class="badge" id="allCount">0</span>
+        </button>
+    </div>
+
     <div id="requestsList"></div>
+
+    <!-- ===== Pagination ===== -->
+    <div id="pagination" class="pagination"></div>
 
     <a href="admin.html" class="btn-back">↩ Back to Admin Panel</a>
 </div>
 
 <script>
+    let allRequests = [];
+    let currentFilter = 'pending';
+    let currentPage = 1;
+    const pageSize = 5;
+
+    // ===== Load Requests =====
     async function loadRequests() {
         try {
             const response = await fetch('/api/get-connection-requests');
             const data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'Error loading requests');
 
-            if (!response.ok) {
-                throw new Error(data.error || 'Error loading requests');
-            }
-
-            const requestsList = document.getElementById('requestsList');
-
-            if (data.requests.length === 0) {
-                requestsList.innerHTML = '<div class="empty-state">No connection requests found</div>';
-                return;
-            }
-
-            requestsList.innerHTML = data.requests.map(req => {
-                // Requester email status
-                const reqEmailStatus = req.senderEmail 
-                    ? `<div class="requester-email-status">✅ Requester has email: ${req.senderEmail}</div>`
-                    : `<div class="requester-email-status no-email">❌ Requester has no registered email (email cannot be sent)</div>`;
-
-                // ===== Change: Display connections list =====
-                const connectionsHtml = req.connections && req.connections.length > 0
-                    ? req.connections.map(email => `
-                        <div class="match-item" style="border-color: #27ae60; background: rgba(39, 174, 96, 0.05);">
-                            <div class="match-info">
-                                <div style="font-family: monospace; font-size: 0.9rem; color: #1e7a1e;">📧 ${email}</div>
-                            </div>
-                            <span class="email-badge email-yes">✅ Has Email</span>
-                        </div>
-                    `).join('')
-                    : '<div class="empty-state" style="padding:0.5rem;">No like-minded people with registered emails found</div>';
-
-                // ===== Cultural matches list with more details =====
-                const matchesHtml = req.culturalMatches && req.culturalMatches.length > 0 
-                    ? req.culturalMatches.map((match, idx) => `
-                        <div class="match-item">
-                            <div class="match-info">
-                                <div class="match-code">${match.displayCode}</div>
-                                <div class="match-details">🌍 ${match.country || 'Unknown'} • Rank #${match.rank}</div>
-                                <span class="email-badge ${match.hasEmail ? 'email-yes' : 'email-no'}">
-                                    ${match.hasEmail ? '✅ Has Email' : '❌ No Email'}
-                                </span>
-                                ${match.hasEmail ? `<button class="btn btn-show-email" onclick="toggleEmail('email-${req.fileName}-${idx}')">👁️ Show Email</button>
-                                <div id="email-${req.fileName}-${idx}" class="hidden-email">${match.email}</div>` : ''}
-                            </div>
-                            <div class="match-score">${match.similarityScore}% Priority Match</div>
-                        </div>
-                    `).join('')
-                    : '<div class="empty-state" style="padding:0.5rem;">No cultural matches with similar priorities found</div>';
-
-                // ===== Display connections count =====
-                const connectionsCount = req.connections ? req.connections.length : 0;
-                const connectionsInfo = connectionsCount > 0 
-                    ? `<span class="connections-count">👥 ${connectionsCount} like-minded with email</span>`
-                    : '';
-
-                // ===== Request status =====
-                const statusClass = req.status === 'approved' ? 'status-approved' : 
-                                   req.status === 'rejected' ? 'status-rejected' : 'status-pending';
-                const statusText = req.status === 'approved' ? '✅ Approved' : 
-                                  req.status === 'rejected' ? '❌ Rejected' : '⏳ Pending';
-
-                return `
-                    <div class="request-card">
-                        <h3>Card Code: ${req.senderCode}</h3>
-                        <p><strong>Request Type:</strong> ${req.type === 'connection' ? 'Connect with cultural kin' : req.type}</p>
-                        ${req.reason ? `<p><strong>Reason:</strong> ${req.reason}</p>` : ''}
-                        ${req.description ? `<p><strong>Description:</strong> ${req.description}</p>` : ''}
-                        <div class="meta">Date: ${new Date(req.createdAt || req.requestDate).toLocaleString('en-US')}</div>
-                        <div style="margin-top:0.5rem;">
-                            <span class="status-badge ${statusClass}">${statusText}</span>
-                            ${connectionsInfo}
-                        </div>
-                        
-                        ${reqEmailStatus}
-                        
-                        <!-- ===== List of like-minded with email ===== -->
-                        <div class="matches-section" style="border-top-color: #27ae60;">
-                            <div class="matches-title" style="color: #27ae60;">📧 Like-minded Emails (${connectionsCount} people):</div>
-                            ${connectionsHtml}
-                        </div>
-                        
-                        <!-- ===== Full matches list ===== -->
-                        <div class="matches-section">
-                            <div class="matches-title">🎯 Full Matches List (Based on Priorities):</div>
-                            ${matchesHtml}
-                        </div>
-
-                        ${req.status === 'pending' ? `
-                        <div class="btn-group">
-                            <button class="btn btn-approve" onclick="handleRequest('${req.fileName}', 'approve')">✓ Approve & Send List</button>
-                            <button class="btn btn-reject" onclick="handleRequest('${req.fileName}', 'reject')">✗ Reject Request</button>
-                        </div>` : ''}
-                    </div>
-                `;
-            }).join('');
+            allRequests = data.requests || [];
+            
+            updateNotification();
+            updateFilterCounts();
+            renderRequests();
 
         } catch (error) {
             console.error('Error:', error);
@@ -298,11 +331,142 @@
         }
     }
 
-    function toggleEmail(id) {
-        const el = document.getElementById(id);
-        el.style.display = el.style.display === 'block' ? 'none' : 'block';
+    // ===== Update Notification =====
+    function updateNotification() {
+        const pending = allRequests.filter(r => r.status === 'pending').length;
+        const banner = document.getElementById('notificationBanner');
+        
+        if (pending > 0) {
+            banner.innerHTML = `🔔 ${pending} new request(s) need review.`;
+            banner.style.display = 'block';
+        } else {
+            banner.style.display = 'none';
+        }
     }
 
+    // ===== Update Filter Counts =====
+    function updateFilterCounts() {
+        const pending = allRequests.filter(r => r.status === 'pending').length;
+        const approved = allRequests.filter(r => r.status === 'approved').length;
+        const rejected = allRequests.filter(r => r.status === 'rejected').length;
+        
+        document.getElementById('pendingCount').textContent = pending;
+        document.getElementById('approvedCount').textContent = approved;
+        document.getElementById('rejectedCount').textContent = rejected;
+        document.getElementById('allCount').textContent = allRequests.length;
+    }
+
+    // ===== Set Filter =====
+    function setFilter(filter) {
+        currentFilter = filter;
+        currentPage = 1;
+        
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.filter === filter);
+        });
+        
+        renderRequests();
+    }
+
+    // ===== Render Requests =====
+    function renderRequests() {
+        const filtered = allRequests.filter(req => {
+            if (currentFilter === 'all') return true;
+            return req.status === currentFilter;
+        });
+
+        const totalPages = Math.ceil(filtered.length / pageSize);
+        if (currentPage > totalPages) currentPage = totalPages || 1;
+        
+        const start = (currentPage - 1) * pageSize;
+        const paginated = filtered.slice(start, start + pageSize);
+
+        const container = document.getElementById('requestsList');
+        
+        if (paginated.length === 0) {
+            container.innerHTML = `<div class="empty-state">No requests with this status</div>`;
+            renderPagination(totalPages);
+            return;
+        }
+
+        container.innerHTML = paginated.map(req => {
+            const reqEmailStatus = req.senderEmail 
+                ? `<div class="requester-email-status">✅ Requester has email: ${req.senderEmail}</div>`
+                : `<div class="requester-email-status no-email">❌ Requester has no registered email</div>`;
+
+            const connectionsHtml = req.connections && req.connections.length > 0
+                ? req.connections.map(email => `
+                    <div class="match-item" style="border-color: #27ae60; background: rgba(39, 174, 96, 0.05);">
+                        <div class="match-info">
+                            <div style="font-family: monospace; font-size: 0.85rem; color: #1e7a1e;">📧 ${email}</div>
+                        </div>
+                        <span class="email-badge email-yes">✅ Has Email</span>
+                    </div>
+                `).join('')
+                : '<div class="empty-state" style="padding:0.5rem;">No like-minded people with registered emails found</div>';
+
+            const statusClass = req.status === 'approved' ? 'status-approved' : 
+                               req.status === 'rejected' ? 'status-rejected' : 'status-pending';
+            const statusText = req.status === 'approved' ? '✅ Approved' : 
+                              req.status === 'rejected' ? '❌ Rejected' : '⏳ Pending';
+
+            const actionButtons = req.status === 'pending' ? `
+                <div class="btn-group">
+                    <button class="btn btn-approve" onclick="handleRequest('${req.fileName}', 'approve')">✓ Approve & Send List</button>
+                    <button class="btn btn-reject" onclick="handleRequest('${req.fileName}', 'reject')">✗ Reject Request</button>
+                </div>
+            ` : '';
+
+            return `
+                <div class="request-card">
+                    <div class="header">
+                        <div>
+                            <h3>Card Code: ${req.senderCode}</h3>
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                            ${req.connections && req.connections.length > 0 ? 
+                                `<span class="connections-count">👥 ${req.connections.length} like-minded</span>` : ''}
+                        </div>
+                        <div class="meta">${new Date(req.createdAt || req.requestDate).toLocaleString('en-US')}</div>
+                    </div>
+                    <div class="body">
+                        ${req.reason || req.description ? `<p><strong>Reason:</strong> ${req.reason || req.description}</p>` : ''}
+                        ${reqEmailStatus}
+                    </div>
+                    
+                    <div class="matches-section" style="border-top-color: #27ae60;">
+                        <div class="matches-title" style="color: #27ae60;">📧 Like-minded Emails (${req.connections ? req.connections.length : 0} people):</div>
+                        ${connectionsHtml}
+                    </div>
+                    
+                    ${actionButtons}
+                </div>
+            `;
+        }).join('');
+
+        renderPagination(totalPages);
+    }
+
+    // ===== Render Pagination =====
+    function renderPagination(totalPages) {
+        const container = document.getElementById('pagination');
+        if (totalPages <= 1) {
+            container.innerHTML = '';
+            return;
+        }
+        
+        let html = '';
+        for (let i = 1; i <= totalPages; i++) {
+            html += `<button class="${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+        }
+        container.innerHTML = html;
+    }
+
+    function goToPage(page) {
+        currentPage = page;
+        renderRequests();
+    }
+
+    // ===== Handle Request (Approve/Reject) =====
     async function handleRequest(fileName, action) {
         if (!confirm(`Are you sure you want to ${action === 'approve' ? 'approve' : 'reject'} this request?`)) return;
 
@@ -315,22 +479,20 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ fileName, action })
             });
-
             const result = await response.json();
-
-            if (!response.ok) {
-                throw new Error(result.error || 'Error processing request');
-            }
-
+            if (!response.ok) throw new Error(result.error || 'Error processing request');
             alert(result.message);
             loadRequests();
-
         } catch (error) {
             alert('Error: ' + error.message);
             buttons.forEach(btn => btn.disabled = false);
         }
     }
 
+    // ===== Auto-refresh every 30 seconds =====
+    setInterval(loadRequests, 30000);
+
+    // ===== Initial Load =====
     loadRequests();
 </script>
 </body>
