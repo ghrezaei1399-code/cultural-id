@@ -1,5 +1,4 @@
-// api/submit-request.js
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -22,7 +21,7 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'Invalid JSON in request body' });
     }
 
-    const { cardCode, type, description } = parsedBody;
+    const { cardCode, description } = parsedBody;
 
     if (!cardCode) {
       return res.status(400).json({ error: 'کد کارت الزامی است' });
@@ -35,23 +34,20 @@ module.exports = async function handler(req, res) {
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
 
-    // ===== 1. دریافت اطلاعات کاربر درخواست‌دهنده =====
+    // دریافت اطلاعات کاربر
     const userPath = `data/active/${cardCode}.json`;
     const userRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
 
     if (!userRes.ok) {
-      if (userRes.status === 404) {
-        return res.status(404).json({ error: 'کاربر یافت نشد' });
-      }
-      return res.status(userRes.status).json({ error: 'خطا در دریافت اطلاعات کاربر' });
+      return res.status(404).json({ error: 'کاربر یافت نشد' });
     }
 
     const userDataRaw = await userRes.json();
     const userData = JSON.parse(Buffer.from(userDataRaw.content, 'base64').toString('utf8'));
 
-    // ===== 2. دریافت لیست همه کاربران =====
+    // دریافت لیست همه کاربران
     const allUsersRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/active`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -62,7 +58,6 @@ module.exports = async function handler(req, res) {
 
     const allUsersList = await allUsersRes.json();
     
-    // اطمینان از اینکه allUsersList یک آرایه است
     if (!Array.isArray(allUsersList)) {
       return res.status(500).json({ error: 'خطا در ساختار لیست کاربران' });
     }
@@ -79,13 +74,12 @@ module.exports = async function handler(req, res) {
             allUsers.push(userData);
           }
         } catch (e) {
-          console.error('Error reading user file:', file.name, e);
           continue;
         }
       }
     }
 
-    // ===== 3. پیدا کردن هم‌فکران بر اساس اولویت‌ها =====
+    // پیدا کردن هم‌فکران
     const senderValues = userData.values || [];
     const senderPriorities = userData.priorities || [];
     const senderEmail = userData.communicationEmail || '';
@@ -125,56 +119,18 @@ module.exports = async function handler(req, res) {
       };
     });
 
-    // فیلتر کردن کاربرانی که حداقل ۳ ارزش مشترک دارند
     const likeMinded = scoredUsers
       .filter(u => u.matchCount >= 3)
       .sort((a, b) => b.matchScore - a.matchScore)
       .slice(0, 50);
 
-    // استخراج ایمیل‌ها
     const connections = likeMinded
       .filter(u => u.hasEmail)
       .map(u => u.email);
 
-    // ===== 4. ایجاد کد پیگیری =====
     const trackingCode = `TRK-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
-    // ===== 5. بررسی درخواست تکراری =====
-    const requestsPath = 'data/requests';
-    const requestsListResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${requestsPath}`, {
-      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
-    });
-
-    if (requestsListResponse.ok) {
-      const requestFiles = await requestsListResponse.json();
-      if (Array.isArray(requestFiles)) {
-        for (const file of requestFiles) {
-          if (!file.name || !file.name.endsWith('.json')) continue;
-          try {
-            const fileRes = await fetch(file.url, {
-              headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
-            });
-            if (!fileRes.ok) continue;
-            const fileData = await fileRes.json();
-            const contentStr = Buffer.from(fileData.content, 'base64').toString('utf8');
-            const existingReq = JSON.parse(contentStr);
-            
-            if (existingReq.senderCode === cardCode && 
-                existingReq.type === (type || 'connection') && 
-                existingReq.status === 'pending') {
-              return res.status(400).json({ 
-                error: 'شما قبلاً این درخواست را ثبت کرده‌اید و در انتظار بررسی است.' 
-              });
-            }
-          } catch (e) { 
-            console.error('Error checking existing request:', e);
-            continue;
-          }
-        }
-      }
-    }
-
-    // ===== 6. ذخیره درخواست =====
+    // ذخیره درخواست
     const fileName = `request-${Date.now()}-${Math.random().toString(36).substring(7)}.json`;
     const requestPath = `data/requests/${fileName}`;
 
@@ -183,7 +139,7 @@ module.exports = async function handler(req, res) {
       trackingCode: trackingCode,
       senderCode: cardCode,
       senderEmail: senderEmail,
-      type: type || 'connection',
+      type: 'connection',
       reason: description,
       status: 'pending',
       createdAt: new Date().toISOString(),
@@ -227,4 +183,4 @@ module.exports = async function handler(req, res) {
     console.error('Submit Request Error:', error);
     return res.status(500).json({ error: error.message });
   }
-};
+}
