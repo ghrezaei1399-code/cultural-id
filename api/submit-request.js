@@ -1,3 +1,4 @@
+// api/submit-request.js
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -8,52 +9,129 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: 'GH_TOKEN is not configured' });
   }
 
-  const { cardCode, type, description } = req.body;
-  if (!cardCode || !type) {
-    return res.status(400).json({ error: 'کد کارت و نوع درخواست الزامی است' });
-  }
-
-  const owner = 'ghrezaei1399-code';
-  const repo = 'cultural-id';
-
   try {
-    // ۱. خواندن index.json برای یافتن کاربر
-    const indexPath = 'data/index.json';
-    const indexResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${indexPath}`, {
-      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+    let body = '';
+    for await (const chunk of req) {
+      body += chunk;
+    }
+    
+    let parsedBody;
+    try {
+      parsedBody = JSON.parse(body);
+    } catch (e) {
+      return res.status(400).json({ error: 'Invalid JSON in request body' });
+    }
+
+    const { cardCode, type, description } = parsedBody;
+
+    if (!cardCode) {
+      return res.status(400).json({ error: 'کد کارت الزامی است' });
+    }
+
+    if (!description) {
+      return res.status(400).json({ error: 'توضیح درخواست الزامی است' });
+    }
+
+    const owner = 'ghrezaei1399-code';
+    const repo = 'cultural-id';
+
+    // ===== 1. دریافت اطلاعات کاربر درخواست‌دهنده =====
+    const userPath = `data/active/${cardCode}.json`;
+    const userRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
     });
 
-    if (!indexResponse.ok) throw new Error('فایل فهرست یافت نشد');
+    if (!userRes.ok) {
+      if (userRes.status === 404) {
+        return res.status(404).json({ error: 'کاربر یافت نشد' });
+      }
+      return res.status(userRes.status).json({ error: 'خطا در دریافت اطلاعات کاربر' });
+    }
 
-    const indexFile = await indexResponse.json();
-    const jsonString = Buffer.from(indexFile.content, 'base64').toString('utf8');
-    const indexData = JSON.parse(jsonString);
+    const userDataRaw = await userRes.json();
+    const userData = JSON.parse(Buffer.from(userDataRaw.content, 'base64').toString('utf8'));
 
-    // نرمال‌سازی کد ورودی
-    const normalizedInput = cardCode.replace(/[\s\-]/g, '').toUpperCase();
-    let userEntry = null;
-    for (const entry of indexData) {
-      if (entry.cardCode.replace(/[\s\-]/g, '').toUpperCase() === normalizedInput) {
-        userEntry = entry;
-        break;
+    // ===== 2. دریافت لیست همه کاربران =====
+    const allUsersRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/active`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!allUsersRes.ok) {
+      return res.status(500).json({ error: 'خطا در دریافت لیست کاربران' });
+    }
+
+    const allUsersList = await allUsersRes.json();
+    const allUsers = [];
+
+    for (const file of allUsersList) {
+      if (file.name.endsWith('.json')) {
+        try {
+          const userFileRes = await fetch(file.download_url);
+          const userData = await userFileRes.json();
+          if (userData.status === 'approved' && userData.cardCode !== cardCode) {
+            allUsers.push(userData);
+          }
+        } catch (e) {
+          console.error('Error reading user file:', file.name);
+        }
       }
     }
 
-    if (!userEntry) return res.status(404).json({ error: 'کاربر یافت نشد' });
+    // ===== 3. پیدا کردن هم‌فکران بر اساس اولویت‌ها =====
+    const senderValues = userData.values || [];
+    const senderPriorities = userData.priorities || [];
+    const senderEmail = userData.communicationEmail || '';
 
-    // ۲. خواندن فایل کامل کاربر (برای گرفتن اولویت‌ها و ایمیل)
-    const userPath = `data/active/${userEntry.cardCode}.json`;
-    const userResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
-      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+    const senderPriorityList = senderValues.map((value, index) => ({
+      value: value,
+      priority: senderPriorities[index] || 999
+    })).sort((a, b) => a.priority - b.priority);
+
+    const scoredUsers = allUsers.map(user => {
+      const userValues = user.values || [];
+      const userPriorities = user.priorities || [];
+      
+      let score = 0;
+      let matchCount = 0;
+      
+      senderPriorityList.forEach((senderItem, idx) => {
+        const userIndex = userValues.indexOf(senderItem.value);
+        if (userIndex !== -1) {
+          const userPriority = userPriorities[userIndex] || 999;
+          const priorityDiff = Math.abs(senderItem.priority - userPriority);
+          score += Math.max(0, 10 - priorityDiff);
+          matchCount++;
+        }
+      });
+      
+      return {
+        cardCode: user.cardCode,
+        displayCode: user.displayCode || user.cardCode,
+        country: user.country || 'نامشخص',
+        rank: user.rank || 0,
+        email: user.communicationEmail || '',
+        hasEmail: !!(user.communicationEmail && user.communicationEmail.length > 5),
+        matchScore: score,
+        matchCount: matchCount,
+        similarityScore: Math.round((matchCount / Math.min(senderValues.length, userValues.length)) * 100) || 0
+      };
     });
 
-    if (!userResponse.ok) return res.status(404).json({ error: 'فایل کاربر یافت نشد' });
+    // فیلتر کردن کاربرانی که حداقل ۳ ارزش مشترک دارند
+    const likeMinded = scoredUsers
+      .filter(u => u.matchCount >= 3)
+      .sort((a, b) => b.matchScore - a.matchScore)
+      .slice(0, 50);
 
-    const userFile = await userResponse.json();
-    const userJsonString = Buffer.from(userFile.content, 'base64').toString('utf8');
-    const userData = JSON.parse(userJsonString);
+    // استخراج ایمیل‌ها
+    const connections = likeMinded
+      .filter(u => u.hasEmail)
+      .map(u => u.email);
 
-    // ⭐ بررسی تکراری نبودن درخواست (جلوگیری از اسپم)
+    // ===== 4. ایجاد کد پیگیری =====
+    const trackingCode = `TRK-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+
+    // ===== 5. بررسی درخواست تکراری =====
     const requestsPath = 'data/requests';
     const requestsListResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${requestsPath}`, {
       headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
@@ -72,8 +150,8 @@ module.exports = async function handler(req, res) {
             const contentStr = Buffer.from(fileData.content, 'base64').toString('utf8');
             const existingReq = JSON.parse(contentStr);
             
-            if (existingReq.cardCode === userEntry.cardCode && 
-                existingReq.type === type && 
+            if (existingReq.senderCode === cardCode && 
+                existingReq.type === (type || 'connection') && 
                 existingReq.status === 'pending') {
               return res.status(400).json({ 
                 error: 'شما قبلاً این درخواست را ثبت کرده‌اید و در انتظار بررسی است.' 
@@ -84,120 +162,57 @@ module.exports = async function handler(req, res) {
       }
     }
 
-    // ۳. پیدا کردن هم‌فرهنگان با الگوریتم انعطاف‌پذیر (فقط بر اساس اولویت‌ها)
-    const approvedUsers = indexData.filter(u => 
-      u.status === 'approved' && 
-      u.rank <= 200 && 
-      u.cardCode !== userEntry.cardCode
-    );
-
-    const culturalMatches = [];
-
-    for (const otherEntry of approvedUsers) {
-      try {
-        const otherPath = `data/active/${otherEntry.cardCode}.json`;
-        const otherResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${otherPath}`, {
-          headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
-        });
-
-        if (!otherResponse.ok) continue;
-
-        const otherFile = await otherResponse.json();
-        const otherJsonString = Buffer.from(otherFile.content, 'base64').toString('utf8');
-        const otherData = JSON.parse(otherJsonString);
-
-        // محاسبه شباهت فقط بر اساس آرایه priorities
-        const similarityScore = calculatePrioritySimilarity(userData.priorities, otherData.priorities);
-
-        // آستانه ۲۰٪ برای انعطاف‌پذیری بیشتر
-        if (similarityScore >= 20) {
-          culturalMatches.push({
-            cardCode: otherEntry.cardCode,
-            displayCode: otherEntry.displayCode || otherEntry.cardCode,
-            similarityScore: similarityScore,
-            country: otherEntry.country,
-            rank: otherEntry.rank,
-            hasEmail: !!otherData.communicationEmail,
-            email: otherData.communicationEmail || null
-          });
-        }
-      } catch (e) {
-        console.error('Error reading user:', otherEntry.cardCode, e);
-      }
-    }
-
-    // مرتب‌سازی بر اساس بیشترین شباهت
-    culturalMatches.sort((a, b) => b.similarityScore - a.similarityScore);
-
-    // ۴. ذخیره درخواست
-    const fileName = `request-${Date.now()}.json`;
-    const path = `data/requests/${fileName}`;
+    // ===== 6. ذخیره درخواست =====
+    const fileName = `request-${Date.now()}-${Math.random().toString(36).substring(7)}.json`;
+    const requestPath = `data/requests/${fileName}`;
 
     const requestData = {
-      cardCode: userEntry.cardCode,
-      displayCode: userEntry.displayCode || userEntry.cardCode,
-      requesterEmail: userData.communicationEmail || null,
-      requesterPriorities: userData.priorities || [],
-      type,
-      description: description || '',
-      requestDate: new Date().toISOString(),
+      fileName: fileName,
+      trackingCode: trackingCode,
+      senderCode: cardCode,
+      senderEmail: senderEmail,
+      type: type || 'connection',
+      reason: description,
       status: 'pending',
-      culturalMatches: culturalMatches.slice(0, 10) // ۱۰ هم‌فرهنگ برتر
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      connections: connections,
+      connectionsCount: connections.length,
+      culturalMatches: likeMinded,
+      totalMatches: likeMinded.length
     };
 
-    const content = Buffer.from(JSON.stringify(requestData, null, 2), 'utf8').toString('base64');
+    const newContent = Buffer.from(JSON.stringify(requestData, null, 2), 'utf8').toString('base64');
 
-    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+    const saveRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${requestPath}`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        message: `New connection request from ${userEntry.cardCode}`,
-        content,
+        message: `Connection request from ${cardCode} - ${trackingCode}`,
+        content: newContent,
         branch: 'main'
       })
     });
 
-    return res.status(200).json({ 
-      success: true, 
-      message: 'درخواست با موفقیت ثبت شد',
-      matchesFound: culturalMatches.length
+    if (!saveRes.ok) {
+      const errorData = await saveRes.json().catch(() => ({}));
+      throw new Error(errorData.message || 'خطا در ذخیره درخواست');
+    }
+
+    return res.status(200).json({
+      success: true,
+      trackingCode: trackingCode,
+      requestId: fileName,
+      connectionsCount: connections.length,
+      matchesCount: likeMinded.length,
+      message: 'درخواست شما با موفقیت ثبت شد'
     });
 
   } catch (error) {
     console.error('Submit Request Error:', error);
     return res.status(500).json({ error: error.message });
   }
-}
-
-// ⭐ الگوریتم هوشمند تطابق اولویت‌ها (بدون توجه به متن)
-function calculatePrioritySimilarity(p1, p2) {
-  if (!p1 || !p2 || p1.length === 0 || p2.length === 0) return 0;
-  
-  let score = 0;
-  
-  // پیدا کردن ارزش‌هایی که هر دو کاربر به آن‌ها اولویت داده‌اند (غیر از ۰ یا null)
-  const validIndices = [];
-  for (let i = 0; i < 7; i++) {
-    if (p1[i] && p2[i] && p1[i] > 0 && p2[i] > 0) {
-      validIndices.push(i);
-    }
-  }
-  
-  if (validIndices.length === 0) return 0;
-  
-  for (const idx of validIndices) {
-    const diff = Math.abs(p1[idx] - p2[idx]);
-    if (diff === 0) score += 15;        // تطابق کامل
-    else if (diff === 1) score += 10;   // نزدیک
-    else if (diff === 2) score += 5;    // نسبتاً نزدیک
-  }
-  
-  const maxPossible = validIndices.length * 15;
-  const normalizedScore = Math.round((score / maxPossible) * 100);
-  
-  return Math.min(normalizedScore, 100);
 }
