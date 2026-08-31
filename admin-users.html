@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>مدیریت کاربران | داشبورد ادمین</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            padding: 1.5rem 1rem;
+            background-image: url('assets/نماد صلح.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            transition: all 0.3s ease;
+        }
+        body.dark {
+            background-image: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+        }
+        body.dark .container {
+            background: rgba(0, 0, 0, 0.25);
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+        .back-link {
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #0a0a1a;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s;
+        }
+        body.dark .back-link { color: #f0e8d0; }
+        .back-link:hover { background: rgba(255, 255, 255, 0.08); }
+
+        .lang-group {
+            display: flex;
+            gap: 0.3rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.3rem;
+            border-radius: 30px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+        }
+        .lang-btn {
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            border: none;
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: transparent;
+            color: #888;
+        }
+        .lang-btn.active {
+            background: rgba(212, 175, 55, 0.25);
+            color: #2a1a0a;
+        }
+        body.dark .lang-btn.active {
+            background: rgba(212, 175, 55, 0.2);
+            color: #f9e79f;
+        }
+        .lang-btn:not(.active):hover {
+            background: rgba(212, 175, 55, 0.08);
+            color: #2a1a0a;
+        }
+        body.dark .lang-btn:not(.active):hover { color: #f0e8d0; }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: 0.3s;
+            color: #0a0a1a;
+        }
+        body.dark .theme-toggle { color: #f9e79f; background: rgba(0, 0, 0, 0.2); }
+        .theme-toggle:hover { transform: scale(1.1); }
+
+        .page-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #0a0a1a;
+            text-align: center;
+            margin-bottom: 0.2rem;
+        }
+        body.dark .page-title { color: #f0e8e0; }
+        .page-subtitle {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #2a2a3a;
+            opacity: 0.7;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 1rem;
+        }
+        body.dark .page-subtitle { color: #c8b890; }
+
+        .search-box {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .search-box input {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.6rem 1rem;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: #0a0a1a;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        body.dark .search-box input { color: #f0e8d0; background: rgba(0, 0, 0, 0.2); }
+        .search-box input::placeholder { color: #888; }
+        .search-box .btn-search {
+            padding: 0.6rem 1.5rem;
+            border-radius: 30px;
+            border: none;
+            background: rgba(212, 175, 55, 0.2);
+            color: #8a6d1f;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        body.dark .search-box .btn-search { color: #f9e79f; }
+        .search-box .btn-search:hover { background: rgba(212, 175, 55, 0.3); }
+        .search-box .btn-clear {
+            padding: 0.6rem 1.5rem;
+            border-radius: 30px;
+            border: none;
+            background: rgba(200, 50, 50, 0.1);
+            color: #6a1a1a;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        body.dark .search-box .btn-clear { color: #f1948a; }
+        .search-box .btn-clear:hover { background: rgba(200, 50, 50, 0.2); }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.5rem;
+        }
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+        .admin-table th {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.8rem 0.5rem;
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #0a0a1a;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        body.dark .admin-table th { color: #f0e8d0; }
+        .admin-table td {
+            padding: 0.6rem 0.5rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #1a1a2a;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+        body.dark .admin-table td { color: #e8dcc0; }
+        .admin-table tr:hover td { background: rgba(255, 255, 255, 0.05); }
+        .admin-table .empty-row td { text-align: center; padding: 2rem; color: #888; }
+
+        .badge {
+            display: inline-block;
+            padding: 0.15rem 0.7rem;
+            border-radius: 30px;
+            font-size: 0.65rem;
+            font-weight: 700;
+        }
+        .badge-golden { background: rgba(212, 175, 55, 0.2); color: #8a7a0a; }
+        .badge-silver { background: rgba(192, 192, 192, 0.25); color: #4a4a5a; }
+        .badge-bronze { background: rgba(205, 127, 50, 0.2); color: #6a4a0a; }
+        .badge-approved { background: rgba(50, 200, 50, 0.2); color: #0a6a0a; }
+        .badge-rejected { background: rgba(200, 50, 50, 0.2); color: #6a1a1a; }
+        .badge-pending { background: rgba(255, 200, 50, 0.2); color: #8a7a0a; }
+        .badge-edit { background: rgba(255, 140, 0, 0.25); color: #c65102; font-weight: 700; }
+
+        .btn-small {
+            padding: 0.25rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            margin: 0.1rem;
+            transition: 0.3s;
+        }
+        .btn-view { background: rgba(50, 150, 200, 0.2); color: #0a4a6a; }
+        body.dark .btn-view { color: #85c1e9; }
+        .btn-view:hover { background: rgba(50, 150, 200, 0.3); }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .pagination button {
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            background: rgba(255, 255, 255, 0.03);
+            color: #0a0a1a;
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        body.dark .pagination button { color: #f0e8d0; }
+        .pagination button:hover { background: rgba(212, 175, 55, 0.08); }
+        .pagination button.active {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: #d4af37;
+        }
+        body.dark .pagination button.active { background: rgba(212, 175, 55, 0.15); border-color: #f9e79f; }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 2rem;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        body.dark .modal { background: rgba(30, 30, 50, 0.95); }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+            padding-bottom: 1rem;
+        }
+        body.dark .modal-header { border-bottom-color: rgba(255, 255, 255, 0.05); }
+        .modal-header h2 { font-size: 1.2rem; color: #0a0a1a; }
+        body.dark .modal-header h2 { color: #f0e8d0; }
+        .modal-close {
+            background: rgba(200, 50, 50, 0.1);
+            border: none;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #6a1a1a;
+        }
+        body.dark .modal-close { color: #f1948a; }
+        .modal-body .info-row {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+        }
+        body.dark .modal-body .info-row { border-bottom-color: rgba(255, 255, 255, 0.03); }
+        .modal-body .info-label { font-weight: 700; color: #2a2a3a; font-size: 0.8rem; }
+        body.dark .modal-body .info-label { color: #c8b890; }
+        .modal-body .info-value { color: #0a0a1a; font-size: 0.85rem; }
+        body.dark .modal-body .info-value { color: #e8dcc0; }
+        .modal-actions {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn-modal {
+            padding: 0.6rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-modal.approve { background: rgba(50, 200, 50, 0.2); color: #0a6a0a; }
+        body.dark .btn-modal.approve { color: #82e0aa; }
+        .btn-modal.reject { background: rgba(200, 50, 50, 0.2); color: #6a1a1a; }
+        body.dark .btn-modal.reject { color: #f1948a; }
+
+        .highlight-change {
+            background-color: rgba(255, 200, 0, 0.12) !important;
+            border-right: 3px solid #d4af37 !important;
+            padding-right: 10px !important;
+            border-radius: 4px;
+        }
+        .highlight-change .info-label::after {
+            content: ' ✏️ تغییر یافته';
+            color: #b7791f;
+            font-weight: 800;
+            font-size: 0.7rem;
+            margin-right: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1.2rem; }
+            .top-bar { flex-direction: column; align-items: stretch; }
+            .lang-group { justify-content: center; }
+            .theme-toggle { align-self: center; }
+            .modal-body .info-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ===== نوار بالا ===== -->
+        <div class="top-bar">
+            <a href="admin.html" class="back-link" id="backLink">↩ بازگشت به داشبورد</a>
+            <div class="lang-group">
+                <button onclick="setLanguage('fa')" id="langFa" class="lang-btn active">🇮🇷 فارسی</button>
+                <button onclick="setLanguage('en')" id="langEn" class="lang-btn">🇬🇧 English</button>
+            </div>
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
+        </div>
+
+        <!-- ===== عنوان ===== -->
+        <h1 class="page-title" id="pageTitle">👥 مدیریت کاربران</h1>
+        <div class="page-subtitle" id="pageSubtitle">مشاهده، جستجو و تأیید کاربران ثبت‌نام‌شده</div>
+
+        <!-- ===== جستجو ===== -->
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="🔍 جستجوی کد کارت..." oninput="applySearch()" />
+            <button class="btn-search" onclick="applySearch()" id="searchBtn">🔍 جستجو</button>
+            <button class="btn-clear" onclick="clearSearch()" id="clearBtn">✕ پاک کردن</button>
+        </div>
+
+        <!-- ===== جدول ===== -->
+        <div class="table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th id="thRank">رتبه</th>
+                        <th id="thCardCode">کد کارت</th>
+                        <th id="thOptionalCode">کد اختیاری</th>
+                        <th id="thCountry">کشور</th>
+                        <th id="thValues">ارزش‌ها</th>
+                        <th id="thDate">تاریخ</th>
+                        <th id="thBadge">نشان</th>
+                        <th id="thStatus">وضعیت</th>
+                        <th id="thActions">عملیات</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    <tr><td colspan="9" style="text-align:center; padding: 2rem;" id="loadingText">در حال بارگذاری...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ===== صفحه‌بندی ===== -->
+        <div id="pagination" class="pagination"></div>
+    </div>
+
+    <!-- ===== مودال ===== -->
+    <div class="modal-overlay" id="userModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle">جزئیات کاربر</h2>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-actions" id="modalActions"></div>
+        </div>
+    </div>
+
+    <script>
+        // ===== متغیرها =====
+        let allUsers = [];
+        let currentPage = 1;
+        const pageSize = 10;
+        let searchQuery = '';
+        let currentLang = 'fa';
+
+        // ===== ترجمه =====
+        const translations = {
+            fa: {
+                backLink: '↩ بازگشت به داشبورد',
+                pageTitle: '👥 مدیریت کاربران',
+                pageSubtitle: 'مشاهده، جستجو و تأیید کاربران ثبت‌نام‌شده',
+                searchPlaceholder: '🔍 جستجوی کد کارت...',
+                searchBtn: '🔍 جستجو',
+                clearBtn: '✕ پاک کردن',
+                thRank: 'رتبه',
+                thCardCode: 'کد کارت',
+                thOptionalCode: 'کد اختیاری',
+                thCountry: 'کشور',
+                thValues: 'ارزش‌ها',
+                thDate: 'تاریخ',
+                thBadge: 'نشان',
+                thStatus: 'وضعیت',
+                thActions: 'عملیات',
+                loadingText: 'در حال بارگذاری...',
+                noUsers: 'کاربری یافت نشد',
+                viewUser: '👁️ مشاهده',
+                modalTitle: 'جزئیات فرهنگی: ',
+                statusPending: 'در انتظار',
+                statusApproved: 'تأیید شده',
+                statusRejected: 'رد شده',
+                statusEdit: '⚠️ در انتظار تایید ویرایش',
+                approveBtn: '✓ تأیید',
+                rejectBtn: '✗ رد',
+                approveEditBtn: '✓ تأیید ویرایش',
+                rejectEditBtn: '✗ رد ویرایش (بازگشت به وضعیت قبلی)',
+                noEmail: 'ثبت نشده',
+                allowYes: '✅ بله',
+                allowNo: '❌ خیر',
+                badgeGolden: '🌟 طلایی',
+                badgeSilver: '🥈 نقره‌ای',
+                badgeBronze: '🥉 برنزی',
+                rankLabel: 'رتبه: '
+            },
+            en: {
+                backLink: '↩ Back to Dashboard',
+                pageTitle: '👥 User Management',
+                pageSubtitle: 'View, search and approve registered users',
+                searchPlaceholder: '🔍 Search by card code...',
+                searchBtn: '🔍 Search',
+                clearBtn: '✕ Clear',
+                thRank: 'Rank',
+                thCardCode: 'Card Code',
+                thOptionalCode: 'Optional Code',
+                thCountry: 'Country',
+                thValues: 'Values',
+                thDate: 'Date',
+                thBadge: 'Badge',
+                thStatus: 'Status',
+                thActions: 'Actions',
+                loadingText: 'Loading...',
+                noUsers: 'No users found',
+                viewUser: '👁️ View',
+                modalTitle: 'Cultural Details: ',
+                statusPending: 'Pending',
+                statusApproved: 'Approved',
+                statusRejected: 'Rejected',
+                statusEdit: '⚠️ Pending Edit Approval',
+                approveBtn: '✓ Approve',
+                rejectBtn: '✗ Reject',
+                approveEditBtn: '✓ Approve Edit',
+                rejectEditBtn: '✗ Reject Edit (Revert)',
+                noEmail: 'Not registered',
+                allowYes: '✅ Yes',
+                allowNo: '❌ No',
+                badgeGolden: '🌟 Golden',
+                badgeSilver: '🥈 Silver',
+                badgeBronze: '🥉 Bronze',
+                rankLabel: 'Rank: '
+            }
+        };
+
+        function t(key) {
+            return translations[currentLang] && translations[currentLang][key] ? translations[currentLang][key] : key;
+        }
+
+        // ===== تغییر زبان =====
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.getElementById('langFa').className = 'lang-btn' + (lang === 'fa' ? ' active' : '');
+            document.getElementById('langEn').className = 'lang-btn' + (lang === 'en' ? ' active' : '');
+            
+            document.getElementById('backLink').textContent = t('backLink');
+            document.getElementById('pageTitle').textContent = t('pageTitle');
+            document.getElementById('pageSubtitle').textContent = t('pageSubtitle');
+            document.getElementById('searchInput').placeholder = t('searchPlaceholder');
+            document.getElementById('searchBtn').textContent = t('searchBtn');
+            document.getElementById('clearBtn').textContent = t('clearBtn');
+            document.getElementById('thRank').textContent = t('thRank');
+            document.getElementById('thCardCode').textContent = t('thCardCode');
+            document.getElementById('thOptionalCode').textContent = t('thOptionalCode');
+            document.getElementById('thCountry').textContent = t('thCountry');
+            document.getElementById('thValues').textContent = t('thValues');
+            document.getElementById('thDate').textContent = t('thDate');
+            document.getElementById('thBadge').textContent = t('thBadge');
+            document.getElementById('thStatus').textContent = t('thStatus');
+            document.getElementById('thActions').textContent = t('thActions');
+        }
+
+        // ===== تم =====
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            const btn = document.getElementById('themeToggle');
+            btn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+            localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+        }
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark');
+            document.getElementById('themeToggle').textContent = '☀️';
+        }
+
+        // ===== بارگذاری کاربران =====
+        async function loadUsers() {
+            try {
+                const response = await fetch('/api/get-users?t=' + new Date().getTime());
+                if (!response.ok) throw new Error('خطا در دریافت اطلاعات');
+                
+                const data = await response.json();
+                allUsers = data.users || [];
+                currentPage = 1;
+                renderFilteredUsers();
+
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('usersTableBody').innerHTML = 
+                    `<tr><td colspan="9" style="text-align:center; color:red; padding: 2rem;">خطا: ${error.message}</td></tr>`;
+            }
+        }
+
+        // ===== جستجو =====
+        function applySearch() {
+            searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
+            currentPage = 1;
+            renderFilteredUsers();
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            searchQuery = '';
+            currentPage = 1;
+            renderFilteredUsers();
+        }
+
+        // ===== رندر =====
+        function renderFilteredUsers() {
+            let filtered = allUsers;
+            if (searchQuery) {
+                filtered = filtered.filter(u => 
+                    (u.cardCode && u.cardCode.toLowerCase().includes(searchQuery)) ||
+                    (u.optionalCode && u.optionalCode.toLowerCase().includes(searchQuery)) ||
+                    (u.displayCode && u.displayCode.toLowerCase().includes(searchQuery))
+                );
+            }
+
+            const sortedUsers = [...filtered].sort((a, b) => {
+                const statusOrder = { 'pending_edit': 0, 'pending': 1, 'approved': 2, 'rejected': 3 };
+                return (statusOrder[a.status] || 4) - (statusOrder[b.status] || 4);
+            });
+
+            const totalPages = Math.ceil(sortedUsers.length / pageSize);
+            if (currentPage > totalPages) currentPage = totalPages || 1;
+            
+            const start = (currentPage - 1) * pageSize;
+            const paginated = sortedUsers.slice(start, start + pageSize);
+
+            renderTable(paginated, sortedUsers.length, totalPages);
+        }
+
+        function renderTable(users, totalCount, totalPages) {
+            const tbody = document.getElementById('usersTableBody');
+            
+            if (users.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding: 2rem;">${t('noUsers')}</td></tr>`;
+                renderPagination(totalPages || 1);
+                return;
+            }
+
+            tbody.innerHTML = users.map(user => {
+                const badgeClass = `badge-${user.badge}`;
+                const badgeText = user.badge === 'golden' ? t('badgeGolden') : 
+                                 user.badge === 'silver' ? t('badgeSilver') : t('badgeBronze');
+                
+                const status = user.status || 'pending';
+                let statusClass = 'badge-pending';
+                let statusText = t('statusPending');
+
+                if (status === 'approved') {
+                    statusClass = 'badge-approved';
+                    statusText = t('statusApproved');
+                } else if (status === 'rejected') {
+                    statusClass = 'badge-rejected';
+                    statusText = t('statusRejected');
+                } else if (status === 'pending_edit') {
+                    statusClass = 'badge-edit';
+                    statusText = t('statusEdit');
+                }
+
+                const valuesText = user.values ? user.values.slice(0, 2).join('، ') + (user.values.length > 2 ? '...' : '') : '---';
+                const date = user.registrationDate ? new Date(user.registrationDate).toLocaleDateString('fa-IR') : '---';
+                const timeSince = user.lastEditRequest ? getTimeSince(user.lastEditRequest) : '';
+
+                return `
+                    <tr>
+                        <td>${user.rank || '---'}</td>
+                        <td style="font-family: monospace; font-size: 0.75rem;">${user.cardCode || '---'}</td>
+                        <td style="font-family: monospace; font-size: 0.75rem; color: #d4af37; font-weight:bold;">${user.optionalCode || '---'}</td>
+                        <td>${user.country || '---'}</td>
+                        <td>${valuesText}</td>
+                        <td>${date}</td>
+                        <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+                        <td><span class="badge ${statusClass}">${statusText}</span>${timeSince}</td>
+                        <td>
+                            <button class="btn-small btn-view" onclick="viewUser('${user.cardCode}')">${t('viewUser')}</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            renderPagination(totalPages || 1);
+        }
+
+        function renderPagination(totalPages) {
+            const container = document.getElementById('pagination');
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            let html = '';
+            for (let i = 1; i <= totalPages; i++) {
+                html += `<button class="${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+            }
+            container.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            renderFilteredUsers();
+        }
+
+        function getTimeSince(dateString) {
+            const now = new Date();
+            const date = new Date(dateString);
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMins / 60);
+            const diffDays = Math.floor(diffHours / 24);
+
+            if (diffDays > 0) return `<br><small style="color: #888;">${diffDays} روز پیش</small>`;
+            if (diffHours > 0) return `<br><small style="color: #888;">${diffHours} ساعت پیش</small>`;
+            if (diffMins > 0) return `<br><small style="color: #888;">${diffMins} دقیقه پیش</small>`;
+            return '';
+        }
+
+        // ===== مشاهده کاربر =====
+        function viewUser(cardCode) {
+            const user = allUsers.find(u => u.cardCode === cardCode);
+            if (!user) return;
+
+            const status = user.status || 'pending';
+            let statusText = t('statusPending');
+            if (status === 'approved') statusText = t('statusApproved');
+            else if (status === 'rejected') statusText = t('statusRejected');
+            else if (status === 'pending_edit') statusText = t('statusEdit');
+
+            document.getElementById('modalTitle').textContent = t('modalTitle') + user.cardCode;
+            
+            const changed = user.pendingChanges || [];
+            const hl = (field) => changed.includes(field) ? 'highlight-change' : '';
+
+            const body = document.getElementById('modalBody');
+            body.innerHTML = `
+                <div class="info-row ${hl('cardCode')}"><div class="info-label">کد کارت:</div><div class="info-value" style="font-family: monospace;">${user.cardCode}</div></div>
+                <div class="info-row ${hl('optionalCode')}"><div class="info-label">کد اختیاری:</div><div class="info-value" style="font-family: monospace; color:#d4af37;">${user.optionalCode || t('noEmail')}</div></div>
+                <div class="info-row"><div class="info-label">رتبه ثبت‌نام:</div><div class="info-value">${user.rank}</div></div>
+                <div class="info-row"><div class="info-label">کشور (از IP):</div><div class="info-value">${user.country || '---'}</div></div>
+                <div class="info-row"><div class="info-label">تاریخ ثبت‌نام:</div><div class="info-value">${user.registrationDate ? new Date(user.registrationDate).toLocaleDateString('fa-IR') : '---'}</div></div>
+                ${user.lastEditRequest ? `<div class="info-row"><div class="info-label">تاریخ آخرین درخواست ویرایش:</div><div class="info-value">${new Date(user.lastEditRequest).toLocaleString('fa-IR')}</div></div>` : ''}
+                <div class="info-row"><div class="info-label">نشان:</div><div class="info-value"><span class="badge badge-${user.badge}">${user.badge === 'golden' ? t('badgeGolden') : user.badge === 'silver' ? t('badgeSilver') : t('badgeBronze')}</span></div></div>
+                <div class="info-row"><div class="info-label">وضعیت:</div><div class="info-value"><span class="badge ${status === 'pending_edit' ? 'badge-edit' : 'badge-' + status}">${statusText}</span></div></div>
+                <div class="info-row ${hl('values')}"><div class="info-label">ارزش‌های فرهنگی:</div><div class="info-value">${user.values ? user.values.join('، ') : '---'}</div></div>
+                <div class="info-row ${hl('communicationEmail')}"><div class="info-label">ایمیل ارتباطی:</div><div class="info-value">${user.communicationEmail || t('noEmail')}</div></div>
+                <div class="info-row"><div class="info-label">اجازه ارتباط:</div><div class="info-value">${user.allowConnection ? t('allowYes') : t('allowNo')}</div></div>
+                ${user.culturalInfo ? `<div class="info-row"><div class="info-label">اطلاعات فرهنگی:</div><div class="info-value">${user.culturalInfo}</div></div>` : ''}
+            `;
+
+            const actions = document.getElementById('modalActions');
+            if (status === 'pending_edit') {
+                actions.innerHTML = `
+                    <button class="btn-modal approve" onclick="approveUser('${user.cardCode}')">${t('approveEditBtn')}</button>
+                    <button class="btn-modal reject" onclick="rejectEditUser('${user.cardCode}')">${t('rejectEditBtn')}</button>
+                `;
+            } else {
+                actions.innerHTML = `
+                    <button class="btn-modal approve" onclick="approveUser('${user.cardCode}')">${t('approveBtn')}</button>
+                    <button class="btn-modal reject" onclick="rejectUser('${user.cardCode}')">${t('rejectBtn')}</button>
+                `;
+            }
+
+            document.getElementById('userModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('userModal').classList.remove('active');
+        }
+
+        // ===== تغییر وضعیت =====
+        async function updateStatus(cardCode, newStatus) {
+            try {
+                const response = await fetch('/api/update-user-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cardCode, status: newStatus })
+                });
+
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'خطا در بروزرسانی وضعیت');
+
+                alert(newStatus === 'approved' ? '✅ کاربر با موفقیت تأیید شد.' : '❌ کاربر با موفقیت رد شد.');
+                closeModal();
+                loadUsers();
+
+            } catch (error) {
+                console.error('Error updating status:', error);
+                alert('خطا: ' + error.message);
+            }
+        }
+
+        async function approveUser(cardCode) {
+            if (!confirm(`آیا از تأیید نهایی کاربر با کد ${cardCode} اطمینان دارید؟`)) return;
+            await updateStatus(cardCode, 'approved');
+        }
+
+        async function rejectUser(cardCode) {
+            if (!confirm(`آیا از رد کردن کاربر با کد ${cardCode} اطمینان دارید؟ کاربر از لیست فعال حذف خواهد شد.`)) return;
+            await updateStatus(cardCode, 'rejected');
+        }
+
+        async function rejectEditUser(cardCode) {
+            if (!confirm(`آیا از رد درخواست ویرایش کاربر با کد ${cardCode} اطمینان دارید؟ اطلاعات قبلی کاربر حفظ می‌شود.`)) return;
+            await updateStatus(cardCode, 'pending');
+        }
+
+        document.getElementById('userModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // ===== شروع =====
+        loadUsers();
+    </script>
+</body>
+</html>
