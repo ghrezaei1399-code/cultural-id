@@ -283,24 +283,32 @@
         </div>
     </div>
 <script>
-    // Theme Logic
+    // Theme Logic (اگر در فایل اصلی دارید، این بخش را نگه دارید)
     const toggle = document.getElementById('themeToggle');
     const body = document.body;
     if (localStorage.getItem('theme') === 'dark') {
-        body.classList.add('dark'); toggle.textContent = '☀️';
+        body.classList.add('dark'); 
+        if(toggle) toggle.textContent = '☀️';
     }
-    toggle.addEventListener('click', () => {
-        body.classList.toggle('dark');
-        toggle.textContent = body.classList.contains('dark') ? '☀️' : '🌙';
-    });
+    if(toggle) {
+        toggle.addEventListener('click', () => {
+            body.classList.toggle('dark');
+            toggle.textContent = body.classList.contains('dark') ? '☀️' : '🌙';
+        });
+    }
 
     // File Handling
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
-    dropZone.addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', (e) => {
-        if(e.target.files[0]) document.getElementById('fileName').textContent = e.target.files[0].name;
-    });
+    if(dropZone && fileInput) {
+        dropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => {
+            if(e.target.files[0]) {
+                const nameDisplay = document.getElementById('fileName');
+                if(nameDisplay) nameDisplay.textContent = e.target.files[0].name;
+            }
+        });
+    }
 
     // Verification Logic
     function verifyCode() {
@@ -312,92 +320,98 @@
             document.getElementById('uploadSection').classList.remove('hidden');
             localStorage.setItem('verifiedCode', code);
         } else {
-            errorMsg.style.display = 'block';
+            if(errorMsg) errorMsg.style.display = 'block';
         }
     }
 
-    // Upload Logic (New System: Upload to separate folder)
-    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const btn = document.getElementById('submitBtn');
-        const statusBox = document.getElementById('statusBox');
-        const file = fileInput.files[0];
-        
-        btn.disabled = true;
-        btn.textContent = '⏳ در حال آپلود فایل...';
-        statusBox.style.display = 'none';
+    // Upload Logic (اصلاح شده برای ارسال لینک به جای Base64)
+    const uploadForm = document.getElementById('uploadForm');
+    if(uploadForm) {
+        uploadForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const statusBox = document.getElementById('statusBox');
+            const file = fileInput.files[0];
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ در حال آپلود فایل...';
+            if(statusBox) statusBox.style.display = 'none';
 
-        try {
-            let fileUrl = '';
-            let fileName = '';
+            try {
+                let fileUrl = '';
+                let fileName = '';
 
-            // ۱. اگر فایلی انتخاب شده باشد، ابتدا آن را در پوشه uploads ذخیره کن
-            if (file) {
-                const fileData = await new Promise((resolve) => {
-                    const reader = new FileReader();
-                    reader.onload = () => resolve(reader.result);
-                    reader.readAsDataURL(file);
-                });
+                // ۱. اگر فایلی انتخاب شده باشد، ابتدا آن را در پوشه uploads ذخیره کن
+                if (file) {
+                    const fileData = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.readAsDataURL(file);
+                    });
 
-                const uploadRes = await fetch('/api/upload-file', {
+                    const uploadRes = await fetch('/api/upload-file', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ fileData, fileName: file.name })
+                    });
+
+                    const uploadResult = await uploadRes.json();
+                    if (!uploadRes.ok) throw new Error(uploadResult.error || 'خطا در آپلود فایل');
+                    
+                    fileUrl = uploadResult.url;
+                    fileName = uploadResult.fileName;
+                }
+
+                btn.textContent = '⏳ در حال ثبت اطلاعات...';
+                const cardCode = localStorage.getItem('verifiedCode') || document.getElementById('memberCode').value;
+
+                // ۲. اطلاعات نهایی را به API اصلی بفرست (فقط لینک ارسال می‌شود)
+                const achievementData = {
+                    title: document.getElementById('title').value,
+                    description: document.getElementById('description').value,
+                    category: document.getElementById('category').value,
+                    fileName: fileName,
+                    fileUrl: fileUrl, // ⭐ نکته کلیدی: ارسال لینک
+                    section: 'identity-card' 
+                };
+
+                const response = await fetch('/api/upload-achievement', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ fileData, fileName: file.name })
+                    body: JSON.stringify({ 
+                        cardCode: cardCode, 
+                        achievement: achievementData 
+                    })
                 });
 
-                const uploadResult = await uploadRes.json();
-                if (!uploadRes.ok) throw new Error(uploadResult.error || 'خطا در آپلود فایل');
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'خطا در ارتباط با سرور');
+                }
+
+                if(statusBox) {
+                    statusBox.className = 'status-msg success';
+                    statusBox.textContent = '✅ دستاورد شما با موفقیت ثبت شد.';
+                    statusBox.style.display = 'block';
+                }
+                btn.textContent = '✅ ارسال شد';
                 
-                fileUrl = uploadResult.url;
-                fileName = uploadResult.fileName;
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 3000);
+
+            } catch (error) {
+                if(statusBox) {
+                    statusBox.className = 'status-msg error';
+                    statusBox.textContent = '❌ ' + error.message;
+                    statusBox.style.display = 'block';
+                }
+                btn.disabled = false;
+                btn.textContent = '📤 ارسال مجدد';
             }
-
-            btn.textContent = '⏳ در حال ثبت اطلاعات...';
-            const cardCode = localStorage.getItem('verifiedCode') || document.getElementById('memberCode').value;
-
-            // ۲. اطلاعات نهایی را به API اصلی بفرست
-            const achievementData = {
-                title: document.getElementById('title').value,
-                description: document.getElementById('description').value,
-                category: document.getElementById('category').value,
-                fileName: fileName,
-                fileUrl: fileUrl, // ارسال لینک به جای Base64
-                section: 'identity-card' // ⭐ مهم: تعیین بخش کارت هویت برای تفکیک در داشبورد
-            };
-
-            const response = await fetch('/api/upload-achievement', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    cardCode: cardCode, 
-                    achievement: achievementData 
-                })
-            });
-
-            const result = await response.json();
-
-            if (!response.ok) {
-                throw new Error(result.error || 'خطا در ارتباط با سرور');
-            }
-
-            statusBox.className = 'status-msg success';
-            statusBox.textContent = '✅ دستاورد شما با موفقیت ثبت شد و پس از تایید ادمین نمایش داده می‌شود.';
-            statusBox.style.display = 'block';
-            btn.textContent = '✅ ارسال شد';
-            
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 3000);
-
-        } catch (error) {
-            statusBox.className = 'status-msg error';
-            statusBox.textContent = '❌ ' + error.message;
-            statusBox.style.display = 'block';
-            btn.disabled = false;
-            btn.textContent = '📤 ارسال مجدد';
-        }
-    });
+        });
+    }
 </script>
-   
 </body>
 </html>
