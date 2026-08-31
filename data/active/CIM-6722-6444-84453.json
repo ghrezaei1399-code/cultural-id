@@ -22,10 +22,10 @@
   ],
   "communicationEmail": "gh_rezaei2003@yahoo.com",
   "registrationDate": "2026-08-30T20:23:24.107Z",
-  "status": "pending_edit",
+  "status": "approved",
   "rank": 0,
   "country": "Iran",
-  "statusUpdatedAt": "2026-08-30T20:24:34.313Z",
+  "statusUpdatedAt": "2026-08-31T11:08:56.636Z",
   "achievements": [
     {
       "title": "پوستر کتاب",
@@ -68,18 +68,6 @@
       "section": "identity-card"
     }
   ],
-  "previousValues": {
-    "values": [
-      "برادری",
-      "تحول",
-      "شبکه سازی",
-      "فرهنگی سازی",
-      "صلح با همه ی مردم دنیا",
-      "خشونت پرهیزی",
-      "همبستگی"
-    ],
-    "optionalCode": "سلامت",
-    "communicationEmail": "ghrezaei1399@gmail.com"
-  },
-  "lastEditRequest": "2026-08-31T11:08:20.975Z"
+  "lastEditRequest": "2026-08-31T11:08:20.975Z",
+  "editLocked": true
 }
