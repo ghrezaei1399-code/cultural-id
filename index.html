@@ -405,38 +405,36 @@
 
 </div>
 <script>
-  let allApproved = [];
+let allApproved = [];
 
-  async function loadAchievements() {
+async function loadAchievements() {
     const container = document.getElementById('achievementsListContainer');
     try {
-      // دریافت آخرین نسخه اطلاعات بدون کش
-      const res = await fetch('/api/get-users?t=' + new Date().getTime());
-      if (!res.ok) throw new Error('خطا در ارتباط با سرور');
-      
-      const data = await res.json();
-      allApproved = [];
-      
-      // جستجو در تمام کاربران برای یافتن آثار تایید شده
-      if (data.users) {
-          data.users.forEach(user => {
-            if (user.achievements) {
-              user.achievements.forEach(ach => {
-                // فقط آثاری که وضعیتشان approved است
-                if (ach.status === 'approved') {
-                  allApproved.push({ ...ach, owner: user.cardCode });
+        const res = await fetch('/api/get-users?t=' + new Date().getTime());
+        if (!res.ok) throw new Error('خطا در ارتباط با سرور');
+        
+        const data = await res.json();
+        allApproved = [];
+        
+        if (data.users) {
+            data.users.forEach(user => {
+                if (user.achievements) {
+                    user.achievements.forEach(ach => {
+                        if (ach.status === 'approved') {
+                            allApproved.push({ ...ach, owner: user.cardCode });
+                        }
+                    });
                 }
-              });
-            }
-          });
-      }
-      
-      renderList(allApproved);
+            });
+        }
+        
+        renderList(allApproved);
     } catch (e) { 
-      console.error(e);
-      container.innerHTML = '<p style="text-align:center; color:red;">خطا در دریافت اطلاعات.</p>';
+        console.error(e);
+        container.innerHTML = '<p style="text-align:center; color:red;">خطا در دریافت اطلاعات.</p>';
     }
-  }
+}
+
 function renderList(items) {
     const container = document.getElementById('achievementsListContainer');
     if (items.length === 0) {
@@ -469,23 +467,48 @@ function openModal(ownerCode, fileName) {
     
     const mediaDiv = document.getElementById('modalMediaContainer');
     
-    // ========== فقط این بخش را تغییر دهید ==========
-    // ۱. اولویت با fileUrl (روش جدید)
+    // نمایش عکس - اولویت با fileUrl
     if (item.fileUrl) {
-        mediaDiv.innerHTML = `<img src="${item.fileUrl}" class="modal-media" style="width:100%; max-height:400px; object-fit:contain; background:#1a1a1a;" onerror="this.style.display='none'; this.parentElement.innerHTML='<p style=\\'padding:2rem;text-align:center;\\'>❌ لینک تصویر خراب است</p>'"/>`;
-    } 
-    // ۲. پشتیبانی از fileData (روش قدیمی)
-    else if (item.fileData) {
-        mediaDiv.innerHTML = `<img src="${item.fileData}" class="modal-media" style="width:100%; max-height:400px; object-fit:contain; background:#1a1a1a;"/>`;
-    } 
-    // ۳. هیچکدام
-    else {
-        mediaDiv.innerHTML = '<p style="padding:2rem; text-align:center;">📄 فایل مدیا موجود نیست.</p>';
+        mediaDiv.innerHTML = `
+            <img src="${item.fileUrl}" class="modal-media" 
+                 style="width:100%; max-height:400px; object-fit:contain; background:#1a1a1a;"
+                 onerror="this.style.display='none'; this.parentElement.innerHTML='<p style=\\'padding:2rem;text-align:center;color:red;\\'>❌ لینک تصویر خراب است</p>'"
+                 alt="${item.title || 'تصویر'}"
+            />
+        `;
+    } else if (item.fileData) {
+        mediaDiv.innerHTML = `
+            <img src="${item.fileData}" class="modal-media" 
+                 style="width:100%; max-height:400px; object-fit:contain; background:#1a1a1a;"
+                 alt="${item.title || 'تصویر'}"
+            />
+        `;
+    } else {
+        mediaDiv.innerHTML = '<p style="padding:2rem; text-align:center; color:#666;">📄 فایل مدیا موجود نیست.</p>';
     }
 
     document.getElementById('detailModal').classList.add('active');
 }
-    document.addEventListener('DOMContentLoaded', loadAchievements);
+
+// ========== این تابع را اضافه کنید ==========
+function closeModal(e) {
+    if (e.target && e.target.id === 'detailModal') {
+        e.target.classList.remove('active');
+    }
+}
+// =========================================
+
+function filterAchievements() {
+    const filter = document.getElementById('categoryFilter').value;
+    if (filter === 'all') {
+        renderList(allApproved);
+        return;
+    }
+    const filtered = allApproved.filter(item => item.category === filter);
+    renderList(filtered);
+}
+
+document.addEventListener('DOMContentLoaded', loadAchievements);
 </script>
 </body>
 </html>
