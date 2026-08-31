@@ -410,22 +410,19 @@
   async function loadAchievements() {
     const container = document.getElementById('achievementsListContainer');
     try {
-      // اضافه کردن زمان برای جلوگیری از کش شدن
       const res = await fetch('/api/get-users?t=' + new Date().getTime());
       if (!res.ok) throw new Error('خطا در ارتباط با سرور');
       
       const data = await res.json();
-      console.log('Data received:', data); // برای دیباگ
-      
       allApproved = [];
       
-      // بررسی همه کاربران دریافت شده
-      if (data.users && Array.isArray(data.users)) {
+      if (data.users) {
           data.users.forEach(user => {
-            if (user.achievements && Array.isArray(user.achievements)) {
+            if (user.achievements) {
               user.achievements.forEach(ach => {
-                // فقط مواردی که توسط ادمین تایید شده‌اند
                 if (ach.status === 'approved') {
+                  // اضافه کردن شناسه یکتا برای اطمینان از پیدا شدن صحیح
+                  ach.uniqueId = user.cardCode + '_' + (ach.fileName || 'no-file');
                   allApproved.push({ ...ach, owner: user.cardCode });
                 }
               });
@@ -433,7 +430,6 @@
           });
       }
       
-      console.log('Approved items found:', allApproved.length);
       renderList(allApproved);
     } catch (e) { 
       console.error(e);
@@ -444,12 +440,12 @@
   function renderList(items) {
     const container = document.getElementById('achievementsListContainer');
     if (items.length === 0) {
-      container.innerHTML = '<p style="text-align:center; padding:1rem;">هنوز اثری توسط ادمین تایید نشده است.</p>';
+      container.innerHTML = '<p style="text-align:center; padding:1rem;">هنوز اثری تایید نشده است.</p>';
       return;
     }
     
     container.innerHTML = items.map(item => `
-      <div class="achievement-item" onclick="openModal('${item.owner}', '${item.fileName}')">
+      <div class="achievement-item" onclick="openModal('${item.uniqueId}')">
         <div class="item-info">
             <h4>${item.title}</h4>
             <span class="item-meta">${item.category === 'science' ? '📄 مقاله' : item.category === 'art' ? '🎨 هنری' : '🎬 رسانه'}</span>
@@ -459,12 +455,9 @@
     `).join('');
   }
 
-  function openModal(ownerCode, fileName) {
-    const item = allApproved.find(i => i.owner === ownerCode && i.fileName === fileName);
-    if (!item) {
-        alert('خطا: اطلاعات اثر یافت نشد.');
-        return;
-    }
+  function openModal(uniqueId) {
+    const item = allApproved.find(i => i.uniqueId === uniqueId);
+    if (!item) return;
 
     document.getElementById('modalTitle').textContent = item.title;
     
@@ -472,24 +465,24 @@
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     descText = descText.replace(urlRegex, url => `<a href="${url}" target="_blank" style="color:#2874a6; text-decoration:underline;">${url}</a>`);
     document.getElementById('modalDesc').innerHTML = descText;
-    
     document.getElementById('modalMeta').textContent = `ارسال کننده: ${item.owner}`;
     
     const mediaDiv = document.getElementById('modalMediaContainer');
     
-    // اولویت با fileUrl (لینک جدید) است
-    if (item.fileUrl) {
+    // منطق نمایش مدیا با اولویت‌بندی دقیق
+    if (item.fileUrl && item.fileUrl.startsWith('http')) {
+       // اگر لینک معتبر باشد
        if (item.fileName && (item.fileName.endsWith('.mp4') || item.fileName.endsWith('.webm'))) {
-         mediaDiv.innerHTML = `<video controls src="${item.fileUrl}" class="modal-media"></video>`;
+         mediaDiv.innerHTML = `<video controls src="${item.fileUrl}" class="modal-media" onerror="this.parentElement.innerHTML='<p style=color:red>خطا در پخش ویدئو</p>'"></video>`;
        } else {
-         mediaDiv.innerHTML = `<img src="${item.fileUrl}" class="modal-media">`;
+         mediaDiv.innerHTML = `<img src="${item.fileUrl}" class="modal-media" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'"><p style="display:none; text-align:center; color:red; margin-top:1rem;">❌ تصویر بارگذاری نشد (لینک ممکن است خراب باشد)</p>`;
        }
-    } 
-    // پشتیبانی از fileData (سیستم قدیم)
-    else if (item.fileData) {
+    } else if (item.fileData && item.fileData.length > 50) {
+       // اگر کد Base64 وجود داشته باشد
        mediaDiv.innerHTML = `<img src="${item.fileData}" class="modal-media">`;
     } else {
-      mediaDiv.innerHTML = '<p style="text-align:center; padding:2rem;">فایل مدیا موجود نیست.</p>';
+      // اگر هیچکدام نبود
+      mediaDiv.innerHTML = '<div style="padding:3rem; text-align:center; background:#f0f0f0; border-radius:12px;"><p style="font-size:1.2rem;">📂 فایل مدیا موجود نیست</p><small>احتمالاً آپلود فایل با خطا مواجه شده است.</small></div>';
     }
 
     document.getElementById('detailModal').classList.add('active');
