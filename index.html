@@ -456,22 +456,19 @@ function renderList(items) {
 // ====== ساده‌ترین نسخه openModal ======
 function openModal(ownerCode, fileName) {
     const item = allApproved.find(i => i.owner === ownerCode && i.fileName === fileName);
-    if (!item) {
-        alert('اثر پیدا نشد!');
-        return;
-    }
+    if (!item) return;
 
-    document.getElementById('modalTitle').textContent = item.title || 'بدون عنوان';
-    document.getElementById('modalDesc').textContent = item.description || 'بدون توضیحات';
-    document.getElementById('modalMeta').textContent = 'ارسال کننده: ' + item.owner;
+    document.getElementById('modalTitle').textContent = item.title;
+    document.getElementById('modalDesc').innerHTML = item.description || 'بدون توضیحات';
+    document.getElementById('modalMeta').textContent = `ارسال کننده: ${item.owner}`;
     
     const mediaDiv = document.getElementById('modalMediaContainer');
     
-    // ساده و مستقیم
-    if (item.fileUrl) {
-        mediaDiv.innerHTML = '<img src="' + item.fileUrl + '" class="modal-media" style="width:100%;max-height:400px;object-fit:contain;background:#1a1a1a;" onerror="this.outerHTML=\'<p style=\\\'padding:2rem;text-align:center;color:red;\\\'>❌ تصویر خراب است</p>\'"/>';
-    } else if (item.fileData) {
-        mediaDiv.innerHTML = '<img src="' + item.fileData + '" class="modal-media" style="width:100%;max-height:400px;object-fit:contain;background:#1a1a1a;"/>';
+    // اصلاح: استفاده از fileUrl به جای fileData
+    const imageUrl = item.fileUrl || item.fileData || null;
+    
+    if (imageUrl) {
+        mediaDiv.innerHTML = `<img src="${imageUrl}" class="modal-media" style="width:100%;max-height:400px;object-fit:contain;background:#1a1a1a;" onerror="this.outerHTML='<p style=\\'padding:2rem;text-align:center;color:red;\\'>❌ تصویر قابل نمایش نیست</p>'"/>`;
     } else {
         mediaDiv.innerHTML = '<p style="padding:2rem;text-align:center;">📄 فایل موجود نیست</p>';
     }
