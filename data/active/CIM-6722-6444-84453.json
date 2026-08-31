@@ -25,5 +25,17 @@
   "status": "approved",
   "rank": 0,
   "country": "Iran",
-  "statusUpdatedAt": "2026-08-30T20:24:34.313Z"
+  "statusUpdatedAt": "2026-08-30T20:24:34.313Z",
+  "achievements": [
+    {
+      "title": "پوستر کتاب",
+      "description": "کتاب هنر هوشمند نگاری",
+      "category": "cultural",
+      "fileUrl": "",
+      "fileName": "1788165917373-r8mzo.JPG",
+      "status": "pending",
+      "uploadDate": "2026-08-31T08:45:18.781Z",
+      "section": "identity-card"
+    }
+  ]
 }
