@@ -5,11 +5,12 @@
   "senderEmail": "ghrezaei1399@gmail.com",
   "type": "connection",
   "reason": "today",
-  "status": "pending",
+  "status": "approved",
   "createdAt": "2026-08-31T18:25:52.771Z",
   "updatedAt": "2026-08-31T18:25:52.771Z",
   "connections": [],
   "connectionsCount": 0,
   "culturalMatches": [],
-  "totalMatches": 0
+  "totalMatches": 0,
+  "approvedAt": "2026-08-31T18:26:20.403Z"
 }
