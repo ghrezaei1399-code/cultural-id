@@ -391,7 +391,7 @@
     </div>
 
     <!-- ⭐ مودال نمایش جزئیات -->
-    <div id="detailModal" class="modal-overlay" onclick="closeModal(event)">
+    <div id="detailModal" class="modal-overlay" onclick="this.classList.remove('active')">
         <div class="modal-content">
             <button class="modal-close" onclick="document.getElementById('detailModal').classList.remove('active')">✕</button>
             <div id="modalMediaContainer"></div>
