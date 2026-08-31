@@ -601,10 +601,12 @@
             }
 
             tbody.innerHTML = users.map(user => {
+                // ===== ترجمه نشان (Badge) =====
+                let badgeText = user.badge === 'golden' ? t('badgeGolden') : 
+                               user.badge === 'silver' ? t('badgeSilver') : t('badgeBronze');
                 const badgeClass = `badge-${user.badge}`;
-                const badgeText = user.badge === 'golden' ? t('badgeGolden') : 
-                                 user.badge === 'silver' ? t('badgeSilver') : t('badgeBronze');
                 
+                // ===== ترجمه وضعیت (Status) =====
                 const status = user.status || 'pending';
                 let statusClass = 'badge-pending';
                 let statusText = t('statusPending');
