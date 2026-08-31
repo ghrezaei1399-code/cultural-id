@@ -25,5 +25,17 @@
   "status": "approved",
   "rank": 0,
   "country": "Iran",
-  "statusUpdatedAt": "2026-08-31T10:53:26.873Z"
+  "statusUpdatedAt": "2026-08-31T10:53:26.873Z",
+  "achievements": [
+    {
+      "title": " Art Smartography",
+      "description": "A New Perspective on Technological Art\n\nWith the Learning of 21 Principles\n\n\"A Practical Guide to Writing with Artificial Intelligence\"\n\nDedicated to:\nArt Lovers\nand\nTransformative Artists\nAuthor: Gholamreza Rezaei\n",
+      "category": "art",
+      "fileUrl": "https://raw.githubusercontent.com/ghrezaei1399-code/cultural-id/main/uploads/1788173691485-slqhyb.JPG",
+      "fileName": "1788173691485-slqhyb.JPG",
+      "status": "pending",
+      "uploadDate": "2026-08-31T10:54:52.868Z",
+      "section": "identity-card"
+    }
+  ]
 }
