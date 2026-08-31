@@ -5,11 +5,12 @@
   "senderEmail": "gh_rezaei2003@yahoo.com",
   "type": "connection",
   "reason": "شبکه سازی",
-  "status": "pending",
+  "status": "approved",
   "createdAt": "2026-08-31T18:19:07.874Z",
   "updatedAt": "2026-08-31T18:19:07.874Z",
   "connections": [],
   "connectionsCount": 0,
   "culturalMatches": [],
-  "totalMatches": 0
+  "totalMatches": 0,
+  "approvedAt": "2026-08-31T18:20:38.288Z"
 }
