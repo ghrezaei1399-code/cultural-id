@@ -1,3 +1,4 @@
+// api/get-connection-requests.js
 module.exports = async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -41,11 +42,15 @@ module.exports = async function handler(req, res) {
         const jsonString = Buffer.from(fileData.content, 'base64').toString('utf8');
         const requestData = JSON.parse(jsonString);
         
-        // فقط درخواست‌های ارتباط را نشان بده (یا همه را اگر خواستی)
-        if (requestData.type === 'connection' || requestData.type === 'delete') {
+        // ===== تغییر: خواندن همه درخواست‌ها (فقط connection) =====
+        if (requestData.type === 'connection' || !requestData.type) {
           requests.push({
             ...requestData,
-            fileName: file.name
+            fileName: file.name,
+            // ===== تغییر: استفاده از senderCode و senderEmail =====
+            senderCode: requestData.senderCode || requestData.cardCode,
+            senderEmail: requestData.senderEmail || requestData.requesterEmail || '',
+            reason: requestData.reason || requestData.description || ''
           });
         }
       } catch (e) {
@@ -54,7 +59,7 @@ module.exports = async function handler(req, res) {
     }
 
     // مرتب‌سازی بر اساس تاریخ (جدیدترین اول)
-    requests.sort((a, b) => new Date(b.requestDate) - new Date(a.requestDate));
+    requests.sort((a, b) => new Date(b.createdAt || b.requestDate) - new Date(a.createdAt || a.requestDate));
 
     return res.status(200).json({ requests });
 
@@ -62,4 +67,4 @@ module.exports = async function handler(req, res) {
     console.error('API Error:', error);
     return res.status(500).json({ error: error.message });
   }
-}
+};
