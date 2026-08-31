@@ -477,15 +477,17 @@
             }
 
             container.innerHTML = filtered.map(req => {
-                const emailStatus = req.senderEmail 
-                    ? `<div class="req-email-status has-email">${t('hasEmail')}: ${req.senderEmail}</div>`
-                    : `<div class="req-email-status no-email">${t('noEmail')}</div>`;
-
+                // ===== ترجمه وضعیت =====
                 const statusMap = {
                     approved: `<span class="badge badge-approved">${t('approved')}</span>`,
                     rejected: `<span class="badge badge-rejected">${t('rejected')}</span>`,
                     pending: `<span class="badge badge-pending">${t('pending')}</span>`
                 };
+
+                // ===== ترجمه وضعیت ایمیل =====
+                const emailStatus = req.senderEmail 
+                    ? `<div class="req-email-status has-email">${t('hasEmail')}: ${req.senderEmail}</div>`
+                    : `<div class="req-email-status no-email">${t('noEmail')}</div>`;
 
                 const actionButtons = req.status === 'pending' ? `
                     <div style="margin-top:0.8rem; display:flex; gap:0.3rem; flex-wrap:wrap;">
