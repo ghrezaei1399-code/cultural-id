@@ -314,6 +314,51 @@
         body.dark .email-warning h3 { color: #f1948a; }
         .email-warning p { color: #4a3a2a; font-size: 0.9rem; line-height: 1.8; }
         body.dark .email-warning p { color: #d0c0b0; }
+        
+        .tracking-box {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            text-align: center;
+        }
+        body.dark .tracking-box { background: rgba(0, 0, 0, 0.1); }
+        .tracking-box .big-icon { font-size: 2.5rem; display: block; margin-bottom: 0.5rem; }
+        .tracking-box h3 { color: #2874a6; margin-bottom: 0.3rem; }
+        body.dark .tracking-box h3 { color: #85c1e9; }
+        .tracking-box p { color: #4a3a2a; font-size: 0.9rem; line-height: 1.8; }
+        body.dark .tracking-box p { color: #d0c0b0; }
+
+        .bottom-modules {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .bottom-module {
+            text-align: center;
+            padding: 1rem 0.8rem;
+            border-radius: 20px;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+        }
+        body.dark .bottom-module { background: rgba(0, 0, 0, 0.1); }
+        .bottom-module:hover { transform: translateY(-3px); }
+        .bottom-module .icon { font-size: 1.8rem; display: block; margin-bottom: 0.3rem; }
+        .bottom-module .label { font-weight: 700; font-size: 0.85rem; color: #8a6d1f; }
+        body.dark .bottom-module .label { color: #f9e79f; }
+        .bottom-module .desc { font-size: 0.65rem; opacity: 0.7; color: #4a3a2a; }
+        body.dark .bottom-module .desc { color: #c8b890; }
+        .bottom-module a { text-decoration: none; display: block; }
+        
+        @media (max-width: 768px) {
+            .bottom-modules { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -339,6 +384,18 @@
             <button onclick="verifyUser()" class="btn btn-primary" id="authBtn" style="width:100%;">🔍 بررسی کد</button>
 
             <div id="authError" class="message-box error" style="display:none; margin-top:1rem;"></div>
+
+            <!-- ===== بخش پیگیری با کد پیگیری ===== -->
+            <div class="tracking-box" style="margin-top:1.5rem; border-color: rgba(212, 175, 55, 0.3);">
+                <span class="big-icon">🔍</span>
+                <h3>پیگیری درخواست</h3>
+                <p>اگر قبلاً درخواست ارسال کرده‌اید، کد پیگیری خود را وارد کنید</p>
+                <div class="form-group" style="margin-top:0.5rem; margin-bottom:0.5rem;">
+                    <input type="text" id="trackingCode" placeholder="کد پیگیری را وارد کنید" />
+                </div>
+                <button onclick="trackRequest()" class="btn btn-primary" style="width:100%;">🔍 پیگیری</button>
+                <div id="trackingResult" class="message-box" style="margin-top:0.5rem;"></div>
+            </div>
         </div>
 
         <!-- ===== مرحله ۲: محتوای اصلی (بعد از احراز) ===== -->
@@ -389,11 +446,7 @@
                 <form id="requestForm">
                     <input type="hidden" id="requestType" value="connection" />
 
-                    <div class="form-group" id="targetGroup">
-                        <label id="targetLabel">کد کارت طرف مقابل (هم‌فرهنگ) - اختیاری</label>
-                        <input type="text" id="targetCardCode" placeholder="مثلاً: CIM-9876-5432-B" />
-                        <p style="font-size:0.7rem; color:#888; margin-top:0.3rem;">اگر کد خاصی مد نظر دارید وارد کنید، در غیر این صورت سیستم هم‌فکران شما را پیدا می‌کند.</p>
-                    </div>
+                    <!-- ===== حذف فیلد "کد کارت طرف مقابل" ===== -->
 
                     <div class="form-group">
                         <label>📝 توضیح دلیل درخواست ارتباط</label>
@@ -426,6 +479,38 @@
             <div class="btn-group">
                 <a href="register-fa.html" class="btn btn-primary">🪪 ثبت‌نام و دریافت کارت</a>
                 <a href="index.html" class="btn btn-secondary">↩ بازگشت</a>
+            </div>
+        </div>
+
+        <!-- ===== ماژول‌های پایین صفحه ===== -->
+        <div class="bottom-modules" id="bottomModules">
+            <div class="bottom-module">
+                <a href="request-fa.html">
+                    <span class="icon">📤</span>
+                    <div class="label">ارسال درخواست</div>
+                    <div class="desc">درخواست ارتباط با هم‌فکران</div>
+                </a>
+            </div>
+            <div class="bottom-module">
+                <a href="index.html">
+                    <span class="icon">🏠</span>
+                    <div class="label">بازگشت به صفحه اصلی</div>
+                    <div class="desc">صفحه اصلی کارت هویت</div>
+                </a>
+            </div>
+            <div class="bottom-module">
+                <a href="about-fa.html">
+                    <span class="icon">📖</span>
+                    <div class="label">درباره پروژه</div>
+                    <div class="desc">فلسفه و اهداف</div>
+                </a>
+            </div>
+            <div class="bottom-module">
+                <a href="observer-fa.html">
+                    <span class="icon">🧠</span>
+                    <div class="label">مجتمع هم‌اندیشی</div>
+                    <div class="desc">سپهر خردمندی</div>
+                </a>
             </div>
         </div>
 
@@ -527,6 +612,53 @@
             btn.textContent = '🔍 بررسی کد';
         }
 
+        // ===== پیگیری با کد پیگیری =====
+        async function trackRequest() {
+            const trackingCode = document.getElementById('trackingCode').value.trim();
+            const resultEl = document.getElementById('trackingResult');
+
+            if (!trackingCode) {
+                resultEl.className = 'message-box error';
+                resultEl.textContent = '❌ لطفاً کد پیگیری را وارد کنید.';
+                resultEl.style.display = 'block';
+                return;
+            }
+
+            resultEl.style.display = 'none';
+            resultEl.className = 'message-box';
+
+            try {
+                const response = await fetch('/api/get-request-by-tracking?trackingCode=' + trackingCode);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'خطا در دریافت اطلاعات');
+                }
+
+                const req = data.request;
+
+                if (req.status === 'approved') {
+                    resultEl.className = 'message-box success';
+                    resultEl.innerHTML = '✅ درخواست شما تایید شده است.<br>' +
+                        (req.connections && req.connections.length > 0 
+                            ? '📧 ' + req.connections.length + ' ایمیل هم‌فکر برای شما ارسال شده است.' 
+                            : 'هیچ هم‌فکری با ایمیل ثبت‌شده یافت نشد.');
+                } else if (req.status === 'rejected') {
+                    resultEl.className = 'message-box error';
+                    resultEl.textContent = '❌ درخواست شما رد شده است.';
+                } else {
+                    resultEl.className = 'message-box pending';
+                    resultEl.textContent = '⏳ درخواست شما در حال بررسی است. لطفاً صبور باشید.';
+                }
+                resultEl.style.display = 'block';
+
+            } catch (error) {
+                resultEl.className = 'message-box error';
+                resultEl.textContent = '❌ ' + error.message;
+                resultEl.style.display = 'block';
+            }
+        }
+
         // ===== بررسی درخواست قبلی =====
         async function checkExistingRequest(cardCode) {
             try {
@@ -560,7 +692,7 @@
                         
                         const detail = document.getElementById('statusDetail');
                         detail.className = 'message-box pending';
-                        detail.textContent = '⏳ تاریخ ارسال: ' + new Date(latest.createdAt).toLocaleString('fa-IR');
+                        detail.textContent = '⏳ تاریخ ارسال: ' + new Date(latest.createdAt).toLocaleString('fa-IR') + ' | کد پیگیری: ' + (latest.trackingCode || '---');
                         detail.style.display = 'block';
                         
                     } else if (latest.status === 'rejected') {
@@ -615,7 +747,6 @@
                 const cardCode = localStorage.getItem('verifiedCode');
                 const requestType = document.getElementById('requestType').value;
                 const description = document.getElementById('description').value.trim();
-                const targetCardCode = document.getElementById('targetCardCode').value.trim() || '';
 
                 if (!cardCode) {
                     throw new Error('لطفاً ابتدا کد خود را تأیید کنید.');
@@ -631,8 +762,8 @@
                     body: JSON.stringify({
                         cardCode: cardCode,
                         type: requestType,
-                        targetCardCode: targetCardCode,
                         description: description
+                        // targetCardCode حذف شد
                     })
                 });
 
@@ -652,7 +783,7 @@
                 
                 const detail = document.getElementById('statusDetail');
                 detail.className = 'message-box success';
-                detail.textContent = '✅ شماره پیگیری: ' + (result.requestId || '---');
+                detail.textContent = '✅ کد پیگیری: ' + (result.trackingCode || '---');
                 detail.style.display = 'block';
 
                 submitBtn.textContent = '✅ ارسال شد';
