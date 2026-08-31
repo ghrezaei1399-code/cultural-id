@@ -314,6 +314,51 @@
         body.dark .email-warning h3 { color: #f1948a; }
         .email-warning p { color: #4a3a2a; font-size: 0.9rem; line-height: 1.8; }
         body.dark .email-warning p { color: #d0c0b0; }
+        
+        .tracking-box {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            text-align: center;
+        }
+        body.dark .tracking-box { background: rgba(0, 0, 0, 0.1); }
+        .tracking-box .big-icon { font-size: 2.5rem; display: block; margin-bottom: 0.5rem; }
+        .tracking-box h3 { color: #2874a6; margin-bottom: 0.3rem; }
+        body.dark .tracking-box h3 { color: #85c1e9; }
+        .tracking-box p { color: #4a3a2a; font-size: 0.9rem; line-height: 1.8; }
+        body.dark .tracking-box p { color: #d0c0b0; }
+
+        .bottom-modules {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .bottom-module {
+            text-align: center;
+            padding: 1rem 0.8rem;
+            border-radius: 20px;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+        }
+        body.dark .bottom-module { background: rgba(0, 0, 0, 0.1); }
+        .bottom-module:hover { transform: translateY(-3px); }
+        .bottom-module .icon { font-size: 1.8rem; display: block; margin-bottom: 0.3rem; }
+        .bottom-module .label { font-weight: 700; font-size: 0.85rem; color: #8a6d1f; }
+        body.dark .bottom-module .label { color: #f9e79f; }
+        .bottom-module .desc { font-size: 0.65rem; opacity: 0.7; color: #4a3a2a; }
+        body.dark .bottom-module .desc { color: #c8b890; }
+        .bottom-module a { text-decoration: none; display: block; }
+        
+        @media (max-width: 768px) {
+            .bottom-modules { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -339,9 +384,21 @@
             <button onclick="verifyUser()" class="btn btn-primary" id="authBtn" style="width:100%;">🔍 Verify Code</button>
 
             <div id="authError" class="message-box error" style="display:none; margin-top:1rem;"></div>
+
+            <!-- ===== Tracking Section ===== -->
+            <div class="tracking-box" style="margin-top:1.5rem; border-color: rgba(212, 175, 55, 0.3);">
+                <span class="big-icon">🔍</span>
+                <h3>Track Your Request</h3>
+                <p>If you have already submitted a request, enter your tracking code</p>
+                <div class="form-group" style="margin-top:0.5rem; margin-bottom:0.5rem;">
+                    <input type="text" id="trackingCode" placeholder="Enter tracking code" />
+                </div>
+                <button onclick="trackRequest()" class="btn btn-primary" style="width:100%;">🔍 Track</button>
+                <div id="trackingResult" class="message-box" style="margin-top:0.5rem;"></div>
+            </div>
         </div>
 
-        <!-- ===== Step 2: Main Content (After Verification) ===== -->
+        <!-- ===== Step 2: Main Content ===== -->
         <div id="step2" class="hidden">
             <h1 id="pageTitle2">🤝 Request Connection</h1>
             <div class="subtitle" id="pageSubtitle2">Connect with others based on shared cultural values</div>
@@ -389,11 +446,7 @@
                 <form id="requestForm">
                     <input type="hidden" id="requestType" value="connection" />
 
-                    <div class="form-group" id="targetGroup">
-                        <label id="targetLabel">Target Card Code (Cultural Peer) - Optional</label>
-                        <input type="text" id="targetCardCode" placeholder="e.g. CIM-9876-5432-B" />
-                        <p style="font-size:0.7rem; color:#888; margin-top:0.3rem;">Enter a specific code if you have one in mind, otherwise the system will find like-minded people for you.</p>
-                    </div>
+                    <!-- ===== Removed "Target Card Code" field ===== -->
 
                     <div class="form-group">
                         <label>📝 Explain why you want to connect</label>
@@ -412,7 +465,7 @@
             </div>
         </div>
 
-        <!-- ===== Step 3: Invitation to Register (Non-Member) ===== -->
+        <!-- ===== Step 3: Invitation to Register ===== -->
         <div id="notMemberBox" class="hidden">
             <h1>🌍 Join the Global Cultural Community!</h1>
             <div class="subtitle">You are not yet a member of the Global Smart Cultural Identity Card.</div>
@@ -426,6 +479,38 @@
             <div class="btn-group">
                 <a href="register-en.html" class="btn btn-primary">🪪 Register & Get Card</a>
                 <a href="index-en.html" class="btn btn-secondary">↩ Back</a>
+            </div>
+        </div>
+
+        <!-- ===== Bottom Modules ===== -->
+        <div class="bottom-modules" id="bottomModules">
+            <div class="bottom-module">
+                <a href="request-en.html">
+                    <span class="icon">📤</span>
+                    <div class="label">Submit Request</div>
+                    <div class="desc">Request connection with like-minded</div>
+                </a>
+            </div>
+            <div class="bottom-module">
+                <a href="index-en.html">
+                    <span class="icon">🏠</span>
+                    <div class="label">Back to Home</div>
+                    <div class="desc">Main card page</div>
+                </a>
+            </div>
+            <div class="bottom-module">
+                <a href="about-en.html">
+                    <span class="icon">📖</span>
+                    <div class="label">About Project</div>
+                    <div class="desc">Philosophy and goals</div>
+                </a>
+            </div>
+            <div class="bottom-module">
+                <a href="observer-en.html">
+                    <span class="icon">🧠</span>
+                    <div class="label">Wisdom Council</div>
+                    <div class="desc">Sphere of wisdom</div>
+                </a>
             </div>
         </div>
 
@@ -527,6 +612,53 @@
             btn.textContent = '🔍 Verify Code';
         }
 
+        // ===== Track Request =====
+        async function trackRequest() {
+            const trackingCode = document.getElementById('trackingCode').value.trim();
+            const resultEl = document.getElementById('trackingResult');
+
+            if (!trackingCode) {
+                resultEl.className = 'message-box error';
+                resultEl.textContent = '❌ Please enter tracking code.';
+                resultEl.style.display = 'block';
+                return;
+            }
+
+            resultEl.style.display = 'none';
+            resultEl.className = 'message-box';
+
+            try {
+                const response = await fetch('/api/get-request-by-tracking?trackingCode=' + trackingCode);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Error retrieving request');
+                }
+
+                const req = data.request;
+
+                if (req.status === 'approved') {
+                    resultEl.className = 'message-box success';
+                    resultEl.innerHTML = '✅ Your request has been approved.<br>' +
+                        (req.connections && req.connections.length > 0 
+                            ? '📧 ' + req.connections.length + ' like-minded emails have been sent to you.' 
+                            : 'No like-minded people with registered emails found.');
+                } else if (req.status === 'rejected') {
+                    resultEl.className = 'message-box error';
+                    resultEl.textContent = '❌ Your request has been rejected.';
+                } else {
+                    resultEl.className = 'message-box pending';
+                    resultEl.textContent = '⏳ Your request is being reviewed. Please be patient.';
+                }
+                resultEl.style.display = 'block';
+
+            } catch (error) {
+                resultEl.className = 'message-box error';
+                resultEl.textContent = '❌ ' + error.message;
+                resultEl.style.display = 'block';
+            }
+        }
+
         // ===== Check Existing Request =====
         async function checkExistingRequest(cardCode) {
             try {
@@ -560,7 +692,7 @@
                         
                         const detail = document.getElementById('statusDetail');
                         detail.className = 'message-box pending';
-                        detail.textContent = '⏳ Submitted on: ' + new Date(latest.createdAt).toLocaleString('en-US');
+                        detail.textContent = '⏳ Submitted on: ' + new Date(latest.createdAt).toLocaleString('en-US') + ' | Tracking Code: ' + (latest.trackingCode || '---');
                         detail.style.display = 'block';
                         
                     } else if (latest.status === 'rejected') {
@@ -615,7 +747,6 @@
                 const cardCode = localStorage.getItem('verifiedCode');
                 const requestType = document.getElementById('requestType').value;
                 const description = document.getElementById('description').value.trim();
-                const targetCardCode = document.getElementById('targetCardCode').value.trim() || '';
 
                 if (!cardCode) {
                     throw new Error('Please verify your code first.');
@@ -631,8 +762,8 @@
                     body: JSON.stringify({
                         cardCode: cardCode,
                         type: requestType,
-                        targetCardCode: targetCardCode,
                         description: description
+                        // targetCardCode removed
                     })
                 });
 
@@ -652,7 +783,7 @@
                 
                 const detail = document.getElementById('statusDetail');
                 detail.className = 'message-box success';
-                detail.textContent = '✅ Tracking ID: ' + (result.requestId || '---');
+                detail.textContent = '✅ Tracking Code: ' + (result.trackingCode || '---');
                 detail.style.display = 'block';
 
                 submitBtn.textContent = '✅ Sent';
