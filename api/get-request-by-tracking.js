@@ -30,7 +30,13 @@ module.exports = async function handler(req, res) {
     }
 
     const files = await listResponse.json();
-    const requestFiles = files.filter(f => f.name.startsWith('request-') && f.name.endsWith('.json'));
+    
+    // اطمینان از اینکه files یک آرایه است
+    if (!Array.isArray(files)) {
+      return res.status(500).json({ error: 'خطا در ساختار فایل‌های درخواست' });
+    }
+
+    const requestFiles = files.filter(f => f.name && f.name.startsWith('request-') && f.name.endsWith('.json'));
 
     for (const file of requestFiles) {
       try {
@@ -40,6 +46,9 @@ module.exports = async function handler(req, res) {
             'Accept': 'application/vnd.github.v3+json'
           }
         });
+        
+        if (!fileRes.ok) continue;
+        
         const fileData = await fileRes.json();
         const jsonString = Buffer.from(fileData.content, 'base64').toString('utf8');
         const requestData = JSON.parse(jsonString);
@@ -47,11 +56,11 @@ module.exports = async function handler(req, res) {
         if (requestData.trackingCode === trackingCode) {
           return res.status(200).json({
             request: {
-              status: requestData.status,
-              trackingCode: requestData.trackingCode,
+              status: requestData.status || 'pending',
+              trackingCode: requestData.trackingCode || trackingCode,
               connections: requestData.connections || [],
-              connectionsCount: requestData.connections ? requestData.connections.length : 0,
-              createdAt: requestData.createdAt || requestData.requestDate,
+              connectionsCount: (requestData.connections || []).length,
+              createdAt: requestData.createdAt || requestData.requestDate || new Date().toISOString(),
               approvedAt: requestData.approvedAt || null,
               rejectedAt: requestData.rejectedAt || null
             }
@@ -59,6 +68,7 @@ module.exports = async function handler(req, res) {
         }
       } catch (e) {
         console.error('Error reading request file:', e);
+        continue;
       }
     }
 
