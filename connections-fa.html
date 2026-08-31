@@ -13,9 +13,15 @@
             background: linear-gradient(135deg, #fdf6e3 0%, #e8f4f8 50%, #f5e6d3 100%);
             color: #2a1a0a;
         }
+        body.dark {
+            background: linear-gradient(135deg, #3a2f20 0%, #2a2418 50%, #4a3a28 100%);
+            color: #f0e8d0;
+        }
         .container { max-width: 900px; margin: 0 auto; }
         h1 { font-size: 1.8rem; font-weight: 800; color: #2a1a0a; text-align: center; margin-bottom: 0.5rem; }
+        body.dark h1 { color: #f9e79f; }
         .subtitle { text-align: center; font-size: 0.9rem; color: #6a5a3a; opacity: 0.8; margin-bottom: 2rem; }
+        body.dark .subtitle { color: #c8b890; }
         
         .request-card {
             background: rgba(255, 255, 255, 0.8);
@@ -24,10 +30,19 @@
             margin-bottom: 1.5rem;
             border: 2px solid rgba(212, 175, 55, 0.3);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
         }
+        body.dark .request-card {
+            background: rgba(74, 58, 40, 0.7);
+            border-color: rgba(212, 175, 55, 0.5);
+        }
+        .request-card:hover { transform: translateY(-2px); }
         .request-card h3 { font-size: 1.1rem; color: #8a6d1f; margin-bottom: 0.5rem; font-family: 'Courier New', monospace; }
+        body.dark .request-card h3 { color: #f9e79f; }
         .request-card p { font-size: 0.9rem; color: #3a2a1a; margin-bottom: 0.5rem; line-height: 1.6; }
+        body.dark .request-card p { color: #e8dcc0; }
         .request-card .meta { font-size: 0.75rem; color: #6a5a3a; opacity: 0.7; }
+        body.dark .request-card .meta { color: #c8b890; }
         
         .requester-email-status {
             margin-top: 0.5rem;
@@ -38,10 +53,12 @@
             color: #1e7a1e;
             font-weight: 700;
         }
+        body.dark .requester-email-status { background: rgba(40, 167, 69, 0.15); color: #82e0aa; }
         .requester-email-status.no-email {
             background: rgba(220, 53, 69, 0.1);
             color: #a93226;
         }
+        body.dark .requester-email-status.no-email { background: rgba(220, 53, 69, 0.15); color: #f1948a; }
 
         .matches-section {
             margin-top: 1.5rem;
@@ -49,6 +66,7 @@
             border-top: 2px dashed rgba(212, 175, 55, 0.3);
         }
         .matches-title { font-size: 1rem; font-weight: 800; color: #2874a6; margin-bottom: 1rem; }
+        body.dark .matches-title { color: #85c1e9; }
         
         .match-item {
             background: rgba(212, 175, 55, 0.08);
@@ -62,9 +80,12 @@
             flex-wrap: wrap;
             gap: 1rem;
         }
+        body.dark .match-item { background: rgba(212, 175, 55, 0.05); border-color: rgba(212, 175, 55, 0.15); }
         .match-info { flex: 1; min-width: 200px; }
         .match-code { font-family: 'Courier New', monospace; font-size: 0.9rem; color: #8a6d1f; font-weight: 700; }
+        body.dark .match-code { color: #f9e79f; }
         .match-details { font-size: 0.75rem; color: #6a5a3a; margin-top: 0.3rem; }
+        body.dark .match-details { color: #c8b890; }
         
         .match-score {
             background: linear-gradient(135deg, #d4af37, #f9e79f);
@@ -76,6 +97,7 @@
             min-width: 60px;
             text-align: center;
         }
+        body.dark .match-score { background: linear-gradient(135deg, #8a6d1f, #d4af37); color: #fff; }
         
         .email-badge {
             font-size: 0.75rem;
@@ -86,9 +108,12 @@
             display: inline-block;
         }
         .email-yes { background: rgba(40, 167, 69, 0.2); color: #1e7a1e; }
+        body.dark .email-yes { background: rgba(40, 167, 69, 0.15); color: #82e0aa; }
         .email-no { background: rgba(220, 53, 69, 0.2); color: #a93226; }
+        body.dark .email-no { background: rgba(220, 53, 69, 0.15); color: #f1948a; }
 
         .hidden-email { display: none; margin-top: 0.5rem; font-size: 0.8rem; color: #2874a6; font-family: monospace; }
+        body.dark .hidden-email { color: #85c1e9; }
 
         .btn-group { display: flex; gap: 0.5rem; margin-top: 1.5rem; flex-wrap: wrap; }
         .btn {
@@ -96,17 +121,51 @@
             font-size: 0.9rem; border: none; cursor: pointer; transition: all 0.3s;
         }
         .btn-approve { background: rgba(39, 174, 96, 0.2); color: #1e7a1e; }
+        body.dark .btn-approve { background: rgba(39, 174, 96, 0.2); color: #82e0aa; }
         .btn-approve:hover { background: rgba(39, 174, 96, 0.3); }
         .btn-reject { background: rgba(220, 80, 60, 0.2); color: #a93226; }
+        body.dark .btn-reject { background: rgba(220, 80, 60, 0.2); color: #f1948a; }
         .btn-reject:hover { background: rgba(220, 80, 60, 0.3); }
-        .btn-show-email { background: rgba(40, 167, 69, 0.2); color: #1e7a1e; font-size: 0.8rem; padding: 0.4rem 1rem; margin-top: 0.5rem;}
+        .btn-show-email { background: rgba(40, 167, 69, 0.2); color: #1e7a1e; font-size: 0.8rem; padding: 0.4rem 1rem; margin-top: 0.5rem; }
+        body.dark .btn-show-email { background: rgba(40, 167, 69, 0.15); color: #82e0aa; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
         
         .btn-back {
             display: inline-block; margin-top: 2rem; padding: 0.8rem 1.5rem;
             background: rgba(212, 175, 55, 0.2); color: #8a6d1f;
             border-radius: 30px; text-decoration: none; font-weight: 700;
+            transition: all 0.3s;
         }
+        body.dark .btn-back { background: rgba(212, 175, 55, 0.2); color: #f9e79f; }
+        .btn-back:hover { transform: scale(1.05); }
         .empty-state { text-align: center; padding: 3rem; color: #6a5a3a; opacity: 0.6; }
+        body.dark .empty-state { color: #c8b890; }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-top: 0.5rem;
+        }
+        .status-pending { background: rgba(255, 200, 50, 0.2); color: #8a7a0a; }
+        body.dark .status-pending { background: rgba(255, 200, 50, 0.15); color: #f9e79f; }
+        .status-approved { background: rgba(50, 200, 50, 0.2); color: #0a6a0a; }
+        body.dark .status-approved { background: rgba(50, 200, 50, 0.15); color: #82e0aa; }
+        .status-rejected { background: rgba(200, 50, 50, 0.2); color: #6a1a1a; }
+        body.dark .status-rejected { background: rgba(200, 50, 50, 0.15); color: #f1948a; }
+        
+        .connections-count {
+            display: inline-block;
+            background: rgba(212, 175, 55, 0.15);
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #8a6d1f;
+        }
+        body.dark .connections-count { background: rgba(212, 175, 55, 0.1); color: #f9e79f; }
     </style>
 </head>
 <body>
@@ -134,11 +193,23 @@
 
             requestsList.innerHTML = data.requests.map(req => {
                 // وضعیت ایمیل درخواست‌دهنده
-                const reqEmailStatus = req.requesterEmail 
-                    ? `<div class="requester-email-status">✅ درخواست‌دهنده ایمیل ارتباطی دارد: ${req.requesterEmail}</div>`
+                const reqEmailStatus = req.senderEmail 
+                    ? `<div class="requester-email-status">✅ درخواست‌دهنده ایمیل ارتباطی دارد: ${req.senderEmail}</div>`
                     : `<div class="requester-email-status no-email">❌ درخواست‌دهنده ایمیل ارتباطی ثبت نکرده است (امکان ارسال ایمیل نیست)</div>`;
 
-                // لیست هم‌فرهنگان پیشنهادی
+                // ===== تغییر: نمایش لیست ایمیل‌های هم‌فکران =====
+                const connectionsHtml = req.connections && req.connections.length > 0
+                    ? req.connections.map(email => `
+                        <div class="match-item" style="border-color: #27ae60; background: rgba(39, 174, 96, 0.05);">
+                            <div class="match-info">
+                                <div style="font-family: monospace; font-size: 0.9rem; color: #1e7a1e;">📧 ${email}</div>
+                            </div>
+                            <span class="email-badge email-yes">✅ ایمیل دارد</span>
+                        </div>
+                    `).join('')
+                    : '<div class="empty-state" style="padding:0.5rem;">هیچ هم‌فکری با ایمیل ثبت‌شده یافت نشد</div>';
+
+                // ===== لیست هم‌فرهنگان پیشنهادی با جزئیات بیشتر =====
                 const matchesHtml = req.culturalMatches && req.culturalMatches.length > 0 
                     ? req.culturalMatches.map((match, idx) => `
                         <div class="match-item">
@@ -154,27 +225,51 @@
                             <div class="match-score">${match.similarityScore}% تطابق اولویت</div>
                         </div>
                     `).join('')
-                    : '<div class="empty-state">هم‌فرهنگی با اولویت‌های مشابه یافت نشد</div>';
+                    : '<div class="empty-state" style="padding:0.5rem;">هم‌فرهنگی با اولویت‌های مشابه یافت نشد</div>';
+
+                // ===== نمایش تعداد هم‌فکران =====
+                const connectionsCount = req.connections ? req.connections.length : 0;
+                const connectionsInfo = connectionsCount > 0 
+                    ? `<span class="connections-count">👥 ${connectionsCount} هم‌فکر با ایمیل</span>`
+                    : '';
+
+                // ===== وضعیت درخواست =====
+                const statusClass = req.status === 'approved' ? 'status-approved' : 
+                                   req.status === 'rejected' ? 'status-rejected' : 'status-pending';
+                const statusText = req.status === 'approved' ? '✅ تایید شده' : 
+                                  req.status === 'rejected' ? '❌ رد شده' : '⏳ در انتظار';
 
                 return `
                     <div class="request-card">
-                        <h3>کد کارت: ${req.displayCode}</h3>
+                        <h3>کد کارت: ${req.senderCode}</h3>
                         <p><strong>نوع درخواست:</strong> ${req.type === 'connection' ? 'ارتباط با هم‌فرهنگان' : req.type}</p>
+                        ${req.reason ? `<p><strong>دلیل درخواست:</strong> ${req.reason}</p>` : ''}
                         ${req.description ? `<p><strong>توضیحات:</strong> ${req.description}</p>` : ''}
-                        <div class="meta">تاریخ: ${new Date(req.requestDate).toLocaleString('fa-IR')}</div>
+                        <div class="meta">تاریخ: ${new Date(req.createdAt || req.requestDate).toLocaleString('fa-IR')}</div>
+                        <div style="margin-top:0.5rem;">
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                            ${connectionsInfo}
+                        </div>
                         
                         ${reqEmailStatus}
                         
+                        <!-- ===== لیست هم‌فکران با ایمیل ===== -->
+                        <div class="matches-section" style="border-top-color: #27ae60;">
+                            <div class="matches-title" style="color: #27ae60;">📧 لیست ایمیل‌های هم‌فکران (${connectionsCount} نفر):</div>
+                            ${connectionsHtml}
+                        </div>
+                        
+                        <!-- ===== لیست کامل تطابق‌ها ===== -->
                         <div class="matches-section">
-                            <div class="matches-title">🎯 هم‌فرهنگان پیشنهادی (بر اساس تطابق اولویت‌ها):</div>
+                            <div class="matches-title">🎯 لیست کامل تطابق‌ها (بر اساس اولویت‌ها):</div>
                             ${matchesHtml}
                         </div>
 
                         ${req.status === 'pending' ? `
                         <div class="btn-group">
-                            <button class="btn btn-approve" onclick="handleRequest('${req.fileName}', 'approve')">✓ تایید و برقراری ارتباط</button>
+                            <button class="btn btn-approve" onclick="handleRequest('${req.fileName}', 'approve')">✓ تایید و ارسال لیست</button>
                             <button class="btn btn-reject" onclick="handleRequest('${req.fileName}', 'reject')">✗ رد درخواست</button>
-                        </div>` : `<div class="meta" style="margin-top:1rem; font-weight:bold;">وضعیت: ${req.status === 'approved' ? '✅ تایید شده' : '❌ رد شده'}</div>`}
+                        </div>` : ''}
                     </div>
                 `;
             }).join('');
@@ -193,6 +288,9 @@
     async function handleRequest(fileName, action) {
         if (!confirm(`آیا از ${action === 'approve' ? 'تایید' : 'رد'} این درخواست اطمینان دارید؟`)) return;
 
+        const buttons = event.target.parentElement.querySelectorAll('button');
+        buttons.forEach(btn => btn.disabled = true);
+
         try {
             const response = await fetch('/api/approve-connection', {
                 method: 'POST',
@@ -205,6 +303,7 @@
             loadRequests();
         } catch (error) {
             alert('خطا: ' + error.message);
+            buttons.forEach(btn => btn.disabled = false);
         }
     }
 
