@@ -25,5 +25,17 @@
   "status": "approved",
   "rank": 0,
   "country": "Iran",
-  "statusUpdatedAt": "2026-08-30T20:28:03.641Z"
+  "statusUpdatedAt": "2026-08-30T20:28:03.641Z",
+  "achievements": [
+    {
+      "title": "جلد کتاب",
+      "description": "آموزشی",
+      "category": "cultural",
+      "fileUrl": "",
+      "fileName": "1788166657169-5kujvm.JPG",
+      "status": "pending",
+      "uploadDate": "2026-08-31T08:57:38.525Z",
+      "section": "identity-card"
+    }
+  ]
 }
