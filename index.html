@@ -437,29 +437,29 @@
       container.innerHTML = '<p style="text-align:center; color:red;">خطا در دریافت اطلاعات.</p>';
     }
   }
-
-  function renderList(items) {
+function renderList(items) {
     const container = document.getElementById('achievementsListContainer');
     if (items.length === 0) {
-      container.innerHTML = '<p style="text-align:center; padding:1rem;">هنوز اثری تایید نشده است.</p>';
-      return;
+        container.innerHTML = '<p style="text-align:center; padding:1rem;">هنوز اثری تایید نشده است.</p>';
+        return;
     }
     
     container.innerHTML = items.map(item => `
-      <div class="achievement-item" onclick="openModal('${item.owner}', '${item.fileName}')">
-        <div class="item-info">
-            <h4>${item.title}</h4>
-            <span class="item-meta">${item.category === 'science' ? '📄 مقاله' : item.category === 'art' ? '🎨 هنری' : '🎬 رسانه'}</span>
+        <div class="achievement-item" onclick="openModal('${item.owner}', '${item.fileName}')">
+            <div class="item-info">
+                <h4>${item.title}</h4>
+                <span class="item-meta">${item.category === 'science' ? '📄 مقاله' : item.category === 'art' ? '🎨 هنری' : '🎬 رسانه'}</span>
+            </div>
+            <span style="font-size:1.2rem; color:#d4af37;">👁️</span>
         </div>
-        <span style="font-size:1.2rem; color:#d4af37;">👁️</span>
-      </div>
     `).join('');
-  }
-function openModal(index) {
-    const item = allApproved[index];
+}
+
+function openModal(ownerCode, fileName) {
+    const item = allApproved.find(i => i.owner === ownerCode && i.fileName === fileName);
     if (!item) return;
 
-    document.getElementById('modalTitle').textContent = item.title || 'بدون عنوان';
+    document.getElementById('modalTitle').textContent = item.title;
     
     let descText = item.description || 'بدون توضیحات';
     const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -469,25 +469,14 @@ function openModal(index) {
     
     const mediaDiv = document.getElementById('modalMediaContainer');
     
-    // ========== تغییر اصلی: اولویت با fileUrl ==========
-    // ۱. اگر fileUrl وجود دارد (روش جدید)
+    // ========== فقط این بخش را تغییر دهید ==========
+    // ۱. اولویت با fileUrl (روش جدید)
     if (item.fileUrl) {
-        mediaDiv.innerHTML = `
-            <img src="${item.fileUrl}" class="modal-media" 
-                 style="width:100%; max-height:400px; object-fit:contain; background:#1a1a1a;"
-                 onerror="this.style.display='none'; this.parentElement.innerHTML='<p style=\\'padding:2rem;text-align:center;\\'>❌ لینک تصویر خراب است یا فایل حذف شده است.</p>'"
-                 alt="${item.title || 'تصویر'}"
-            />
-        `;
+        mediaDiv.innerHTML = `<img src="${item.fileUrl}" class="modal-media" style="width:100%; max-height:400px; object-fit:contain; background:#1a1a1a;" onerror="this.style.display='none'; this.parentElement.innerHTML='<p style=\\'padding:2rem;text-align:center;\\'>❌ لینک تصویر خراب است</p>'"/>`;
     } 
-    // ۲. اگر fileData وجود دارد (روش قدیمی - برای سازگاری با عقب)
+    // ۲. پشتیبانی از fileData (روش قدیمی)
     else if (item.fileData) {
-        mediaDiv.innerHTML = `
-            <img src="${item.fileData}" class="modal-media" 
-                 style="width:100%; max-height:400px; object-fit:contain; background:#1a1a1a;"
-                 alt="${item.title || 'تصویر'}"
-            />
-        `;
+        mediaDiv.innerHTML = `<img src="${item.fileData}" class="modal-media" style="width:100%; max-height:400px; object-fit:contain; background:#1a1a1a;"/>`;
     } 
     // ۳. هیچکدام
     else {
@@ -496,12 +485,7 @@ function openModal(index) {
 
     document.getElementById('detailModal').classList.add('active');
 }
-
-  function closeModal(e) {
-    if (e.target.id === 'detailModal') e.target.classList.remove('active');
-  }
-
-  document.addEventListener('DOMContentLoaded', loadAchievements);
+    document.addEventListener('DOMContentLoaded', loadAchievements);
 </script>
 </body>
 </html>
