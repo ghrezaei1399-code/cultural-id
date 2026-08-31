@@ -1,0 +1,19 @@
+{
+  "cardCode": "CIM-6722-6444-84453",
+  "displayCode": "CIM - 6722 - 6444 - سلامت",
+  "requesterEmail": "gh_rezaei2003@yahoo.com",
+  "requesterPriorities": [
+    7,
+    6,
+    5,
+    4,
+    3,
+    2,
+    1
+  ],
+  "type": "connection",
+  "description": "شبکه سازی",
+  "requestDate": "2026-08-31T16:39:48.631Z",
+  "status": "pending",
+  "culturalMatches": []
+}
