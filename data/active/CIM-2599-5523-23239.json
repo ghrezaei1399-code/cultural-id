@@ -25,5 +25,17 @@
   "status": "approved",
   "rank": 0,
   "country": "Iran",
-  "statusUpdatedAt": "2026-08-30T21:40:44.230Z"
+  "statusUpdatedAt": "2026-08-30T21:40:44.230Z",
+  "achievements": [
+    {
+      "title": "توضیحات",
+      "description": "توضیحات کتاب هنر هوشمند نگاری",
+      "category": "media",
+      "fileUrl": "",
+      "fileName": "1788166351253-dpi0hm.JPG",
+      "status": "pending",
+      "uploadDate": "2026-08-31T08:52:32.861Z",
+      "section": "identity-card"
+    }
+  ]
 }
