@@ -15,6 +15,9 @@
             background-position: center;
             background-attachment: fixed;
         }
+        body.dark {
+            background-image: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+        }
 
         .container {
             max-width: 1400px;
@@ -34,6 +37,7 @@
             text-align: center;
             margin-bottom: 0.3rem;
         }
+        body.dark h1 { color: #f0e8e0; }
 
         .subtitle {
             text-align: center;
@@ -44,13 +48,122 @@
             border-bottom: 2px solid rgba(255,255,255,0.1);
             padding-bottom: 1rem;
         }
+        body.dark .subtitle { color: #c8b890; }
 
-        /* --- استایل تب‌های جدید --- */
+        /* ===== دکمه تغییر زبان ===== */
+        .lang-switch {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1rem;
+        }
+        .lang-switch .lang-group {
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.3rem;
+            border-radius: 30px;
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+        .lang-switch .lang-btn {
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            border: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: transparent;
+            color: #888;
+        }
+        .lang-switch .lang-btn.active {
+            background: rgba(212,175,55,0.3);
+            color: #2a1a0a;
+        }
+        body.dark .lang-switch .lang-btn.active {
+            background: rgba(212,175,55,0.2);
+            color: #f9e79f;
+        }
+        .lang-switch .lang-btn:not(.active):hover {
+            background: rgba(212,175,55,0.1);
+            color: #2a1a0a;
+        }
+        body.dark .lang-switch .lang-btn:not(.active):hover {
+            color: #f0e8d0;
+        }
+
+        /* ===== اعلان (Notification) ===== */
+        #notificationBanner {
+            display: none;
+            background: linear-gradient(135deg, #d4af37, #f9e79f);
+            color: #2a1a0a;
+            padding: 0.8rem 1.5rem;
+            border-radius: 16px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            border: 2px solid #8a6d1f;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+            animation: pulse 2s infinite;
+            cursor: pointer;
+        }
+        body.dark #notificationBanner {
+            background: linear-gradient(135deg, #8a6d1f, #d4af37);
+            color: #fff;
+            border-color: #f9e79f;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        #notificationBanner .badge-count {
+            display: inline-block;
+            background: #2a1a0a;
+            color: #f9e79f;
+            border-radius: 50%;
+            padding: 0.05rem 0.6rem;
+            font-size: 0.8rem;
+            margin-right: 0.3rem;
+        }
+        body.dark #notificationBanner .badge-count {
+            background: #f9e79f;
+            color: #2a1a0a;
+        }
+
+        /* ===== ماژول‌های ذخیره آمار ===== */
+        .stats-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1rem 0 1.5rem 0;
+            justify-content: center;
+        }
+        .stats-actions .btn-stats {
+            padding: 0.6rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border: 2px solid rgba(212,175,55,0.3);
+            background: rgba(255,255,255,0.05);
+            color: #2a1a0a;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        body.dark .stats-actions .btn-stats { color: #f0e8d0; }
+        .stats-actions .btn-stats:hover {
+            background: rgba(212,175,55,0.15);
+            transform: translateY(-2px);
+        }
+        .stats-actions .btn-stats .icon { font-size: 1.2rem; margin-left: 0.3rem; }
+
+        /* ===== استایل تب‌ها ===== */
         .tabs-container {
             display: flex;
             justify-content: center;
             gap: 1rem;
             margin-bottom: 2rem;
+            flex-wrap: wrap;
         }
         .tab-btn {
             padding: 0.8rem 2rem;
@@ -63,23 +176,24 @@
             transition: 0.3s;
             font-size: 1rem;
         }
+        body.dark .tab-btn { color: #f0e8d0; }
         .tab-btn.active {
             background: rgba(255, 255, 255, 0.3);
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             transform: scale(1.05);
         }
+        body.dark .tab-btn.active { background: rgba(255, 255, 255, 0.1); }
         .tab-content { display: none; animation: fadeIn 0.5s; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- استایل‌های اصلی شما (حفظ شده) --- */
+        /* ===== استایل کارت‌های آمار ===== */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 1rem;
             margin-bottom: 2rem;
         }
-
         .stat-card {
             background: rgba(255, 255, 255, 0.08);
             border-radius: 20px;
@@ -88,26 +202,26 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             transition: 0.3s;
         }
-
         .stat-card:hover {
             background: rgba(255, 255, 255, 0.15);
             transform: translateY(-3px);
         }
-
+        body.dark .stat-card { background: rgba(0, 0, 0, 0.2); }
+        body.dark .stat-card:hover { background: rgba(0, 0, 0, 0.3); }
         .stat-card .number {
             font-size: 1.8rem;
             font-weight: 800;
             color: #0a0a1a;
             display: block;
         }
-
+        body.dark .stat-card .number { color: #f0e8d0; }
         .stat-card .label {
             font-size: 0.75rem;
             color: #2a2a3a;
             opacity: 0.8;
             margin-top: 0.3rem;
         }
-
+        body.dark .stat-card .label { color: #c8b890; }
         .stat-card.golden { background: rgba(212, 175, 55, 0.15); }
         .stat-card.silver { background: rgba(192, 192, 192, 0.2); }
         .stat-card.bronze { background: rgba(205, 127, 50, 0.15); }
@@ -118,58 +232,53 @@
             color: #0a0a1a;
             margin: 1.5rem 0 0.8rem 0;
         }
+        body.dark .section-title { color: #f0e8d0; }
 
-        .country-selector {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
+        /* ===== جستجو ===== */
+        .search-box {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
         }
-
-        .country-dropdown {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.15);
+        .search-box input {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.6rem 1rem;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
             color: #0a0a1a;
             font-size: 0.9rem;
-            font-weight: 600;
+            outline: none;
+        }
+        body.dark .search-box input { color: #f0e8d0; background: rgba(0,0,0,0.2); }
+        .search-box input::placeholder { color: #888; }
+        .search-box .btn-search {
+            padding: 0.6rem 1.5rem;
+            border-radius: 30px;
+            border: none;
+            background: rgba(212,175,55,0.2);
+            color: #8a6d1f;
+            font-weight: 700;
             cursor: pointer;
-            margin-bottom: 1rem;
+            transition: 0.3s;
         }
+        body.dark .search-box .btn-search { color: #f9e79f; }
+        .search-box .btn-search:hover { background: rgba(212,175,55,0.3); }
 
-        .country-users {
-            display: none;
-            margin-top: 1rem;
-            padding: 1rem;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-        }
-
-        .country-users.active { display: block; }
-
-        .country-user-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 0.85rem;
-        }
-
+        /* ===== جدول ===== */
         .table-container {
             overflow-x: auto;
             border-radius: 16px;
             background: rgba(255, 255, 255, 0.05);
             padding: 0.5rem;
         }
-
         .admin-table {
             width: 100%;
             border-collapse: collapse;
             min-width: 900px;
         }
-
         .admin-table th {
             background: rgba(255, 255, 255, 0.08);
             padding: 0.8rem 0.5rem;
@@ -178,7 +287,7 @@
             font-weight: 700;
             color: #0a0a1a;
         }
-
+        body.dark .admin-table th { color: #f0e8d0; }
         .admin-table td {
             padding: 0.7rem 0.5rem;
             text-align: center;
@@ -186,9 +295,39 @@
             color: #1a1a2a;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
-
+        body.dark .admin-table td { color: #e8dcc0; }
         .admin-table tr:hover td { background: rgba(255, 255, 255, 0.08); }
+        .admin-table .empty-row td { text-align: center; padding: 2rem; color: #888; }
 
+        /* ===== صفحه‌بندی ===== */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .pagination button {
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            color: #0a0a1a;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        body.dark .pagination button { color: #f0e8d0; border-color: rgba(212, 175, 55, 0.2); }
+        .pagination button:hover { background: rgba(212, 175, 55, 0.1); }
+        .pagination button.active {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: #d4af37;
+        }
+        body.dark .pagination button.active { background: rgba(212, 175, 55, 0.15); border-color: #f9e79f; }
+        .pagination button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        /* ===== سایر استایل‌ها ===== */
         .badge {
             display: inline-block;
             padding: 0.2rem 0.8rem;
@@ -196,7 +335,6 @@
             font-size: 0.7rem;
             font-weight: 600;
         }
-
         .badge-golden { background: rgba(212, 175, 55, 0.2); color: #8a7a0a; }
         .badge-silver { background: rgba(192, 192, 192, 0.25); color: #4a4a5a; }
         .badge-bronze { background: rgba(205, 127, 50, 0.2); color: #6a4a0a; }
@@ -214,8 +352,8 @@
             cursor: pointer;
             margin: 0.1rem;
         }
-
         .btn-view { background: rgba(50, 150, 200, 0.2); color: #0a4a6a; }
+        body.dark .btn-view { color: #85c1e9; }
 
         .modal-overlay {
             display: none;
@@ -228,9 +366,7 @@
             align-items: center;
             padding: 1rem;
         }
-
         .modal-overlay.active { display: flex; }
-
         .modal {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
@@ -241,7 +377,7 @@
             max-height: 90vh;
             overflow-y: auto;
         }
-
+        body.dark .modal { background: rgba(30, 30, 50, 0.95); }
         .modal-header {
             display: flex;
             justify-content: space-between;
@@ -250,9 +386,9 @@
             border-bottom: 2px solid rgba(0, 0, 0, 0.1);
             padding-bottom: 1rem;
         }
-
+        body.dark .modal-header { border-bottom-color: rgba(255,255,255,0.1); }
         .modal-header h2 { font-size: 1.3rem; color: #0a0a1a; }
-
+        body.dark .modal-header h2 { color: #f0e8d0; }
         .modal-close {
             background: rgba(200, 50, 50, 0.1);
             border: none;
@@ -262,6 +398,7 @@
             cursor: pointer;
             color: #6a1a1a;
         }
+        body.dark .modal-close { color: #f1948a; }
 
         .modal-body .info-row {
             display: grid;
@@ -270,17 +407,18 @@
             padding: 0.6rem 0;
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
-
+        body.dark .modal-body .info-row { border-bottom-color: rgba(255,255,255,0.05); }
         .modal-body .info-label {
             font-weight: 700;
             color: #2a2a3a;
             font-size: 0.85rem;
         }
-
+        body.dark .modal-body .info-label { color: #c8b890; }
         .modal-body .info-value {
             color: #0a0a1a;
             font-size: 0.9rem;
         }
+        body.dark .modal-body .info-value { color: #e8dcc0; }
 
         .modal-actions {
             display: flex;
@@ -289,7 +427,6 @@
             justify-content: center;
             flex-wrap: wrap;
         }
-
         .btn-modal {
             padding: 0.7rem 1.5rem;
             border-radius: 30px;
@@ -298,9 +435,10 @@
             border: none;
             cursor: pointer;
         }
-
         .btn-modal.approve { background: rgba(50, 200, 50, 0.2); color: #0a6a0a; }
+        body.dark .btn-modal.approve { color: #82e0aa; }
         .btn-modal.reject { background: rgba(200, 50, 50, 0.2); color: #6a1a1a; }
+        body.dark .btn-modal.reject { color: #f1948a; }
 
         .admin-actions {
             display: flex;
@@ -309,7 +447,6 @@
             flex-wrap: wrap;
             margin-top: 2rem;
         }
-
         .btn {
             padding: 0.6rem 1.5rem;
             border-radius: 40px;
@@ -321,6 +458,8 @@
             background: rgba(255, 255, 255, 0.15);
             color: #0a0a1a;
         }
+        body.dark .btn { color: #f0e8d0; }
+        .btn:hover { background: rgba(255, 255, 255, 0.25); }
 
         .note {
             text-align: center;
@@ -331,6 +470,7 @@
             border-top: 1px solid rgba(255,255,255,0.1);
             padding-top: 1rem;
         }
+        body.dark .note { color: #c8b890; }
 
         .highlight-change {
             background-color: rgba(255, 200, 0, 0.15) !important;
@@ -346,8 +486,8 @@
             font-size: 0.75rem;
             margin-right: 5px;
         }
+        body.dark .highlight-change .info-label::after { color: #f9e79f; }
 
-        /* --- استایل‌های اختصاصی بخش دستاوردها --- */
         .achievements-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -361,7 +501,9 @@
             border: 1px solid rgba(255, 255, 255, 0.15);
             transition: 0.3s;
         }
+        body.dark .ach-card { background: rgba(0, 0, 0, 0.2); }
         .ach-card:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.15); }
+        body.dark .ach-card:hover { background: rgba(255, 255, 255, 0.05); }
         .ach-media {
             height: 200px;
             background: #eee;
@@ -370,108 +512,185 @@
             justify-content: center;
             overflow: hidden;
         }
+        body.dark .ach-media { background: #1a1a1a; }
         .ach-media img, .ach-media video { width: 100%; height: 100%; object-fit: cover; }
         .ach-content { padding: 1.2rem; }
         .ach-title { font-weight: 800; color: #0a0a1a; margin-bottom: 0.5rem; }
+        body.dark .ach-title { color: #f0e8d0; }
         .ach-desc { font-size: 0.85rem; color: #2a2a3a; line-height: 1.6; margin-bottom: 1rem; }
+        body.dark .ach-desc { color: #c8b890; }
         .ach-meta { font-size: 0.75rem; opacity: 0.7; margin-bottom: 1rem; }
-        
+        .ach-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+        .theme-toggle {
+            position: fixed;
+            bottom: 1rem;
+            left: 1rem;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: 0.3s;
+            color: #0a0a1a;
+            z-index: 100;
+        }
+        body.dark .theme-toggle { color: #f9e79f; background: rgba(0,0,0,0.3); }
+        .theme-toggle:hover { transform: scale(1.1); }
+
         @media (max-width: 768px) {
             .modal-body .info-row { grid-template-columns: 1fr; }
-            .tabs-container { flex-direction: column; }
+            .tabs-container { flex-direction: column; align-items: center; }
+            .tab-btn { width: 100%; max-width: 300px; }
+            .stats-actions { flex-direction: column; align-items: center; }
+            .stats-actions .btn-stats { width: 100%; max-width: 300px; text-align: center; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>️ داشبورد ادمین</h1>
-        <div class="subtitle">مدیریت کارت‌های جهانی هویت هوشمند فرهنگی • کاملاً ناشناس</div>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
 
-        <!-- تب‌های ناوبری -->
-        <div class="tabs-container">
-            <button class="tab-btn active" onclick="switchTab('users')">👥 مدیریت کاربران</button>
-            <button class="tab-btn" onclick="switchTab('achievements')">🏆 مدیریت دستاوردها</button>
+    <div class="container">
+        <!-- ===== دکمه تغییر زبان ===== -->
+        <div class="lang-switch">
+            <div class="lang-group">
+                <button onclick="setLanguage('fa')" id="langFa" class="lang-btn active">🇮🇷 فارسی</button>
+                <button onclick="setLanguage('en')" id="langEn" class="lang-btn">🇬🇧 English</button>
+            </div>
         </div>
 
-        <!-- محتوای تب کاربران (کد اصلی شما) -->
+        <h1 id="pageTitle">🛡️ داشبورد ادمین</h1>
+        <div class="subtitle" id="pageSubtitle">مدیریت کارت‌های جهانی هویت هوشمند فرهنگی • کاملاً ناشناس</div>
+
+        <!-- ===== اعلان (Notification) ===== -->
+        <div id="notificationBanner" onclick="window.location.href='connections-fa.html'">
+            🔔 <span class="badge-count" id="pendingRequestsCount">0</span>
+            <span id="notificationText">درخواست جدید نیاز به بررسی دارد</span>
+        </div>
+
+        <!-- ===== ماژول‌های ذخیره آمار ===== -->
+        <div class="stats-actions">
+            <button class="btn-stats" onclick="saveFullStats()">
+                <span class="icon">📊</span> <span id="saveFullStatsText">ذخیره آمار کلی</span>
+            </button>
+            <button class="btn-stats" onclick="saveDetailedStats()">
+                <span class="icon">📋</span> <span id="saveDetailedStatsText">ذخیره آمار تفکیکی</span>
+            </button>
+            <span id="statsSaveResult" style="font-size:0.8rem;color:#888;display:flex;align-items:center;"></span>
+        </div>
+
+        <!-- ===== تب‌های ناوبری ===== -->
+        <div class="tabs-container">
+            <button class="tab-btn active" onclick="switchTab('users')" id="tabUsersBtn">👥 <span id="tabUsersText">مدیریت کاربران</span></button>
+            <button class="tab-btn" onclick="switchTab('achievements')" id="tabAchievementsBtn">🏆 <span id="tabAchievementsText">مدیریت دستاوردها</span></button>
+            <button class="tab-btn" onclick="switchTab('requests')" id="tabRequestsBtn">🤝 <span id="tabRequestsText">درخواست‌های ارتباط</span></button>
+        </div>
+
+        <!-- ===== تب کاربران ===== -->
         <div id="tab-users" class="tab-content active">
             <div class="stats-grid">
                 <div class="stat-card">
                     <span class="number" id="totalUsers">۰</span>
-                    <div class="label">کل کاربران فعال</div>
+                    <div class="label" id="labelTotalUsers">کل کاربران فعال</div>
                 </div>
                 <div class="stat-card golden">
                     <span class="number" id="goldenUsers"></span>
-                    <div class="label">🌟 طلایی (۱-۲۰۰)</div>
+                    <div class="label" id="labelGoldenUsers">🌟 طلایی (۱-۲۰۰)</div>
                 </div>
                 <div class="stat-card silver">
                     <span class="number" id="silverUsers">۰</span>
-                    <div class="label"> نقره‌ای (۲۰۱-۱۰۰۰)</div>
+                    <div class="label" id="labelSilverUsers">🥈 نقره‌ای (۲۰۱-۱۰۰۰)</div>
                 </div>
                 <div class="stat-card bronze">
                     <span class="number" id="bronzeUsers">۰</span>
-                    <div class="label"> برنزی (۱۰۰۱-۱۰۰۰۰)</div>
+                    <div class="label" id="labelBronzeUsers">🥉 برنزی (۱۰۰۱-۱۰۰۰۰)</div>
                 </div>
             </div>
 
-            <div class="section-title"> آمار بر اساس کشور (تشخیص از IP)</div>
+            <div class="section-title" id="sectionCountryTitle">🌍 آمار بر اساس کشور (تشخیص از IP)</div>
             <div class="country-selector">
                 <select class="country-dropdown" id="countryDropdown" onchange="showCountryUsers(this.value)">
-                    <option value="">-- انتخاب کشور --</option>
+                    <option value="">-- <span id="selectCountryText">انتخاب کشور</span> --</option>
                 </select>
                 <div id="countryUsersList" class="country-users"></div>
             </div>
 
-            <div class="section-title"> کاربران ثبت‌نام شده (فقط اطلاعات فرهنگی)</div>
+            <div class="section-title" id="sectionUsersTitle">👥 کاربران ثبت‌نام شده (فقط اطلاعات فرهنگی)</div>
+            
+            <!-- ===== جستجو ===== -->
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 جستجوی کد کارت..." oninput="applySearch()" />
+                <button class="btn-search" onclick="applySearch()" id="searchBtnText">🔍 جستجو</button>
+                <button class="btn-search" style="background:rgba(200,50,50,0.1);color:#6a1a1a;" onclick="clearSearch()" id="clearSearchText">✕ پاک کردن</button>
+            </div>
+
             <div class="table-container">
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>رتبه</th>
-                            <th>کد کارت</th>
-                            <th>کد اختیاری</th>
-                            <th>کشور</th>
-                            <th>ارزش‌ها</th>
-                            <th>تاریخ</th>
-                            <th>نشان</th>
-                            <th>وضعیت</th>
-                            <th>عملیات</th>
+                            <th id="thRank">رتبه</th>
+                            <th id="thCardCode">کد کارت</th>
+                            <th id="thOptionalCode">کد اختیاری</th>
+                            <th id="thCountry">کشور</th>
+                            <th id="thValues">ارزش‌ها</th>
+                            <th id="thDate">تاریخ</th>
+                            <th id="thBadge">نشان</th>
+                            <th id="thStatus">وضعیت</th>
+                            <th id="thActions">عملیات</th>
                         </tr>
                     </thead>
                     <tbody id="usersTableBody">
-                        <tr><td colspan="9" style="text-align:center; padding: 2rem;">در حال بارگذاری...</td></tr>
+                        <tr><td colspan="9" style="text-align:center; padding: 2rem;" id="loadingText">در حال بارگذاری...</td></tr>
                     </tbody>
                 </table>
             </div>
+
+            <!-- ===== صفحه‌بندی ===== -->
+            <div id="pagination" class="pagination"></div>
         </div>
 
-        <!-- محتوای تب دستاوردها (جدید) -->
+        <!-- ===== تب دستاوردها ===== -->
         <div id="tab-achievements" class="tab-content">
             <div class="stats-grid">
                 <div class="stat-card">
                     <span class="number" id="totalAch">۰</span>
-                    <div class="label">کل دستاوردها</div>
+                    <div class="label" id="labelTotalAch">کل دستاوردها</div>
                 </div>
                 <div class="stat-card" style="background: rgba(255, 200, 50, 0.15);">
                     <span class="number" id="pendingAch">۰</span>
-                    <div class="label">⏳ در انتظار بررسی</div>
+                    <div class="label" id="labelPendingAch">⏳ در انتظار بررسی</div>
+                </div>
+                <div class="stat-card" style="background: rgba(50, 200, 50, 0.1);">
+                    <span class="number" id="approvedAch">۰</span>
+                    <div class="label" id="labelApprovedAch">✅ تایید شده</div>
                 </div>
             </div>
-            <div class="section-title"> گالری دستاوردهای ارسالی</div>
-            <div id="achievementsGrid" class="achievements-grid">
-                <!-- کارت‌ها اینجا ساخته می‌شوند -->
+            <div class="section-title" id="sectionAchievementsTitle">🏆 گالری دستاوردهای ارسالی</div>
+            <div id="achievementsGrid" class="achievements-grid"></div>
+        </div>
+
+        <!-- ===== تب درخواست‌های ارتباط ===== -->
+        <div id="tab-requests" class="tab-content">
+            <div style="text-align:center;padding:2rem;">
+                <p style="font-size:1.2rem;color:#8a6d1f;font-weight:700;" id="requestsRedirectText">📋 برای مدیریت درخواست‌های ارتباط، به صفحه اختصاصی بروید</p>
+                <a href="connections-fa.html" class="btn" style="margin-top:1rem;display:inline-block;" id="requestsRedirectBtn">🤝 رفتن به مدیریت درخواست‌ها</a>
             </div>
         </div>
-               
-       <div class="admin-actions">
-           <a href="connections-fa.html" class="btn">🤝 مدیریت درخواست‌های ارتباط</a>
-           <a href="index.html" class="btn">↩ بازگشت به صفحه اصلی</a>
-       </div>
-        <div class="note">
+
+        <!-- ===== دکمه‌های پایین ===== -->
+        <div class="admin-actions">
+            <a href="connections-fa.html" class="btn" id="adminConnectionsBtn">🤝 مدیریت درخواست‌های ارتباط</a>
+            <a href="index.html" class="btn" id="adminBackBtn">↩ بازگشت به صفحه اصلی</a>
+        </div>
+
+        <div class="note" id="adminNote">
             🔒 کاملاً ناشناس • بدون اطلاعات هویتی • فقط اطلاعات فرهنگی
         </div>
     </div>
 
+    <!-- ===== مودال ===== -->
     <div class="modal-overlay" id="userModal">
         <div class="modal">
             <div class="modal-header">
@@ -482,321 +701,683 @@
             <div class="modal-actions" id="modalActions"></div>
         </div>
     </div>
-<script>
-    let allUsers = [];
-    let allCountries = [];
-    let allAchievements = []; 
 
-    async function loadUsers() {
-        try {
-            const response = await fetch('/api/get-users');
-            if (!response.ok) throw new Error('خطا در دریافت اطلاعات');
+    <script>
+        // ===== متغیرهای سراسری =====
+        let allUsers = [];
+        let allCountries = [];
+        let allAchievements = [];
+        let currentPage = 1;
+        const pageSize = 15;
+        let searchQuery = '';
+        let currentLang = 'fa';
+
+        // ===== دیکشنری ترجمه =====
+        const translations = {
+            fa: {
+                pageTitle: '🛡️ داشبورد ادمین',
+                pageSubtitle: 'مدیریت کارت‌های جهانی هویت هوشمند فرهنگی • کاملاً ناشناس',
+                notificationText: 'درخواست جدید نیاز به بررسی دارد',
+                tabUsers: 'مدیریت کاربران',
+                tabAchievements: 'مدیریت دستاوردها',
+                tabRequests: 'درخواست‌های ارتباط',
+                labelTotalUsers: 'کل کاربران فعال',
+                labelGoldenUsers: '🌟 طلایی (۱-۲۰۰)',
+                labelSilverUsers: '🥈 نقره‌ای (۲۰۱-۱۰۰۰)',
+                labelBronzeUsers: '🥉 برنزی (۱۰۰۱-۱۰۰۰۰)',
+                sectionCountryTitle: '🌍 آمار بر اساس کشور (تشخیص از IP)',
+                selectCountryText: 'انتخاب کشور',
+                sectionUsersTitle: '👥 کاربران ثبت‌نام شده (فقط اطلاعات فرهنگی)',
+                searchPlaceholder: '🔍 جستجوی کد کارت...',
+                searchBtn: '🔍 جستجو',
+                clearSearch: '✕ پاک کردن',
+                thRank: 'رتبه',
+                thCardCode: 'کد کارت',
+                thOptionalCode: 'کد اختیاری',
+                thCountry: 'کشور',
+                thValues: 'ارزش‌ها',
+                thDate: 'تاریخ',
+                thBadge: 'نشان',
+                thStatus: 'وضعیت',
+                thActions: 'عملیات',
+                loadingText: 'در حال بارگذاری...',
+                labelTotalAch: 'کل دستاوردها',
+                labelPendingAch: '⏳ در انتظار بررسی',
+                labelApprovedAch: '✅ تایید شده',
+                sectionAchievementsTitle: '🏆 گالری دستاوردهای ارسالی',
+                requestsRedirectText: '📋 برای مدیریت درخواست‌های ارتباط، به صفحه اختصاصی بروید',
+                requestsRedirectBtn: '🤝 رفتن به مدیریت درخواست‌ها',
+                adminConnectionsBtn: '🤝 مدیریت درخواست‌های ارتباط',
+                adminBackBtn: '↩ بازگشت به صفحه اصلی',
+                adminNote: '🔒 کاملاً ناشناس • بدون اطلاعات هویتی • فقط اطلاعات فرهنگی',
+                saveFullStatsText: '📊 ذخیره آمار کلی',
+                saveDetailedStatsText: '📋 ذخیره آمار تفکیکی',
+                statsSaved: '✅ آمار ذخیره شد',
+                statsError: '❌ خطا در ذخیره آمار',
+                noAchievements: 'هنوز دستاوردی ثبت نشده است.',
+                noUsers: 'کاربری یافت نشد',
+                viewUser: '👁️ مشاهده',
+                modalTitle: 'جزئیات فرهنگی: ',
+                statusPending: 'در انتظار',
+                statusApproved: 'تأیید شده',
+                statusRejected: 'رد شده',
+                statusEdit: '⚠️ در انتظار تایید ویرایش',
+                approveBtn: '✓ تأیید',
+                rejectBtn: '✗ رد',
+                approveEditBtn: '✓ تأیید ویرایش',
+                rejectEditBtn: '✗ رد ویرایش (بازگشت به وضعیت قبلی)',
+                noEmail: 'ثبت نشده',
+                allowYes: '✅ بله',
+                allowNo: '❌ خیر',
+                badgeGolden: '🌟 طلایی',
+                badgeSilver: '🥈 نقره‌ای',
+                badgeBronze: '🥉 برنزی',
+                achApproved: 'تایید شده',
+                achRejected: 'رد شده',
+                achPending: 'در انتظار',
+                achApproveBtn: '✅ تایید و نمایش',
+                achRejectBtn: '❌ رد کردن',
+                achSender: 'ارسال کننده: ',
+                rankLabel: 'رتبه: '
+            },
+            en: {
+                pageTitle: '🛡️ Admin Dashboard',
+                pageSubtitle: 'Global Smart Cultural Identity Card Management • Completely Anonymous',
+                notificationText: 'new request(s) need review',
+                tabUsers: 'User Management',
+                tabAchievements: 'Achievement Management',
+                tabRequests: 'Connection Requests',
+                labelTotalUsers: 'Total Active Users',
+                labelGoldenUsers: '🌟 Golden (1-200)',
+                labelSilverUsers: '🥈 Silver (201-1000)',
+                labelBronzeUsers: '🥉 Bronze (1001-10000)',
+                sectionCountryTitle: '🌍 Statistics by Country (Detected from IP)',
+                selectCountryText: 'Select Country',
+                sectionUsersTitle: '👥 Registered Users (Cultural Info Only)',
+                searchPlaceholder: '🔍 Search by card code...',
+                searchBtn: '🔍 Search',
+                clearSearch: '✕ Clear',
+                thRank: 'Rank',
+                thCardCode: 'Card Code',
+                thOptionalCode: 'Optional Code',
+                thCountry: 'Country',
+                thValues: 'Values',
+                thDate: 'Date',
+                thBadge: 'Badge',
+                thStatus: 'Status',
+                thActions: 'Actions',
+                loadingText: 'Loading...',
+                labelTotalAch: 'Total Achievements',
+                labelPendingAch: '⏳ Pending Review',
+                labelApprovedAch: '✅ Approved',
+                sectionAchievementsTitle: '🏆 Achievements Gallery',
+                requestsRedirectText: '📋 To manage connection requests, go to the dedicated page',
+                requestsRedirectBtn: '🤝 Go to Connection Requests',
+                adminConnectionsBtn: '🤝 Manage Connection Requests',
+                adminBackBtn: '↩ Back to Home',
+                adminNote: '🔒 Completely Anonymous • No Personal Info • Cultural Data Only',
+                saveFullStatsText: '📊 Save Full Statistics',
+                saveDetailedStatsText: '📋 Save Detailed Statistics',
+                statsSaved: '✅ Statistics saved',
+                statsError: '❌ Error saving statistics',
+                noAchievements: 'No achievements registered yet.',
+                noUsers: 'No users found',
+                viewUser: '👁️ View',
+                modalTitle: 'Cultural Details: ',
+                statusPending: 'Pending',
+                statusApproved: 'Approved',
+                statusRejected: 'Rejected',
+                statusEdit: '⚠️ Pending Edit Approval',
+                approveBtn: '✓ Approve',
+                rejectBtn: '✗ Reject',
+                approveEditBtn: '✓ Approve Edit',
+                rejectEditBtn: '✗ Reject Edit (Revert to previous)',
+                noEmail: 'Not registered',
+                allowYes: '✅ Yes',
+                allowNo: '❌ No',
+                badgeGolden: '🌟 Golden',
+                badgeSilver: '🥈 Silver',
+                badgeBronze: '🥉 Bronze',
+                achApproved: 'Approved',
+                achRejected: 'Rejected',
+                achPending: 'Pending',
+                achApproveBtn: '✅ Approve & Show',
+                achRejectBtn: '❌ Reject',
+                achSender: 'Submitted by: ',
+                rankLabel: 'Rank: '
+            }
+        };
+
+        // ===== ترجمه =====
+        function t(key) {
+            return translations[currentLang] && translations[currentLang][key] ? translations[currentLang][key] : key;
+        }
+
+        // ===== تغییر زبان =====
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.getElementById('langFa').className = 'lang-btn' + (lang === 'fa' ? ' active' : '');
+            document.getElementById('langEn').className = 'lang-btn' + (lang === 'en' ? ' active' : '');
             
-            const data = await response.json();
-            allUsers = data.users;
-            allCountries = data.countries;
-
-            document.getElementById('totalUsers').textContent = data.stats.total.toLocaleString('fa-IR');
-            document.getElementById('goldenUsers').textContent = data.stats.golden.toLocaleString('fa-IR');
-            document.getElementById('silverUsers').textContent = data.stats.silver.toLocaleString('fa-IR');
-            document.getElementById('bronzeUsers').textContent = data.stats.bronze.toLocaleString('fa-IR');
-
-            const dropdown = document.getElementById('countryDropdown');
-            dropdown.innerHTML = '<option value="">-- انتخاب کشور --</option>';
-            allCountries.forEach(c => {
-                const opt = document.createElement('option');
-                opt.value = c.country;
-                opt.textContent = `${c.country} (${c.count.toLocaleString('fa-IR')} نفر)`;
-                dropdown.appendChild(opt);
-            });
-
+            // ترجمه عناصر صفحه
+            document.getElementById('pageTitle').textContent = t('pageTitle');
+            document.getElementById('pageSubtitle').textContent = t('pageSubtitle');
+            document.getElementById('tabUsersText').textContent = t('tabUsers');
+            document.getElementById('tabAchievementsText').textContent = t('tabAchievements');
+            document.getElementById('tabRequestsText').textContent = t('tabRequests');
+            document.getElementById('labelTotalUsers').textContent = t('labelTotalUsers');
+            document.getElementById('labelGoldenUsers').textContent = t('labelGoldenUsers');
+            document.getElementById('labelSilverUsers').textContent = t('labelSilverUsers');
+            document.getElementById('labelBronzeUsers').textContent = t('labelBronzeUsers');
+            document.getElementById('sectionCountryTitle').textContent = t('sectionCountryTitle');
+            document.getElementById('selectCountryText').textContent = t('selectCountryText');
+            document.getElementById('sectionUsersTitle').textContent = t('sectionUsersTitle');
+            document.getElementById('searchInput').placeholder = t('searchPlaceholder');
+            document.getElementById('searchBtnText').textContent = t('searchBtn');
+            document.getElementById('clearSearchText').textContent = t('clearSearch');
+            document.getElementById('thRank').textContent = t('thRank');
+            document.getElementById('thCardCode').textContent = t('thCardCode');
+            document.getElementById('thOptionalCode').textContent = t('thOptionalCode');
+            document.getElementById('thCountry').textContent = t('thCountry');
+            document.getElementById('thValues').textContent = t('thValues');
+            document.getElementById('thDate').textContent = t('thDate');
+            document.getElementById('thBadge').textContent = t('thBadge');
+            document.getElementById('thStatus').textContent = t('thStatus');
+            document.getElementById('thActions').textContent = t('thActions');
+            document.getElementById('labelTotalAch').textContent = t('labelTotalAch');
+            document.getElementById('labelPendingAch').textContent = t('labelPendingAch');
+            document.getElementById('labelApprovedAch').textContent = t('labelApprovedAch');
+            document.getElementById('sectionAchievementsTitle').textContent = t('sectionAchievementsTitle');
+            document.getElementById('requestsRedirectText').textContent = t('requestsRedirectText');
+            document.getElementById('requestsRedirectBtn').textContent = t('requestsRedirectBtn');
+            document.getElementById('adminConnectionsBtn').textContent = t('adminConnectionsBtn');
+            document.getElementById('adminBackBtn').textContent = t('adminBackBtn');
+            document.getElementById('adminNote').textContent = t('adminNote');
+            document.getElementById('saveFullStatsText').textContent = t('saveFullStatsText');
+            document.getElementById('saveDetailedStatsText').textContent = t('saveDetailedStatsText');
+            
+            // رندر مجدد
             renderTable(allUsers);
-            prepareAchievements(); 
-
-        } catch (error) {
-            console.error('Error:', error);
-            document.getElementById('usersTableBody').innerHTML = 
-                `<tr><td colspan="9" style="text-align:center; color:red; padding: 2rem;">خطا: ${error.message}</td></tr>`;
-        }
-    }
-
-    function renderTable(users) {
-        const tbody = document.getElementById('usersTableBody');
-        const sortedUsers = [...users].sort((a, b) => {
-            const statusOrder = { 'pending_edit': 0, 'pending': 1, 'approved': 2, 'rejected': 3 };
-            return (statusOrder[a.status] || 4) - (statusOrder[b.status] || 4);
-        });
-
-        if (sortedUsers.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 2rem;">کاربری یافت نشد</td></tr>';
-            return;
+            renderAchievements();
+            updateNotification();
         }
 
-        tbody.innerHTML = sortedUsers.map(user => {
-            const badgeClass = `badge-${user.badge}`;
-            const badgeText = user.badge === 'golden' ? '🌟 طلایی' : 
-                             user.badge === 'silver' ? ' نقره‌ای' : ' برنزی';
-            
-            const status = user.status || 'pending';
-            let statusClass = 'badge-pending';
-            let statusText = 'در انتظار';
-
-            if (status === 'approved') {
-                statusClass = 'badge-approved';
-                statusText = 'تأیید شده';
-            } else if (status === 'rejected') {
-                statusClass = 'badge-rejected';
-                statusText = 'رد شده';
-            } else if (status === 'pending_edit') {
-                statusClass = 'badge-edit';
-                statusText = '⚠️ در انتظار تایید ویرایش';
-            }
-
-            const valuesText = user.values ? user.values.slice(0, 2).join('، ') + (user.values.length > 2 ? '...' : '') : '---';
-            const date = user.registrationDate ? new Date(user.registrationDate).toLocaleDateString('fa-IR') : '---';
-            const timeSince = user.lastEditRequest ? getTimeSince(user.lastEditRequest) : '';
-
-            return `
-                <tr>
-                    <td>${user.rank}</td>
-                    <td style="font-family: monospace; font-size: 0.75rem;">${user.cardCode || '---'}</td>
-                    <td style="font-family: monospace; font-size: 0.75rem; color: #d4af37; font-weight:bold;">${user.optionalCode || '---'}</td>
-                    <td>${user.country || '---'}</td>
-                    <td>${valuesText}</td>
-                    <td>${date}</td>
-                    <td><span class="badge ${badgeClass}">${badgeText}</span></td>
-                    <td><span class="badge ${statusClass}">${statusText}</span>${timeSince}</td>
-                    <td>
-                        <button class="btn-small btn-view" onclick="viewUser('${user.cardCode}')">👁️ مشاهده</button>
-                    </td>
-                </tr>
-            `;
-        }).join('');
-    }
-
-    function getTimeSince(dateString) {
-        const now = new Date();
-        const date = new Date(dateString);
-        const diffMs = now - date;
-        const diffMins = Math.floor(diffMs / 60000);
-        const diffHours = Math.floor(diffMins / 60);
-        const diffDays = Math.floor(diffHours / 24);
-
-        if (diffDays > 0) return `<br><small style="color: #888;">${diffDays} روز پیش</small>`;
-        if (diffHours > 0) return `<br><small style="color: #888;">${diffHours} ساعت پیش</small>`;
-        if (diffMins > 0) return `<br><small style="color: #888;">${diffMins} دقیقه پیش</small>`;
-        return '';
-    }
-
-    function showCountryUsers(country) {
-        const container = document.getElementById('countryUsersList');
-        if (!country) {
-            container.classList.remove('active');
-            return;
+        // ===== تم (Theme) =====
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            const btn = document.getElementById('themeToggle');
+            btn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+            localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+        }
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark');
+            document.getElementById('themeToggle').textContent = '☀️';
         }
 
-        const countryData = allCountries.find(c => c.country === country);
-        if (!countryData) return;
-
-        container.innerHTML = `
-            <div style="font-weight: 700; margin-bottom: 0.5rem; color: #0a0a1a;">
-                ${countryData.country} - ${countryData.count.toLocaleString('fa-IR')} عضو:
-            </div>
-            ${countryData.users.map(u => `
-                <div class="country-user-item">
-                    <span style="font-family: monospace; font-size: 0.8rem;">${u.cardCode}</span>
-                    <span>رتبه: ${u.rank}</span>
-                    <span class="badge badge-${u.badge}">${u.badge === 'golden' ? '🌟' : u.badge === 'silver' ? '🥈' : '🥉'}</span>
-                </div>
-            `).join('')}
-        `;
-        container.classList.add('active');
-    }
-
-    function viewUser(cardCode) {
-        const user = allUsers.find(u => u.cardCode === cardCode);
-        if (!user) return;
-
-        const status = user.status || 'pending';
-        let statusText = 'در انتظار';
-        if (status === 'approved') statusText = 'تأیید شده';
-        else if (status === 'rejected') statusText = 'رد شده';
-        else if (status === 'pending_edit') statusText = '️ در انتظار تایید ویرایش';
-
-        document.getElementById('modalTitle').textContent = `جزئیات فرهنگی: ${user.cardCode}`;
-        
-        const changed = user.pendingChanges || [];
-        const hl = (field) => changed.includes(field) ? 'highlight-change' : '';
-
-        const body = document.getElementById('modalBody');
-        body.innerHTML = `
-            <div class="info-row ${hl('cardCode')}"><div class="info-label">کد کارت:</div><div class="info-value" style="font-family: monospace;">${user.cardCode}</div></div>
-            <div class="info-row ${hl('optionalCode')}"><div class="info-label">کد اختیاری:</div><div class="info-value" style="font-family: monospace; color:#d4af37;">${user.optionalCode || 'ثبت نشده'}</div></div>
-            <div class="info-row"><div class="info-label">رتبه ثبت‌نام:</div><div class="info-value">${user.rank}</div></div>
-            <div class="info-row"><div class="info-label">کشور (از IP):</div><div class="info-value">${user.country || '---'}</div></div>
-            <div class="info-row"><div class="info-label">تاریخ ثبت‌نام:</div><div class="info-value">${user.registrationDate ? new Date(user.registrationDate).toLocaleDateString('fa-IR') : '---'}</div></div>
-            ${user.lastEditRequest ? `<div class="info-row"><div class="info-label">تاریخ آخرین درخواست ویرایش:</div><div class="info-value">${new Date(user.lastEditRequest).toLocaleString('fa-IR')}</div></div>` : ''}
-            <div class="info-row"><div class="info-label">نشان:</div><div class="info-value"><span class="badge badge-${user.badge}">${user.badge === 'golden' ? '🌟 طلایی' : user.badge === 'silver' ? '🥈 نقره‌ای' : ' برنزی'}</span></div></div>
-            <div class="info-row"><div class="info-label">وضعیت:</div><div class="info-value"><span class="badge ${status === 'pending_edit' ? 'badge-edit' : 'badge-' + status}">${statusText}</span></div></div>
-            <div class="info-row ${hl('values')}"><div class="info-label">ارزش‌های فرهنگی:</div><div class="info-value">${user.values ? user.values.join('، ') : '---'}</div></div>
-            <div class="info-row ${hl('communicationEmail')}"><div class="info-label">ایمیل ارتباطی:</div><div class="info-value">${user.communicationEmail || 'ثبت نشده'}</div></div>
-            <div class="info-row"><div class="info-label">اجازه ارتباط:</div><div class="info-value">${user.allowConnection ? '✅ بله' : '❌ خیر'}</div></div>
-            ${user.culturalInfo ? `<div class="info-row"><div class="info-label">اطلاعات فرهنگی:</div><div class="info-value">${user.culturalInfo}</div></div>` : ''}
-        `;
-
-        const actions = document.getElementById('modalActions');
-        if (status === 'pending_edit') {
-            actions.innerHTML = `
-                <button class="btn-modal approve" onclick="approveUser('${user.cardCode}')">✓ تأیید ویرایش</button>
-                <button class="btn-modal reject" onclick="rejectEditUser('${user.cardCode}')">✗ رد ویرایش (بازگشت به وضعیت قبلی)</button>
-            `;
-        } else {
-            actions.innerHTML = `
-                <button class="btn-modal approve" onclick="approveUser('${user.cardCode}')">✓ تأیید</button>
-                <button class="btn-modal reject" onclick="rejectUser('${user.cardCode}')">✗ رد</button>
-            `;
-        }
-
-        document.getElementById('userModal').classList.add('active');
-    }
-
-    function closeModal() {
-        document.getElementById('userModal').classList.remove('active');
-    }
-
-    async function updateStatus(cardCode, newStatus) {
-        try {
-            const response = await fetch('/api/update-user-status', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ cardCode, status: newStatus })
-            });
-
-            const result = await response.json();
-            if (!response.ok) throw new Error(result.error || 'خطا در بروزرسانی وضعیت');
-
-            alert(newStatus === 'approved' ? '✅ کاربر با موفقیت تأیید شد.' : '❌ کاربر با موفقیت رد شد.');
-            closeModal();
-            window.location.reload(); // رفرش صفحه برای نمایش تغییرات
-
-        } catch (error) {
-            console.error('Error updating status:', error);
-            alert('خطا: ' + error.message);
-        }
-    }
-
-    async function approveUser(cardCode) {
-        if (!confirm(`آیا از تأیید نهایی کاربر با کد ${cardCode} اطمینان دارید؟`)) return;
-        await updateStatus(cardCode, 'approved');
-    }
-
-    async function rejectUser(cardCode) {
-        if (!confirm(`آیا از رد کردن کاربر با کد ${cardCode} اطمینان دارید؟ کاربر از لیست فعال حذف خواهد شد.`)) return;
-        await updateStatus(cardCode, 'rejected');
-    }
-
-    async function rejectEditUser(cardCode) {
-        if (!confirm(`آیا از رد درخواست ویرایش کاربر با کد ${cardCode} اطمینان دارید؟ اطلاعات قبلی کاربر حفظ می‌شود.`)) return;
-        await updateStatus(cardCode, 'pending');
-    }
-
-    document.getElementById('userModal').addEventListener('click', function(e) {
-        if (e.target === this) closeModal();
-    });
-
-    // --- توابع جدید برای تب دستاوردها ---
-    function switchTab(tabName) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-        
-        document.getElementById(`tab-${tabName}`).classList.add('active');
-        event.target.classList.add('active');
-    }
-
-    function prepareAchievements() {
-        allAchievements = [];
-        allUsers.forEach(user => {
-            if (user.achievements) {
-                user.achievements.forEach(ach => {
-                    ach.ownerCode = user.cardCode;
-                    ach.ownerRank = user.rank;
-                    allAchievements.push(ach);
-                });
-            }
-        });
-        
-        document.getElementById('totalAch').textContent = allAchievements.length;
-        document.getElementById('pendingAch').textContent = allAchievements.filter(a => a.status === 'pending').length;
-        renderAchievements();
-    }
-
-    function renderAchievements() {
-        const grid = document.getElementById('achievementsGrid');
-        if (allAchievements.length === 0) {
-            grid.innerHTML = '<p style="text-align:center; width:100%;">هنوز دستاوردی ثبت نشده است.</p>';
-            return;
-        }
-
-        grid.innerHTML = allAchievements.map((ach) => {
-            let mediaHtml = '';
-            // استفاده از fileUrl (لینک جدید) به جای fileData (Base64 قدیمی)
-            if (ach.fileUrl) {
-                 if (ach.fileName && (ach.fileName.endsWith('.mp4') || ach.fileName.endsWith('.webm'))) {
-                    mediaHtml = `<video controls src="${ach.fileUrl}"></video>`;
+        // ===== اعلان (Notification) =====
+        async function checkPendingRequests() {
+            try {
+                const response = await fetch('/api/get-connection-requests');
+                const data = await response.json();
+                const pending = data.requests ? data.requests.filter(r => r.status === 'pending').length : 0;
+                document.getElementById('pendingRequestsCount').textContent = pending;
+                const banner = document.getElementById('notificationBanner');
+                if (pending > 0) {
+                    banner.style.display = 'block';
+                    document.getElementById('notificationText').textContent = pending + ' ' + t('notificationText');
                 } else {
-                    mediaHtml = `<img src="${ach.fileUrl}" alt="${ach.title}">`;
+                    banner.style.display = 'none';
                 }
-            } else if (ach.fileData) {
-                 // پشتیبانی از رکوردهای قدیمی اگر هنوز پاک نشده باشند
-                 mediaHtml = `<img src="${ach.fileData}" alt="${ach.title}">`;
-            } else {
-                mediaHtml = '<span style="font-size:3rem;">📄</span>';
+            } catch (e) {
+                console.error('Error checking pending requests:', e);
+            }
+        }
+
+        // ===== ذخیره آمار =====
+        function getStatsData() {
+            const stats = {
+                date: new Date().toISOString(),
+                total: allUsers.length,
+                golden: allUsers.filter(u => u.badge === 'golden').length,
+                silver: allUsers.filter(u => u.badge === 'silver').length,
+                bronze: allUsers.filter(u => u.badge === 'bronze').length,
+                pending: allUsers.filter(u => u.status === 'pending' || u.status === 'pending_edit').length,
+                approved: allUsers.filter(u => u.status === 'approved').length,
+                rejected: allUsers.filter(u => u.status === 'rejected').length,
+                countries: allCountries.map(c => ({ country: c.country, count: c.count }))
+            };
+            return stats;
+        }
+
+        function getDetailedStatsData() {
+            const details = {
+                date: new Date().toISOString(),
+                users: allUsers.map(u => ({
+                    cardCode: u.cardCode,
+                    rank: u.rank,
+                    country: u.country,
+                    badge: u.badge,
+                    status: u.status,
+                    values: u.values || [],
+                    hasEmail: !!(u.communicationEmail)
+                }))
+            };
+            return details;
+        }
+
+        async function saveFullStats() {
+            try {
+                const data = getStatsData();
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `stats-full-${new Date().toISOString().slice(0,10)}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                document.getElementById('statsSaveResult').textContent = '✅ ' + t('statsSaved');
+                setTimeout(() => document.getElementById('statsSaveResult').textContent = '', 3000);
+            } catch (e) {
+                document.getElementById('statsSaveResult').textContent = '❌ ' + t('statsError');
+                console.error(e);
+            }
+        }
+
+        async function saveDetailedStats() {
+            try {
+                const data = getDetailedStatsData();
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `stats-detailed-${new Date().toISOString().slice(0,10)}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                document.getElementById('statsSaveResult').textContent = '✅ ' + t('statsSaved');
+                setTimeout(() => document.getElementById('statsSaveResult').textContent = '', 3000);
+            } catch (e) {
+                document.getElementById('statsSaveResult').textContent = '❌ ' + t('statsError');
+                console.error(e);
+            }
+        }
+
+        // ===== بارگذاری کاربران =====
+        async function loadUsers() {
+            try {
+                const response = await fetch('/api/get-users?t=' + new Date().getTime());
+                if (!response.ok) throw new Error('خطا در دریافت اطلاعات');
+                
+                const data = await response.json();
+                allUsers = data.users || [];
+                allCountries = data.countries || [];
+
+                document.getElementById('totalUsers').textContent = (data.stats?.total || 0).toLocaleString('fa-IR');
+                document.getElementById('goldenUsers').textContent = (data.stats?.golden || 0).toLocaleString('fa-IR');
+                document.getElementById('silverUsers').textContent = (data.stats?.silver || 0).toLocaleString('fa-IR');
+                document.getElementById('bronzeUsers').textContent = (data.stats?.bronze || 0).toLocaleString('fa-IR');
+
+                const dropdown = document.getElementById('countryDropdown');
+                dropdown.innerHTML = '<option value="">-- ' + t('selectCountryText') + ' --</option>';
+                allCountries.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c.country;
+                    opt.textContent = `${c.country} (${(c.count || 0).toLocaleString('fa-IR')} نفر)`;
+                    dropdown.appendChild(opt);
+                });
+
+                currentPage = 1;
+                applySearch();
+
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('usersTableBody').innerHTML = 
+                    `<tr><td colspan="9" style="text-align:center; color:red; padding: 2rem;">خطا: ${error.message}</td></tr>`;
+            }
+        }
+
+        // ===== جستجو =====
+        function applySearch() {
+            searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
+            currentPage = 1;
+            renderFilteredUsers();
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            searchQuery = '';
+            currentPage = 1;
+            renderFilteredUsers();
+        }
+
+        // ===== رندر کاربران با فیلتر و صفحه‌بندی =====
+        function renderFilteredUsers() {
+            let filtered = allUsers;
+            
+            if (searchQuery) {
+                filtered = filtered.filter(u => 
+                    (u.cardCode && u.cardCode.toLowerCase().includes(searchQuery)) ||
+                    (u.optionalCode && u.optionalCode.toLowerCase().includes(searchQuery)) ||
+                    (u.displayCode && u.displayCode.toLowerCase().includes(searchQuery))
+                );
             }
 
-            const statusBadge = ach.status === 'approved' ? '<span class="badge badge-approved">تایید شده</span>' : 
-                               (ach.status === 'rejected' ? '<span class="badge badge-rejected">رد شده</span>' : '<span class="badge badge-pending">در انتظار</span>');
+            const sortedUsers = [...filtered].sort((a, b) => {
+                const statusOrder = { 'pending_edit': 0, 'pending': 1, 'approved': 2, 'rejected': 3 };
+                return (statusOrder[a.status] || 4) - (statusOrder[b.status] || 4);
+            });
 
-            return `
-            <div class="ach-card">
-                <div class="ach-media">${mediaHtml}</div>
-                <div class="ach-content">
-                    <div class="ach-title">${ach.title}</div>
-                    <div class="ach-desc">${ach.description.substring(0, 120)}...</div>
-                    <div class="ach-meta">ارسال کننده: ${ach.ownerCode} (رتبه ${ach.ownerRank})</div>
-                    <div style="margin-bottom:1rem;">${statusBadge}</div>
-                    
-                    ${ach.status === 'pending' ? `
-                    <div class="ach-actions">
-                        <button class="btn-small btn-view" style="background:rgba(50,200,50,0.2); color:#0a6a0a;" onclick="updateAchStatus('${ach.ownerCode}', '${ach.fileName}', 'approved')">✅ تایید و نمایش</button>
-                        <button class="btn-small btn-view" style="background:rgba(200,50,50,0.2); color:#6a1a1a;" onclick="updateAchStatus('${ach.ownerCode}', '${ach.fileName}', 'rejected')">❌ رد کردن</button>
-                    </div>` : ''}
+            const totalPages = Math.ceil(sortedUsers.length / pageSize);
+            if (currentPage > totalPages) currentPage = totalPages || 1;
+            
+            const start = (currentPage - 1) * pageSize;
+            const paginated = sortedUsers.slice(start, start + pageSize);
+
+            renderTable(paginated, sortedUsers.length, totalPages);
+        }
+
+        function renderTable(users, totalCount, totalPages) {
+            const tbody = document.getElementById('usersTableBody');
+            
+            if (users.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding: 2rem;">${t('noUsers')}</td></tr>`;
+                renderPagination(totalPages || 1);
+                return;
+            }
+
+            tbody.innerHTML = users.map(user => {
+                const badgeClass = `badge-${user.badge}`;
+                const badgeText = user.badge === 'golden' ? t('badgeGolden') : 
+                                 user.badge === 'silver' ? t('badgeSilver') : t('badgeBronze');
+                
+                const status = user.status || 'pending';
+                let statusClass = 'badge-pending';
+                let statusText = t('statusPending');
+
+                if (status === 'approved') {
+                    statusClass = 'badge-approved';
+                    statusText = t('statusApproved');
+                } else if (status === 'rejected') {
+                    statusClass = 'badge-rejected';
+                    statusText = t('statusRejected');
+                } else if (status === 'pending_edit') {
+                    statusClass = 'badge-edit';
+                    statusText = t('statusEdit');
+                }
+
+                const valuesText = user.values ? user.values.slice(0, 2).join('، ') + (user.values.length > 2 ? '...' : '') : '---';
+                const date = user.registrationDate ? new Date(user.registrationDate).toLocaleDateString('fa-IR') : '---';
+                const timeSince = user.lastEditRequest ? getTimeSince(user.lastEditRequest) : '';
+
+                return `
+                    <tr>
+                        <td>${user.rank || '---'}</td>
+                        <td style="font-family: monospace; font-size: 0.75rem;">${user.cardCode || '---'}</td>
+                        <td style="font-family: monospace; font-size: 0.75rem; color: #d4af37; font-weight:bold;">${user.optionalCode || '---'}</td>
+                        <td>${user.country || '---'}</td>
+                        <td>${valuesText}</td>
+                        <td>${date}</td>
+                        <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+                        <td><span class="badge ${statusClass}">${statusText}</span>${timeSince}</td>
+                        <td>
+                            <button class="btn-small btn-view" onclick="viewUser('${user.cardCode}')">${t('viewUser')}</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            renderPagination(totalPages || 1);
+        }
+
+        function renderPagination(totalPages) {
+            const container = document.getElementById('pagination');
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            let html = '';
+            for (let i = 1; i <= totalPages; i++) {
+                html += `<button class="${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+            }
+            container.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            renderFilteredUsers();
+        }
+
+        function getTimeSince(dateString) {
+            const now = new Date();
+            const date = new Date(dateString);
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMins / 60);
+            const diffDays = Math.floor(diffHours / 24);
+
+            if (diffDays > 0) return `<br><small style="color: #888;">${diffDays} روز پیش</small>`;
+            if (diffHours > 0) return `<br><small style="color: #888;">${diffHours} ساعت پیش</small>`;
+            if (diffMins > 0) return `<br><small style="color: #888;">${diffMins} دقیقه پیش</small>`;
+            return '';
+        }
+
+        // ===== نمایش کاربران بر اساس کشور =====
+        function showCountryUsers(country) {
+            const container = document.getElementById('countryUsersList');
+            if (!country) {
+                container.classList.remove('active');
+                return;
+            }
+
+            const countryData = allCountries.find(c => c.country === country);
+            if (!countryData) return;
+
+            container.innerHTML = `
+                <div style="font-weight: 700; margin-bottom: 0.5rem; color: #0a0a1a;">
+                    ${countryData.country} - ${(countryData.count || 0).toLocaleString('fa-IR')} عضو:
                 </div>
-            </div>`;
-        }).join('');
-    }
+                ${(countryData.users || []).map(u => `
+                    <div class="country-user-item">
+                        <span style="font-family: monospace; font-size: 0.8rem;">${u.cardCode}</span>
+                        <span>${t('rankLabel')} ${u.rank}</span>
+                        <span class="badge badge-${u.badge}">${u.badge === 'golden' ? '🌟' : u.badge === 'silver' ? '🥈' : '🥉'}</span>
+                    </div>
+                `).join('')}
+            `;
+            container.classList.add('active');
+        }
 
-    async function updateAchStatus(cardCode, fileName, newStatus) {
-        if(!confirm(`آیا از ${newStatus === 'approved' ? 'تایید' : 'رد'} این اثر مطمئن هستید؟`)) return;
-        
-        try {
-            const response = await fetch('/api/update-achievement-status', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ cardCode, fileName, status: newStatus })
+        // ===== مشاهده کاربر =====
+        function viewUser(cardCode) {
+            const user = allUsers.find(u => u.cardCode === cardCode);
+            if (!user) return;
+
+            const status = user.status || 'pending';
+            let statusText = t('statusPending');
+            if (status === 'approved') statusText = t('statusApproved');
+            else if (status === 'rejected') statusText = t('statusRejected');
+            else if (status === 'pending_edit') statusText = t('statusEdit');
+
+            document.getElementById('modalTitle').textContent = t('modalTitle') + user.cardCode;
+            
+            const changed = user.pendingChanges || [];
+            const hl = (field) => changed.includes(field) ? 'highlight-change' : '';
+
+            const body = document.getElementById('modalBody');
+            body.innerHTML = `
+                <div class="info-row ${hl('cardCode')}"><div class="info-label">کد کارت:</div><div class="info-value" style="font-family: monospace;">${user.cardCode}</div></div>
+                <div class="info-row ${hl('optionalCode')}"><div class="info-label">کد اختیاری:</div><div class="info-value" style="font-family: monospace; color:#d4af37;">${user.optionalCode || t('noEmail')}</div></div>
+                <div class="info-row"><div class="info-label">رتبه ثبت‌نام:</div><div class="info-value">${user.rank}</div></div>
+                <div class="info-row"><div class="info-label">کشور (از IP):</div><div class="info-value">${user.country || '---'}</div></div>
+                <div class="info-row"><div class="info-label">تاریخ ثبت‌نام:</div><div class="info-value">${user.registrationDate ? new Date(user.registrationDate).toLocaleDateString('fa-IR') : '---'}</div></div>
+                ${user.lastEditRequest ? `<div class="info-row"><div class="info-label">تاریخ آخرین درخواست ویرایش:</div><div class="info-value">${new Date(user.lastEditRequest).toLocaleString('fa-IR')}</div></div>` : ''}
+                <div class="info-row"><div class="info-label">نشان:</div><div class="info-value"><span class="badge badge-${user.badge}">${user.badge === 'golden' ? t('badgeGolden') : user.badge === 'silver' ? t('badgeSilver') : t('badgeBronze')}</span></div></div>
+                <div class="info-row"><div class="info-label">وضعیت:</div><div class="info-value"><span class="badge ${status === 'pending_edit' ? 'badge-edit' : 'badge-' + status}">${statusText}</span></div></div>
+                <div class="info-row ${hl('values')}"><div class="info-label">ارزش‌های فرهنگی:</div><div class="info-value">${user.values ? user.values.join('، ') : '---'}</div></div>
+                <div class="info-row ${hl('communicationEmail')}"><div class="info-label">ایمیل ارتباطی:</div><div class="info-value">${user.communicationEmail || t('noEmail')}</div></div>
+                <div class="info-row"><div class="info-label">اجازه ارتباط:</div><div class="info-value">${user.allowConnection ? t('allowYes') : t('allowNo')}</div></div>
+                ${user.culturalInfo ? `<div class="info-row"><div class="info-label">اطلاعات فرهنگی:</div><div class="info-value">${user.culturalInfo}</div></div>` : ''}
+            `;
+
+            const actions = document.getElementById('modalActions');
+            if (status === 'pending_edit') {
+                actions.innerHTML = `
+                    <button class="btn-modal approve" onclick="approveUser('${user.cardCode}')">${t('approveEditBtn')}</button>
+                    <button class="btn-modal reject" onclick="rejectEditUser('${user.cardCode}')">${t('rejectEditBtn')}</button>
+                `;
+            } else {
+                actions.innerHTML = `
+                    <button class="btn-modal approve" onclick="approveUser('${user.cardCode}')">${t('approveBtn')}</button>
+                    <button class="btn-modal reject" onclick="rejectUser('${user.cardCode}')">${t('rejectBtn')}</button>
+                `;
+            }
+
+            document.getElementById('userModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('userModal').classList.remove('active');
+        }
+
+        // ===== تغییر وضعیت کاربر =====
+        async function updateStatus(cardCode, newStatus) {
+            try {
+                const response = await fetch('/api/update-user-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cardCode, status: newStatus })
+                });
+
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'خطا در بروزرسانی وضعیت');
+
+                alert(newStatus === 'approved' ? '✅ کاربر با موفقیت تأیید شد.' : '❌ کاربر با موفقیت رد شد.');
+                closeModal();
+                loadUsers();
+
+            } catch (error) {
+                console.error('Error updating status:', error);
+                alert('خطا: ' + error.message);
+            }
+        }
+
+        async function approveUser(cardCode) {
+            if (!confirm(`آیا از تأیید نهایی کاربر با کد ${cardCode} اطمینان دارید؟`)) return;
+            await updateStatus(cardCode, 'approved');
+        }
+
+        async function rejectUser(cardCode) {
+            if (!confirm(`آیا از رد کردن کاربر با کد ${cardCode} اطمینان دارید؟ کاربر از لیست فعال حذف خواهد شد.`)) return;
+            await updateStatus(cardCode, 'rejected');
+        }
+
+        async function rejectEditUser(cardCode) {
+            if (!confirm(`آیا از رد درخواست ویرایش کاربر با کد ${cardCode} اطمینان دارید؟ اطلاعات قبلی کاربر حفظ می‌شود.`)) return;
+            await updateStatus(cardCode, 'pending');
+        }
+
+        // ===== تب‌ها =====
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // ===== دستاوردها =====
+        function prepareAchievements() {
+            allAchievements = [];
+            allUsers.forEach(user => {
+                if (user.achievements) {
+                    user.achievements.forEach(ach => {
+                        ach.ownerCode = user.cardCode;
+                        ach.ownerRank = user.rank;
+                        allAchievements.push(ach);
+                    });
+                }
             });
             
-            if(!response.ok) throw new Error('خطا در سرور');
-            
-            alert('وضعیت دستاورد با موفقیت تغییر کرد.');
-            window.location.reload(); // رفرش کامل صفحه برای حذف اثر رد شده از لیست
-        } catch (error) { 
-            alert('خطا: ' + error.message); 
+            document.getElementById('totalAch').textContent = allAchievements.length;
+            document.getElementById('pendingAch').textContent = allAchievements.filter(a => a.status === 'pending').length;
+            document.getElementById('approvedAch').textContent = allAchievements.filter(a => a.status === 'approved').length;
+            renderAchievements();
         }
-    }
 
-    // شروع برنامه
-    loadUsers();
-</script>
-    
+        function renderAchievements() {
+            const grid = document.getElementById('achievementsGrid');
+            if (allAchievements.length === 0) {
+                grid.innerHTML = `<p style="text-align:center; width:100%; padding:2rem;">${t('noAchievements')}</p>`;
+                return;
+            }
+
+            grid.innerHTML = allAchievements.map((ach) => {
+                let mediaHtml = '';
+                if (ach.fileUrl) {
+                    if (ach.fileName && (ach.fileName.endsWith('.mp4') || ach.fileName.endsWith('.webm'))) {
+                        mediaHtml = `<video controls src="${ach.fileUrl}"></video>`;
+                    } else {
+                        mediaHtml = `<img src="${ach.fileUrl}" alt="${ach.title}" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\\'font-size:3rem;\\'>📄</span>'"/>`;
+                    }
+                } else if (ach.fileData) {
+                    mediaHtml = `<img src="${ach.fileData}" alt="${ach.title}"/>`;
+                } else {
+                    mediaHtml = '<span style="font-size:3rem;">📄</span>';
+                }
+
+                const statusBadge = ach.status === 'approved' ? `<span class="badge badge-approved">${t('achApproved')}</span>` : 
+                                   (ach.status === 'rejected' ? `<span class="badge badge-rejected">${t('achRejected')}</span>` : `<span class="badge badge-pending">${t('achPending')}</span>`);
+
+                return `
+                <div class="ach-card">
+                    <div class="ach-media">${mediaHtml}</div>
+                    <div class="ach-content">
+                        <div class="ach-title">${ach.title}</div>
+                        <div class="ach-desc">${ach.description ? ach.description.substring(0, 120) + (ach.description.length > 120 ? '...' : '') : '---'}</div>
+                        <div class="ach-meta">${t('achSender')} ${ach.ownerCode} (${t('rankLabel')} ${ach.ownerRank})</div>
+                        <div style="margin-bottom:1rem;">${statusBadge}</div>
+                        
+                        ${ach.status === 'pending' ? `
+                        <div class="ach-actions">
+                            <button class="btn-small" style="background:rgba(50,200,50,0.2); color:#0a6a0a;" onclick="updateAchStatus('${ach.ownerCode}', '${ach.fileName}', 'approved')">${t('achApproveBtn')}</button>
+                            <button class="btn-small" style="background:rgba(200,50,50,0.2); color:#6a1a1a;" onclick="updateAchStatus('${ach.ownerCode}', '${ach.fileName}', 'rejected')">${t('achRejectBtn')}</button>
+                        </div>` : ''}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        async function updateAchStatus(cardCode, fileName, newStatus) {
+            if(!confirm(`آیا از ${newStatus === 'approved' ? 'تایید' : 'رد'} این اثر مطمئن هستید؟`)) return;
+            
+            try {
+                const response = await fetch('/api/update-achievement-status', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ cardCode, fileName, status: newStatus })
+                });
+                
+                if(!response.ok) throw new Error('خطا در سرور');
+                
+                alert('وضعیت دستاورد با موفقیت تغییر کرد.');
+                loadUsers();
+            } catch (error) { 
+                alert('خطا: ' + error.message); 
+            }
+        }
+
+        // ===== به‌روزرسانی اعلان =====
+        function updateNotification() {
+            checkPendingRequests();
+        }
+
+        // ===== بررسی خودکار =====
+        setInterval(() => {
+            checkPendingRequests();
+        }, 30000);
+
+        // ===== شروع =====
+        loadUsers();
+    </script>
 </body>
 </html>
