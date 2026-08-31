@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>مدیریت درخواست‌های ارتباط | داشبورد ادمین</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            padding: 1.5rem 1rem;
+            background-image: url('assets/نماد صلح.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            transition: all 0.3s ease;
+        }
+        body.dark {
+            background-image: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+        }
+        body.dark .container {
+            background: rgba(0, 0, 0, 0.25);
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+        .back-link {
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #0a0a1a;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s;
+        }
+        body.dark .back-link { color: #f0e8d0; }
+        .back-link:hover { background: rgba(255, 255, 255, 0.08); }
+
+        .lang-group {
+            display: flex;
+            gap: 0.3rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.3rem;
+            border-radius: 30px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+        }
+        .lang-btn {
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            border: none;
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: transparent;
+            color: #888;
+        }
+        .lang-btn.active {
+            background: rgba(212, 175, 55, 0.25);
+            color: #2a1a0a;
+        }
+        body.dark .lang-btn.active {
+            background: rgba(212, 175, 55, 0.2);
+            color: #f9e79f;
+        }
+        .lang-btn:not(.active):hover {
+            background: rgba(212, 175, 55, 0.08);
+            color: #2a1a0a;
+        }
+        body.dark .lang-btn:not(.active):hover { color: #f0e8d0; }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: 0.3s;
+            color: #0a0a1a;
+        }
+        body.dark .theme-toggle { color: #f9e79f; background: rgba(0, 0, 0, 0.2); }
+        .theme-toggle:hover { transform: scale(1.1); }
+
+        .page-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #0a0a1a;
+            text-align: center;
+            margin-bottom: 0.2rem;
+        }
+        body.dark .page-title { color: #f0e8e0; }
+        .page-subtitle {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #2a2a3a;
+            opacity: 0.7;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 1rem;
+        }
+        body.dark .page-subtitle { color: #c8b890; }
+
+        .stats-mini {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+        .stat-mini {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 14px;
+            padding: 0.8rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        body.dark .stat-mini { background: rgba(0, 0, 0, 0.1); }
+        .stat-mini .number { font-size: 1.3rem; font-weight: 800; color: #0a0a1a; display: block; }
+        body.dark .stat-mini .number { color: #f0e8e0; }
+        .stat-mini .label { font-size: 0.65rem; color: #6a6a7a; }
+        body.dark .stat-mini .label { color: #a8a8b8; }
+
+        .filter-bar {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.2rem;
+            justify-content: center;
+        }
+        .filter-btn {
+            padding: 0.4rem 1.2rem;
+            border-radius: 30px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            background: rgba(255, 255, 255, 0.03);
+            color: #0a0a1a;
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        body.dark .filter-btn { color: #f0e8d0; }
+        .filter-btn:hover { background: rgba(212, 175, 55, 0.05); }
+        .filter-btn.active {
+            background: rgba(212, 175, 55, 0.12);
+            border-color: #d4af37;
+        }
+        body.dark .filter-btn.active { background: rgba(212, 175, 55, 0.08); }
+
+        .requests-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 0.3rem;
+        }
+        .requests-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .requests-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+        }
+        .requests-list::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.2);
+            border-radius: 10px;
+        }
+
+        .req-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1.2rem;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: 0.3s;
+        }
+        body.dark .req-card { background: rgba(0, 0, 0, 0.15); }
+        .req-card:hover { background: rgba(255, 255, 255, 0.08); }
+        body.dark .req-card:hover { background: rgba(255, 255, 255, 0.02); }
+
+        .req-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.3rem;
+        }
+        .req-code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #8a6d1f;
+        }
+        body.dark .req-code { color: #f9e79f; }
+        .req-meta { font-size: 0.7rem; color: #888; }
+
+        .req-body { margin-top: 0.3rem; }
+        .req-body p { font-size: 0.85rem; color: #4a4a5a; line-height: 1.6; }
+        body.dark .req-body p { color: #b0b0c0; }
+
+        .req-email-status {
+            margin-top: 0.5rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .req-email-status.has-email {
+            background: rgba(50, 200, 50, 0.1);
+            color: #0a6a0a;
+        }
+        body.dark .req-email-status.has-email { color: #82e0aa; }
+        .req-email-status.no-email {
+            background: rgba(200, 50, 50, 0.1);
+            color: #6a1a1a;
+        }
+        body.dark .req-email-status.no-email { color: #f1948a; }
+
+        .req-connections {
+            margin-top: 0.8rem;
+            padding-top: 0.8rem;
+            border-top: 1px dashed rgba(212, 175, 55, 0.15);
+        }
+        .req-connections .label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #2874a6;
+        }
+        body.dark .req-connections .label { color: #85c1e9; }
+        .req-connections .emails {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            margin-top: 0.3rem;
+        }
+        .req-connections .email-tag {
+            background: rgba(212, 175, 55, 0.08);
+            padding: 0.15rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-family: monospace;
+            color: #2874a6;
+        }
+        body.dark .req-connections .email-tag { color: #85c1e9; }
+
+        .badge {
+            display: inline-block;
+            padding: 0.15rem 0.6rem;
+            border-radius: 30px;
+            font-size: 0.65rem;
+            font-weight: 700;
+        }
+        .badge-approved { background: rgba(50, 200, 50, 0.15); color: #0a6a0a; }
+        .badge-rejected { background: rgba(200, 50, 50, 0.15); color: #6a1a1a; }
+        .badge-pending { background: rgba(255, 200, 50, 0.15); color: #8a7a0a; }
+
+        .btn-small {
+            padding: 0.25rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            margin: 0.1rem;
+        }
+        .btn-approve { background: rgba(50, 200, 50, 0.15); color: #0a6a0a; }
+        body.dark .btn-approve { color: #82e0aa; }
+        .btn-approve:hover { background: rgba(50, 200, 50, 0.25); }
+        .btn-reject { background: rgba(200, 50, 50, 0.15); color: #6a1a1a; }
+        body.dark .btn-reject { color: #f1948a; }
+        .btn-reject:hover { background: rgba(200, 50, 50, 0.25); }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #888;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1.2rem; }
+            .top-bar { flex-direction: column; align-items: stretch; }
+            .lang-group { justify-content: center; }
+            .theme-toggle { align-self: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ===== نوار بالا ===== -->
+        <div class="top-bar">
+            <a href="admin.html" class="back-link" id="backLink">↩ بازگشت به داشبورد</a>
+            <div class="lang-group">
+                <button onclick="setLanguage('fa')" id="langFa" class="lang-btn active">🇮🇷 فارسی</button>
+                <button onclick="setLanguage('en')" id="langEn" class="lang-btn">🇬🇧 English</button>
+            </div>
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
+        </div>
+
+        <!-- ===== عنوان ===== -->
+        <h1 class="page-title" id="pageTitle">🤝 مدیریت درخواست‌های ارتباط</h1>
+        <div class="page-subtitle" id="pageSubtitle">مشاهده و بررسی درخواست‌های ارتباط با هم‌فکران</div>
+
+        <!-- ===== آمار کوچک ===== -->
+        <div class="stats-mini">
+            <div class="stat-mini">
+                <span class="number" id="totalReqs">۰</span>
+                <div class="label" id="labelTotal">کل درخواست‌ها</div>
+            </div>
+            <div class="stat-mini">
+                <span class="number" id="pendingReqs">۰</span>
+                <div class="label" id="labelPending">⏳ در انتظار</div>
+            </div>
+            <div class="stat-mini">
+                <span class="number" id="approvedReqs">۰</span>
+                <div class="label" id="labelApproved">✅ تایید شده</div>
+            </div>
+            <div class="stat-mini">
+                <span class="number" id="rejectedReqs">۰</span>
+                <div class="label" id="labelRejected">❌ رد شده</div>
+            </div>
+        </div>
+
+        <!-- ===== فیلتر ===== -->
+        <div class="filter-bar">
+            <button class="filter-btn active" data-filter="all" onclick="setFilter('all')" id="filterAll">📋 همه</button>
+            <button class="filter-btn" data-filter="pending" onclick="setFilter('pending')" id="filterPending">⏳ در انتظار</button>
+            <button class="filter-btn" data-filter="approved" onclick="setFilter('approved')" id="filterApproved">✅ تایید شده</button>
+            <button class="filter-btn" data-filter="rejected" onclick="setFilter('rejected')" id="filterRejected">❌ رد شده</button>
+        </div>
+
+        <!-- ===== لیست ===== -->
+        <div id="requestsList" class="requests-list">
+            <div class="empty-state" id="loadingRequests">در حال بارگذاری...</div>
+        </div>
+    </div>
+
+    <script>
+        // ===== متغیرها =====
+        let allRequests = [];
+        let currentFilter = 'all';
+        let currentLang = 'fa';
+
+        // ===== ترجمه =====
+        const translations = {
+            fa: {
+                backLink: '↩ بازگشت به داشبورد',
+                pageTitle: '🤝 مدیریت درخواست‌های ارتباط',
+                pageSubtitle: 'مشاهده و بررسی درخواست‌های ارتباط با هم‌فکران',
+                labelTotal: 'کل درخواست‌ها',
+                labelPending: '⏳ در انتظار',
+                labelApproved: '✅ تایید شده',
+                labelRejected: '❌ رد شده',
+                filterAll: '📋 همه',
+                filterPending: '⏳ در انتظار',
+                filterApproved: '✅ تایید شده',
+                filterRejected: '❌ رد شده',
+                loading: 'در حال بارگذاری...',
+                noRequests: 'هیچ درخواستی یافت نشد',
+                approved: 'تایید شده',
+                rejected: 'رد شده',
+                pending: 'در انتظار',
+                approveBtn: '✅ تایید و ارسال لیست',
+                rejectBtn: '❌ رد',
+                hasEmail: '✅ درخواست‌دهنده ایمیل دارد',
+                noEmail: '❌ درخواست‌دهنده ایمیل ثبت نکرده است',
+                connectionsLabel: '📧 ایمیل‌های هم‌فکران',
+                reason: 'دلیل: ',
+                date: 'تاریخ: '
+            },
+            en: {
+                backLink: '↩ Back to Dashboard',
+                pageTitle: '🤝 Connection Request Management',
+                pageSubtitle: 'View and review connection requests from like-minded people',
+                labelTotal: 'Total Requests',
+                labelPending: '⏳ Pending',
+                labelApproved: '✅ Approved',
+                labelRejected: '❌ Rejected',
+                filterAll: '📋 All',
+                filterPending: '⏳ Pending',
+                filterApproved: '✅ Approved',
+                filterRejected: '❌ Rejected',
+                loading: 'Loading...',
+                noRequests: 'No requests found',
+                approved: 'Approved',
+                rejected: 'Rejected',
+                pending: 'Pending',
+                approveBtn: '✅ Approve & Send List',
+                rejectBtn: '❌ Reject',
+                hasEmail: '✅ Requester has email',
+                noEmail: '❌ Requester has no email',
+                connectionsLabel: '📧 Like-minded Emails',
+                reason: 'Reason: ',
+                date: 'Date: '
+            }
+        };
+
+        function t(key) {
+            return translations[currentLang] && translations[currentLang][key] ? translations[currentLang][key] : key;
+        }
+
+        // ===== تغییر زبان =====
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.getElementById('langFa').className = 'lang-btn' + (lang === 'fa' ? ' active' : '');
+            document.getElementById('langEn').className = 'lang-btn' + (lang === 'en' ? ' active' : '');
+            
+            document.getElementById('backLink').textContent = t('backLink');
+            document.getElementById('pageTitle').textContent = t('pageTitle');
+            document.getElementById('pageSubtitle').textContent = t('pageSubtitle');
+            document.getElementById('labelTotal').textContent = t('labelTotal');
+            document.getElementById('labelPending').textContent = t('labelPending');
+            document.getElementById('labelApproved').textContent = t('labelApproved');
+            document.getElementById('labelRejected').textContent = t('labelRejected');
+            document.getElementById('filterAll').textContent = t('filterAll');
+            document.getElementById('filterPending').textContent = t('filterPending');
+            document.getElementById('filterApproved').textContent = t('filterApproved');
+            document.getElementById('filterRejected').textContent = t('filterRejected');
+        }
+
+        // ===== تم =====
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            const btn = document.getElementById('themeToggle');
+            btn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+            localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+        }
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark');
+            document.getElementById('themeToggle').textContent = '☀️';
+        }
+
+        // ===== بارگذاری =====
+        async function loadRequests() {
+            try {
+                const response = await fetch('/api/get-connection-requests?t=' + new Date().getTime());
+                if (!response.ok) throw new Error('خطا در دریافت اطلاعات');
+                
+                const data = await response.json();
+                allRequests = data.requests || [];
+
+                updateStats();
+                renderRequests();
+
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('requestsList').innerHTML = 
+                    `<div class="empty-state" style="color:red;">خطا: ${error.message}</div>`;
+            }
+        }
+
+        // ===== آمار =====
+        function updateStats() {
+            const total = allRequests.length;
+            const pending = allRequests.filter(r => r.status === 'pending').length;
+            const approved = allRequests.filter(r => r.status === 'approved').length;
+            const rejected = allRequests.filter(r => r.status === 'rejected').length;
+
+            document.getElementById('totalReqs').textContent = total;
+            document.getElementById('pendingReqs').textContent = pending;
+            document.getElementById('approvedReqs').textContent = approved;
+            document.getElementById('rejectedReqs').textContent = rejected;
+        }
+
+        // ===== فیلتر =====
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === filter);
+            });
+            renderRequests();
+        }
+
+        // ===== رندر =====
+        function renderRequests() {
+            const container = document.getElementById('requestsList');
+            
+            let filtered = allRequests;
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(r => r.status === currentFilter);
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="empty-state">${t('noRequests')}</div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(req => {
+                const emailStatus = req.senderEmail 
+                    ? `<div class="req-email-status has-email">${t('hasEmail')}: ${req.senderEmail}</div>`
+                    : `<div class="req-email-status no-email">${t('noEmail')}</div>`;
+
+                const connectionsHtml = req.connections && req.connections.length > 0
+                    ? `<div class="req-connections">
+                        <div class="label">${t('connectionsLabel')} (${req.connections.length})</div>
+                        <div class="emails">
+                            ${req.connections.map(email => `<span class="email-tag">📧 ${email}</span>`).join('')}
+                        </div>
+                    </div>`
+                    : '';
+
+                const statusMap = {
+                    approved: `<span class="badge badge-approved">${t('approved')}</span>`,
+                    rejected: `<span class="badge badge-rejected">${t('rejected')}</span>`,
+                    pending: `<span class="badge badge-pending">${t('pending')}</span>`
+                };
+
+                const actionButtons = req.status === 'pending' ? `
+                    <div style="margin-top:0.8rem; display:flex; gap:0.3rem; flex-wrap:wrap;">
+                        <button class="btn-small btn-approve" onclick="handleRequest('${req.fileName}', 'approve')">${t('approveBtn')}</button>
+                        <button class="btn-small btn-reject" onclick="handleRequest('${req.fileName}', 'reject')">${t('rejectBtn')}</button>
+                    </div>
+                ` : '';
+
+                return `
+                    <div class="req-card">
+                        <div class="req-header">
+                            <div>
+                                <span class="req-code">${req.senderCode || req.cardCode || '---'}</span>
+                                ${statusMap[req.status] || ''}
+                            </div>
+                            <div class="req-meta">${t('date')} ${new Date(req.createdAt || req.requestDate).toLocaleString(currentLang === 'fa' ? 'fa-IR' : 'en-US')}</div>
+                        </div>
+                        <div class="req-body">
+                            ${req.reason || req.description ? `<p><strong>${t('reason')}</strong> ${req.reason || req.description}</p>` : ''}
+                            ${emailStatus}
+                            ${connectionsHtml}
+                            ${actionButtons}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ===== مدیریت درخواست =====
+        async function handleRequest(fileName, action) {
+            const confirmMsg = currentLang === 'fa' 
+                ? `آیا از ${action === 'approve' ? 'تایید' : 'رد'} این درخواست اطمینان دارید؟`
+                : `Are you sure you want to ${action === 'approve' ? 'approve' : 'reject'} this request?`;
+            
+            if (!confirm(confirmMsg)) return;
+
+            try {
+                const response = await fetch('/api/approve-connection', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fileName, action })
+                });
+                
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'خطا در پردازش درخواست');
+                
+                alert(result.message);
+                loadRequests();
+            } catch (error) {
+                alert('خطا: ' + error.message);
+            }
+        }
+
+        // ===== شروع =====
+        loadRequests();
+    </script>
+</body>
+</html>
