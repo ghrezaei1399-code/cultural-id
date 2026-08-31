@@ -1,4 +1,4 @@
-// api/upload-file.js
+// api/upload-file.js (نسخه بدون نیاز به پکیج اضافی)
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
@@ -6,11 +6,14 @@ module.exports = async function handler(req, res) {
   if (!token) return res.status(500).json({ error: 'GH_TOKEN not configured' });
 
   try {
-    // خواندن صحیح داده‌های JSON از بدنه درخواست
-    const body = await req.json();
-    const { fileData, fileName } = body;
+    // خواندن بدنه درخواست به صورت دستی
+    let body = '';
+    for await (const chunk of req) {
+      body += chunk;
+    }
+    const parsedBody = JSON.parse(body);
+    const { fileData, fileName } = parsedBody;
 
-    // اعتبارسنجی ورودی‌ها
     if (!fileData || !fileName) {
       return res.status(400).json({ error: 'Missing fileData or fileName in request body' });
     }
@@ -18,15 +21,12 @@ module.exports = async function handler(req, res) {
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
     
-    // ساخت نام یکتا برای جلوگیری از تداخل
     const ext = fileName.split('.').pop();
     const uniqueName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
     const filePath = `uploads/${uniqueName}`;
 
-    // حذف هدر Base64 برای ذخیره خالص باینری
     const base64Content = fileData.replace(/^data:[^;]+;base64,/, '');
 
-    // آپلود به گیت‌هاب
     const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`, {
       method: 'PUT',
       headers: {
@@ -46,7 +46,6 @@ module.exports = async function handler(req, res) {
       throw new Error(errorData.message || 'Failed to upload to GitHub');
     }
 
-    // برگرداندن آدرس عمومی فایل
     const publicUrl = `https://raw.githubusercontent.com/${owner}/${repo}/main/${filePath}`;
     return res.status(200).json({ success: true, url: publicUrl, fileName: uniqueName });
 
