@@ -36,7 +36,6 @@
             border-color: rgba(255, 255, 255, 0.05);
         }
 
-        /* ===== نوار بالا: زبان + تم ===== */
         .top-bar {
             display: flex;
             justify-content: space-between;
@@ -76,9 +75,7 @@
             background: rgba(212, 175, 55, 0.08);
             color: #2a1a0a;
         }
-        body.dark .lang-btn:not(.active):hover {
-            color: #f0e8d0;
-        }
+        body.dark .lang-btn:not(.active):hover { color: #f0e8d0; }
 
         .theme-toggle {
             background: rgba(255, 255, 255, 0.05);
@@ -91,13 +88,9 @@
             transition: 0.3s;
             color: #0a0a1a;
         }
-        body.dark .theme-toggle {
-            color: #f9e79f;
-            background: rgba(0, 0, 0, 0.2);
-        }
+        body.dark .theme-toggle { color: #f9e79f; background: rgba(0, 0, 0, 0.2); }
         .theme-toggle:hover { transform: scale(1.1); }
 
-        /* ===== عنوان ===== */
         .page-title {
             font-size: 1.8rem;
             font-weight: 800;
@@ -137,34 +130,17 @@
             position: relative;
             overflow: hidden;
         }
-        body.dark .module-card {
-            background: rgba(0, 0, 0, 0.15);
-        }
+        body.dark .module-card { background: rgba(0, 0, 0, 0.15); }
         .module-card:hover {
             transform: translateY(-4px);
             background: rgba(255, 255, 255, 0.08);
             border-color: rgba(212, 175, 55, 0.2);
         }
-        body.dark .module-card:hover {
-            background: rgba(255, 255, 255, 0.03);
-            border-color: rgba(212, 175, 55, 0.15);
-        }
-        .module-card .icon {
-            font-size: 2rem;
-            display: block;
-            margin-bottom: 0.3rem;
-        }
-        .module-card .label {
-            font-weight: 800;
-            font-size: 0.95rem;
-            color: #0a0a1a;
-        }
+        body.dark .module-card:hover { background: rgba(255, 255, 255, 0.03); border-color: rgba(212, 175, 55, 0.15); }
+        .module-card .icon { font-size: 2rem; display: block; margin-bottom: 0.3rem; }
+        .module-card .label { font-weight: 800; font-size: 0.95rem; color: #0a0a1a; }
         body.dark .module-card .label { color: #f0e8e0; }
-        .module-card .desc {
-            font-size: 0.7rem;
-            color: #6a6a7a;
-            margin-top: 0.2rem;
-        }
+        .module-card .desc { font-size: 0.7rem; color: #6a6a7a; margin-top: 0.2rem; }
         body.dark .module-card .desc { color: #a8a8b8; }
         .module-card .badge-module {
             position: absolute;
@@ -177,15 +153,8 @@
             font-size: 0.7rem;
             font-weight: 700;
         }
-        body.dark .module-card .badge-module {
-            background: #8a6d1f;
-            color: #f9e79f;
-        }
-        .module-card .badge-module.pending {
-            background: #e74c3c;
-            color: #fff;
-            animation: pulse-badge 1.5s infinite;
-        }
+        body.dark .module-card .badge-module { background: #8a6d1f; color: #f9e79f; }
+        .module-card .badge-module.pending { background: #e74c3c; color: #fff; animation: pulse-badge 1.5s infinite; }
         @keyframes pulse-badge {
             0% { transform: scale(1); }
             50% { transform: scale(1.1); }
@@ -207,29 +176,15 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
             transition: 0.3s;
         }
-        body.dark .stat-card {
-            background: rgba(0, 0, 0, 0.1);
-        }
-        .stat-card:hover {
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateY(-2px);
-        }
-        body.dark .stat-card:hover {
-            background: rgba(255, 255, 255, 0.02);
-        }
-        .stat-card .number {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: #0a0a1a;
-            display: block;
-        }
+        body.dark .stat-card { background: rgba(0, 0, 0, 0.1); }
+        .stat-card:hover { background: rgba(255, 255, 255, 0.08); transform: translateY(-2px); }
+        body.dark .stat-card:hover { background: rgba(255, 255, 255, 0.02); }
+        .stat-card .number { font-size: 1.6rem; font-weight: 800; color: #0a0a1a; display: block; }
         body.dark .stat-card .number { color: #f0e8e0; }
-        .stat-card .label {
-            font-size: 0.7rem;
-            color: #6a6a7a;
-            margin-top: 0.2rem;
-        }
+        .stat-card .label { font-size: 0.7rem; color: #6a6a7a; margin-top: 0.2rem; }
         body.dark .stat-card .label { color: #a8a8b8; }
+        .stat-card .range { font-size: 0.6rem; color: #888; margin-top: 0.1rem; }
+        body.dark .stat-card .range { color: #888; }
         .stat-card.golden { background: rgba(212, 175, 55, 0.12); border-color: rgba(212, 175, 55, 0.15); }
         .stat-card.silver { background: rgba(192, 192, 192, 0.12); border-color: rgba(192, 192, 192, 0.15); }
         .stat-card.bronze { background: rgba(205, 127, 50, 0.12); border-color: rgba(205, 127, 50, 0.15); }
@@ -242,15 +197,8 @@
             margin-bottom: 2rem;
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
-        body.dark .country-section {
-            background: rgba(0, 0, 0, 0.05);
-        }
-        .country-section .title {
-            font-weight: 700;
-            font-size: 0.9rem;
-            color: #0a0a1a;
-            margin-bottom: 0.8rem;
-        }
+        body.dark .country-section { background: rgba(0, 0, 0, 0.05); }
+        .country-section .title { font-weight: 700; font-size: 0.9rem; color: #0a0a1a; margin-bottom: 0.8rem; }
         body.dark .country-section .title { color: #f0e8e0; }
         .country-dropdown {
             width: 100%;
@@ -264,17 +212,8 @@
             outline: none;
             cursor: pointer;
         }
-        body.dark .country-dropdown {
-            background: rgba(0, 0, 0, 0.15);
-            color: #f0e8d0;
-            border-color: rgba(255, 255, 255, 0.05);
-        }
-        .country-users-list {
-            margin-top: 0.8rem;
-            max-height: 150px;
-            overflow-y: auto;
-            display: none;
-        }
+        body.dark .country-dropdown { background: rgba(0, 0, 0, 0.15); color: #f0e8d0; border-color: rgba(255, 255, 255, 0.05); }
+        .country-users-list { margin-top: 0.8rem; max-height: 150px; overflow-y: auto; display: none; }
         .country-users-list.active { display: block; }
         .country-user-item {
             display: flex;
@@ -314,24 +253,12 @@
             transition: all 0.3s;
         }
         body.dark .btn-stats { color: #f0e8d0; }
-        .btn-stats:hover {
-            background: rgba(212, 175, 55, 0.08);
-            transform: translateY(-2px);
-        }
+        .btn-stats:hover { background: rgba(212, 175, 55, 0.08); transform: translateY(-2px); }
         .btn-stats .icon { font-size: 1.1rem; margin-left: 0.3rem; }
-        #statsSaveResult {
-            font-size: 0.8rem;
-            color: #888;
-            display: flex;
-            align-items: center;
-        }
+        #statsSaveResult { font-size: 0.8rem; color: #888; display: flex; align-items: center; }
 
         /* ===== دکمه بازگشت ===== */
-        .back-row {
-            display: flex;
-            justify-content: center;
-            margin-top: 1.5rem;
-        }
+        .back-row { display: flex; justify-content: center; margin-top: 1.5rem; }
         .btn-back {
             padding: 0.7rem 2rem;
             border-radius: 40px;
@@ -344,30 +271,8 @@
             transition: all 0.3s;
         }
         body.dark .btn-back { color: #f0e8d0; }
-        .btn-back:hover {
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateY(-2px);
-        }
+        .btn-back:hover { background: rgba(255, 255, 255, 0.08); transform: translateY(-2px); }
 
-        /* ===== اسکرول ===== */
-        .scroll-area {
-            max-height: 250px;
-            overflow-y: auto;
-            padding-left: 0.5rem;
-        }
-        .scroll-area::-webkit-scrollbar {
-            width: 4px;
-        }
-        .scroll-area::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 10px;
-        }
-        .scroll-area::-webkit-scrollbar-thumb {
-            background: rgba(212, 175, 55, 0.3);
-            border-radius: 10px;
-        }
-
-        /* ===== ریسپانسیو ===== */
         @media (max-width: 768px) {
             .container { padding: 1.2rem; }
             .modules-grid { grid-template-columns: 1fr 1fr; }
@@ -384,7 +289,7 @@
 </head>
 <body>
     <div class="container">
-        <!-- ===== نوار بالا: زبان + تم ===== -->
+        <!-- ===== نوار بالا ===== -->
         <div class="top-bar">
             <div class="lang-group">
                 <button onclick="setLanguage('fa')" id="langFa" class="lang-btn active">🇮🇷 فارسی</button>
@@ -434,14 +339,17 @@
             <div class="stat-card golden">
                 <span class="number" id="goldenUsers">۰</span>
                 <div class="label" id="labelGolden">🌟 طلایی</div>
+                <div class="range" id="rangeGolden">(۱-۲۰۰)</div>
             </div>
             <div class="stat-card silver">
                 <span class="number" id="silverUsers">۰</span>
                 <div class="label" id="labelSilver">🥈 نقره‌ای</div>
+                <div class="range" id="rangeSilver">(۲۰۱-۱۰۰۰)</div>
             </div>
             <div class="stat-card bronze">
                 <span class="number" id="bronzeUsers">۰</span>
                 <div class="label" id="labelBronze">🥉 برنزی</div>
+                <div class="range" id="rangeBronze">(۱۰۰۱-۱۰۰۰۰)</div>
             </div>
         </div>
 
@@ -477,8 +385,8 @@
         let allCountries = [];
         let currentLang = 'fa';
 
-        // ===== دیکشنری ترجمه =====
-        const t = {
+        // ===== دیکشنری کامل ترجمه =====
+        const translations = {
             fa: {
                 pageTitle: '🛡️ داشبورد ادمین',
                 pageSubtitle: 'مدیریت کارت‌های جهانی هویت هوشمند فرهنگی • کاملاً ناشناس',
@@ -494,6 +402,9 @@
                 labelGolden: '🌟 طلایی',
                 labelSilver: '🥈 نقره‌ای',
                 labelBronze: '🥉 برنزی',
+                rangeGolden: '(۱-۲۰۰)',
+                rangeSilver: '(۲۰۱-۱۰۰۰)',
+                rangeBronze: '(۱۰۰۱-۱۰۰۰۰)',
                 countryTitle: '🌍 آمار بر اساس کشور',
                 selectCountryText: 'انتخاب کشور',
                 saveFullText: '📊 ذخیره آمار کلی',
@@ -517,6 +428,9 @@
                 labelGolden: '🌟 Golden',
                 labelSilver: '🥈 Silver',
                 labelBronze: '🥉 Bronze',
+                rangeGolden: '(1-200)',
+                rangeSilver: '(201-1000)',
+                rangeBronze: '(1001-10000)',
                 countryTitle: '🌍 Statistics by Country',
                 selectCountryText: 'Select Country',
                 saveFullText: '📊 Save Full Statistics',
@@ -528,7 +442,7 @@
         };
 
         function tr(key) {
-            return t[currentLang] && t[currentLang][key] ? t[currentLang][key] : key;
+            return translations[currentLang] && translations[currentLang][key] ? translations[currentLang][key] : key;
         }
 
         // ===== تغییر زبان =====
@@ -551,6 +465,9 @@
             document.getElementById('labelGolden').textContent = tr('labelGolden');
             document.getElementById('labelSilver').textContent = tr('labelSilver');
             document.getElementById('labelBronze').textContent = tr('labelBronze');
+            document.getElementById('rangeGolden').textContent = tr('rangeGolden');
+            document.getElementById('rangeSilver').textContent = tr('rangeSilver');
+            document.getElementById('rangeBronze').textContent = tr('rangeBronze');
             document.getElementById('countryTitle').textContent = tr('countryTitle');
             document.getElementById('selectCountryText').textContent = tr('selectCountryText');
             document.getElementById('saveFullText').textContent = tr('saveFullText');
@@ -580,13 +497,11 @@
                 allUsers = data.users || [];
                 allCountries = data.countries || [];
 
-                // آمار
                 document.getElementById('totalUsers').textContent = (data.stats?.total || 0).toLocaleString('fa-IR');
                 document.getElementById('goldenUsers').textContent = (data.stats?.golden || 0).toLocaleString('fa-IR');
                 document.getElementById('silverUsers').textContent = (data.stats?.silver || 0).toLocaleString('fa-IR');
                 document.getElementById('bronzeUsers').textContent = (data.stats?.bronze || 0).toLocaleString('fa-IR');
 
-                // کشورها
                 const dropdown = document.getElementById('countryDropdown');
                 dropdown.innerHTML = '<option value="">-- ' + tr('selectCountryText') + ' --</option>';
                 allCountries.forEach(c => {
@@ -596,7 +511,6 @@
                     dropdown.appendChild(opt);
                 });
 
-                // نشانگرهای ماژول‌ها
                 updateBadges();
 
             } catch (error) {
@@ -606,12 +520,10 @@
 
         // ===== به‌روزرسانی نشانگرها =====
         function updateBadges() {
-            // کاربران pending
             const pendingUsers = allUsers.filter(u => u.status === 'pending' || u.status === 'pending_edit').length;
             document.getElementById('badgeUsers').textContent = pendingUsers;
             document.getElementById('badgeUsers').className = 'badge-module' + (pendingUsers > 0 ? ' pending' : '');
 
-            // دستاوردهای pending
             let pendingAchievements = 0;
             allUsers.forEach(u => {
                 if (u.achievements) {
@@ -621,13 +533,8 @@
             document.getElementById('badgeAchievements').textContent = pendingAchievements;
             document.getElementById('badgeAchievements').className = 'badge-module' + (pendingAchievements > 0 ? ' pending' : '');
 
-            // درخواست‌های ارتباط pending
-            // (از API جداگانه خوانده می‌شود، فعلاً ۰)
-            // برای این نسخه، یک عدد نمونه
             document.getElementById('badgeRequests').textContent = '0';
             document.getElementById('badgeRequests').className = 'badge-module';
-
-            // درخواست‌های حذف
             document.getElementById('badgeDelete').textContent = '0';
             document.getElementById('badgeDelete').className = 'badge-module';
         }
@@ -635,10 +542,7 @@
         // ===== نمایش کاربران کشور =====
         function showCountryUsers(country) {
             const container = document.getElementById('countryUsersList');
-            if (!country) {
-                container.classList.remove('active');
-                return;
-            }
+            if (!country) { container.classList.remove('active'); return; }
             const countryData = allCountries.find(c => c.country === country);
             if (!countryData) return;
 
@@ -724,8 +628,6 @@
 
         // ===== شروع =====
         loadData();
-
-        // ===== بررسی خودکار هر ۳۰ ثانیه =====
         setInterval(loadData, 30000);
     </script>
 </body>
