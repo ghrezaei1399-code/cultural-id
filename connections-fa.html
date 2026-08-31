@@ -23,6 +23,47 @@
         .subtitle { text-align: center; font-size: 0.9rem; color: #6a5a3a; opacity: 0.8; margin-bottom: 1.5rem; }
         body.dark .subtitle { color: #c8b890; }
         
+        /* ===== دکمه تغییر زبان ===== */
+        .lang-switch {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1rem;
+        }
+        .lang-switch .lang-group {
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.3rem;
+            border-radius: 30px;
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+        .lang-switch .lang-btn {
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            border: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: transparent;
+            color: #888;
+        }
+        .lang-switch .lang-btn.active {
+            background: rgba(212,175,55,0.3);
+            color: #2a1a0a;
+        }
+        body.dark .lang-switch .lang-btn.active {
+            background: rgba(212,175,55,0.2);
+            color: #f9e79f;
+        }
+        .lang-switch .lang-btn:not(.active):hover {
+            background: rgba(212,175,55,0.1);
+            color: #2a1a0a;
+        }
+        body.dark .lang-switch .lang-btn:not(.active):hover {
+            color: #f0e8d0;
+        }
+        
         /* ===== اعلان ===== */
         #notificationBanner {
             display: none;
@@ -49,7 +90,6 @@
             100% { transform: scale(1); }
         }
         
-        /* ===== فیلتر ===== */
         .filter-bar {
             display: flex;
             gap: 0.5rem;
@@ -199,8 +239,6 @@
         .btn-reject { background: rgba(220, 80, 60, 0.2); color: #a93226; }
         body.dark .btn-reject { background: rgba(220, 80, 60, 0.2); color: #f1948a; }
         .btn-reject:hover { background: rgba(220, 80, 60, 0.3); }
-        .btn-show-email { background: rgba(40, 167, 69, 0.2); color: #1e7a1e; font-size: 0.75rem; padding: 0.2rem 0.8rem; }
-        body.dark .btn-show-email { background: rgba(40, 167, 69, 0.15); color: #82e0aa; }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; }
         
         .status-badge {
@@ -239,17 +277,6 @@
         .empty-state { text-align: center; padding: 3rem; color: #6a5a3a; opacity: 0.6; }
         body.dark .empty-state { color: #c8b890; }
         
-        .badge-count {
-            display: inline-block;
-            background: #d4af37;
-            color: #2a1a0a;
-            border-radius: 50%;
-            padding: 0.05rem 0.5rem;
-            font-size: 0.7rem;
-        }
-        body.dark .badge-count { color: #2a1a0a; }
-        
-        /* ===== صفحه‌بندی ===== */
         .pagination {
             display: flex;
             justify-content: center;
@@ -280,34 +307,39 @@
 </head>
 <body>
 <div class="container">
-    <h1>🤝 درخواست‌های ارتباط با هم‌فرهنگان</h1>
-    <div class="subtitle">تطابق بر اساس اولویت‌های فرهنگی • بررسی توسط ادمین</div>
+    <!-- ===== دکمه تغییر زبان ===== -->
+    <div class="lang-switch">
+        <div class="lang-group">
+            <button onclick="setLanguage('fa')" id="langFa" class="lang-btn active">🇮🇷 فارسی</button>
+            <button onclick="setLanguage('en')" id="langEn" class="lang-btn">🇬🇧 English</button>
+        </div>
+    </div>
 
-    <!-- ===== اعلان ===== -->
+    <h1 id="pageTitle">🤝 درخواست‌های ارتباط با هم‌فرهنگان</h1>
+    <div class="subtitle" id="pageSubtitle">تطابق بر اساس اولویت‌های فرهنگی • بررسی توسط ادمین</div>
+
     <div id="notificationBanner"></div>
 
-    <!-- ===== فیلتر ===== -->
     <div class="filter-bar">
         <button class="filter-btn active" data-filter="pending" onclick="setFilter('pending')">
-            ⏳ در انتظار <span class="badge" id="pendingCount">0</span>
+            <span id="filterPending">⏳ در انتظار</span> <span class="badge" id="pendingCount">0</span>
         </button>
         <button class="filter-btn" data-filter="approved" onclick="setFilter('approved')">
-            ✅ تایید شده <span class="badge" id="approvedCount">0</span>
+            <span id="filterApproved">✅ تایید شده</span> <span class="badge" id="approvedCount">0</span>
         </button>
         <button class="filter-btn" data-filter="rejected" onclick="setFilter('rejected')">
-            ❌ رد شده <span class="badge" id="rejectedCount">0</span>
+            <span id="filterRejected">❌ رد شده</span> <span class="badge" id="rejectedCount">0</span>
         </button>
         <button class="filter-btn" data-filter="all" onclick="setFilter('all')">
-            📋 همه <span class="badge" id="allCount">0</span>
+            <span id="filterAll">📋 همه</span> <span class="badge" id="allCount">0</span>
         </button>
     </div>
 
     <div id="requestsList"></div>
 
-    <!-- ===== صفحه‌بندی ===== -->
     <div id="pagination" class="pagination"></div>
 
-    <a href="admin.html" class="btn-back">↩ بازگشت به پنل ادمین</a>
+    <a href="admin.html" class="btn-back" id="backLink">↩ بازگشت به پنل ادمین</a>
 </div>
 
 <script>
@@ -315,6 +347,34 @@
     let currentFilter = 'pending';
     let currentPage = 1;
     const pageSize = 5;
+
+    // ===== تغییر زبان =====
+    function setLanguage(lang) {
+        const faBtn = document.getElementById('langFa');
+        const enBtn = document.getElementById('langEn');
+        
+        if (lang === 'fa') {
+            faBtn.className = 'lang-btn active';
+            enBtn.className = 'lang-btn';
+            document.getElementById('pageTitle').textContent = '🤝 درخواست‌های ارتباط با هم‌فرهنگان';
+            document.getElementById('pageSubtitle').textContent = 'تطابق بر اساس اولویت‌های فرهنگی • بررسی توسط ادمین';
+            document.getElementById('filterPending').textContent = '⏳ در انتظار';
+            document.getElementById('filterApproved').textContent = '✅ تایید شده';
+            document.getElementById('filterRejected').textContent = '❌ رد شده';
+            document.getElementById('filterAll').textContent = '📋 همه';
+            document.getElementById('backLink').textContent = '↩ بازگشت به پنل ادمین';
+        } else {
+            enBtn.className = 'lang-btn active';
+            faBtn.className = 'lang-btn';
+            document.getElementById('pageTitle').textContent = '🤝 Cultural Connection Requests';
+            document.getElementById('pageSubtitle').textContent = 'Requests pending admin review';
+            document.getElementById('filterPending').textContent = '⏳ Pending';
+            document.getElementById('filterApproved').textContent = '✅ Approved';
+            document.getElementById('filterRejected').textContent = '❌ Rejected';
+            document.getElementById('filterAll').textContent = '📋 All';
+            document.getElementById('backLink').textContent = '↩ Back to Admin Panel';
+        }
+    }
 
     // ===== بارگذاری درخواست‌ها =====
     async function loadRequests() {
@@ -325,13 +385,8 @@
 
             allRequests = data.requests || [];
             
-            // ===== به‌روزرسانی اعلان =====
             updateNotification();
-            
-            // ===== به‌روزرسانی فیلترها =====
             updateFilterCounts();
-            
-            // ===== نمایش درخواست‌ها =====
             renderRequests();
 
         } catch (error) {
@@ -347,7 +402,10 @@
         const banner = document.getElementById('notificationBanner');
         
         if (pending > 0) {
-            banner.innerHTML = `🔔 ${pending} درخواست جدید نیاز به بررسی دارد.`;
+            const isFa = document.getElementById('langFa').classList.contains('active');
+            banner.innerHTML = isFa 
+                ? `🔔 ${pending} درخواست جدید نیاز به بررسی دارد.`
+                : `🔔 ${pending} new request(s) need review.`;
             banner.style.display = 'block';
         } else {
             banner.style.display = 'none';
@@ -385,7 +443,6 @@
             return req.status === currentFilter;
         });
 
-        // ===== صفحه‌بندی =====
         const totalPages = Math.ceil(filtered.length / pageSize);
         if (currentPage > totalPages) currentPage = totalPages || 1;
         
@@ -393,17 +450,18 @@
         const paginated = filtered.slice(start, start + pageSize);
 
         const container = document.getElementById('requestsList');
+        const isFa = document.getElementById('langFa').classList.contains('active');
         
         if (paginated.length === 0) {
-            container.innerHTML = `<div class="empty-state">هیچ درخواستی با این وضعیت وجود ندارد</div>`;
+            container.innerHTML = `<div class="empty-state">${isFa ? 'هیچ درخواستی با این وضعیت وجود ندارد' : 'No requests with this status'}</div>`;
             renderPagination(totalPages);
             return;
         }
 
         container.innerHTML = paginated.map(req => {
             const reqEmailStatus = req.senderEmail 
-                ? `<div class="requester-email-status">✅ درخواست‌دهنده ایمیل دارد: ${req.senderEmail}</div>`
-                : `<div class="requester-email-status no-email">❌ درخواست‌دهنده ایمیل ثبت نکرده است</div>`;
+                ? `<div class="requester-email-status">✅ ${isFa ? 'درخواست‌دهنده ایمیل دارد:' : 'Requester has email:'} ${req.senderEmail}</div>`
+                : `<div class="requester-email-status no-email">❌ ${isFa ? 'درخواست‌دهنده ایمیل ثبت نکرده است' : 'Requester has no registered email'}</div>`;
 
             const connectionsHtml = req.connections && req.connections.length > 0
                 ? req.connections.map(email => `
@@ -411,20 +469,20 @@
                         <div class="match-info">
                             <div style="font-family: monospace; font-size: 0.85rem; color: #1e7a1e;">📧 ${email}</div>
                         </div>
-                        <span class="email-badge email-yes">✅ ایمیل دارد</span>
+                        <span class="email-badge email-yes">✅ ${isFa ? 'ایمیل دارد' : 'Has Email'}</span>
                     </div>
                 `).join('')
-                : '<div class="empty-state" style="padding:0.5rem;">هیچ هم‌فکری با ایمیل ثبت‌شده یافت نشد</div>';
+                : `<div class="empty-state" style="padding:0.5rem;">${isFa ? 'هیچ هم‌فکری با ایمیل ثبت‌شده یافت نشد' : 'No like-minded people with registered emails found'}</div>`;
 
             const statusClass = req.status === 'approved' ? 'status-approved' : 
                                req.status === 'rejected' ? 'status-rejected' : 'status-pending';
-            const statusText = req.status === 'approved' ? '✅ تایید شده' : 
-                              req.status === 'rejected' ? '❌ رد شده' : '⏳ در انتظار';
+            const statusText = req.status === 'approved' ? (isFa ? '✅ تایید شده' : '✅ Approved') : 
+                              req.status === 'rejected' ? (isFa ? '❌ رد شده' : '❌ Rejected') : (isFa ? '⏳ در انتظار' : '⏳ Pending');
 
             const actionButtons = req.status === 'pending' ? `
                 <div class="btn-group">
-                    <button class="btn btn-approve" onclick="handleRequest('${req.fileName}', 'approve')">✓ تایید و ارسال لیست</button>
-                    <button class="btn btn-reject" onclick="handleRequest('${req.fileName}', 'reject')">✗ رد درخواست</button>
+                    <button class="btn btn-approve" onclick="handleRequest('${req.fileName}', 'approve')">${isFa ? '✓ تایید و ارسال لیست' : '✓ Approve & Send List'}</button>
+                    <button class="btn btn-reject" onclick="handleRequest('${req.fileName}', 'reject')">${isFa ? '✗ رد درخواست' : '✗ Reject Request'}</button>
                 </div>
             ` : '';
 
@@ -432,20 +490,20 @@
                 <div class="request-card">
                     <div class="header">
                         <div>
-                            <h3>کد کارت: ${req.senderCode}</h3>
+                            <h3>${isFa ? 'کد کارت:' : 'Card Code:'} ${req.senderCode}</h3>
                             <span class="status-badge ${statusClass}">${statusText}</span>
                             ${req.connections && req.connections.length > 0 ? 
-                                `<span class="connections-count">👥 ${req.connections.length} هم‌فکر</span>` : ''}
+                                `<span class="connections-count">👥 ${req.connections.length} ${isFa ? 'هم‌فکر' : 'like-minded'}</span>` : ''}
                         </div>
-                        <div class="meta">${new Date(req.createdAt || req.requestDate).toLocaleString('fa-IR')}</div>
+                        <div class="meta">${new Date(req.createdAt || req.requestDate).toLocaleString(isFa ? 'fa-IR' : 'en-US')}</div>
                     </div>
                     <div class="body">
-                        ${req.reason || req.description ? `<p><strong>دلیل:</strong> ${req.reason || req.description}</p>` : ''}
+                        ${req.reason || req.description ? `<p><strong>${isFa ? 'دلیل:' : 'Reason:'}</strong> ${req.reason || req.description}</p>` : ''}
                         ${reqEmailStatus}
                     </div>
                     
                     <div class="matches-section" style="border-top-color: #27ae60;">
-                        <div class="matches-title" style="color: #27ae60;">📧 ایمیل‌های هم‌فکران (${req.connections ? req.connections.length : 0} نفر):</div>
+                        <div class="matches-title" style="color: #27ae60;">📧 ${isFa ? 'ایمیل‌های هم‌فکران' : 'Like-minded Emails'} (${req.connections ? req.connections.length : 0} ${isFa ? 'نفر' : 'people'}):</div>
                         ${connectionsHtml}
                     </div>
                     
@@ -477,15 +535,13 @@
         renderRequests();
     }
 
-    // ===== نمایش ایمیل =====
-    function toggleEmail(id) {
-        const el = document.getElementById(id);
-        el.style.display = el.style.display === 'block' ? 'none' : 'block';
-    }
-
     // ===== مدیریت درخواست (تایید/رد) =====
     async function handleRequest(fileName, action) {
-        if (!confirm(`آیا از ${action === 'approve' ? 'تایید' : 'رد'} این درخواست اطمینان دارید؟`)) return;
+        const isFa = document.getElementById('langFa').classList.contains('active');
+        if (!confirm(isFa 
+            ? `آیا از ${action === 'approve' ? 'تایید' : 'رد'} این درخواست اطمینان دارید؟` 
+            : `Are you sure you want to ${action === 'approve' ? 'approve' : 'reject'} this request?`
+        )) return;
 
         const buttons = event.target.parentElement.querySelectorAll('button');
         buttons.forEach(btn => btn.disabled = true);
@@ -497,11 +553,11 @@
                 body: JSON.stringify({ fileName, action })
             });
             const result = await response.json();
-            if (!response.ok) throw new Error(result.error || 'خطا در پردازش درخواست');
+            if (!response.ok) throw new Error(result.error || (isFa ? 'خطا در پردازش درخواست' : 'Error processing request'));
             alert(result.message);
             loadRequests();
         } catch (error) {
-            alert('خطا: ' + error.message);
+            alert((isFa ? 'خطا: ' : 'Error: ') + error.message);
             buttons.forEach(btn => btn.disabled = false);
         }
     }
