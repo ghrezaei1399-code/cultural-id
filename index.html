@@ -404,7 +404,6 @@
     </div>
 
 </div>
-
 <script>
   let allApproved = [];
 
@@ -453,12 +452,19 @@
   }
 
   function openModal(ownerCode, fileName) {
+    // جستجو در آرایه
     const item = allApproved.find(i => i.owner === ownerCode && i.fileName === fileName);
-    if (!item) return;
+    
+    // لاگ برای دیباگ: بررسی می‌کنیم چه داده‌هایی وجود دارد
+    console.log('Item found:', item); 
+
+    if (!item) {
+        alert('خطا: اطلاعات اثر یافت نشد.');
+        return;
+    }
 
     document.getElementById('modalTitle').textContent = item.title;
     
-    // نمایش توضیحات
     let descText = item.description || 'بدون توضیحات';
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     descText = descText.replace(urlRegex, url => `<a href="${url}" target="_blank" style="color:#2874a6; text-decoration:underline;">${url}</a>`);
@@ -467,19 +473,27 @@
     document.getElementById('modalMeta').textContent = `ارسال کننده: ${item.owner}`;
     
     const mediaDiv = document.getElementById('modalMediaContainer');
-    
-    // اولویت با fileUrl (لینک جدید) است، اگر نبود از fileData (کد Base64 قدیمی) استفاده می‌کند
+    let mediaFound = false;
+
+    // حالت ۱: لینک مستقیم (سیستم جدید)
     if (item.fileUrl) {
+       console.log('Using fileUrl:', item.fileUrl);
        if (item.fileName && (item.fileName.endsWith('.mp4') || item.fileName.endsWith('.webm'))) {
          mediaDiv.innerHTML = `<video controls src="${item.fileUrl}" class="modal-media"></video>`;
        } else {
-         mediaDiv.innerHTML = `<img src="${item.fileUrl}" class="modal-media">`;
+         mediaDiv.innerHTML = `<img src="${item.fileUrl}" class="modal-media" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'"><p style="display:none; text-align:center; color:red;">خطا در لود تصویر</p>`;
        }
-    } else if (item.fileData) {
-       // پشتیبانی از رکوردهای قدیمی که هنوز پاک نشده‌اند
+       mediaFound = true;
+    } 
+    // حالت ۲: کد Base64 (سیستم قدیم)
+    else if (item.fileData && item.fileData.length > 100) {
+       console.log('Using fileData (Base64)');
        mediaDiv.innerHTML = `<img src="${item.fileData}" class="modal-media">`;
-    } else {
-      mediaDiv.innerHTML = '<p style="text-align:center; padding:2rem;">فایل مدیا موجود نیست.</p>';
+       mediaFound = true;
+    }
+
+    if (!mediaFound) {
+        mediaDiv.innerHTML = '<div style="padding:2rem; text-align:center; background:#f9f9f9; border-radius:12px;"><p>❌ فایل مدیا موجود نیست.</p><small>لطفاً بررسی کنید آیا آپلود فایل با موفقیت انجام شده است؟</small></div>';
     }
 
     document.getElementById('detailModal').classList.add('active');
@@ -491,5 +505,6 @@
 
   document.addEventListener('DOMContentLoaded', loadAchievements);
 </script>
+
 </body>
 </html>
