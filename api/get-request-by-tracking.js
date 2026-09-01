@@ -36,13 +36,11 @@ module.exports = async function handler(req, res) {
 
       const issueData = await response.json();
 
-      // ===== تشخیص وضعیت =====
       const labels = issueData.labels.map(l => l.name);
       let status = 'pending';
       if (labels.includes('approved')) status = 'approved';
       else if (labels.includes('rejected')) status = 'rejected';
 
-      // ===== استخراج متن مشاهده =====
       const bodyLines = issueData.body.split('\n');
       let observation = '';
       let inObservation = false;
@@ -58,7 +56,7 @@ module.exports = async function handler(req, res) {
       }
       observation = observation.trim() || issueData.body.substring(0, 200);
 
-      // ===== استخراج بسته راهنما از کامنت‌ها =====
+      // ===== استخراج بسته راهنما با الگوی جدید =====
       let guide = null;
       if (status === 'approved') {
         try {
@@ -78,18 +76,18 @@ module.exports = async function handler(req, res) {
                 
                 for (const line of lines) {
                   const trimmedLine = line.trim();
-                  if (trimmedLine.includes('**سطح فردی**')) {
+                  if (trimmedLine.includes('سطح فردی') || trimmedLine.includes('اقدام شخصی')) {
                     currentLevel = 'individual';
                     continue;
-                  } else if (trimmedLine.includes('**سطح شبکه‌ای**')) {
+                  } else if (trimmedLine.includes('سطح شبکه‌ای') || trimmedLine.includes('کنشگری جمعی')) {
                     currentLevel = 'network';
                     continue;
-                  } else if (trimmedLine.includes('**سطح سیاستی**')) {
+                  } else if (trimmedLine.includes('سطح سیاستی') || trimmedLine.includes('تأثیر ساختاری')) {
                     currentLevel = 'policy';
                     continue;
-                  } else if (trimmedLine.includes('---') && currentLevel) {
+                  } else if (trimmedLine.startsWith('---') && currentLevel) {
                     continue;
-                  } else if (currentLevel && trimmedLine && !trimmedLine.startsWith('*')) {
+                  } else if (currentLevel && trimmedLine && !trimmedLine.startsWith('*') && !trimmedLine.startsWith('📍')) {
                     if (levels[currentLevel]) {
                       levels[currentLevel] += ' ' + trimmedLine;
                     } else {
@@ -98,7 +96,6 @@ module.exports = async function handler(req, res) {
                   }
                 }
                 
-                // پاکسازی
                 for (const key of ['individual', 'network', 'policy']) {
                   if (levels[key]) {
                     levels[key] = levels[key].trim();
