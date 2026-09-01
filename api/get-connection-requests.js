@@ -4,13 +4,82 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const token = process.env.GH_TOKEN;
+  const token = process.env.OBSERVER_TOKEN || process.env.GH_TOKEN;
   if (!token) {
-    return res.status(500).json({ error: 'GH_TOKEN is not configured' });
+    return res.status(500).json({ error: 'Token is not configured' });
   }
 
+  const { type } = req.query;
   const owner = 'ghrezaei1399-code';
   const repo = 'cultural-id';
+
+  // ===== اگر درخواست برای دریافت مشاهدات (observations) باشد =====
+  if (type === 'observations') {
+    try {
+      const response = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}/issues?labels=observation&state=all&per_page=100`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('خطا در دریافت Issues از گیت‌هاب');
+      }
+
+      const issues = await response.json();
+
+      const observations = issues.map(issue => {
+        const bodyLines = issue.body.split('\n');
+        let cardCode = 'ناشناس';
+        let observation = '';
+        let inObservation = false;
+
+        for (const line of bodyLines) {
+          if (line.includes('**کد کارت:**')) {
+            cardCode = line.replace('**کد کارت:**', '').trim();
+          }
+          if (line.includes('**مشاهده خام:**')) {
+            inObservation = true;
+            continue;
+          }
+          if (inObservation && line.trim() && !line.includes('---')) {
+            observation += line.trim() + ' ';
+          }
+          if (line.includes('---')) break;
+        }
+
+        observation = observation.trim() || issue.body.substring(0, 200);
+
+        const labels = issue.labels.map(l => l.name);
+        let status = 'pending';
+        if (labels.includes('approved')) status = 'approved';
+        else if (labels.includes('rejected')) status = 'rejected';
+
+        return {
+          number: issue.number,
+          cardCode: cardCode,
+          observation: observation,
+          status: status,
+          createdAt: issue.created_at,
+          issueUrl: issue.html_url
+        };
+      });
+
+      observations.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+      return res.status(200).json({ observations });
+
+    } catch (error) {
+      console.error('Get Observations Error:', error);
+      return res.status(500).json({ error: error.message });
+    }
+  }
+
+  // ===== منطق قبلی: دریافت درخواست‌های ارتباط =====
   const path = 'data/requests';
 
   try {
@@ -42,12 +111,10 @@ module.exports = async function handler(req, res) {
         const jsonString = Buffer.from(fileData.content, 'base64').toString('utf8');
         const requestData = JSON.parse(jsonString);
         
-        // ===== تغییر: خواندن همه درخواست‌ها (فقط connection) =====
         if (requestData.type === 'connection' || !requestData.type) {
           requests.push({
             ...requestData,
             fileName: file.name,
-            // ===== تغییر: استفاده از senderCode و senderEmail =====
             senderCode: requestData.senderCode || requestData.cardCode,
             senderEmail: requestData.senderEmail || requestData.requesterEmail || '',
             reason: requestData.reason || requestData.description || ''
@@ -58,7 +125,6 @@ module.exports = async function handler(req, res) {
       }
     }
 
-    // مرتب‌سازی بر اساس تاریخ (جدیدترین اول)
     requests.sort((a, b) => new Date(b.createdAt || b.requestDate) - new Date(a.createdAt || a.requestDate));
 
     return res.status(200).json({ requests });
