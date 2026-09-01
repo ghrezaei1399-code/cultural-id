@@ -320,6 +320,13 @@
                 <span class="desc" id="modDeleteDesc">مدیریت انصراف از عضویت</span>
                 <span class="badge-module" id="badgeDelete">0</span>
             </a>
+            <!-- ===== کارت جدید ===== -->
+            <a href="admin-observations.html" class="module-card">
+                <span class="icon">👁️</span>
+                <span class="label" id="modObservations">مدیریت مشاهدات</span>
+                <span class="desc" id="modObservationsDesc">بررسی مشاهدات خام کاربران</span>
+                <span class="badge-module pending" id="badgeObservations">0</span>
+            </a>
         </div>
 
         <div class="stats-grid">
@@ -384,6 +391,8 @@
                 modRequestsDesc: 'مدیریت درخواست‌های هم‌فکران',
                 modDelete: 'درخواست‌های حذف',
                 modDeleteDesc: 'مدیریت انصراف از عضویت',
+                modObservations: 'مدیریت مشاهدات',
+                modObservationsDesc: 'بررسی مشاهدات خام کاربران',
                 labelTotal: 'کل کاربران',
                 labelGolden: '🌟 طلایی',
                 labelSilver: '🥈 نقره‌ای',
@@ -410,6 +419,8 @@
                 modRequestsDesc: 'Manage connection requests',
                 modDelete: 'Delete Requests',
                 modDeleteDesc: 'Manage withdrawal requests',
+                modObservations: 'Observations Management',
+                modObservationsDesc: 'Review raw user observations',
                 labelTotal: 'Total Users',
                 labelGolden: '🌟 Golden',
                 labelSilver: '🥈 Silver',
@@ -446,6 +457,8 @@
             document.getElementById('modRequestsDesc').textContent = tr('modRequestsDesc');
             document.getElementById('modDelete').textContent = tr('modDelete');
             document.getElementById('modDeleteDesc').textContent = tr('modDeleteDesc');
+            document.getElementById('modObservations').textContent = tr('modObservations');
+            document.getElementById('modObservationsDesc').textContent = tr('modObservationsDesc');
             document.getElementById('labelTotal').textContent = tr('labelTotal');
             document.getElementById('labelGolden').textContent = tr('labelGolden');
             document.getElementById('labelSilver').textContent = tr('labelSilver');
@@ -515,10 +528,25 @@
             document.getElementById('badgeAchievements').textContent = pendingAchievements;
             document.getElementById('badgeAchievements').className = 'badge-module' + (pendingAchievements > 0 ? ' pending' : '');
 
-            document.getElementById('badgeRequests').textContent = '0';
-            document.getElementById('badgeRequests').className = 'badge-module';
+            const pendingRequests = allUsers.filter(u => u.status === 'pending' || u.status === 'pending_edit').length;
+            document.getElementById('badgeRequests').textContent = pendingRequests;
+            document.getElementById('badgeRequests').className = 'badge-module' + (pendingRequests > 0 ? ' pending' : '');
+
             document.getElementById('badgeDelete').textContent = '0';
             document.getElementById('badgeDelete').className = 'badge-module';
+
+            // ===== نشانگر برای مدیریت مشاهدات =====
+            fetch('/api/get-connection-requests?type=observations')
+                .then(res => res.json())
+                .then(data => {
+                    const pendingObs = (data.observations || []).filter(o => o.status === 'pending').length;
+                    document.getElementById('badgeObservations').textContent = pendingObs;
+                    document.getElementById('badgeObservations').className = 'badge-module' + (pendingObs > 0 ? ' pending' : '');
+                })
+                .catch(() => {
+                    document.getElementById('badgeObservations').textContent = '0';
+                    document.getElementById('badgeObservations').className = 'badge-module';
+                });
         }
 
         function showCountryUsers(country) {
