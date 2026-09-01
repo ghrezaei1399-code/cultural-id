@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>اطلس ظهور | کارت جهانی هویت هوشمند فرهنگی</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            padding: 1.5rem 1rem;
+            background: linear-gradient(135deg, #fdf6e3 0%, #e8f4f8 50%, #f5e6d3 100%);
+            color: #2a1a0a;
+        }
+        body.dark {
+            background: linear-gradient(135deg, #3a2f20 0%, #2a2418 50%, #4a3a28 100%);
+            color: #f0e8d0;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .page-title {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #8a6d1f;
+            text-align: center;
+            margin-bottom: 0.2rem;
+        }
+        body.dark .page-title { color: #f9e79f; }
+        .page-subtitle {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #6a5a3a;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(212,175,55,0.15);
+            padding-bottom: 1rem;
+        }
+        body.dark .page-subtitle { color: #c8b890; }
+        
+        .stats-bar {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 0.5rem 1.5rem;
+            background: rgba(255,255,255,0.3);
+            border-radius: 12px;
+            border: 1px solid rgba(212,175,55,0.15);
+        }
+        body.dark .stat-item { background: rgba(0,0,0,0.1); }
+        .stat-item .number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #8a6d1f;
+            display: block;
+        }
+        body.dark .stat-item .number { color: #f9e79f; }
+        .stat-item .label {
+            font-size: 0.7rem;
+            color: #6a5a3a;
+        }
+        body.dark .stat-item .label { color: #c8b890; }
+        
+        .filter-bar {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+        }
+        .filter-btn {
+            padding: 0.4rem 1.2rem;
+            border-radius: 30px;
+            border: 1px solid rgba(212,175,55,0.15);
+            background: rgba(255,255,255,0.03);
+            color: #0a0a1a;
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        body.dark .filter-btn { color: #f0e8d0; }
+        .filter-btn:hover { background: rgba(212,175,55,0.05); }
+        .filter-btn.active {
+            background: rgba(212,175,55,0.12);
+            border-color: #d4af37;
+        }
+        body.dark .filter-btn.active { background: rgba(212,175,55,0.08); }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .gallery-card {
+            background: rgba(255,255,255,0.6);
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid rgba(212,175,55,0.2);
+            transition: 0.3s;
+            position: relative;
+        }
+        body.dark .gallery-card { background: rgba(0,0,0,0.15); border-color: rgba(212,175,55,0.1); }
+        .gallery-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(212,175,55,0.12);
+        }
+        body.dark .gallery-card:hover { box-shadow: 0 8px 30px rgba(212,175,55,0.05); }
+        
+        .gallery-card .score-badge {
+            position: absolute;
+            top: -8px;
+            right: 12px;
+            background: linear-gradient(135deg, #d4af37, #f9e79f);
+            color: #2a1a0a;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            box-shadow: 0 2px 10px rgba(212,175,55,0.3);
+        }
+        body.dark .gallery-card .score-badge { background: linear-gradient(135deg, #8a6d1f, #d4af37); color: #fff; }
+        
+        .gallery-card .card-code {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: #888;
+            margin-bottom: 0.3rem;
+        }
+        .gallery-card .card-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #2a1a0a;
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
+        body.dark .gallery-card .card-title { color: #f0e8e0; }
+        .gallery-card .card-observation {
+            font-size: 0.85rem;
+            color: #4a3a2a;
+            line-height: 1.7;
+            margin-bottom: 0.8rem;
+            background: rgba(255,255,255,0.3);
+            padding: 0.8rem;
+            border-radius: 8px;
+            border-right: 3px solid rgba(212,175,55,0.2);
+        }
+        body.dark .gallery-card .card-observation { color: #d0c0b0; background: rgba(0,0,0,0.05); }
+        
+        .gallery-card .analysis-section {
+            margin-top: 0.8rem;
+            border-top: 1px solid rgba(212,175,55,0.1);
+            padding-top: 0.8rem;
+        }
+        .gallery-card .analysis-section .matrix-item {
+            font-size: 0.75rem;
+            margin-bottom: 0.3rem;
+        }
+        .gallery-card .analysis-section .matrix-label {
+            font-weight: 700;
+            color: #8a6d1f;
+        }
+        body.dark .gallery-card .analysis-section .matrix-label { color: #f9e79f; }
+        .gallery-card .analysis-section .matrix-text {
+            color: #4a3a2a;
+            font-size: 0.8rem;
+        }
+        body.dark .gallery-card .analysis-section .matrix-text { color: #d0c0b0; }
+        
+        .gallery-card .module-tag {
+            display: inline-block;
+            padding: 0.15rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            background: rgba(212,175,55,0.1);
+            color: #8a6d1f;
+            border: 1px solid rgba(212,175,55,0.2);
+            margin-top: 0.5rem;
+        }
+        body.dark .gallery-card .module-tag { color: #f9e79f; background: rgba(212,175,55,0.05); }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #888;
+            grid-column: 1 / -1;
+        }
+        
+        .back-row { display: flex; justify-content: center; margin-top: 2rem; }
+        .btn-back {
+            padding: 0.7rem 2rem;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-decoration: none;
+            background: rgba(255,255,255,0.3);
+            color: #0a0a1a;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s;
+        }
+        body.dark .btn-back { color: #f0e8d0; background: rgba(0,0,0,0.1); }
+        .btn-back:hover { background: rgba(255,255,255,0.5); transform: translateY(-2px); }
+        body.dark .btn-back:hover { background: rgba(255,255,255,0.05); }
+        
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .gallery-grid { grid-template-columns: 1fr; }
+            .stats-bar { gap: 0.8rem; }
+            .stat-item { padding: 0.3rem 1rem; }
+            .gallery-card .score-badge { top: -6px; right: 8px; font-size: 0.6rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="page-title">🏛️ اطلس ظهور</h1>
+        <div class="page-subtitle">پرونده‌های برتر مشاهده و تحلیل سپهری • امتیاز ۵</div>
+        
+        <div class="stats-bar" id="statsBar">
+            <div class="stat-item">
+                <span class="number" id="totalCount">۰</span>
+                <span class="label">کل آثار</span>
+            </div>
+            <div class="stat-item">
+                <span class="number" id="moduleCount">۰</span>
+                <span class="label">ماژول‌های فعال</span>
+            </div>
+        </div>
+        
+        <div class="filter-bar" id="filterBar">
+            <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">📋 همه</button>
+            <button class="filter-btn" data-filter="collaboration" onclick="setFilter('collaboration')">🤝 همفکری</button>
+            <button class="filter-btn" data-filter="related" onclick="setFilter('related')">👁️ مشاهدات مرتبط</button>
+            <button class="filter-btn" data-filter="referral" onclick="setFilter('referral')">📤 ارجاع به همفرهنگان</button>
+        </div>
+        
+        <div id="galleryGrid" class="gallery-grid">
+            <div class="empty-state">در حال بارگذاری...</div>
+        </div>
+        
+        <div class="back-row">
+            <a href="index.html" class="btn-back">↩ بازگشت به صفحه اصلی</a>
+        </div>
+    </div>
+    
+    <script>
+        let allEntries = [];
+        let currentFilter = 'all';
+        
+        // ===== نگاشت نام ماژول‌ها =====
+        const moduleNames = {
+            'collaboration': 'همفکری با دیگران',
+            'related': 'مشاهدات مرتبط دیگران',
+            'referral': 'ارجاع به ۵ همفرهنگ'
+        };
+        
+        async function loadGallery() {
+            try {
+                const response = await fetch('/api/get-connection-requests?type=observations');
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'خطا در دریافت اطلاعات');
+                
+                // ===== فیلتر کردن مشاهدات با امتیاز ۵ و تاییدشده =====
+                allEntries = (data.observations || [])
+                    .filter(o => o.score === 5 && o.status === 'approved')
+                    .map(o => ({
+                        ...o,
+                        moduleName: moduleNames[o.module] || o.module || 'بدون ماژول'
+                    }));
+                
+                updateStats();
+                renderGallery();
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('galleryGrid').innerHTML = 
+                    `<div class="empty-state" style="color:red;">خطا: ${error.message}</div>`;
+            }
+        }
+        
+        function updateStats() {
+            const total = allEntries.length;
+            const modules = new Set(allEntries.map(e => e.module).filter(Boolean));
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('moduleCount').textContent = modules.size;
+        }
+        
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === filter);
+            });
+            renderGallery();
+        }
+        
+        function renderGallery() {
+            const container = document.getElementById('galleryGrid');
+            
+            let filtered = allEntries;
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(o => o.module === currentFilter);
+            }
+            
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="empty-state">هیچ اثری با این دسته‌بندی در اطلس ظهور یافت نشد.</div>`;
+                return;
+            }
+            
+            container.innerHTML = filtered.map(entry => {
+                const analysis = entry.analysis || {};
+                
+                // لیست ماتریس‌های موجود
+                const matrixItems = [
+                    { label: 'ظهورها', key: 'emergenceMatrix' },
+                    { label: 'لایه‌ها', key: 'layerMatrix' },
+                    { label: 'ارتباطات', key: 'connectionMatrix' },
+                    { label: 'مقیاس', key: 'scaleMatrix' },
+                    { label: 'ظرفیت', key: 'capacityMatrix' }
+                ];
+                
+                const analysisHtml = matrixItems
+                    .filter(item => analysis[item.key])
+                    .map(item => `
+                        <div class="matrix-item">
+                            <span class="matrix-label">${item.label}:</span>
+                            <span class="matrix-text">${analysis[item.key]}</span>
+                        </div>
+                    `).join('');
+                
+                return `
+                    <div class="gallery-card">
+                        <span class="score-badge">⭐ امتیاز ۵</span>
+                        <div class="card-code">${entry.cardCode || 'ناشناس'} • #${entry.number}</div>
+                        <div class="card-title">مشاهده</div>
+                        <div class="card-observation">${entry.observation || 'متن موجود نیست'}</div>
+                        <span class="module-tag">${entry.moduleName}</span>
+                        ${analysisHtml ? `
+                            <div class="analysis-section">
+                                ${analysisHtml}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        loadGallery();
+        setInterval(loadGallery, 60000);
+    </script>
+</body>
+</html>
