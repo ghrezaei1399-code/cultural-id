@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>ثبت مشاهدات | مجتمع هم‌اندیشی سپهر خردمندی</title>
+    <title>Submit Observations | Sahar Wisdom Community</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', 'Vazir', sans-serif;
             min-height: 100vh;
             padding: 1.5rem 1rem;
             background: linear-gradient(135deg, #fdf6e3 0%, #e8f4f8 50%, #f5e6d3 100%);
@@ -36,7 +36,6 @@
         }
         body.dark .page-subtitle { color: #c8b890; }
         
-        /* ===== پیام هشدار ایمیل ===== */
         .email-warning {
             background: rgba(212, 175, 55, 0.12);
             border: 2px solid #d4af37;
@@ -70,7 +69,6 @@
         .email-warning .icon { font-size: 1.5rem; }
         .email-warning .sep { opacity: 0.3; }
         
-        /* ===== راهنما ===== */
         .guide-banner {
             background: rgba(212,175,55,0.06);
             border: 1px solid rgba(212,175,55,0.15);
@@ -119,7 +117,6 @@
         body.dark .form-group input { background: rgba(0,0,0,0.15); color: #f0e8d0; border-color: rgba(212,175,55,0.15); }
         .form-group input:focus { border-color: #d4af37; box-shadow: 0 0 0 4px rgba(212,175,55,0.08); }
         
-        /* ===== باکس‌های مشاهده ===== */
         .observation-box {
             background: rgba(255,255,255,0.5);
             border-radius: 20px;
@@ -168,7 +165,6 @@
             box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
         }
         
-        /* ===== ماژول‌های هر باکس ===== */
         .box-modules {
             display: flex;
             gap: 0.8rem;
@@ -214,6 +210,11 @@
         }
         body.dark .add-box-btn { color: #f9e79f; border-color: rgba(212,175,55,0.15); }
         .add-box-btn:hover { background: rgba(212,175,55,0.05); border-color: #d4af37; }
+        .add-box-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            border-color: rgba(212,175,55,0.1);
+        }
         
         .btn {
             padding: 0.8rem 2rem;
@@ -311,95 +312,93 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="page-title">👁️ ثبت مشاهدات خام</h1>
-        <div class="page-subtitle">گزارش پدیده‌های فرهنگی، اجتماعی و انسانی بدون تفسیر و قضاوت</div>
+        <h1 class="page-title">👁️ Submit Raw Observations</h1>
+        <div class="page-subtitle">Report cultural, social, and human phenomena without interpretation or judgment</div>
         
-        <!-- ===== پیام هشدار ایمیل با لینک آشنایی ===== -->
         <div class="email-warning">
             <span class="icon">⚠️</span>
-            بدون ثبت پست الکترونیک، مشاهدات شما فقط برای مجتمع هم‌اندیشی ثبت می‌شود.
-            <a href="edit-fa.html">📧 ثبت ایمیل</a>
+            Without registering an email, your observations will only be recorded for the Wisdom Community.
+            <a href="edit-en.html">📧 Register Email</a>
             <span class="sep">|</span>
-            <a href="about-fa.html#wisdom">🧠 آشنایی با سپهر خردمندی</a>
+            <a href="about-en.html#wisdom">🧠 About Sphere of Wisdom</a>
         </div>
         
-        <!-- ===== راهنما ===== -->
         <div class="guide-banner">
-            <strong>📌 راهنمای ثبت مشاهده:</strong><br>
-            • مشاهده‌ی خود را <strong>بدون تفسیر و قضاوت</strong> بنویسید.<br>
-            • از <strong>کلیدواژه‌های مشخص</strong> برای دسته‌بندی استفاده کنید:
-            <span class="keyword-hint">#آموزش</span>
-            <span class="keyword-hint">#سلامت</span>
-            <span class="keyword-hint">#فناوری</span>
-            <span class="keyword-hint">#هوش_مصنوعی</span>
-            <span class="keyword-hint">#فرهنگ</span>
-            <span class="keyword-hint">#حکمرانی</span>
-            <span class="keyword-hint">#محیط_زیست</span>
+            <strong>📌 Observation Guide:</strong><br>
+            • Write your observation <strong>without interpretation or judgment</strong>.<br>
+            • Use <strong>keywords</strong> for categorization:
+            <span class="keyword-hint">#Education</span>
+            <span class="keyword-hint">#Health</span>
+            <span class="keyword-hint">#Technology</span>
+            <span class="keyword-hint">#AI</span>
+            <span class="keyword-hint">#Culture</span>
+            <span class="keyword-hint">#Governance</span>
+            <span class="keyword-hint">#Environment</span>
             <br>
-            • هر مشاهده را در یک باکس جداگانه ثبت کنید. می‌توانید چندین مشاهده از موضوعات مختلف داشته باشید.
+            • Each observation in a separate box. <strong>Maximum 5 observations</strong>.
+            • Only <strong>one module</strong> per observation.
         </div>
         
-        <!-- ===== کد کارت ===== -->
         <div class="form-group">
-            <label for="userCode">🔑 کد کارت هویت فرهنگی</label>
-            <input type="text" id="userCode" placeholder="مثلاً: CIM-1234-5678-ABCDE" required />
+            <label for="userCode">🔑 Cultural Identity Card Code</label>
+            <input type="text" id="userCode" placeholder="e.g. CIM-1234-5678-ABCDE" required />
         </div>
         
-        <!-- ===== باکس‌های مشاهده ===== -->
         <div id="observationsContainer">
             <div class="observation-box" data-index="0">
                 <div class="box-header">
-                    <span class="box-title">📝 مشاهده ۱</span>
+                    <span class="box-title">📝 Observation 1</span>
                     <button class="box-module-btn" onclick="removeBox(this)" style="color:#c0392b;border-color:rgba(200,50,50,0.3);">
-                        <span class="icon">✕</span> حذف
+                        <span class="icon">✕</span> Remove
                     </button>
                 </div>
-                <textarea placeholder="مشاهده خام خود را بنویسید..." class="obs-text"></textarea>
+                <textarea placeholder="Write your raw observation..." class="obs-text"></textarea>
                 <div class="box-modules">
-                    <button class="box-module-btn" onclick="toggleModule(this)">
-                        <span class="icon">🤝</span> همفکری با دیگران
+                    <button class="box-module-btn" onclick="selectModule(this, 'collaboration')">
+                        <span class="icon">🤝</span> Collaborate
                     </button>
-                    <button class="box-module-btn" onclick="toggleModule(this)">
-                        <span class="icon">👁️</span> مشاهدات مرتبط دیگران
+                    <button class="box-module-btn" onclick="selectModule(this, 'related')">
+                        <span class="icon">👁️</span> Related Observations
                     </button>
-                    <button class="box-module-btn" onclick="toggleModule(this)">
-                        <span class="icon">📤</span> ارجاع به ۵ همفرهنگ
+                    <button class="box-module-btn" onclick="selectModule(this, 'referral')">
+                        <span class="icon">📤</span> Refer to 5 peers
                     </button>
                 </div>
             </div>
         </div>
         
-        <!-- ===== دکمه اضافه کردن باکس ===== -->
-        <button class="add-box-btn" onclick="addObservationBox()">➕ افزودن مشاهده جدید</button>
+        <button class="add-box-btn" id="addBoxBtn" onclick="addObservationBox()">➕ Add New Observation (max 5)</button>
         
-        <!-- ===== دکمه‌ها ===== -->
         <div class="actions">
-            <button type="button" class="btn btn-secondary" onclick="window.location.href='index.html'">↩ بازگشت</button>
-            <button type="button" class="btn btn-primary" id="submitBtn" onclick="submitObservations()">📤 ثبت همه مشاهدات</button>
+            <button type="button" class="btn btn-secondary" onclick="window.location.href='index-en.html'">↩ Back</button>
+            <button type="button" class="btn btn-primary" id="submitBtn" onclick="submitObservations()">📤 Submit All Observations</button>
         </div>
         
-        <!-- ===== نتیجه ===== -->
         <div id="resultBox" class="result-box">
-            <div class="title" id="resultTitle">✅ مشاهدات با موفقیت ثبت شد</div>
-            <div class="tracking" id="resultTracking">شماره پیگیری: ---</div>
+            <div class="title" id="resultTitle">✅ Observations submitted successfully</div>
+            <div class="tracking" id="resultTracking">Tracking number: ---</div>
             <div id="resultError" style="display:none;" class="error"></div>
         </div>
         
-        <!-- ===== بازگشت ===== -->
         <div class="back-row">
-            <a href="track-observation.html" class="btn-back" style="background:rgba(40,116,166,0.1);border-color:rgba(40,116,166,0.2);">🔍 پیگیری مشاهدات</a>
-            <a href="index.html" class="btn-back">↩ بازگشت به صفحه اصلی</a>
+            <a href="track-observation.html" class="btn-back" style="background:rgba(40,116,166,0.1);border-color:rgba(40,116,166,0.2);">🔍 Track Observations</a>
+            <a href="index-en.html" class="btn-back">↩ Back to Home</a>
         </div>
         
         <div class="note">
-            🔒 مشاهدات شما به‌صورت ناشناس و با رعایت کامل حریم خصوصی ثبت می‌شود.
+            🔒 Your observations are recorded anonymously with full privacy protection.
         </div>
     </div>
     
     <script>
         let boxCounter = 1;
+        const MAX_BOXES = 5;
         
         function addObservationBox() {
+            if (boxCounter >= MAX_BOXES) {
+                alert('Maximum 5 observations allowed.');
+                return;
+            }
             boxCounter++;
             const container = document.getElementById('observationsContainer');
             const newBox = document.createElement('div');
@@ -407,38 +406,60 @@
             newBox.dataset.index = boxCounter - 1;
             newBox.innerHTML = `
                 <div class="box-header">
-                    <span class="box-title">📝 مشاهده ${boxCounter}</span>
+                    <span class="box-title">📝 Observation ${boxCounter}</span>
                     <button class="box-module-btn" onclick="removeBox(this)" style="color:#c0392b;border-color:rgba(200,50,50,0.3);">
-                        <span class="icon">✕</span> حذف
+                        <span class="icon">✕</span> Remove
                     </button>
                 </div>
-                <textarea placeholder="مشاهده خام خود را بنویسید..." class="obs-text"></textarea>
+                <textarea placeholder="Write your raw observation..." class="obs-text"></textarea>
                 <div class="box-modules">
-                    <button class="box-module-btn" onclick="toggleModule(this)">
-                        <span class="icon">🤝</span> همفکری با دیگران
+                    <button class="box-module-btn" onclick="selectModule(this, 'collaboration')">
+                        <span class="icon">🤝</span> Collaborate
                     </button>
-                    <button class="box-module-btn" onclick="toggleModule(this)">
-                        <span class="icon">👁️</span> مشاهدات مرتبط دیگران
+                    <button class="box-module-btn" onclick="selectModule(this, 'related')">
+                        <span class="icon">👁️</span> Related Observations
                     </button>
-                    <button class="box-module-btn" onclick="toggleModule(this)">
-                        <span class="icon">📤</span> ارجاع به ۵ همفرهنگ
+                    <button class="box-module-btn" onclick="selectModule(this, 'referral')">
+                        <span class="icon">📤</span> Refer to 5 peers
                     </button>
                 </div>
             `;
             container.appendChild(newBox);
+            updateAddButton();
         }
         
         function removeBox(btn) {
             const box = btn.closest('.observation-box');
             if (document.querySelectorAll('.observation-box').length > 1) {
                 box.remove();
+                const boxes = document.querySelectorAll('.observation-box');
+                boxes.forEach((b, i) => {
+                    b.querySelector('.box-title').textContent = `📝 Observation ${i + 1}`;
+                });
+                boxCounter = boxes.length;
+                updateAddButton();
             } else {
-                alert('حداقل یک باکس مشاهده باید وجود داشته باشد.');
+                alert('At least one observation box is required.');
             }
         }
         
-        function toggleModule(btn) {
-            btn.classList.toggle('active');
+        function selectModule(btn, moduleType) {
+            const box = btn.closest('.observation-box');
+            const allModules = box.querySelectorAll('.box-module-btn');
+            allModules.forEach(m => m.classList.remove('active'));
+            btn.classList.add('active');
+            btn.dataset.module = moduleType;
+        }
+        
+        function updateAddButton() {
+            const addBtn = document.getElementById('addBoxBtn');
+            if (boxCounter >= MAX_BOXES) {
+                addBtn.disabled = true;
+                addBtn.textContent = '⚠️ Maximum 5 observations reached';
+            } else {
+                addBtn.disabled = false;
+                addBtn.textContent = `➕ Add New Observation (${boxCounter}/${MAX_BOXES})`;
+            }
         }
         
         async function submitObservations() {
@@ -448,34 +469,35 @@
             let hasError = false;
             
             if (!userCode) {
-                alert('لطفاً کد کارت هویت فرهنگی خود را وارد کنید.');
+                alert('Please enter your Cultural Identity Card code.');
                 return;
             }
             
             boxes.forEach((box, index) => {
                 const text = box.querySelector('.obs-text').value.trim();
-                const modules = box.querySelectorAll('.box-module-btn.active');
-                const selectedModules = [];
-                modules.forEach(m => {
-                    const label = m.textContent.trim();
-                    if (label.includes('همفکری')) selectedModules.push('collaboration');
-                    else if (label.includes('مشاهدات مرتبط')) selectedModules.push('related');
-                    else if (label.includes('ارجاع')) selectedModules.push('referral');
-                });
+                const selectedModule = box.querySelector('.box-module-btn.active');
+                const moduleType = selectedModule ? selectedModule.dataset.module : null;
                 
                 if (!text) {
-                    alert(`لطفاً مشاهده ${index + 1} را پر کنید.`);
+                    alert(`Please fill in observation ${index + 1}.`);
                     hasError = true;
                     return;
                 }
                 
                 observations.push({
                     text: text,
-                    modules: selectedModules
+                    module: moduleType
                 });
             });
             
             if (hasError) return;
+            
+            const noModule = observations.some(o => !o.module);
+            if (noModule) {
+                if (!confirm('Some observations have no module selected. Continue?')) {
+                    return;
+                }
+            }
             
             const submitBtn = document.getElementById('submitBtn');
             const resultBox = document.getElementById('resultBox');
@@ -484,7 +506,7 @@
             const resultError = document.getElementById('resultError');
             
             submitBtn.disabled = true;
-            submitBtn.textContent = '⏳ در حال ثبت...';
+            submitBtn.textContent = '⏳ Submitting...';
             resultBox.style.display = 'none';
             
             try {
@@ -501,29 +523,31 @@
                 const result = await response.json();
                 
                 if (!response.ok) {
-                    throw new Error(result.error || 'خطا در ثبت مشاهدات');
+                    throw new Error(result.error || 'Error submitting observations');
                 }
                 
-                resultTitle.textContent = '✅ مشاهدات با موفقیت ثبت شد';
-                resultTracking.textContent = `🔗 شماره پیگیری: ${result.trackingCode}`;
+                resultTitle.textContent = '✅ Observations submitted successfully';
+                resultTracking.textContent = `🔗 Tracking number: ${result.trackingCode}`;
                 resultError.style.display = 'none';
                 resultBox.style.display = 'block';
                 
-                submitBtn.textContent = '✅ ثبت شد';
+                submitBtn.textContent = '✅ Submitted';
                 
                 document.querySelectorAll('.obs-text').forEach(t => t.value = '');
                 document.querySelectorAll('.box-module-btn.active').forEach(b => b.classList.remove('active'));
                 
             } catch (error) {
                 console.error('Error:', error);
-                resultTitle.textContent = '❌ خطا در ثبت مشاهدات';
+                resultTitle.textContent = '❌ Error submitting observations';
                 resultError.textContent = error.message;
                 resultError.style.display = 'block';
                 resultBox.style.display = 'block';
-                submitBtn.textContent = '📤 تلاش مجدد';
+                submitBtn.textContent = '📤 Retry';
                 submitBtn.disabled = false;
             }
         }
+        
+        updateAddButton();
     </script>
 </body>
 </html>
