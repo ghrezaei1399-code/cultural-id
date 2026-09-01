@@ -9,7 +9,7 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: 'Token is not configured' });
   }
 
-  const { fileName, action, issueNumber, type, moduleType } = req.body;
+  const { fileName, action, issueNumber, type, moduleType, analysis, score } = req.body;
   const owner = 'ghrezaei1399-code';
   const repo = 'cultural-id';
 
@@ -78,56 +78,24 @@ ${guide.policy}
           const selectedModule = extractModuleFromIssue(issueData.body);
           
           if (selectedModule === 'ارجاع به ۵ همفرهنگ') {
-            // دریافت ۱۰ هم‌فکر و ذخیره برای انتخاب ادمین
             const likeMinded = await getLikeMinded(issueData, token);
             if (likeMinded.length > 0) {
-              const referralData = {
+              await saveReferralData({
                 issueNumber: issueNumber,
                 cardCode: extractCardCode(issueData.body),
                 likeMinded: likeMinded,
                 selected: [],
                 status: 'pending_admin_selection'
-              };
-              // ذخیره در data/referrals/
-              await saveReferralData(referralData, token);
+              }, token);
             }
-          } else if (selectedModule === 'همفکری با دیگران') {
-            // اضافه کردن برچسب همفکری
-            newLabels.push('collaboration');
-          } else if (selectedModule === 'مشاهدات مرتبط دیگران') {
-            // اضافه کردن برچسب مرتبط
-            newLabels.push('related');
           }
 
         } else {
           newLabels.push('rejected');
           newLabels.push('observation');
-          
-          await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/comments`, {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json',
-              'Accept': 'application/vnd.github.v3+json'
-            },
-            body: JSON.stringify({
-              body: '❌ این مشاهده با توجه به اصول آزمایشگاه سپهر خردمندی رد شد.'
-            })
-          });
         }
 
-        await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}`, {
-          method: 'PATCH',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/vnd.github.v3+json'
-          },
-          body: JSON.stringify({
-            labels: newLabels,
-            state: action === 'approve_all' ? 'open' : 'closed'
-          })
-        });
+        await updateIssueLabels(issueNumber, newLabels, token, action === 'approve_all' ? 'open' : 'closed');
 
         return res.status(200).json({
           success: true,
@@ -135,42 +103,95 @@ ${guide.policy}
         });
       }
 
-      // ===== تایید ماژول جداگانه =====
-      if (action === 'approve_module' && moduleType) {
-        const moduleCommentBody = `
-**${moduleType}** - ✅ تایید شد.
+      // ===== ذخیره تحلیل ۵ سطحی =====
+      if (action === 'save_analysis' && analysis) {
+        // ذخیره تحلیل در فایل JSON مخصوص
+        const analysisPath = `data/analyses/${issueNumber}.json`;
+        const analysisData = {
+          issueNumber: issueNumber,
+          analysis: analysis,
+          score: score || 0,
+          updatedAt: new Date().toISOString()
+        };
+        
+        // ابتدا بررسی می‌کنیم که فایل وجود دارد یا نه
+        let existingSha = null;
+        try {
+          const existingRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${analysisPath}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (existingRes.ok) {
+            const existingData = await existingRes.json();
+            existingSha = existingData.sha;
+          }
+        } catch (e) { /* فایل وجود ندارد */ }
+        
+        const content = Buffer.from(JSON.stringify(analysisData, null, 2), 'utf8').toString('base64');
+        const body = {
+          message: `Analysis for observation #${issueNumber}`,
+          content: content,
+          branch: 'main'
+        };
+        if (existingSha) body.sha = existingSha;
+        
+        await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${analysisPath}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        });
 
-این ماژول توسط ادمین تایید شده است. کاربر می‌تواند از این قابلیت استفاده کند.
-        `;
-        await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/comments`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/vnd.github.v3+json'
-          },
-          body: JSON.stringify({ body: moduleCommentBody })
-        });
+        // اگر امتیاز ۵ است، برچسب gallery را اضافه کن
+        if (score === 5) {
+          newLabels.push('gallery');
+        }
         
-        // اضافه کردن برچسب ماژول
-        const moduleLabel = `module-${moduleType.replace(/\s/g, '-')}`;
-        newLabels.push(moduleLabel);
+        // اگر issue قبلاً approved نبود، آن را approved کن
+        if (!currentLabels.includes('approved')) {
+          newLabels.push('approved');
+          newLabels.push('observation');
+        }
         
-        await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}`, {
-          method: 'PATCH',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/vnd.github.v3+json'
-          },
-          body: JSON.stringify({
-            labels: newLabels
-          })
-        });
+        await updateIssueLabels(issueNumber, newLabels, token);
 
         return res.status(200).json({
           success: true,
-          message: `✅ ماژول "${moduleType}" تایید شد.`
+          message: '✅ تحلیل با موفقیت ذخیره شد.'
+        });
+      }
+
+      // ===== ارسال به گالری (امتیاز ۵) =====
+      if (action === 'submit_gallery') {
+        // بررسی اینکه تحلیل وجود دارد
+        const analysisPath = `data/analyses/${issueNumber}.json`;
+        const analysisRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${analysisPath}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!analysisRes.ok) {
+          return res.status(400).json({ error: 'لطفاً ابتدا تحلیل را تکمیل کنید.' });
+        }
+        
+        const analysisDataRaw = await analysisRes.json();
+        const analysisData = JSON.parse(Buffer.from(analysisDataRaw.content, 'base64').toString('utf8'));
+        
+        if (analysisData.score !== 5) {
+          return res.status(400).json({ error: 'برای ارسال به گالری، امتیاز باید ۵ باشد.' });
+        }
+        
+        // اضافه کردن برچسب gallery
+        const newLabels = currentLabels.filter(l => l !== 'pending-review');
+        if (!newLabels.includes('gallery')) newLabels.push('gallery');
+        if (!newLabels.includes('approved')) newLabels.push('approved');
+        newLabels.push('observation');
+        
+        await updateIssueLabels(issueNumber, newLabels, token);
+
+        return res.status(200).json({
+          success: true,
+          message: '⭐ مشاهده با امتیاز ۵ به گالری اطلس ظهور ارسال شد.'
         });
       }
 
@@ -284,6 +305,23 @@ ${guide.policy}
 
 // ===== توابع کمکی =====
 
+async function updateIssueLabels(issueNumber, labels, token, state = 'open') {
+  const owner = 'ghrezaei1399-code';
+  const repo = 'cultural-id';
+  await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}`, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'Accept': 'application/vnd.github.v3+json'
+    },
+    body: JSON.stringify({
+      labels: labels,
+      state: state
+    })
+  });
+}
+
 function extractModuleFromIssue(body) {
   const lines = body.split('\n');
   for (const line of lines) {
@@ -305,13 +343,13 @@ function extractCardCode(body) {
 }
 
 async function getLikeMinded(issueData, token) {
-  // این تابع از طریق GitHub API هم‌فکران را پیدا می‌کند
-  // به دلیل محدودیت ۱۲ فایل، این منطق در اینجا پیاده‌سازی شده است
   try {
     const cardCode = extractCardCode(issueData.body);
     if (!cardCode) return [];
     
-    // دریافت اطلاعات کاربر از گیت‌هاب
+    const owner = 'ghrezaei1399-code';
+    const repo = 'cultural-id';
+    
     const userRes = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/contents/data/active/${cardCode}.json`,
       { headers: { 'Authorization': `Bearer ${token}` } }
@@ -321,7 +359,6 @@ async function getLikeMinded(issueData, token) {
     const userDataRaw = await userRes.json();
     const userData = JSON.parse(Buffer.from(userDataRaw.content, 'base64').toString('utf8'));
     
-    // دریافت لیست همه کاربران
     const allUsersRes = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/contents/data/active`,
       { headers: { 'Authorization': `Bearer ${token}` } }
@@ -343,7 +380,6 @@ async function getLikeMinded(issueData, token) {
       }
     }
     
-    // محاسبه شباهت
     const senderValues = userData.values || [];
     const senderPriorities = userData.priorities || [];
     
@@ -383,8 +419,9 @@ async function getLikeMinded(issueData, token) {
 }
 
 async function saveReferralData(data, token) {
-  // ذخیره در پوشه data/referrals/
   try {
+    const owner = 'ghrezaei1399-code';
+    const repo = 'cultural-id';
     const path = `data/referrals/${data.issueNumber}.json`;
     const content = Buffer.from(JSON.stringify(data, null, 2), 'utf8').toString('base64');
     
