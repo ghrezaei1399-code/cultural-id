@@ -9,7 +9,7 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: 'Token is not configured' });
   }
 
-  const { type, filter } = req.query;
+  const { type } = req.query;
   const owner = 'ghrezaei1399-code';
   const repo = 'cultural-id';
 
@@ -36,7 +36,7 @@ module.exports = async function handler(req, res) {
         const bodyLines = issue.body.split('\n');
         let cardCode = 'ناشناس';
         let observation = '';
-        let modules = [];
+        let selectedModule = '';
         let inObservation = false;
 
         for (const line of bodyLines) {
@@ -47,10 +47,10 @@ module.exports = async function handler(req, res) {
             inObservation = true;
             continue;
           }
-          if (line.includes('**ماژول‌های انتخاب‌شده:**')) {
-            const mods = line.replace('**ماژول‌های انتخاب‌شده:**', '').trim();
-            if (mods && mods !== 'هیچ‌کدام') {
-              modules = mods.split('،').map(m => m.trim());
+          if (line.includes('**ماژول انتخاب‌شده:**')) {
+            const mod = line.replace('**ماژول انتخاب‌شده:**', '').trim();
+            if (mod && mod !== 'هیچ‌کدام') {
+              selectedModule = mod;
             }
             continue;
           }
@@ -71,7 +71,7 @@ module.exports = async function handler(req, res) {
           number: issue.number,
           cardCode: cardCode,
           observation: observation,
-          modules: modules,
+          module: selectedModule,
           status: status,
           createdAt: issue.created_at,
           issueUrl: issue.html_url
