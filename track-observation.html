@@ -95,6 +95,14 @@
         body.dark .btn-primary { background: linear-gradient(135deg, #8a6d1f, #d4af37); color: #fff; }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(212,175,55,0.35); }
         .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .btn-secondary {
+            background: rgba(255,255,255,0.5);
+            color: #4a3a2a;
+            border: 1px solid rgba(212,175,55,0.3);
+        }
+        body.dark .btn-secondary { background: rgba(0,0,0,0.2); color: #f0e8d0; }
+        .btn-secondary:hover { background: rgba(255,255,255,0.8); transform: translateY(-2px); }
+        body.dark .btn-secondary:hover { background: rgba(255,255,255,0.05); }
         
         .actions { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; justify-content: center; }
         
@@ -239,7 +247,7 @@
             <span class="status-icon" id="statusIcon">⏳</span>
             <div class="status-title" id="statusTitle">در حال بررسی</div>
             <div id="observationDisplay" class="observation-text"></div>
-            <div id="guideContainer" class="guide-box" style="display:none;">
+            <div id="guideContainer" class="guide-box">
                 <div class="level">
                     <span class="level-label">📍 سطح فردی (اقدام شخصی)</span>
                     <div class="level-text" id="levelIndividual">...</div>
@@ -280,14 +288,12 @@
                 return;
             }
             
-            // Reset
             resultBox.className = 'result-box';
             resultBox.style.display = 'none';
             guideContainer.style.display = 'none';
             errorMsg.style.display = 'none';
             
             try {
-                // ===== تغییر اصلی: استفاده از فایل موجود =====
                 const response = await fetch(`/api/get-request-by-tracking?type=observation&trackingCode=${trackingCode}`);
                 const result = await response.json();
                 
@@ -295,7 +301,6 @@
                     throw new Error(result.error || 'خطا در دریافت اطلاعات');
                 }
                 
-                // نمایش نتیجه
                 resultBox.style.display = 'block';
                 
                 if (result.status === 'pending') {
@@ -310,12 +315,16 @@
                     statusTitle.textContent = 'تأیید شده';
                     observationDisplay.textContent = result.observation || 'مشاهده‌ی شما تأیید شد.';
                     
-                    // نمایش بسته راهنما
+                    // ===== نمایش بسته راهنما =====
+                    guideContainer.style.display = 'block';
                     if (result.guide) {
                         document.getElementById('levelIndividual').textContent = result.guide.individual || '---';
                         document.getElementById('levelNetwork').textContent = result.guide.network || '---';
                         document.getElementById('levelPolicy').textContent = result.guide.policy || '---';
-                        guideContainer.style.display = 'block';
+                    } else {
+                        document.getElementById('levelIndividual').textContent = 'راهنمایی برای این مشاهده تولید نشده است.';
+                        document.getElementById('levelNetwork').textContent = '---';
+                        document.getElementById('levelPolicy').textContent = '---';
                     }
                 } else if (result.status === 'rejected') {
                     resultBox.className = 'result-box rejected';
