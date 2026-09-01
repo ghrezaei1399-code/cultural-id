@@ -33,12 +33,20 @@ module.exports = async function handler(req, res) {
         return res.status(400).json({ error: 'کد کارت الزامی است' });
       }
 
-      // ایجاد یک Issue برای هر مشاهده
+      // ===== نگاشت نام ماژول‌ها =====
+      const moduleNames = {
+        'collaboration': 'همفکری با دیگران',
+        'related': 'مشاهدات مرتبط دیگران',
+        'referral': 'ارجاع به ۵ همفرهنگ'
+      };
+
       const createdIssues = [];
       for (const obs of observations) {
         if (!obs.text || obs.text.length < 10) {
-          continue; // رد کردن مشاهدات خیلی کوتاه
+          continue;
         }
+
+        const selectedModules = obs.modules.map(m => moduleNames[m] || m).join('، ') || 'هیچ‌کدام';
 
         const issueTitle = `مشاهده خام: ${cardCode}`;
         const issueBody = `
@@ -48,7 +56,7 @@ module.exports = async function handler(req, res) {
 ${obs.text}
 
 **ماژول‌های انتخاب‌شده:**
-${obs.modules && obs.modules.length > 0 ? obs.modules.join('، ') : 'هیچ‌کدام'}
+${selectedModules}
 
 ---
 *این مشاهده توسط کاربر ثبت شده و در انتظار بررسی است.*
@@ -77,7 +85,8 @@ ${obs.modules && obs.modules.length > 0 ? obs.modules.join('، ') : 'هیچ‌ک
         createdIssues.push({
           number: issueData.number,
           url: issueData.html_url,
-          observation: obs.text.substring(0, 50) + '...'
+          observation: obs.text.substring(0, 50) + '...',
+          modules: obs.modules
         });
       }
 
@@ -94,12 +103,11 @@ ${obs.modules && obs.modules.length > 0 ? obs.modules.join('، ') : 'هیچ‌ک
       });
     }
 
-    // ===== درخواست‌های معمولی (ارتباط یا حذف) =====
+    // ===== درخواست‌های معمولی =====
     if (!cardCode || !type) {
       return res.status(400).json({ error: 'کد کارت و نوع درخواست الزامی است' });
     }
 
-    // ... (بقیه کدهای قبلی برای connection و delete)
     return res.status(200).json({ success: true, message: 'درخواست ثبت شد' });
 
   } catch (error) {
