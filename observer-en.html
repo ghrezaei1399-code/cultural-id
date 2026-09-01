@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Submit Observations | Sahar Wisdom Community</title>
+    <title>ثبت مشاهدات | مجتمع هم‌اندیشی سپهر خردمندی</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', 'Vazir', sans-serif;
+            font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
             min-height: 100vh;
             padding: 1.5rem 1rem;
             background: linear-gradient(135deg, #fdf6e3 0%, #e8f4f8 50%, #f5e6d3 100%);
@@ -36,6 +36,7 @@
         }
         body.dark .page-subtitle { color: #c8b890; }
         
+        /* ===== پیام هشدار ایمیل ===== */
         .email-warning {
             background: rgba(212, 175, 55, 0.12);
             border: 2px solid #d4af37;
@@ -46,17 +47,30 @@
             font-weight: 700;
             color: #8a6d1f;
             animation: pulse-warning 2s infinite;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
         body.dark .email-warning { background: rgba(212, 175, 55, 0.05); color: #f9e79f; }
         @keyframes pulse-warning {
             0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
+            50% { transform: scale(1.01); }
             100% { transform: scale(1); }
         }
-        .email-warning a { color: #2874a6; text-decoration: none; }
-        body.dark .email-warning a { color: #85c1e9; }
-        .email-warning .icon { font-size: 1.5rem; display: inline-block; margin-right: 0.5rem; }
+        .email-warning a {
+            color: #2874a6;
+            text-decoration: none;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            background: rgba(40,116,166,0.1);
+        }
+        body.dark .email-warning a { color: #85c1e9; background: rgba(40,116,166,0.05); }
+        .email-warning .icon { font-size: 1.5rem; }
+        .email-warning .sep { opacity: 0.3; }
         
+        /* ===== راهنما ===== */
         .guide-banner {
             background: rgba(212,175,55,0.06);
             border: 1px solid rgba(212,175,55,0.15);
@@ -81,6 +95,31 @@
         }
         body.dark .guide-banner .keyword-hint { background: rgba(212,175,55,0.05); }
         
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #2a1a0a;
+            margin-bottom: 0.3rem;
+        }
+        body.dark .form-group label { color: #e8d8c8; }
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 16px;
+            border: 2px solid rgba(212,175,55,0.2);
+            background: rgba(255,255,255,0.5);
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: #1a0a0a;
+            outline: none;
+            transition: 0.3s;
+        }
+        body.dark .form-group input { background: rgba(0,0,0,0.15); color: #f0e8d0; border-color: rgba(212,175,55,0.15); }
+        .form-group input:focus { border-color: #d4af37; box-shadow: 0 0 0 4px rgba(212,175,55,0.08); }
+        
+        /* ===== باکس‌های مشاهده ===== */
         .observation-box {
             background: rgba(255,255,255,0.5);
             border-radius: 20px;
@@ -129,6 +168,7 @@
             box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
         }
         
+        /* ===== ماژول‌های هر باکس ===== */
         .box-modules {
             display: flex;
             gap: 0.8rem;
@@ -145,18 +185,19 @@
             color: #4a3a2a;
             cursor: pointer;
             transition: 0.3s;
-            text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 0.3rem;
         }
         body.dark .box-module-btn { color: #d0c0b0; background: rgba(0,0,0,0.1); }
-        .box-module-btn:hover {
-            background: rgba(212,175,55,0.15);
-            transform: translateY(-2px);
-        }
+        .box-module-btn:hover { background: rgba(212,175,55,0.15); transform: translateY(-2px); }
         body.dark .box-module-btn:hover { background: rgba(212,175,55,0.08); }
         .box-module-btn .icon { font-size: 1rem; }
+        .box-module-btn.active {
+            background: rgba(212,175,55,0.25);
+            border-color: #d4af37;
+        }
+        body.dark .box-module-btn.active { background: rgba(212,175,55,0.15); }
         
         .add-box-btn {
             width: 100%;
@@ -264,88 +305,94 @@
             .back-row { flex-direction: column; align-items: center; }
             .observation-box .box-header { flex-direction: column; align-items: stretch; }
             .box-modules { justify-content: center; }
+            .email-warning { flex-direction: column; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="page-title">👁️ Submit Raw Observations</h1>
-        <div class="page-subtitle">Report cultural, social, and human phenomena without interpretation or judgment</div>
+        <h1 class="page-title">👁️ ثبت مشاهدات خام</h1>
+        <div class="page-subtitle">گزارش پدیده‌های فرهنگی، اجتماعی و انسانی بدون تفسیر و قضاوت</div>
         
+        <!-- ===== پیام هشدار ایمیل با لینک آشنایی ===== -->
         <div class="email-warning">
             <span class="icon">⚠️</span>
-            Without registering an email, your observations will only be recorded for the Wisdom Community.
-            <a href="edit-en.html">📧 Register Email</a>
-            | <a href="about-en.html#wisdom">🧠 About Sphere of Wisdom</a>
+            بدون ثبت پست الکترونیک، مشاهدات شما فقط برای مجتمع هم‌اندیشی ثبت می‌شود.
+            <a href="edit-fa.html">📧 ثبت ایمیل</a>
+            <span class="sep">|</span>
+            <a href="about-fa.html#wisdom">🧠 آشنایی با سپهر خردمندی</a>
         </div>
         
+        <!-- ===== راهنما ===== -->
         <div class="guide-banner">
-            <strong>📌 Observation Guide:</strong><br>
-            • Write your observation <strong>without interpretation or judgment</strong>.<br>
-            • Use <strong>keywords</strong> for categorization:
-            <span class="keyword-hint">#Education</span>
-            <span class="keyword-hint">#Health</span>
-            <span class="keyword-hint">#Technology</span>
-            <span class="keyword-hint">#AI</span>
-            <span class="keyword-hint">#Culture</span>
-            <span class="keyword-hint">#Governance</span>
-            <span class="keyword-hint">#Environment</span>
+            <strong>📌 راهنمای ثبت مشاهده:</strong><br>
+            • مشاهده‌ی خود را <strong>بدون تفسیر و قضاوت</strong> بنویسید.<br>
+            • از <strong>کلیدواژه‌های مشخص</strong> برای دسته‌بندی استفاده کنید:
+            <span class="keyword-hint">#آموزش</span>
+            <span class="keyword-hint">#سلامت</span>
+            <span class="keyword-hint">#فناوری</span>
+            <span class="keyword-hint">#هوش_مصنوعی</span>
+            <span class="keyword-hint">#فرهنگ</span>
+            <span class="keyword-hint">#حکمرانی</span>
+            <span class="keyword-hint">#محیط_زیست</span>
             <br>
-            • Each observation in a separate box. You can have multiple observations on different topics.
+            • هر مشاهده را در یک باکس جداگانه ثبت کنید. می‌توانید چندین مشاهده از موضوعات مختلف داشته باشید.
         </div>
         
-        <div class="form-group" style="margin-bottom:1.5rem;">
-            <label for="userCode" style="display:block;font-weight:700;font-size:0.9rem;color:#2a1a0a;margin-bottom:0.3rem;">
-                🔑 Cultural Identity Card Code
-            </label>
-            <input type="text" id="userCode" placeholder="e.g. CIM-1234-5678-ABCDE" 
-                   style="width:100%;padding:0.8rem 1rem;border-radius:16px;border:2px solid rgba(212,175,55,0.2);background:rgba(255,255,255,0.5);font-family:inherit;font-size:0.95rem;color:#1a0a0a;outline:none;transition:0.3s;"
-                   required />
+        <!-- ===== کد کارت ===== -->
+        <div class="form-group">
+            <label for="userCode">🔑 کد کارت هویت فرهنگی</label>
+            <input type="text" id="userCode" placeholder="مثلاً: CIM-1234-5678-ABCDE" required />
         </div>
         
+        <!-- ===== باکس‌های مشاهده ===== -->
         <div id="observationsContainer">
             <div class="observation-box" data-index="0">
                 <div class="box-header">
-                    <span class="box-title">📝 Observation 1</span>
+                    <span class="box-title">📝 مشاهده ۱</span>
                     <button class="box-module-btn" onclick="removeBox(this)" style="color:#c0392b;border-color:rgba(200,50,50,0.3);">
-                        <span class="icon">✕</span> Remove
+                        <span class="icon">✕</span> حذف
                     </button>
                 </div>
-                <textarea placeholder="Write your raw observation..." class="obs-text"></textarea>
+                <textarea placeholder="مشاهده خام خود را بنویسید..." class="obs-text"></textarea>
                 <div class="box-modules">
                     <button class="box-module-btn" onclick="toggleModule(this)">
-                        <span class="icon">🤝</span> Collaborate
+                        <span class="icon">🤝</span> همفکری با دیگران
                     </button>
                     <button class="box-module-btn" onclick="toggleModule(this)">
-                        <span class="icon">👁️</span> Related Observations
+                        <span class="icon">👁️</span> مشاهدات مرتبط دیگران
                     </button>
                     <button class="box-module-btn" onclick="toggleModule(this)">
-                        <span class="icon">📤</span> Refer to 5 peers
+                        <span class="icon">📤</span> ارجاع به ۵ همفرهنگ
                     </button>
                 </div>
             </div>
         </div>
         
-        <button class="add-box-btn" onclick="addObservationBox()">➕ Add New Observation</button>
+        <!-- ===== دکمه اضافه کردن باکس ===== -->
+        <button class="add-box-btn" onclick="addObservationBox()">➕ افزودن مشاهده جدید</button>
         
+        <!-- ===== دکمه‌ها ===== -->
         <div class="actions">
-            <button type="button" class="btn btn-secondary" onclick="window.location.href='index-en.html'">↩ Back</button>
-            <button type="button" class="btn btn-primary" id="submitBtn" onclick="submitObservations()">📤 Submit All Observations</button>
+            <button type="button" class="btn btn-secondary" onclick="window.location.href='index.html'">↩ بازگشت</button>
+            <button type="button" class="btn btn-primary" id="submitBtn" onclick="submitObservations()">📤 ثبت همه مشاهدات</button>
         </div>
         
+        <!-- ===== نتیجه ===== -->
         <div id="resultBox" class="result-box">
-            <div class="title" id="resultTitle">✅ Observations submitted successfully</div>
-            <div class="tracking" id="resultTracking">Tracking number: ---</div>
+            <div class="title" id="resultTitle">✅ مشاهدات با موفقیت ثبت شد</div>
+            <div class="tracking" id="resultTracking">شماره پیگیری: ---</div>
             <div id="resultError" style="display:none;" class="error"></div>
         </div>
         
+        <!-- ===== بازگشت ===== -->
         <div class="back-row">
-            <a href="track-observation.html" class="btn-back" style="background:rgba(40,116,166,0.1);border-color:rgba(40,116,166,0.2);">🔍 Track Observations</a>
-            <a href="index-en.html" class="btn-back">↩ Back to Home</a>
+            <a href="track-observation.html" class="btn-back" style="background:rgba(40,116,166,0.1);border-color:rgba(40,116,166,0.2);">🔍 پیگیری مشاهدات</a>
+            <a href="index.html" class="btn-back">↩ بازگشت به صفحه اصلی</a>
         </div>
         
         <div class="note">
-            🔒 Your observations are recorded anonymously with full privacy protection.
+            🔒 مشاهدات شما به‌صورت ناشناس و با رعایت کامل حریم خصوصی ثبت می‌شود.
         </div>
     </div>
     
@@ -360,21 +407,21 @@
             newBox.dataset.index = boxCounter - 1;
             newBox.innerHTML = `
                 <div class="box-header">
-                    <span class="box-title">📝 Observation ${boxCounter}</span>
+                    <span class="box-title">📝 مشاهده ${boxCounter}</span>
                     <button class="box-module-btn" onclick="removeBox(this)" style="color:#c0392b;border-color:rgba(200,50,50,0.3);">
-                        <span class="icon">✕</span> Remove
+                        <span class="icon">✕</span> حذف
                     </button>
                 </div>
-                <textarea placeholder="Write your raw observation..." class="obs-text"></textarea>
+                <textarea placeholder="مشاهده خام خود را بنویسید..." class="obs-text"></textarea>
                 <div class="box-modules">
                     <button class="box-module-btn" onclick="toggleModule(this)">
-                        <span class="icon">🤝</span> Collaborate
+                        <span class="icon">🤝</span> همفکری با دیگران
                     </button>
                     <button class="box-module-btn" onclick="toggleModule(this)">
-                        <span class="icon">👁️</span> Related Observations
+                        <span class="icon">👁️</span> مشاهدات مرتبط دیگران
                     </button>
                     <button class="box-module-btn" onclick="toggleModule(this)">
-                        <span class="icon">📤</span> Refer to 5 peers
+                        <span class="icon">📤</span> ارجاع به ۵ همفرهنگ
                     </button>
                 </div>
             `;
@@ -386,19 +433,12 @@
             if (document.querySelectorAll('.observation-box').length > 1) {
                 box.remove();
             } else {
-                alert('At least one observation box is required.');
+                alert('حداقل یک باکس مشاهده باید وجود داشته باشد.');
             }
         }
         
         function toggleModule(btn) {
             btn.classList.toggle('active');
-            if (btn.classList.contains('active')) {
-                btn.style.background = 'rgba(212,175,55,0.2)';
-                btn.style.borderColor = '#d4af37';
-            } else {
-                btn.style.background = '';
-                btn.style.borderColor = '';
-            }
         }
         
         async function submitObservations() {
@@ -408,7 +448,7 @@
             let hasError = false;
             
             if (!userCode) {
-                alert('Please enter your Cultural Identity Card code.');
+                alert('لطفاً کد کارت هویت فرهنگی خود را وارد کنید.');
                 return;
             }
             
@@ -418,13 +458,13 @@
                 const selectedModules = [];
                 modules.forEach(m => {
                     const label = m.textContent.trim();
-                    if (label.includes('Collaborate')) selectedModules.push('collaboration');
-                    else if (label.includes('Related')) selectedModules.push('related');
-                    else if (label.includes('Refer')) selectedModules.push('referral');
+                    if (label.includes('همفکری')) selectedModules.push('collaboration');
+                    else if (label.includes('مشاهدات مرتبط')) selectedModules.push('related');
+                    else if (label.includes('ارجاع')) selectedModules.push('referral');
                 });
                 
                 if (!text) {
-                    alert(`Please fill in observation ${index + 1}.`);
+                    alert(`لطفاً مشاهده ${index + 1} را پر کنید.`);
                     hasError = true;
                     return;
                 }
@@ -444,7 +484,7 @@
             const resultError = document.getElementById('resultError');
             
             submitBtn.disabled = true;
-            submitBtn.textContent = '⏳ Submitting...';
+            submitBtn.textContent = '⏳ در حال ثبت...';
             resultBox.style.display = 'none';
             
             try {
@@ -461,30 +501,26 @@
                 const result = await response.json();
                 
                 if (!response.ok) {
-                    throw new Error(result.error || 'Error submitting observations');
+                    throw new Error(result.error || 'خطا در ثبت مشاهدات');
                 }
                 
-                resultTitle.textContent = '✅ Observations submitted successfully';
-                resultTracking.textContent = `🔗 Tracking number: ${result.trackingCode}`;
+                resultTitle.textContent = '✅ مشاهدات با موفقیت ثبت شد';
+                resultTracking.textContent = `🔗 شماره پیگیری: ${result.trackingCode}`;
                 resultError.style.display = 'none';
                 resultBox.style.display = 'block';
                 
-                submitBtn.textContent = '✅ Submitted';
+                submitBtn.textContent = '✅ ثبت شد';
                 
                 document.querySelectorAll('.obs-text').forEach(t => t.value = '');
-                document.querySelectorAll('.box-module-btn.active').forEach(b => {
-                    b.classList.remove('active');
-                    b.style.background = '';
-                    b.style.borderColor = '';
-                });
+                document.querySelectorAll('.box-module-btn.active').forEach(b => b.classList.remove('active'));
                 
             } catch (error) {
                 console.error('Error:', error);
-                resultTitle.textContent = '❌ Error submitting observations';
+                resultTitle.textContent = '❌ خطا در ثبت مشاهدات';
                 resultError.textContent = error.message;
                 resultError.style.display = 'block';
                 resultBox.style.display = 'block';
-                submitBtn.textContent = '📤 Retry';
+                submitBtn.textContent = '📤 تلاش مجدد';
                 submitBtn.disabled = false;
             }
         }
