@@ -181,9 +181,6 @@
             color: #4a3a2a;
         }
         body.dark .module-tag { color: #d0c0b0; }
-        .module-tag.approved { border-color: #27ae60; background: rgba(39,174,96,0.1); color: #1e7a1e; }
-        body.dark .module-tag.approved { color: #82e0aa; }
-        .module-tag .status-icon { font-size: 0.7rem; }
         
         .badge {
             display: inline-block;
@@ -219,13 +216,18 @@
         }
         body.dark .btn-module { color: #85c1e9; }
         .btn-module:hover { background: rgba(40,116,166,0.2); }
-        .btn-module.approved { background: rgba(39,174,96,0.15); color: #1e7a1e; border-color: #27ae60; }
-        body.dark .btn-module.approved { color: #82e0aa; }
         
         .empty-state {
             text-align: center;
             padding: 3rem;
             color: #888;
+        }
+        
+        .obs-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
         }
         
         .btn-back-bottom {
@@ -241,13 +243,6 @@
         }
         body.dark .btn-back-bottom { color: #f9e79f; background: rgba(212,175,55,0.15); }
         .btn-back-bottom:hover { background: rgba(212,175,55,0.3); }
-        
-        .obs-actions {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-top: 1rem;
-        }
         
         @media (max-width: 768px) {
             .container { padding: 1.2rem; }
@@ -366,11 +361,7 @@
                 // نمایش ماژول‌ها
                 const modulesHtml = obs.modules && obs.modules.length > 0
                     ? obs.modules.map(mod => {
-                        const isApproved = false; // بررسی وضعیت ماژول از کامنت‌ها
-                        return `<span class="module-tag ${isApproved ? 'approved' : ''}">
-                            <span class="status-icon">${isApproved ? '✅' : '⏳'}</span>
-                            ${mod}
-                        </span>`;
+                        return `<span class="module-tag">${mod}</span>`;
                     }).join('')
                     : '<span class="module-tag">بدون ماژول</span>';
                 
