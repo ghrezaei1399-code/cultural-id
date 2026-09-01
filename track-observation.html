@@ -287,7 +287,8 @@
             errorMsg.style.display = 'none';
             
             try {
-                const response = await fetch(`/api/get-observation-status?issueNumber=${trackingCode}`);
+                // ===== تغییر اصلی: استفاده از فایل موجود =====
+                const response = await fetch(`/api/get-request-by-tracking?type=observation&trackingCode=${trackingCode}`);
                 const result = await response.json();
                 
                 if (!response.ok) {
