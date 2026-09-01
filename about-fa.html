@@ -7,15 +7,18 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Vazir', 'IRANSans', serif;
+            font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
             min-height: 100vh;
             padding: 2rem 1rem;
             background: linear-gradient(135deg, #fdf6e3 0%, #e8f4f8 50%, #f5e6d3 100%);
             color: #2a1a0a;
             line-height: 1.8;
         }
-        body.dark { background: linear-gradient(135deg, #3a2f20 0%, #2a2418 50%, #4a3a28 100%); color: #f0e8d0; }
-        .container { max-width: 900px; margin: 0 auto; }
+        body.dark {
+            background: linear-gradient(135deg, #3a2f20 0%, #2a2418 50%, #4a3a28 100%);
+            color: #f0e8d0;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
         h1 {
             font-size: 1.8rem; text-align: center; color: #8a6d1f;
             margin-bottom: 0.5rem; border-bottom: 2px solid #d4af37; padding-bottom: 1rem;
@@ -39,9 +42,10 @@
         body.dark .section h2 { color: #85c1e9; border-right-color: #85c1e9; }
         .section p { font-size: 0.95rem; color: #3a2a1a; margin-bottom: 1rem; }
         body.dark .section p { color: #e8dcc0; }
-        .section ul { padding-right: 1.5rem; color: #3a2a1a; }
-        body.dark .section ul { color: #e8dcc0; }
-        .section ul li { margin-bottom: 0.5rem; }
+        .section ul { list-style: none; padding-right: 1.5rem; }
+        .section ul li { font-size: 0.9rem; color: #3a2a1a; margin-bottom: 0.5rem; position: relative; padding-right: 1.2rem; }
+        body.dark .section ul li { color: #e8dcc0; }
+        .section ul li::before { content: "✦"; color: #d4af37; position: absolute; right: 0; }
         
         .theoretical-note {
             font-size: 0.85rem;
@@ -58,6 +62,7 @@
             display: inline-block; margin-top: 2rem; padding: 0.8rem 1.5rem;
             background: rgba(212, 175, 55, 0.2); color: #8a6d1f;
             border-radius: 30px; text-decoration: none; font-weight: 700;
+            transition: all 0.3s;
         }
         body.dark .btn-back { color: #f9e79f; background: rgba(212, 175, 55, 0.15); }
         .btn-back:hover { background: rgba(212, 175, 55, 0.3); }
@@ -72,8 +77,102 @@
         }
         .academic-link:hover { color: #8a6d1f; border-color: #8a6d1f; }
         body.dark .academic-link { color: #85c1e9; border-bottom-color: #85c1e9; }
+
+        /* ===== بخش سپهر خردمندی ===== */
+        .wisdom-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.2rem;
+            margin-top: 1rem;
+        }
+        .wisdom-card {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 16px;
+            padding: 1.2rem;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: 0.3s;
+        }
+        body.dark .wisdom-card { background: rgba(0, 0, 0, 0.1); border-color: rgba(212, 175, 55, 0.15); }
+        .wisdom-card:hover { transform: translateY(-3px); background: rgba(255, 255, 255, 0.7); }
+        body.dark .wisdom-card:hover { background: rgba(255, 255, 255, 0.03); }
+        .wisdom-card .icon { font-size: 2rem; display: block; margin-bottom: 0.3rem; }
+        .wisdom-card h3 { color: #8a6d1f; font-size: 1rem; margin-bottom: 0.3rem; }
+        body.dark .wisdom-card h3 { color: #f9e79f; }
+        .wisdom-card p { font-size: 0.85rem; color: #4a3a2a; line-height: 1.7; }
+        body.dark .wisdom-card p { color: #d0c0b0; }
         
-        /* ====== بخش رادیوتلویزیون ====== */
+        .poster-container {
+            margin: 1.5rem 0;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 2px solid rgba(212, 175, 55, 0.2);
+        }
+        body.dark .poster-container { background: rgba(0, 0, 0, 0.1); border-color: rgba(212, 175, 55, 0.15); }
+        .poster-container img {
+            max-width: 100%;
+            max-height: 600px;
+            border-radius: 12px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+        .poster-caption {
+            font-size: 0.8rem;
+            color: #6a5a3a;
+            margin-top: 0.5rem;
+        }
+        body.dark .poster-caption { color: #c8b890; }
+        
+        .steps-list {
+            list-style: none;
+            padding-right: 1.5rem;
+            counter-reset: step-counter;
+        }
+        .steps-list li {
+            counter-increment: step-counter;
+            font-size: 0.9rem;
+            color: #3a2a1a;
+            margin-bottom: 0.8rem;
+            padding-right: 2.5rem;
+            position: relative;
+            line-height: 1.6;
+        }
+        body.dark .steps-list li { color: #e8dcc0; }
+        .steps-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #d4af37, #f9e79f);
+            color: #2a1a0a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.8rem;
+        }
+        body.dark .steps-list li::before { background: linear-gradient(135deg, #8a6d1f, #d4af37); color: #fff; }
+        .steps-list li strong { color: #8a6d1f; }
+        body.dark .steps-list li strong { color: #f9e79f; }
+        
+        .example-box {
+            background: rgba(212, 175, 55, 0.06);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-right: 4px solid #d4af37;
+        }
+        body.dark .example-box { background: rgba(212, 175, 55, 0.03); }
+        .example-box .ex-title { font-weight: 800; color: #8a6d1f; margin-bottom: 0.3rem; }
+        body.dark .example-box .ex-title { color: #f9e79f; }
+        .example-box .ex-desc { font-size: 0.85rem; color: #4a3a2a; }
+        body.dark .example-box .ex-desc { color: #d0c0b0; }
+
+        /* ===== بخش رادیوتلویزیون ===== */
         .radio-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -81,17 +180,16 @@
             margin-top: 1rem;
         }
         .radio-card {
-            background: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.5);
             border-radius: 20px;
             padding: 1.5rem;
             border: 1px solid rgba(212, 175, 55, 0.3);
             text-align: center;
             transition: 0.3s;
         }
-        body.dark .radio-card { background: rgba(0, 0, 0, 0.2); border-color: rgba(212, 175, 55, 0.2); }
-        .radio-card:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.8); }
-        body.dark .radio-card:hover { background: rgba(255, 255, 255, 0.05); }
-        
+        body.dark .radio-card { background: rgba(0, 0, 0, 0.1); border-color: rgba(212, 175, 55, 0.2); }
+        .radio-card:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.7); }
+        body.dark .radio-card:hover { background: rgba(255, 255, 255, 0.03); }
         .radio-card .poster {
             width: 100%;
             border-radius: 12px;
@@ -115,12 +213,12 @@
         body.dark .radio-card .tag { color: #f9e79f; background: rgba(212, 175, 55, 0.2); }
         
         .radio-player {
-            background: rgba(0, 0, 0, 0.05);
+            background: rgba(0, 0, 0, 0.03);
             border-radius: 12px;
             padding: 1rem;
             margin-top: 0.8rem;
         }
-        body.dark .radio-player { background: rgba(0, 0, 0, 0.2); }
+        body.dark .radio-player { background: rgba(0, 0, 0, 0.1); }
         .radio-player audio, .radio-player video {
             width: 100%;
             max-width: 400px;
@@ -130,12 +228,12 @@
         .channel-desc {
             margin-bottom: 2rem;
             padding: 1.5rem;
-            background: rgba(212, 175, 55, 0.08);
+            background: rgba(212, 175, 55, 0.06);
             border-radius: 16px;
             border: 1px solid rgba(212, 175, 55, 0.2);
             text-align: center;
         }
-        body.dark .channel-desc { background: rgba(212, 175, 55, 0.05); }
+        body.dark .channel-desc { background: rgba(212, 175, 55, 0.03); }
         .channel-desc h3 { color: #8a6d1f; margin-bottom: 0.5rem; }
         body.dark .channel-desc h3 { color: #f9e79f; }
         .channel-desc p { font-size: 0.9rem; color: #4a3a2a; line-height: 2; }
@@ -143,18 +241,20 @@
         
         .coming-soon {
             text-align: center;
-            padding: 1.5rem;
+            padding: 1rem;
             color: #8a6d1f;
-            font-size: 1rem;
+            font-size: 0.9rem;
             opacity: 0.6;
         }
         body.dark .coming-soon { color: #c8b890; }
-        
+
         @media (max-width: 768px) {
+            .container { padding: 1rem; }
             .radio-grid { grid-template-columns: 1fr; }
-            .poster { max-height: 200px; object-fit: cover; }
+            .wisdom-grid { grid-template-columns: 1fr; }
+            .poster-container img { max-height: 300px; }
+            .section { padding: 1rem; }
         }
-        /* ====== پایان بخش رادیوتلویزیون ====== */
     </style>
 </head>
 <body>
@@ -162,6 +262,7 @@
     <h1>📖 درباره پروژه</h1>
     <div class="subtitle">فلسفه‌ی غیرمتمرکز و اهداف فرهنگی</div>
 
+    <!-- ===== بخش ۱: درباره پروژه ===== -->
     <div class="section">
         <h2>چرا کارت هویت فرهنگی؟</h2>
         <p>در عصری که مرزهای جغرافیایی پررنگ شده‌اند اما ارتباطات انسانی عمیق‌تر از همیشه مورد نیاز است، ما به هویتی فراتر از نام و ملیت نیاز داریم. این کارت، ابزاری برای شناسایی «هم‌فرهنگان» بر اساس ارزش‌های مشترک است، نه پیشینه‌ی سیاسی یا اقتصادی.</p>
@@ -189,9 +290,103 @@
         </div>
     </div>
 
-    <!-- ====== بخش رادیوتلویزیون هوشمند ====== -->
+    <!-- ===== بخش ۲: آشنایی با سپهر خردمندی ===== -->
+    <div id="wisdom" class="section" style="border-color: #8a6d1f; border-width: 2px;">
+        <h2 style="color: #8a6d1f; border-right-color: #d4af37;">🧠 آشنایی با سپهر خردمندی</h2>
+        
+        <div style="margin-bottom: 1.5rem;">
+            <p style="font-size: 1rem; line-height: 2;">
+                <strong>سپهر خردمندی</strong> یک چارچوب نظری و عملیاتی برای <strong>مشاهده، تحلیل و کنشگری فرهنگی</strong> است. 
+                این چارچوب بر این باور است که پدیده‌های انسانی، اجتماعی، فرهنگی و تمدنی را نمی‌توان صرفاً از درون یک رشته، یک تخصص یا یک سپهر فهمید.
+            </p>
+            <p style="font-size: 0.95rem; line-height: 2; color: #8a6d1f; font-weight: 700; text-align: center;">
+                «بهتر دیدن، پیش از بهتر داوری کردن.»
+            </p>
+        </div>
+
+        <h3 style="color: #2874a6; margin: 1.5rem 0 0.5rem 0; font-size: 1.05rem;">🌟 چرا به سپهر خردمندی نیاز داریم؟</h3>
+        <p style="font-size: 0.95rem; line-height: 2;">
+            در دنیای پیچیده‌ی امروز، بسیاری از مشکلات فرهنگی و اجتماعی با رویکردهای تک‌بُعدی قابل حل نیستند. ما اغلب ظرفیت‌های پنهان را نمی‌بینیم، موانع واقعی را تشخیص نمی‌دهیم، گسست‌های میان سپهرها را نادیده می‌گیریم و پیش از مشاهده، قضاوت می‌کنیم.
+        </p>
+        <p style="font-size: 0.95rem; line-height: 2;">
+            سپهر خردمندی به ما ابزاری می‌دهد تا <strong>مشاهده کنیم</strong> (نه تفسیر)، <strong>تمایز بگذاریم</strong> (نه قضاوت)، <strong>ظرفیت‌ها را کشف کنیم</strong> (نه فقط مشکلات را ببینیم) و <strong>کرامت انسانی</strong> را مبنای ارزیابی قرار دهیم.
+        </p>
+
+        <h3 style="color: #2874a6; margin: 1.5rem 0 0.5rem 0; font-size: 1.05rem;">📋 اصول کلیدی سپهر خردمندی</h3>
+        <div class="wisdom-grid">
+            <div class="wisdom-card">
+                <span class="icon">🔍</span>
+                <h3>واقعیت‌محوری</h3>
+                <p>تمام تحلیل‌ها بر پایه‌ی پدیده‌های واقعی استوار است.</p>
+            </div>
+            <div class="wisdom-card">
+                <span class="icon">👁️</span>
+                <h3>مشاهده پیش از قضاوت</h3>
+                <p>ابتدا مشاهده، سپس تحلیل، سپس داوری.</p>
+            </div>
+            <div class="wisdom-card">
+                <span class="icon">💎</span>
+                <h3>ظرفیت‌محوری</h3>
+                <p>از ظرفیت‌ها آغاز می‌کنیم، نه از مشکلات.</p>
+            </div>
+            <div class="wisdom-card">
+                <span class="icon">🌐</span>
+                <h3>چندسپهری</h3>
+                <p>هر پدیده‌ای چند سپهر را درگیر می‌کند.</p>
+            </div>
+            <div class="wisdom-card">
+                <span class="icon">🤝</span>
+                <h3>کرامت انسانی</h3>
+                <p>معیار نهایی تمایزگذاری.</p>
+            </div>
+            <div class="wisdom-card">
+                <span class="icon">🌟</span>
+                <h3>کشف نادیده‌ها</h3>
+                <p>آنچه را که دیده نشده، آشکار می‌کنیم.</p>
+            </div>
+        </div>
+
+        <h3 style="color: #2874a6; margin: 1.5rem 0 0.5rem 0; font-size: 1.05rem;">🗺️ نقشه راه سپهر خردمندی</h3>
+        <div class="poster-container">
+            <img src="assets/The Sphere of Wisdom Roadmap.png" alt="نقشه راه سپهر خردمندی" onerror="this.style.display='none'; this.parentElement.innerHTML='<p style=\'padding:1rem;color:#888;\'>تصویر نقشه راه بارگذاری نشد.</p>'" />
+            <div class="poster-caption">نقشه راه سپهر خردمندی - مسیر مشاهده تا کنشگری فرهنگی</div>
+        </div>
+
+        <h3 style="color: #2874a6; margin: 1.5rem 0 0.5rem 0; font-size: 1.05rem;">🛠️ چگونه از این چارچوب استفاده کنیم؟</h3>
+        <ol class="steps-list">
+            <li>به <strong>مجتمع هم‌اندیشی سپهر خردمندی</strong> بروید</li>
+            <li>یک <strong>مشاهده خام</strong> از یک پدیده ثبت کنید</li>
+            <li>سیستم یا ادمین، <strong>خوشه</strong> و <strong>بسته‌ی راهنما</strong> را برای شما تولید می‌کند</li>
+            <li>اقدامات پیشنهادی را در سطح <strong>فردی، شبکه‌ای یا سیاستی</strong> اجرا کنید</li>
+            <li><strong>دستاورد ظهور</strong> خود را ثبت و در گالری به اشتراک بگذارید</li>
+        </ol>
+
+        <h3 style="color: #2874a6; margin: 1.5rem 0 0.5rem 0; font-size: 1.05rem;">📌 مثال‌های کاربردی</h3>
+        <div class="example-box">
+            <div class="ex-title">مثال ۱: فراموشی مهارت‌های سنتی</div>
+            <div class="ex-desc">
+                <strong>مشاهده خام:</strong> «در محله‌ی ما، جوانان مهارت‌های سنتی را فراموش کرده‌اند و هیچ فضایی برای یادگیری آنها وجود ندارد.»<br>
+                <strong>خوشه:</strong> انسان / دانش<br>
+                <strong>اقدام پیشنهادی:</strong> تشکیل گروه‌های آموزشی محلی با مشارکت پیشکسوتان
+            </div>
+        </div>
+        <div class="example-box">
+            <div class="ex-title">مثال ۲: مدیریت منابع آب</div>
+            <div class="ex-desc">
+                <strong>مشاهده خام:</strong> «با وجود منابع آبی کافی در منطقه، دسترسی کشاورزان به آب به‌درستی مدیریت نمی‌شود و هر سال سطح زیر کشت کاهش می‌یابد.»<br>
+                <strong>خوشه:</strong> بقا و آینده / حکمرانی<br>
+                <strong>اقدام پیشنهادی:</strong> تشکیل شبکه‌ی محلی برای مدیریت مشارکتی آب
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 1.5rem;">
+            <a href="observer-fa.html" class="btn-back" style="display: inline-block;">🧠 ورود به مجتمع هم‌اندیشی</a>
+        </div>
+    </div>
+
+    <!-- ===== بخش ۳: رادیوتلویزیون هوشمند ===== -->
     <div id="radio-tv" class="section" style="border-color: #d4af37; border-width: 2px;">
-        <h2 style="color: #8a6d1f; border-right-color: #d4af37; font-size: 1.4rem;">📡 رادیوتلویزیون هوشمند فرهنگی</h2>
+        <h2 style="color: #8a6d1f; border-right-color: #d4af37;">📡 رادیوتلویزیون هوشمند فرهنگی</h2>
         <p style="text-align: center; font-size: 0.95rem; color: #6a5a3a;">شبکه‌های فرهنگی و محتوای گروهی</p>
 
         <div class="channel-desc">
@@ -204,7 +399,6 @@
         </div>
 
         <div class="radio-grid">
-            <!-- شبکه ۱: PRINGTIN -->
             <div class="radio-card">
                 <img src="assets/PRINGTIN.png" alt="PRINGTIN" class="poster" onerror="this.style.display='none'"/>
                 <h3>🎵 شبکه PRINGTIN</h3>
@@ -219,7 +413,6 @@
                 </div>
             </div>
 
-            <!-- شبکه ۲: Retirees Society -->
             <div class="radio-card">
                 <img src="assets/Retirees Society.png" alt="Retirees Society" class="poster" onerror="this.style.display='none'"/>
                 <h3>👴 شبکه Retirees Society</h3>
@@ -234,7 +427,6 @@
                 </div>
             </div>
 
-            <!-- شبکه ۳: پیش‌نمایش -->
             <div class="radio-card">
                 <div style="width:100%;height:180px;background:rgba(212,175,55,0.1);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:3rem;margin-bottom:0.8rem;">🎬</div>
                 <h3>شبکه میراث جهانی</h3>
@@ -254,7 +446,6 @@
             🌍 شبکه‌های فرهنگی بیشتر به زودی اضافه می‌شوند...
         </div>
     </div>
-    <!-- ====== پایان بخش رادیوتلویزیون ====== -->
 
     <div style="text-align: center;">
         <a href="index.html" class="btn-back">↩ بازگشت به صفحه اصلی</a>
