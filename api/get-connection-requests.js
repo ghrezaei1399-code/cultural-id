@@ -16,7 +16,7 @@ module.exports = async function handler(req, res) {
   // ===== اگر درخواست برای دریافت مشاهدات (observations) باشد =====
   if (type === 'observations') {
     try {
-      // دریافت Issues از گیت‌هاب
+      // ۱. دریافت Issues از گیت‌هاب
       const response = await fetch(
         `https://api.github.com/repos/${owner}/${repo}/issues?labels=observation&state=all&per_page=100`,
         {
@@ -33,7 +33,7 @@ module.exports = async function handler(req, res) {
 
       const issues = await response.json();
 
-      // دریافت لیست تحلیل‌ها از پوشه data/analyses/
+      // ۲. دریافت تحلیل‌ها از پوشه data/analyses/
       let analysesMap = {};
       try {
         const analysesRes = await fetch(
@@ -60,6 +60,7 @@ module.exports = async function handler(req, res) {
         console.error('Error fetching analyses:', e);
       }
 
+      // ۳. پردازش و ساخت خروجی
       const observations = issues.map(issue => {
         const bodyLines = issue.body.split('\n');
         let cardCode = 'ناشناس';
@@ -95,7 +96,7 @@ module.exports = async function handler(req, res) {
         if (labels.includes('approved')) status = 'approved';
         else if (labels.includes('rejected')) status = 'rejected';
 
-        // ===== دریافت تحلیل و امتیاز =====
+        // ۴. دریافت تحلیل و امتیاز
         const analysisData = analysesMap[issue.number] || null;
         const analysis = analysisData ? analysisData.analysis : null;
         const score = analysisData ? analysisData.score : 0;
@@ -113,6 +114,7 @@ module.exports = async function handler(req, res) {
         };
       });
 
+      // مرتب‌سازی بر اساس تاریخ (جدیدترین اول)
       observations.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
       return res.status(200).json({ observations });
