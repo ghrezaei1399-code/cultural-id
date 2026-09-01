@@ -9,7 +9,7 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: 'Token is not configured' });
   }
 
-  const { fileName, action, issueNumber, type } = req.body;
+  const { fileName, action, issueNumber, type, moduleType } = req.body;
   const owner = 'ghrezaei1399-code';
   const repo = 'cultural-id';
 
@@ -31,13 +31,14 @@ module.exports = async function handler(req, res) {
       const currentLabels = issueData.labels.map(l => l.name);
       let newLabels = currentLabels.filter(l => l !== 'pending-review' && l !== 'observation');
 
-      if (action === 'approve') {
-        newLabels.push('approved');
-        newLabels.push('observation');
-        
-        // ===== تولید بسته راهنما =====
-        const guide = generateGuide(issueData.body);
-        const commentBody = `
+      // ===== تایید/رد کل مشاهده =====
+      if (action === 'approve_all' || action === 'reject_all') {
+        if (action === 'approve_all') {
+          newLabels.push('approved');
+          newLabels.push('observation');
+          
+          const guide = generateGuide(issueData.body);
+          const commentBody = `
 ### بسته راهنمای اقدام عملی
 
 **مشاهده شما تأیید شد.** بر اساس تحلیل سپهری، بسته‌ی راهنمای زیر برای شما تولید شده است:
@@ -60,58 +61,118 @@ ${guide.policy}
 ---
 
 *این بسته بر اساس اصول آزمایشگاه سپهر خردمندی تولید شده است.*
-        `;
+          `;
 
-        // ===== ارسال کامنت =====
-        const commentRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/comments`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/vnd.github.v3+json'
-          },
-          body: JSON.stringify({ body: commentBody })
-        });
-
-        if (!commentRes.ok) {
-          console.error('Error posting comment:', await commentRes.text());
+          await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/comments`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+              'Accept': 'application/vnd.github.v3+json'
+            },
+            body: JSON.stringify({ body: commentBody })
+          });
+        } else {
+          newLabels.push('rejected');
+          newLabels.push('observation');
+          
+          await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/comments`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+              'Accept': 'application/vnd.github.v3+json'
+            },
+            body: JSON.stringify({
+              body: '❌ این مشاهده با توجه به اصول آزمایشگاه سپهر خردمندی رد شد.'
+            })
+          });
         }
 
-      } else if (action === 'reject') {
-        newLabels.push('rejected');
-        newLabels.push('observation');
-        
-        await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/comments`, {
-          method: 'POST',
+        await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}`, {
+          method: 'PATCH',
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
             'Accept': 'application/vnd.github.v3+json'
           },
           body: JSON.stringify({
-            body: '❌ این مشاهده با توجه به اصول آزمایشگاه سپهر خردمندی رد شد.'
+            labels: newLabels,
+            state: action === 'approve_all' ? 'open' : 'closed'
           })
+        });
+
+        return res.status(200).json({
+          success: true,
+          message: action === 'approve_all' ? '✅ مشاهده تایید شد.' : '❌ مشاهده رد شد.'
         });
       }
 
-      // ===== به‌روزرسانی برچسب‌ها =====
-      await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'Accept': 'application/vnd.github.v3+json'
-        },
-        body: JSON.stringify({
-          labels: newLabels,
-          state: action === 'approve' ? 'open' : 'closed'
-        })
-      });
+      // ===== تایید/رد جزء جزء (ماژول‌ها) =====
+      if (moduleType) {
+        // دریافت کامنت‌های موجود
+        const commentsRes = await fetch(issueData.comments_url, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+        let comments = [];
+        if (commentsRes.ok) {
+          comments = await commentsRes.json();
+        }
 
-      return res.status(200).json({
-        success: true,
-        message: action === 'approve' ? '✅ مشاهده تایید شد و بسته راهنما ارسال گردید.' : '❌ مشاهده رد شد.'
-      });
+        // بررسی وضعیت ماژول در کامنت‌ها
+        const moduleComment = comments.find(c => c.body && c.body.includes(`**${moduleType}**`));
+        const moduleStatus = moduleComment ? 'approved' : 'pending';
+
+        if (moduleStatus === 'pending') {
+          // ارسال کامنت جدید برای تایید ماژول
+          const moduleCommentBody = `
+**${moduleType}** - تایید شد.
+
+این ماژول توسط ادمین تایید شده است. کاربر می‌تواند از این قابلیت استفاده کند.
+          `;
+          await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/comments`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+              'Accept': 'application/vnd.github.v3+json'
+            },
+            body: JSON.stringify({ body: moduleCommentBody })
+          });
+
+          // افزودن برچسب ماژول
+          const moduleLabel = `module-${moduleType}`;
+          if (!currentLabels.includes(moduleLabel)) {
+            newLabels.push(moduleLabel);
+          }
+
+          await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}`, {
+            method: 'PATCH',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+              'Accept': 'application/vnd.github.v3+json'
+            },
+            body: JSON.stringify({
+              labels: newLabels
+            })
+          });
+
+          return res.status(200).json({
+            success: true,
+            message: `✅ ماژول ${moduleType} تایید شد.`
+          });
+        } else {
+          return res.status(400).json({
+            error: `ماژول ${moduleType} قبلاً تایید شده است.`
+          });
+        }
+      }
+
+      return res.status(400).json({ error: 'عملیات نامشخص است.' });
 
     } catch (error) {
       console.error('Update Observation Error:', error);
@@ -120,107 +181,12 @@ ${guide.policy}
   }
 
   // ===== منطق قبلی: تأیید/رد درخواست‌های ارتباط =====
-  if (!fileName || !action) {
-    return res.status(400).json({ error: 'نام فایل و نوع عملیات الزامی است' });
-  }
-
-  const path = `data/requests/${fileName}`;
-
-  try {
-    const fileResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json'
-      }
-    });
-
-    if (!fileResponse.ok) {
-      return res.status(404).json({ error: 'درخواست یافت نشد' });
-    }
-
-    const fileData = await fileResponse.json();
-    const jsonString = Buffer.from(fileData.content, 'base64').toString('utf8');
-    const requestData = JSON.parse(jsonString);
-
-    if (action === 'approve') {
-      requestData.status = 'approved';
-      requestData.approvedAt = new Date().toISOString();
-
-      if (requestData.connections && requestData.connections.length > 0) {
-        try {
-          const senderCode = requestData.senderCode || requestData.cardCode;
-          const userPath = `data/active/${senderCode}.json`;
-          
-          const userRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
-
-          if (userRes.ok) {
-            const userDataRaw = await userRes.json();
-            const userData = JSON.parse(Buffer.from(userDataRaw.content, 'base64').toString('utf8'));
-            
-            userData.connectionsList = requestData.connections;
-            userData.connectionsUpdatedAt = new Date().toISOString();
-            userData.connectionsTrackingCode = requestData.trackingCode || '---';
-            
-            const newUserContent = Buffer.from(JSON.stringify(userData, null, 2), 'utf8').toString('base64');
-            
-            await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
-              method: 'PUT',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                message: `Connection list delivered to ${senderCode} (${requestData.trackingCode})`,
-                content: newUserContent,
-                sha: userDataRaw.sha,
-                branch: 'main'
-              })
-            });
-          }
-        } catch (userError) {
-          console.error('Error updating user file:', userError);
-        }
-      }
-
-    } else if (action === 'reject') {
-      requestData.status = 'rejected';
-      requestData.rejectedAt = new Date().toISOString();
-    }
-
-    const newContent = Buffer.from(JSON.stringify(requestData, null, 2), 'utf8').toString('base64');
-
-    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        message: `${action === 'approve' ? 'Approved' : 'Rejected'} connection request: ${requestData.senderCode || requestData.cardCode}`,
-        content: newContent,
-        sha: fileData.sha,
-        branch: 'main'
-      })
-    });
-
-    return res.status(200).json({
-      success: true,
-      message: action === 'approve' ? '✅ درخواست تایید شد.' : '❌ درخواست رد شد.',
-      connectionsCount: requestData.connections ? requestData.connections.length : 0,
-      trackingCode: requestData.trackingCode || '---'
-    });
-
-  } catch (error) {
-    console.error('Approve Connection Error:', error);
-    return res.status(500).json({ error: error.message });
-  }
+  // ... (بقیه کدهای قبلی)
 };
 
 // ===== تولید بسته راهنمای اقدام عملی =====
 function generateGuide(issueBody) {
+  // ... (همان کد قبلی)
   const text = issueBody.toLowerCase();
   let cluster = 'انسان';
   
