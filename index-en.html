@@ -173,15 +173,32 @@
         .cta-note { text-align: center; font-size: 0.75rem; color: #6a5a3a; margin-top: -0.8rem; margin-bottom: 1.5rem; font-weight: 600; }
         body.dark .cta-note { color: #c8b890; }
 
-        .bottom-modules-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-top: 1rem; }
-        .bottom-module { text-align: center; padding: 1rem 0.8rem; border-radius: 20px; transition: all 0.3s; backdrop-filter: blur(10px); }
+        .bottom-modules-wrapper {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+        .bottom-module {
+            text-align: center;
+            padding: 1rem 0.8rem;
+            border-radius: 20px;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
         .bottom-module:hover { transform: translateY(-3px); }
         .bottom-about { background: rgba(180, 220, 250, 0.8); border: 2px solid rgba(52, 152, 219, 0.5); }
         body.dark .bottom-about { background: rgba(40, 60, 80, 0.7); border-color: rgba(133, 193, 233, 0.5); }
         .bottom-about h3 { color: #2874a6; } body.dark .bottom-about h3 { color: #85c1e9; }
+        
+        .bottom-wisdom { background: rgba(212, 175, 55, 0.12); border: 2px solid rgba(212, 175, 55, 0.4); }
+        body.dark .bottom-wisdom { background: rgba(212, 175, 55, 0.05); border-color: rgba(212, 175, 55, 0.3); }
+        .bottom-wisdom h3 { color: #8a6d1f; } body.dark .bottom-wisdom h3 { color: #f9e79f; }
+        
         .bottom-radio { background: rgba(230, 200, 245, 0.8); border: 2px solid rgba(142, 68, 173, 0.5); }
         body.dark .bottom-radio { background: rgba(70, 50, 90, 0.7); border-color: rgba(210, 180, 222, 0.5); }
         .bottom-radio h3 { color: #6a3d9a; } body.dark .bottom-radio h3 { color: #d2b4de; }
+        
         .bottom-module p { font-size: 0.75rem; margin-bottom: 0.6rem; line-height: 1.5; color: #3a2a1a; }
         body.dark .bottom-module p { color: #e8dcc0; }
         .btn-bottom { display: inline-block; background: rgba(255, 255, 255, 0.6); color: #2a1a0a; padding: 0.4rem 1.2rem; border-radius: 30px; font-weight: 700; font-size: 0.75rem; text-decoration: none; border: 1px solid rgba(212, 175, 55, 0.4); transition: all 0.3s; }
@@ -252,7 +269,7 @@
             .modules { grid-template-columns: 1fr 1fr; }
             .golden-row { grid-template-columns: 1fr; padding: 1rem; gap: 1rem; }
             .golden-btn { min-height: 100px; font-size: 1rem; padding: 1.2rem 0.8rem; }
-            .bottom-modules-wrapper { grid-template-columns: 1fr; }
+            .bottom-modules-wrapper { grid-template-columns: 1fr !important; }
             .real-card-sample { transform: none; max-width: 100%; }
             .gallery-header { flex-direction: column; text-align: center; }
         }
@@ -269,7 +286,7 @@
 
     <div class="hero-header">
         <div class="logo-showcase">
-            <img src="assets/logo-fa.png" alt="Logo" class="main-logo" />
+            <img src="assets/logo-en.png" alt="Logo" class="main-logo" />
             <div>
                 <h1 class="site-title">Global Smart Cultural Identity Card</h1>
                 <div class="site-subtitle">کارت جهانی هویت هوشمند فرهنگی</div>
@@ -311,7 +328,7 @@
     <div class="box box-purple">
         <div class="box-title">Sample Issued Card</div>
         <div class="real-card-sample">
-            <div class="rc-logo-container"><img src="assets/logo-fa.png" alt="Logo" class="rc-logo" onerror="this.style.display='none'"></div>
+            <div class="rc-logo-container"><img src="assets/logo-en.png" alt="Logo" class="rc-logo" onerror="this.style.display='none'"></div>
             <div class="rc-title">Global Smart Cultural Identity Card</div>
             <div class="rc-code-box"><div class="rc-code">CIM - 234 - 578 - SAMPLE</div></div>
             <div class="rc-values"><span class="rc-tag">Indigenous Values</span><span class="rc-tag">Personal Knowledge</span><span class="rc-tag">Collective Cooperation</span><span class="rc-tag">Cultural Diversity</span></div>
@@ -327,7 +344,7 @@
         </a>
         <a href="observer-en.html" class="golden-btn btn-lab">
             <span style="font-size:1.8rem; margin-bottom:0.5rem;">🧠</span>
-            Wisdom Council
+            Wisdom Community
         </a>
         <a href="achievements-en.html" class="golden-btn btn-gallery">
             <span style="font-size:1.8rem; margin-bottom:0.5rem;">🏆</span>
@@ -344,9 +361,14 @@
 
     <div class="bottom-modules-wrapper">
         <div class="bottom-module bottom-about">
-            <h3>📖 About the Project</h3>
+            <h3>📖 About Project</h3>
             <p>Goals and decentralized philosophy</p>
             <a href="about-en.html" class="btn-bottom">Learn More</a>
+        </div>
+        <div class="bottom-module bottom-wisdom">
+            <h3>🧠 Sphere of Wisdom</h3>
+            <p>Framework for observation and cultural action</p>
+            <a href="about-en.html#wisdom" class="btn-bottom" style="border-color: #d4af37;">View</a>
         </div>
         <div class="bottom-module bottom-radio">
             <h3>📡 Smart Radio & TV</h3>
@@ -423,8 +445,8 @@ function renderList(items) {
         return;
     }
     
-    container.innerHTML = items.map(item => `
-        <div class="achievement-item" onclick="openModal('${item.owner}', '${item.fileName}')">
+    container.innerHTML = items.map((item, index) => `
+        <div class="achievement-item" onclick="openModal(${index})">
             <div class="item-info">
                 <h4>${item.title}</h4>
                 <span class="item-meta">${item.category === 'science' ? '📄 Paper' : item.category === 'art' ? '🎨 Art' : '🎬 Media'}</span>
@@ -434,12 +456,9 @@ function renderList(items) {
     `).join('');
 }
 
-function openModal(ownerCode, fileName) {
-    const item = allApproved.find(i => i.owner === ownerCode && i.fileName === fileName);
-    if (!item) {
-        alert('Achievement not found');
-        return;
-    }
+function openModal(index) {
+    const item = allApproved[index];
+    if (!item) return;
 
     document.getElementById('modalTitle').textContent = item.title || 'Untitled';
     
@@ -451,7 +470,6 @@ function openModal(ownerCode, fileName) {
     
     const mediaDiv = document.getElementById('modalMediaContainer');
     
-    // Use fileUrl (new method) or fileData (old method for compatibility)
     const imageUrl = item.fileUrl || item.fileData;
     
     if (imageUrl) {
