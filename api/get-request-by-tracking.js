@@ -43,10 +43,22 @@ module.exports = async function handler(req, res) {
 
       const bodyLines = issueData.body.split('\n');
       let observation = '';
+      let modules = [];
       let inObservation = false;
+
       for (const line of bodyLines) {
+        if (line.includes('**کد کارت:**')) {
+          continue;
+        }
         if (line.includes('**مشاهده خام:**')) {
           inObservation = true;
+          continue;
+        }
+        if (line.includes('**ماژول‌های انتخاب‌شده:**')) {
+          const mods = line.replace('**ماژول‌های انتخاب‌شده:**', '').trim();
+          if (mods && mods !== 'هیچ‌کدام') {
+            modules = mods.split('،').map(m => m.trim());
+          }
           continue;
         }
         if (inObservation && line.trim() && !line.includes('---')) {
@@ -56,7 +68,7 @@ module.exports = async function handler(req, res) {
       }
       observation = observation.trim() || issueData.body.substring(0, 200);
 
-      // ===== استخراج بسته راهنما با الگوی جدید =====
+      // ===== استخراج بسته راهنما از کامنت‌ها =====
       let guide = null;
       if (status === 'approved') {
         try {
@@ -115,6 +127,7 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({
         status: status,
         observation: observation,
+        modules: modules,
         guide: guide,
         issueUrl: issueData.html_url,
         createdAt: issueData.created_at
