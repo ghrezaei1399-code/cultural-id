@@ -173,15 +173,33 @@
         .cta-note { text-align: center; font-size: 0.75rem; color: #6a5a3a; margin-top: -0.8rem; margin-bottom: 1.5rem; font-weight: 600; }
         body.dark .cta-note { color: #c8b890; }
 
-        .bottom-modules-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-top: 1rem; }
-        .bottom-module { text-align: center; padding: 1rem 0.8rem; border-radius: 20px; transition: all 0.3s; backdrop-filter: blur(10px); }
+        /* ===== بخش پایینی: سه ماژول ===== */
+        .bottom-modules-wrapper {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+        .bottom-module {
+            text-align: center;
+            padding: 1rem 0.8rem;
+            border-radius: 20px;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
         .bottom-module:hover { transform: translateY(-3px); }
         .bottom-about { background: rgba(180, 220, 250, 0.8); border: 2px solid rgba(52, 152, 219, 0.5); }
         body.dark .bottom-about { background: rgba(40, 60, 80, 0.7); border-color: rgba(133, 193, 233, 0.5); }
         .bottom-about h3 { color: #2874a6; } body.dark .bottom-about h3 { color: #85c1e9; }
+        
+        .bottom-wisdom { background: rgba(212, 175, 55, 0.12); border: 2px solid rgba(212, 175, 55, 0.4); }
+        body.dark .bottom-wisdom { background: rgba(212, 175, 55, 0.05); border-color: rgba(212, 175, 55, 0.3); }
+        .bottom-wisdom h3 { color: #8a6d1f; } body.dark .bottom-wisdom h3 { color: #f9e79f; }
+        
         .bottom-radio { background: rgba(230, 200, 245, 0.8); border: 2px solid rgba(142, 68, 173, 0.5); }
         body.dark .bottom-radio { background: rgba(70, 50, 90, 0.7); border-color: rgba(210, 180, 222, 0.5); }
         .bottom-radio h3 { color: #6a3d9a; } body.dark .bottom-radio h3 { color: #d2b4de; }
+        
         .bottom-module p { font-size: 0.75rem; margin-bottom: 0.6rem; line-height: 1.5; color: #3a2a1a; }
         body.dark .bottom-module p { color: #e8dcc0; }
         .btn-bottom { display: inline-block; background: rgba(255, 255, 255, 0.6); color: #2a1a0a; padding: 0.4rem 1.2rem; border-radius: 30px; font-weight: 700; font-size: 0.75rem; text-decoration: none; border: 1px solid rgba(212, 175, 55, 0.4); transition: all 0.3s; }
@@ -252,7 +270,7 @@
             .modules { grid-template-columns: 1fr 1fr; }
             .golden-row { grid-template-columns: 1fr; padding: 1rem; gap: 1rem; }
             .golden-btn { min-height: 100px; font-size: 1rem; padding: 1.2rem 0.8rem; }
-            .bottom-modules-wrapper { grid-template-columns: 1fr; }
+            .bottom-modules-wrapper { grid-template-columns: 1fr !important; }
             .real-card-sample { transform: none; max-width: 100%; }
             .gallery-header { flex-direction: column; text-align: center; }
         }
@@ -342,11 +360,17 @@
         <a href="request-fa.html?type=delete" class="module-btn module-cancel"><span class="icon">🗑️</span><span class="label">انصراف</span><span class="desc">حذف حساب کاربری</span></a>
     </div>
 
+    <!-- ===== بخش پایینی: سه ماژول ===== -->
     <div class="bottom-modules-wrapper">
         <div class="bottom-module bottom-about">
             <h3>📖 درباره پروژه</h3>
             <p>اهداف و فلسفه‌ی غیرمتمرکز</p>
             <a href="about-fa.html" class="btn-bottom">بیشتر بدانید</a>
+        </div>
+        <div class="bottom-module bottom-wisdom">
+            <h3>🧠 آشنایی با سپهر خردمندی</h3>
+            <p>چارچوب مشاهده و کنشگری فرهنگی</p>
+            <a href="about-fa.html#wisdom" class="btn-bottom" style="border-color: #d4af37;">مشاهده</a>
         </div>
         <div class="bottom-module bottom-radio">
             <h3>📡 رادیوتلویزیون هوشمند</h3>
@@ -423,8 +447,8 @@ function renderList(items) {
         return;
     }
     
-    container.innerHTML = items.map(item => `
-        <div class="achievement-item" onclick="openModal('${item.owner}', '${item.fileName}')">
+    container.innerHTML = items.map((item, index) => `
+        <div class="achievement-item" onclick="openModal(${index})">
             <div class="item-info">
                 <h4>${item.title}</h4>
                 <span class="item-meta">${item.category === 'science' ? '📄 مقاله' : item.category === 'art' ? '🎨 هنری' : '🎬 رسانه'}</span>
@@ -434,12 +458,9 @@ function renderList(items) {
     `).join('');
 }
 
-function openModal(ownerCode, fileName) {
-    const item = allApproved.find(i => i.owner === ownerCode && i.fileName === fileName);
-    if (!item) {
-        alert('اثر پیدا نشد');
-        return;
-    }
+function openModal(index) {
+    const item = allApproved[index];
+    if (!item) return;
 
     document.getElementById('modalTitle').textContent = item.title || 'بدون عنوان';
     
@@ -451,8 +472,6 @@ function openModal(ownerCode, fileName) {
     
     const mediaDiv = document.getElementById('modalMediaContainer');
     
-    // ====== تنها تغییر مهم ======
-    // استفاده از fileUrl به جای fileData
     const imageUrl = item.fileUrl || item.fileData;
     
     if (imageUrl) {
