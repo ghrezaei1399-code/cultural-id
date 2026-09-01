@@ -140,7 +140,7 @@
         .result-box .error { color: #c0392b; }
         body.dark .result-box .error { color: #f1948a; }
         
-        .back-row { display: flex; justify-content: center; margin-top: 2rem; }
+        .back-row { display: flex; justify-content: center; margin-top: 2rem; gap: 1rem; flex-wrap: wrap; }
         .btn-back {
             padding: 0.7rem 2rem;
             border-radius: 40px;
@@ -156,6 +156,16 @@
         .btn-back:hover { background: rgba(255,255,255,0.5); transform: translateY(-2px); }
         body.dark .btn-back:hover { background: rgba(255,255,255,0.05); }
         
+        /* ===== دکمه پیگیری ===== */
+        .btn-track {
+            background: rgba(40, 116, 166, 0.15);
+            color: #2874a6;
+            border: 1px solid rgba(40, 116, 166, 0.3);
+        }
+        body.dark .btn-track { background: rgba(40, 116, 166, 0.1); color: #85c1e9; border-color: rgba(40, 116, 166, 0.2); }
+        .btn-track:hover { background: rgba(40, 116, 166, 0.25); transform: translateY(-2px); }
+        body.dark .btn-track:hover { background: rgba(40, 116, 166, 0.2); }
+        
         .note {
             font-size: 0.7rem;
             color: #6a5a3a;
@@ -169,6 +179,7 @@
             .container { padding: 1rem; }
             .actions { flex-direction: column; }
             .actions .btn { width: 100%; text-align: center; }
+            .back-row { flex-direction: column; align-items: center; }
         }
     </style>
 </head>
@@ -207,7 +218,9 @@
             <div id="resultError" style="display:none;" class="error"></div>
         </div>
         
+        <!-- ===== دکمه پیگیری ===== -->
         <div class="back-row">
+            <a href="track-observation.html" class="btn-back btn-track">🔍 پیگیری مشاهده</a>
             <a href="index.html" class="btn-back">↩ بازگشت به صفحه اصلی</a>
         </div>
         
@@ -243,7 +256,6 @@
             resultBox.style.display = 'none';
             
             try {
-                // ===== ارسال به API خودمان =====
                 const response = await fetch('/api/submit-request', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
