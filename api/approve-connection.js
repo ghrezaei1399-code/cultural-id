@@ -35,6 +35,7 @@ module.exports = async function handler(req, res) {
         newLabels.push('approved');
         newLabels.push('observation');
         
+        // ===== تولید بسته راهنما =====
         const guide = generateGuide(issueData.body);
         const commentBody = `
 ### بسته راهنمای اقدام عملی
@@ -61,7 +62,8 @@ ${guide.policy}
 *این بسته بر اساس اصول آزمایشگاه سپهر خردمندی تولید شده است.*
         `;
 
-        await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/comments`, {
+        // ===== ارسال کامنت =====
+        const commentRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/comments`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -70,6 +72,10 @@ ${guide.policy}
           },
           body: JSON.stringify({ body: commentBody })
         });
+
+        if (!commentRes.ok) {
+          console.error('Error posting comment:', await commentRes.text());
+        }
 
       } else if (action === 'reject') {
         newLabels.push('rejected');
@@ -88,6 +94,7 @@ ${guide.policy}
         });
       }
 
+      // ===== به‌روزرسانی برچسب‌ها =====
       await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}`, {
         method: 'PATCH',
         headers: {
