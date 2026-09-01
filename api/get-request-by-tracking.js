@@ -3,7 +3,6 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
-
   const token = process.env.OBSERVER_TOKEN || process.env.GH_TOKEN;
   if (!token) {
     return res.status(500).json({ error: 'Token is not configured' });
