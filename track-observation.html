@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>پیگیری مشاهده | مجتمع هم‌اندیشی سپهر خردمندی</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            background: linear-gradient(135deg, #fdf6e3 0%, #e8f4f8 50%, #f5e6d3 100%);
+            color: #2a1a0a;
+        }
+        body.dark {
+            background: linear-gradient(135deg, #3a2f20 0%, #2a2418 50%, #4a3a28 100%);
+            color: #f0e8d0;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #8a6d1f;
+            text-align: center;
+            margin-bottom: 0.2rem;
+        }
+        body.dark .page-title { color: #f9e79f; }
+        .page-subtitle {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #6a5a3a;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(212,175,55,0.15);
+            padding-bottom: 1rem;
+        }
+        body.dark .page-subtitle { color: #c8b890; }
+        
+        .track-box {
+            background: rgba(255,255,255,0.5);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 2px solid rgba(212,175,55,0.2);
+            margin-bottom: 2rem;
+        }
+        body.dark .track-box { background: rgba(0,0,0,0.1); border-color: rgba(212,175,55,0.15); }
+        
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #2a1a0a;
+            margin-bottom: 0.3rem;
+        }
+        body.dark .form-group label { color: #e8d8c8; }
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 16px;
+            border: 2px solid rgba(212,175,55,0.2);
+            background: rgba(255,255,255,0.5);
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: #1a0a0a;
+            transition: all 0.3s ease;
+            outline: none;
+            text-align: center;
+            font-family: monospace;
+        }
+        body.dark .form-group input {
+            background: rgba(0,0,0,0.15);
+            color: #f0e8d0;
+            border-color: rgba(212,175,55,0.15);
+        }
+        .form-group input:focus {
+            border-color: #d4af37;
+            box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
+        }
+        
+        .btn {
+            padding: 0.8rem 2rem;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #d4af37, #f9e79f);
+            color: #2a1a0a;
+            box-shadow: 0 4px 15px rgba(212,175,55,0.25);
+        }
+        body.dark .btn-primary { background: linear-gradient(135deg, #8a6d1f, #d4af37); color: #fff; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(212,175,55,0.35); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        
+        .actions { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; justify-content: center; }
+        
+        .result-box {
+            display: none;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-radius: 16px;
+            animation: fadeIn 0.5s ease;
+        }
+        .result-box.pending {
+            background: rgba(255,200,50,0.08);
+            border: 2px solid rgba(255,200,50,0.3);
+        }
+        .result-box.approved {
+            background: rgba(39,174,96,0.08);
+            border: 2px solid rgba(39,174,96,0.3);
+        }
+        .result-box.rejected {
+            background: rgba(200,50,50,0.08);
+            border: 2px solid rgba(200,50,50,0.3);
+        }
+        body.dark .result-box.pending { background: rgba(255,200,50,0.03); border-color: rgba(255,200,50,0.15); }
+        body.dark .result-box.approved { background: rgba(39,174,96,0.03); border-color: rgba(39,174,96,0.15); }
+        body.dark .result-box.rejected { background: rgba(200,50,50,0.03); border-color: rgba(200,50,50,0.15); }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-box .status-icon { font-size: 2.5rem; display: block; text-align: center; }
+        .result-box .status-title {
+            font-weight: 800;
+            font-size: 1.2rem;
+            text-align: center;
+            margin: 0.5rem 0;
+        }
+        .result-box.pending .status-title { color: #8a7a0a; }
+        body.dark .result-box.pending .status-title { color: #f9e79f; }
+        .result-box.approved .status-title { color: #1e7a1e; }
+        body.dark .result-box.approved .status-title { color: #82e0aa; }
+        .result-box.rejected .status-title { color: #6a1a1a; }
+        body.dark .result-box.rejected .status-title { color: #f1948a; }
+        
+        .result-box .observation-text {
+            background: rgba(255,255,255,0.3);
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 0.5rem 0;
+            font-style: italic;
+            line-height: 1.8;
+            border-right: 3px solid rgba(212,175,55,0.3);
+        }
+        body.dark .result-box .observation-text { background: rgba(0,0,0,0.1); }
+        
+        .guide-box {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(212,175,55,0.06);
+            border-radius: 12px;
+            border: 1px solid rgba(212,175,55,0.15);
+        }
+        body.dark .guide-box { background: rgba(212,175,55,0.03); }
+        .guide-box .level {
+            margin-bottom: 0.8rem;
+            padding: 0.8rem;
+            background: rgba(255,255,255,0.3);
+            border-radius: 8px;
+            border-right: 3px solid #d4af37;
+        }
+        body.dark .guide-box .level { background: rgba(0,0,0,0.1); }
+        .guide-box .level-label {
+            font-weight: 800;
+            color: #8a6d1f;
+            font-size: 0.85rem;
+            display: block;
+            margin-bottom: 0.2rem;
+        }
+        body.dark .guide-box .level-label { color: #f9e79f; }
+        .guide-box .level-text {
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: #3a2a1a;
+        }
+        body.dark .guide-box .level-text { color: #e8dcc0; }
+        
+        .error-msg { color: #c0392b; text-align: center; padding: 0.5rem; }
+        body.dark .error-msg { color: #f1948a; }
+        
+        .back-row { display: flex; justify-content: center; margin-top: 2rem; }
+        .btn-back {
+            padding: 0.7rem 2rem;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-decoration: none;
+            background: rgba(255,255,255,0.3);
+            color: #0a0a1a;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s;
+        }
+        body.dark .btn-back { color: #f0e8d0; background: rgba(0,0,0,0.1); }
+        .btn-back:hover { background: rgba(255,255,255,0.5); transform: translateY(-2px); }
+        body.dark .btn-back:hover { background: rgba(255,255,255,0.05); }
+        
+        .note {
+            font-size: 0.7rem;
+            color: #6a5a3a;
+            margin-top: 1.5rem;
+            text-align: center;
+            opacity: 0.6;
+        }
+        body.dark .note { color: #a8a8b8; }
+        
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .actions { flex-direction: column; }
+            .actions .btn { width: 100%; text-align: center; }
+            .track-box { padding: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="page-title">🔍 پیگیری مشاهده</h1>
+        <div class="page-subtitle">وضعیت مشاهده‌ی خود را با کد پیگیری بررسی کنید</div>
+        
+        <div class="track-box">
+            <div class="form-group">
+                <label for="trackingCode">کد پیگیری (شماره Issue)</label>
+                <input type="text" id="trackingCode" placeholder="مثلاً: 5" />
+            </div>
+            
+            <div class="actions">
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='index.html'">↩ بازگشت</button>
+                <button type="button" class="btn btn-primary" id="trackBtn">🔍 بررسی</button>
+            </div>
+        </div>
+        
+        <div id="resultBox" class="result-box">
+            <span class="status-icon" id="statusIcon">⏳</span>
+            <div class="status-title" id="statusTitle">در حال بررسی</div>
+            <div id="observationDisplay" class="observation-text"></div>
+            <div id="guideContainer" class="guide-box" style="display:none;">
+                <div class="level">
+                    <span class="level-label">📍 سطح فردی (اقدام شخصی)</span>
+                    <div class="level-text" id="levelIndividual">...</div>
+                </div>
+                <div class="level">
+                    <span class="level-label">🌐 سطح شبکه‌ای (کنشگری جمعی)</span>
+                    <div class="level-text" id="levelNetwork">...</div>
+                </div>
+                <div class="level">
+                    <span class="level-label">🏛️ سطح سیاستی/مدیریتی (تأثیر ساختاری)</span>
+                    <div class="level-text" id="levelPolicy">...</div>
+                </div>
+            </div>
+            <div id="errorMsg" class="error-msg" style="display:none;"></div>
+        </div>
+        
+        <div class="back-row">
+            <a href="index.html" class="btn-back">↩ بازگشت به صفحه اصلی</a>
+        </div>
+        
+        <div class="note">
+            🔒 کد پیگیری همان شماره Issue در گیت‌هاب است که پس از ثبت مشاهده دریافت کردید.
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('trackBtn').addEventListener('click', async function() {
+            const trackingCode = document.getElementById('trackingCode').value.trim();
+            const resultBox = document.getElementById('resultBox');
+            const statusIcon = document.getElementById('statusIcon');
+            const statusTitle = document.getElementById('statusTitle');
+            const observationDisplay = document.getElementById('observationDisplay');
+            const guideContainer = document.getElementById('guideContainer');
+            const errorMsg = document.getElementById('errorMsg');
+            
+            if (!trackingCode) {
+                alert('لطفاً کد پیگیری را وارد کنید.');
+                return;
+            }
+            
+            // Reset
+            resultBox.className = 'result-box';
+            resultBox.style.display = 'none';
+            guideContainer.style.display = 'none';
+            errorMsg.style.display = 'none';
+            
+            try {
+                const response = await fetch(`/api/get-observation-status?issueNumber=${trackingCode}`);
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.error || 'خطا در دریافت اطلاعات');
+                }
+                
+                // نمایش نتیجه
+                resultBox.style.display = 'block';
+                
+                if (result.status === 'pending') {
+                    resultBox.className = 'result-box pending';
+                    statusIcon.textContent = '⏳';
+                    statusTitle.textContent = 'در انتظار بررسی';
+                    observationDisplay.textContent = result.observation || 'مشاهده‌ی شما در صف بررسی است.';
+                    guideContainer.style.display = 'none';
+                } else if (result.status === 'approved') {
+                    resultBox.className = 'result-box approved';
+                    statusIcon.textContent = '✅';
+                    statusTitle.textContent = 'تأیید شده';
+                    observationDisplay.textContent = result.observation || 'مشاهده‌ی شما تأیید شد.';
+                    
+                    // نمایش بسته راهنما
+                    if (result.guide) {
+                        document.getElementById('levelIndividual').textContent = result.guide.individual || '---';
+                        document.getElementById('levelNetwork').textContent = result.guide.network || '---';
+                        document.getElementById('levelPolicy').textContent = result.guide.policy || '---';
+                        guideContainer.style.display = 'block';
+                    }
+                } else if (result.status === 'rejected') {
+                    resultBox.className = 'result-box rejected';
+                    statusIcon.textContent = '❌';
+                    statusTitle.textContent = 'رد شده';
+                    observationDisplay.textContent = result.observation || 'مشاهده‌ی شما رد شد.';
+                    guideContainer.style.display = 'none';
+                }
+                
+            } catch (error) {
+                resultBox.style.display = 'block';
+                resultBox.className = 'result-box rejected';
+                statusIcon.textContent = '❌';
+                statusTitle.textContent = 'خطا';
+                observationDisplay.textContent = '';
+                guideContainer.style.display = 'none';
+                errorMsg.textContent = error.message || 'مشاهده‌ای با این کد پیدا نشد.';
+                errorMsg.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
