@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>مدیریت مشاهدات | داشبورد ادمین</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            padding: 1.5rem 1rem;
+            background: linear-gradient(135deg, #fdf6e3 0%, #e8f4f8 50%, #f5e6d3 100%);
+            color: #2a1a0a;
+        }
+        body.dark {
+            background: linear-gradient(135deg, #3a2f20 0%, #2a2418 50%, #4a3a28 100%);
+            color: #f0e8d0;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+        .back-link {
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            background: rgba(255,255,255,0.05);
+            color: #0a0a1a;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: 0.3s;
+        }
+        body.dark .back-link { color: #f0e8d0; }
+        .back-link:hover { background: rgba(255,255,255,0.08); }
+        
+        .page-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #0a0a1a;
+            text-align: center;
+            margin-bottom: 0.2rem;
+        }
+        body.dark .page-title { color: #f0e8e0; }
+        .page-subtitle {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #2a2a3a;
+            opacity: 0.7;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 1rem;
+        }
+        body.dark .page-subtitle { color: #c8b890; }
+        
+        .stats-mini {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+        .stat-mini {
+            background: rgba(255,255,255,0.04);
+            border-radius: 14px;
+            padding: 0.8rem;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        body.dark .stat-mini { background: rgba(0,0,0,0.1); }
+        .stat-mini .number { font-size: 1.3rem; font-weight: 800; color: #0a0a1a; display: block; }
+        body.dark .stat-mini .number { color: #f0e8e0; }
+        .stat-mini .label { font-size: 0.65rem; color: #6a6a7a; }
+        body.dark .stat-mini .label { color: #a8a8b8; }
+        
+        .filter-bar {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.2rem;
+            justify-content: center;
+        }
+        .filter-btn {
+            padding: 0.4rem 1.2rem;
+            border-radius: 30px;
+            border: 1px solid rgba(212,175,55,0.15);
+            background: rgba(255,255,255,0.03);
+            color: #0a0a1a;
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        body.dark .filter-btn { color: #f0e8d0; }
+        .filter-btn:hover { background: rgba(212,175,55,0.05); }
+        .filter-btn.active {
+            background: rgba(212,175,55,0.12);
+            border-color: #d4af37;
+        }
+        body.dark .filter-btn.active { background: rgba(212,175,55,0.08); }
+        
+        .observations-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 600px;
+            overflow-y: auto;
+            padding-left: 0.3rem;
+        }
+        .observations-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .observations-list::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.02);
+            border-radius: 10px;
+        }
+        .observations-list::-webkit-scrollbar-thumb {
+            background: rgba(212,175,55,0.2);
+            border-radius: 10px;
+        }
+        
+        .obs-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 1.2rem;
+            border: 1px solid rgba(255,255,255,0.06);
+            transition: 0.3s;
+        }
+        body.dark .obs-card { background: rgba(0,0,0,0.15); }
+        .obs-card:hover { background: rgba(255,255,255,0.08); }
+        body.dark .obs-card:hover { background: rgba(255,255,255,0.02); }
+        
+        .obs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.3rem;
+        }
+        .obs-code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #8a6d1f;
+        }
+        body.dark .obs-code { color: #f9e79f; }
+        .obs-meta { font-size: 0.7rem; color: #888; }
+        .obs-body { margin-top: 0.3rem; }
+        .obs-body p {
+            font-size: 0.9rem;
+            color: #4a4a5a;
+            line-height: 1.6;
+            background: rgba(255,255,255,0.3);
+            padding: 0.8rem;
+            border-radius: 8px;
+            border-right: 3px solid rgba(212,175,55,0.3);
+        }
+        body.dark .obs-body p { color: #b0b0c0; background: rgba(0,0,0,0.1); }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.15rem 0.6rem;
+            border-radius: 30px;
+            font-size: 0.65rem;
+            font-weight: 700;
+        }
+        .badge-approved { background: rgba(50,200,50,0.15); color: #0a6a0a; }
+        .badge-rejected { background: rgba(200,50,50,0.15); color: #6a1a1a; }
+        .badge-pending { background: rgba(255,200,50,0.15); color: #8a7a0a; }
+        
+        .btn-small {
+            padding: 0.25rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            margin: 0.1rem;
+        }
+        .btn-approve { background: rgba(50,200,50,0.15); color: #0a6a0a; }
+        body.dark .btn-approve { color: #82e0aa; }
+        .btn-approve:hover { background: rgba(50,200,50,0.25); }
+        .btn-reject { background: rgba(200,50,50,0.15); color: #6a1a1a; }
+        body.dark .btn-reject { color: #f1948a; }
+        .btn-reject:hover { background: rgba(200,50,50,0.25); }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #888;
+        }
+        
+        .btn-back-bottom {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 0.8rem 1.5rem;
+            background: rgba(212,175,55,0.2);
+            color: #8a6d1f;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+        body.dark .btn-back-bottom { color: #f9e79f; background: rgba(212,175,55,0.15); }
+        .btn-back-bottom:hover { background: rgba(212,175,55,0.3); }
+        
+        @media (max-width: 768px) {
+            .container { padding: 1.2rem; }
+            .top-bar { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-bar">
+            <a href="admin.html" class="back-link">↩ بازگشت به داشبورد</a>
+        </div>
+        
+        <h1 class="page-title">👁️ مدیریت مشاهدات</h1>
+        <div class="page-subtitle">بررسی و تأیید مشاهدات خام ثبت‌شده توسط کاربران</div>
+        
+        <div class="stats-mini">
+            <div class="stat-mini">
+                <span class="number" id="totalObs">۰</span>
+                <div class="label">کل مشاهدات</div>
+            </div>
+            <div class="stat-mini">
+                <span class="number" id="pendingObs">۰</span>
+                <div class="label">⏳ در انتظار</div>
+            </div>
+            <div class="stat-mini">
+                <span class="number" id="approvedObs">۰</span>
+                <div class="label">✅ تایید شده</div>
+            </div>
+            <div class="stat-mini">
+                <span class="number" id="rejectedObs">۰</span>
+                <div class="label">❌ رد شده</div>
+            </div>
+        </div>
+        
+        <div class="filter-bar">
+            <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">📋 همه</button>
+            <button class="filter-btn" data-filter="pending" onclick="setFilter('pending')">⏳ در انتظار</button>
+            <button class="filter-btn" data-filter="approved" onclick="setFilter('approved')">✅ تایید شده</button>
+            <button class="filter-btn" data-filter="rejected" onclick="setFilter('rejected')">❌ رد شده</button>
+        </div>
+        
+        <div id="observationsList" class="observations-list">
+            <div class="empty-state">در حال بارگذاری...</div>
+        </div>
+        
+        <div style="text-align:center; margin-top:2rem;">
+            <a href="admin.html" class="btn-back-bottom">↩ بازگشت به پنل ادمین</a>
+        </div>
+    </div>
+    
+    <script>
+        let allObservations = [];
+        let currentFilter = 'all';
+        
+        async function loadObservations() {
+            try {
+                const response = await fetch('/api/get-connection-requests?type=observations');
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'خطا در دریافت مشاهدات');
+                
+                allObservations = data.observations || [];
+                updateStats();
+                renderObservations();
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('observationsList').innerHTML = 
+                    `<div class="empty-state" style="color:red;">خطا: ${error.message}</div>`;
+            }
+        }
+        
+        function updateStats() {
+            const total = allObservations.length;
+            const pending = allObservations.filter(o => o.status === 'pending').length;
+            const approved = allObservations.filter(o => o.status === 'approved').length;
+            const rejected = allObservations.filter(o => o.status === 'rejected').length;
+            
+            document.getElementById('totalObs').textContent = total;
+            document.getElementById('pendingObs').textContent = pending;
+            document.getElementById('approvedObs').textContent = approved;
+            document.getElementById('rejectedObs').textContent = rejected;
+        }
+        
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === filter);
+            });
+            renderObservations();
+        }
+        
+        function renderObservations() {
+            const container = document.getElementById('observationsList');
+            
+            let filtered = allObservations;
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(o => o.status === currentFilter);
+            }
+            
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="empty-state">هیچ مشاهده‌ای با این وضعیت وجود ندارد</div>`;
+                return;
+            }
+            
+            container.innerHTML = filtered.map(obs => {
+                const statusMap = {
+                    approved: `<span class="badge badge-approved">✅ تایید شده</span>`,
+                    rejected: `<span class="badge badge-rejected">❌ رد شده</span>`,
+                    pending: `<span class="badge badge-pending">⏳ در انتظار</span>`
+                };
+                
+                const actionButtons = obs.status === 'pending' ? `
+                    <div style="margin-top:0.8rem; display:flex; gap:0.3rem; flex-wrap:wrap;">
+                        <button class="btn-small btn-approve" onclick="updateStatus('${obs.number}', 'approve')">✅ تایید</button>
+                        <button class="btn-small btn-reject" onclick="updateStatus('${obs.number}', 'reject')">❌ رد</button>
+                    </div>
+                ` : '';
+                
+                return `
+                    <div class="obs-card">
+                        <div class="obs-header">
+                            <div>
+                                <span class="obs-code">#${obs.number} - ${obs.cardCode || 'ناشناس'}</span>
+                                ${statusMap[obs.status] || ''}
+                            </div>
+                            <div class="obs-meta">${new Date(obs.createdAt).toLocaleString('fa-IR')}</div>
+                        </div>
+                        <div class="obs-body">
+                            <p>${obs.observation || 'متن مشاهده موجود نیست'}</p>
+                        </div>
+                        ${actionButtons}
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        async function updateStatus(issueNumber, action) {
+            if (!confirm(`آیا از ${action === 'approve' ? 'تایید' : 'رد'} این مشاهده اطمینان دارید؟`)) return;
+            
+            try {
+                const response = await fetch('/api/approve-connection', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ issueNumber, action, type: 'observation' })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'خطا در تغییر وضعیت');
+                alert(result.message);
+                loadObservations();
+            } catch (error) {
+                alert('خطا: ' + error.message);
+            }
+        }
+        
+        loadObservations();
+        setInterval(loadObservations, 30000);
+    </script>
+</body>
+</html>
