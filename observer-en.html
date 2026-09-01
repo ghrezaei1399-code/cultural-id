@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Submit Raw Observation | Sahar Wisdom Community</title>
+    <title>Submit Observations | Sahar Wisdom Community</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -17,7 +17,7 @@
             background: linear-gradient(135deg, #3a2f20 0%, #2a2418 50%, #4a3a28 100%);
             color: #f0e8d0;
         }
-        .container { max-width: 800px; margin: 0 auto; }
+        .container { max-width: 900px; margin: 0 auto; }
         .page-title {
             font-size: 1.8rem;
             font-weight: 900;
@@ -30,57 +30,149 @@
             text-align: center;
             font-size: 0.85rem;
             color: #6a5a3a;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             border-bottom: 1px solid rgba(212,175,55,0.15);
             padding-bottom: 1rem;
         }
         body.dark .page-subtitle { color: #c8b890; }
         
+        .email-warning {
+            background: rgba(212, 175, 55, 0.12);
+            border: 2px solid #d4af37;
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 700;
+            color: #8a6d1f;
+            animation: pulse-warning 2s infinite;
+        }
+        body.dark .email-warning { background: rgba(212, 175, 55, 0.05); color: #f9e79f; }
+        @keyframes pulse-warning {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        .email-warning a { color: #2874a6; text-decoration: none; }
+        body.dark .email-warning a { color: #85c1e9; }
+        .email-warning .icon { font-size: 1.5rem; display: inline-block; margin-right: 0.5rem; }
+        
         .guide-banner {
-            background: rgba(212,175,55,0.08);
-            border: 1px solid rgba(212,175,55,0.2);
+            background: rgba(212,175,55,0.06);
+            border: 1px solid rgba(212,175,55,0.15);
             border-radius: 16px;
             padding: 1.2rem;
             margin-bottom: 2rem;
-            line-height: 1.8;
+            line-height: 1.9;
             font-size: 0.9rem;
             color: #4a3a2a;
         }
         body.dark .guide-banner { background: rgba(212,175,55,0.03); color: #d0c0b0; }
         .guide-banner strong { color: #8a6d1f; }
         body.dark .guide-banner strong { color: #f9e79f; }
+        .guide-banner .keyword-hint {
+            display: inline-block;
+            background: rgba(212,175,55,0.1);
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin: 0.2rem 0;
+            border: 1px solid rgba(212,175,55,0.15);
+        }
+        body.dark .guide-banner .keyword-hint { background: rgba(212,175,55,0.05); }
         
-        .form-group { margin-bottom: 1.5rem; }
-        .form-group label {
-            display: block;
-            font-weight: 700;
-            font-size: 0.9rem;
-            color: #2a1a0a;
-            margin-bottom: 0.3rem;
-        }
-        body.dark .form-group label { color: #e8d8c8; }
-        .form-group input, .form-group textarea {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            border-radius: 16px;
-            border: 2px solid rgba(212,175,55,0.2);
+        .observation-box {
             background: rgba(255,255,255,0.5);
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 2px solid rgba(212,175,55,0.15);
+            margin-bottom: 1.5rem;
+            transition: 0.3s;
+        }
+        body.dark .observation-box { background: rgba(0,0,0,0.1); border-color: rgba(212,175,55,0.1); }
+        .observation-box:hover { border-color: #d4af37; }
+        .observation-box .box-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.8rem;
+        }
+        .observation-box .box-title {
+            font-weight: 800;
+            font-size: 1rem;
+            color: #8a6d1f;
+        }
+        body.dark .observation-box .box-title { color: #f9e79f; }
+        .observation-box textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 0.8rem;
+            border-radius: 12px;
+            border: 2px solid rgba(212,175,55,0.15);
+            background: rgba(255,255,255,0.4);
             font-family: inherit;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: #1a0a0a;
-            transition: all 0.3s ease;
+            resize: vertical;
             outline: none;
+            transition: 0.3s;
         }
-        body.dark .form-group input, body.dark .form-group textarea {
-            background: rgba(0,0,0,0.15);
+        body.dark .observation-box textarea {
+            background: rgba(0,0,0,0.1);
             color: #f0e8d0;
-            border-color: rgba(212,175,55,0.15);
+            border-color: rgba(212,175,55,0.1);
         }
-        .form-group input:focus, .form-group textarea:focus {
+        .observation-box textarea:focus {
             border-color: #d4af37;
             box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
         }
-        .form-group textarea { min-height: 120px; resize: vertical; }
+        
+        .box-modules {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin-top: 0.8rem;
+        }
+        .box-module-btn {
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: 1px solid rgba(212,175,55,0.2);
+            background: rgba(255,255,255,0.3);
+            color: #4a3a2a;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        body.dark .box-module-btn { color: #d0c0b0; background: rgba(0,0,0,0.1); }
+        .box-module-btn:hover {
+            background: rgba(212,175,55,0.15);
+            transform: translateY(-2px);
+        }
+        body.dark .box-module-btn:hover { background: rgba(212,175,55,0.08); }
+        .box-module-btn .icon { font-size: 1rem; }
+        
+        .add-box-btn {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 16px;
+            border: 2px dashed rgba(212,175,55,0.3);
+            background: transparent;
+            color: #8a6d1f;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-bottom: 1.5rem;
+        }
+        body.dark .add-box-btn { color: #f9e79f; border-color: rgba(212,175,55,0.15); }
+        .add-box-btn:hover { background: rgba(212,175,55,0.05); border-color: #d4af37; }
         
         .btn {
             padding: 0.8rem 2rem;
@@ -109,6 +201,22 @@
         body.dark .btn-secondary:hover { background: rgba(255,255,255,0.05); }
         
         .actions { display: flex; gap: 1rem; margin-top: 2rem; flex-wrap: wrap; justify-content: center; }
+        
+        .back-row { display: flex; justify-content: center; margin-top: 2rem; gap: 1rem; flex-wrap: wrap; }
+        .btn-back {
+            padding: 0.7rem 2rem;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-decoration: none;
+            background: rgba(255,255,255,0.3);
+            color: #0a0a1a;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s;
+        }
+        body.dark .btn-back { color: #f0e8d0; background: rgba(0,0,0,0.1); }
+        .btn-back:hover { background: rgba(255,255,255,0.5); transform: translateY(-2px); }
+        body.dark .btn-back:hover { background: rgba(255,255,255,0.05); }
         
         .result-box {
             display: none;
@@ -140,22 +248,6 @@
         .result-box .error { color: #c0392b; }
         body.dark .result-box .error { color: #f1948a; }
         
-        .back-row { display: flex; justify-content: center; margin-top: 2rem; }
-        .btn-back {
-            padding: 0.7rem 2rem;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            text-decoration: none;
-            background: rgba(255,255,255,0.3);
-            color: #0a0a1a;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.3s;
-        }
-        body.dark .btn-back { color: #f0e8d0; background: rgba(0,0,0,0.1); }
-        .btn-back:hover { background: rgba(255,255,255,0.5); transform: translateY(-2px); }
-        body.dark .btn-back:hover { background: rgba(255,255,255,0.05); }
-        
         .note {
             font-size: 0.7rem;
             color: #6a5a3a;
@@ -169,74 +261,187 @@
             .container { padding: 1rem; }
             .actions { flex-direction: column; }
             .actions .btn { width: 100%; text-align: center; }
+            .back-row { flex-direction: column; align-items: center; }
+            .observation-box .box-header { flex-direction: column; align-items: stretch; }
+            .box-modules { justify-content: center; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="page-title">👁️ Submit Raw Observation</h1>
-        <div class="page-subtitle">Report a cultural phenomenon without interpretation or judgment</div>
+        <h1 class="page-title">👁️ Submit Raw Observations</h1>
+        <div class="page-subtitle">Report cultural, social, and human phenomena without interpretation or judgment</div>
         
-        <div class="guide-banner">
-            <strong>📌 Guide:</strong> In this section, you submit a <strong>raw observation</strong> of a cultural, social, or human phenomenon.
-            Please avoid any interpretation, diagnosis, or solution proposals.
-            <br><br>
-            <strong>🔑 Enter your card code so your observation can be recorded as an "Emergence Case" in the Atlas of Emergence.</strong>
+        <div class="email-warning">
+            <span class="icon">⚠️</span>
+            Without registering an email, your observations will only be recorded for the Wisdom Community.
+            <a href="edit-en.html">📧 Register Email</a>
+            | <a href="about-en.html#wisdom">🧠 About Sphere of Wisdom</a>
         </div>
         
-        <form id="observationForm">
-            <div class="form-group">
-                <label for="userCode">Cultural Identity Card Code</label>
-                <input type="text" id="userCode" placeholder="e.g. CIM-1234-5678-ABCDE" required />
+        <div class="guide-banner">
+            <strong>📌 Observation Guide:</strong><br>
+            • Write your observation <strong>without interpretation or judgment</strong>.<br>
+            • Use <strong>keywords</strong> for categorization:
+            <span class="keyword-hint">#Education</span>
+            <span class="keyword-hint">#Health</span>
+            <span class="keyword-hint">#Technology</span>
+            <span class="keyword-hint">#AI</span>
+            <span class="keyword-hint">#Culture</span>
+            <span class="keyword-hint">#Governance</span>
+            <span class="keyword-hint">#Environment</span>
+            <br>
+            • Each observation in a separate box. You can have multiple observations on different topics.
+        </div>
+        
+        <div class="form-group" style="margin-bottom:1.5rem;">
+            <label for="userCode" style="display:block;font-weight:700;font-size:0.9rem;color:#2a1a0a;margin-bottom:0.3rem;">
+                🔑 Cultural Identity Card Code
+            </label>
+            <input type="text" id="userCode" placeholder="e.g. CIM-1234-5678-ABCDE" 
+                   style="width:100%;padding:0.8rem 1rem;border-radius:16px;border:2px solid rgba(212,175,55,0.2);background:rgba(255,255,255,0.5);font-family:inherit;font-size:0.95rem;color:#1a0a0a;outline:none;transition:0.3s;"
+                   required />
+        </div>
+        
+        <div id="observationsContainer">
+            <div class="observation-box" data-index="0">
+                <div class="box-header">
+                    <span class="box-title">📝 Observation 1</span>
+                    <button class="box-module-btn" onclick="removeBox(this)" style="color:#c0392b;border-color:rgba(200,50,50,0.3);">
+                        <span class="icon">✕</span> Remove
+                    </button>
+                </div>
+                <textarea placeholder="Write your raw observation..." class="obs-text"></textarea>
+                <div class="box-modules">
+                    <button class="box-module-btn" onclick="toggleModule(this)">
+                        <span class="icon">🤝</span> Collaborate
+                    </button>
+                    <button class="box-module-btn" onclick="toggleModule(this)">
+                        <span class="icon">👁️</span> Related Observations
+                    </button>
+                    <button class="box-module-btn" onclick="toggleModule(this)">
+                        <span class="icon">📤</span> Refer to 5 peers
+                    </button>
+                </div>
             </div>
-            
-            <div class="form-group">
-                <label for="observationText">Raw Observation</label>
-                <textarea id="observationText" placeholder="Write only what you have observed; no definition, no diagnosis, no solution..." required></textarea>
-            </div>
-            
-            <div class="actions">
-                <button type="button" class="btn btn-secondary" onclick="window.location.href='index-en.html'">↩ Back</button>
-                <button type="submit" class="btn btn-primary" id="submitBtn">📤 Submit Observation</button>
-            </div>
-        </form>
+        </div>
+        
+        <button class="add-box-btn" onclick="addObservationBox()">➕ Add New Observation</button>
+        
+        <div class="actions">
+            <button type="button" class="btn btn-secondary" onclick="window.location.href='index-en.html'">↩ Back</button>
+            <button type="button" class="btn btn-primary" id="submitBtn" onclick="submitObservations()">📤 Submit All Observations</button>
+        </div>
         
         <div id="resultBox" class="result-box">
-            <div class="title" id="resultTitle">✅ Observation submitted successfully</div>
+            <div class="title" id="resultTitle">✅ Observations submitted successfully</div>
             <div class="tracking" id="resultTracking">Tracking number: ---</div>
             <div id="resultError" style="display:none;" class="error"></div>
         </div>
         
         <div class="back-row">
+            <a href="track-observation.html" class="btn-back" style="background:rgba(40,116,166,0.1);border-color:rgba(40,116,166,0.2);">🔍 Track Observations</a>
             <a href="index-en.html" class="btn-back">↩ Back to Home</a>
         </div>
         
         <div class="note">
-            🔒 Your observation is recorded anonymously with full privacy protection.
+            🔒 Your observations are recorded anonymously with full privacy protection.
         </div>
     </div>
     
     <script>
-        document.getElementById('observationForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
+        let boxCounter = 1;
+        
+        function addObservationBox() {
+            boxCounter++;
+            const container = document.getElementById('observationsContainer');
+            const newBox = document.createElement('div');
+            newBox.className = 'observation-box';
+            newBox.dataset.index = boxCounter - 1;
+            newBox.innerHTML = `
+                <div class="box-header">
+                    <span class="box-title">📝 Observation ${boxCounter}</span>
+                    <button class="box-module-btn" onclick="removeBox(this)" style="color:#c0392b;border-color:rgba(200,50,50,0.3);">
+                        <span class="icon">✕</span> Remove
+                    </button>
+                </div>
+                <textarea placeholder="Write your raw observation..." class="obs-text"></textarea>
+                <div class="box-modules">
+                    <button class="box-module-btn" onclick="toggleModule(this)">
+                        <span class="icon">🤝</span> Collaborate
+                    </button>
+                    <button class="box-module-btn" onclick="toggleModule(this)">
+                        <span class="icon">👁️</span> Related Observations
+                    </button>
+                    <button class="box-module-btn" onclick="toggleModule(this)">
+                        <span class="icon">📤</span> Refer to 5 peers
+                    </button>
+                </div>
+            `;
+            container.appendChild(newBox);
+        }
+        
+        function removeBox(btn) {
+            const box = btn.closest('.observation-box');
+            if (document.querySelectorAll('.observation-box').length > 1) {
+                box.remove();
+            } else {
+                alert('At least one observation box is required.');
+            }
+        }
+        
+        function toggleModule(btn) {
+            btn.classList.toggle('active');
+            if (btn.classList.contains('active')) {
+                btn.style.background = 'rgba(212,175,55,0.2)';
+                btn.style.borderColor = '#d4af37';
+            } else {
+                btn.style.background = '';
+                btn.style.borderColor = '';
+            }
+        }
+        
+        async function submitObservations() {
             const userCode = document.getElementById('userCode').value.trim();
-            const observation = document.getElementById('observationText').value.trim();
+            const boxes = document.querySelectorAll('.observation-box');
+            const observations = [];
+            let hasError = false;
+            
+            if (!userCode) {
+                alert('Please enter your Cultural Identity Card code.');
+                return;
+            }
+            
+            boxes.forEach((box, index) => {
+                const text = box.querySelector('.obs-text').value.trim();
+                const modules = box.querySelectorAll('.box-module-btn.active');
+                const selectedModules = [];
+                modules.forEach(m => {
+                    const label = m.textContent.trim();
+                    if (label.includes('Collaborate')) selectedModules.push('collaboration');
+                    else if (label.includes('Related')) selectedModules.push('related');
+                    else if (label.includes('Refer')) selectedModules.push('referral');
+                });
+                
+                if (!text) {
+                    alert(`Please fill in observation ${index + 1}.`);
+                    hasError = true;
+                    return;
+                }
+                
+                observations.push({
+                    text: text,
+                    modules: selectedModules
+                });
+            });
+            
+            if (hasError) return;
+            
             const submitBtn = document.getElementById('submitBtn');
             const resultBox = document.getElementById('resultBox');
             const resultTitle = document.getElementById('resultTitle');
             const resultTracking = document.getElementById('resultTracking');
             const resultError = document.getElementById('resultError');
-            
-            if (!userCode || !observation) {
-                alert('Please fill in all fields.');
-                return;
-            }
-            
-            if (observation.length < 20) {
-                alert('Observation must be at least 20 characters.');
-                return;
-            }
             
             submitBtn.disabled = true;
             submitBtn.textContent = '⏳ Submitting...';
@@ -247,38 +452,42 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        type: 'observation',
+                        type: 'observations',
                         cardCode: userCode,
-                        observation: observation
+                        observations: observations
                     })
                 });
                 
                 const result = await response.json();
                 
                 if (!response.ok) {
-                    throw new Error(result.error || 'Error submitting observation');
+                    throw new Error(result.error || 'Error submitting observations');
                 }
                 
-                resultTitle.textContent = '✅ Observation submitted successfully';
+                resultTitle.textContent = '✅ Observations submitted successfully';
                 resultTracking.textContent = `🔗 Tracking number: ${result.trackingCode}`;
                 resultError.style.display = 'none';
                 resultBox.style.display = 'block';
                 
                 submitBtn.textContent = '✅ Submitted';
                 
-                document.getElementById('observationText').value = '';
-                document.getElementById('userCode').value = '';
+                document.querySelectorAll('.obs-text').forEach(t => t.value = '');
+                document.querySelectorAll('.box-module-btn.active').forEach(b => {
+                    b.classList.remove('active');
+                    b.style.background = '';
+                    b.style.borderColor = '';
+                });
                 
             } catch (error) {
                 console.error('Error:', error);
-                resultTitle.textContent = '❌ Error submitting observation';
+                resultTitle.textContent = '❌ Error submitting observations';
                 resultError.textContent = error.message;
                 resultError.style.display = 'block';
                 resultBox.style.display = 'block';
                 submitBtn.textContent = '📤 Retry';
                 submitBtn.disabled = false;
             }
-        });
+        }
     </script>
 </body>
 </html>
