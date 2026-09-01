@@ -16,6 +16,7 @@ module.exports = async function handler(req, res) {
   // ===== اگر درخواست برای دریافت مشاهدات (observations) باشد =====
   if (type === 'observations') {
     try {
+      // دریافت Issues از گیت‌هاب
       const response = await fetch(
         `https://api.github.com/repos/${owner}/${repo}/issues?labels=observation&state=all&per_page=100`,
         {
@@ -31,6 +32,33 @@ module.exports = async function handler(req, res) {
       }
 
       const issues = await response.json();
+
+      // دریافت لیست تحلیل‌ها از پوشه data/analyses/
+      let analysesMap = {};
+      try {
+        const analysesRes = await fetch(
+          `https://api.github.com/repos/${owner}/${repo}/contents/data/analyses`,
+          {
+            headers: { 'Authorization': `Bearer ${token}` }
+          }
+        );
+        if (analysesRes.ok) {
+          const files = await analysesRes.json();
+          for (const file of files) {
+            if (file.name.endsWith('.json')) {
+              try {
+                const fileRes = await fetch(file.download_url);
+                const data = await fileRes.json();
+                analysesMap[data.issueNumber] = data;
+              } catch (e) {
+                console.error('Error reading analysis file:', file.name);
+              }
+            }
+          }
+        }
+      } catch (e) {
+        console.error('Error fetching analyses:', e);
+      }
 
       const observations = issues.map(issue => {
         const bodyLines = issue.body.split('\n');
@@ -67,12 +95,19 @@ module.exports = async function handler(req, res) {
         if (labels.includes('approved')) status = 'approved';
         else if (labels.includes('rejected')) status = 'rejected';
 
+        // ===== دریافت تحلیل و امتیاز =====
+        const analysisData = analysesMap[issue.number] || null;
+        const analysis = analysisData ? analysisData.analysis : null;
+        const score = analysisData ? analysisData.score : 0;
+
         return {
           number: issue.number,
           cardCode: cardCode,
           observation: observation,
           module: selectedModule,
           status: status,
+          score: score,
+          analysis: analysis,
           createdAt: issue.created_at,
           issueUrl: issue.html_url
         };
@@ -89,5 +124,57 @@ module.exports = async function handler(req, res) {
   }
 
   // ===== منطق قبلی: دریافت درخواست‌های ارتباط =====
-  // ... (بقیه کدهای قبلی)
+  const path = 'data/requests';
+
+  try {
+    const listResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+
+    if (!listResponse.ok) {
+      return res.status(200).json({ requests: [] });
+    }
+
+    const files = await listResponse.json();
+    const requestFiles = files.filter(f => f.name.startsWith('request-') && f.name.endsWith('.json'));
+
+    const requests = [];
+
+    for (const file of requestFiles) {
+      try {
+        const fileRes = await fetch(file.url, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+        const fileData = await fileRes.json();
+        const jsonString = Buffer.from(fileData.content, 'base64').toString('utf8');
+        const requestData = JSON.parse(jsonString);
+        
+        if (requestData.type === 'connection' || !requestData.type) {
+          requests.push({
+            ...requestData,
+            fileName: file.name,
+            senderCode: requestData.senderCode || requestData.cardCode,
+            senderEmail: requestData.senderEmail || requestData.requesterEmail || '',
+            reason: requestData.reason || requestData.description || ''
+          });
+        }
+      } catch (e) {
+        console.error('Error reading request file:', e);
+      }
+    }
+
+    requests.sort((a, b) => new Date(b.createdAt || b.requestDate) - new Date(a.createdAt || a.requestDate));
+
+    return res.status(200).json({ requests });
+
+  } catch (error) {
+    console.error('API Error:', error);
+    return res.status(500).json({ error: error.message });
+  }
 };
