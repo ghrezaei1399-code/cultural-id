@@ -162,13 +162,7 @@
         .obs-body p { font-size: 0.9rem; color: #4a4a5a; line-height: 1.6; }
         body.dark .obs-body p { color: #b0b0c0; }
         
-        .obs-modules {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-top: 0.8rem;
-        }
-        .module-tag {
+        .obs-module {
             display: inline-flex;
             align-items: center;
             gap: 0.3rem;
@@ -179,8 +173,10 @@
             border: 1px solid rgba(212,175,55,0.2);
             background: rgba(255,255,255,0.1);
             color: #4a3a2a;
+            margin-top: 0.8rem;
         }
-        body.dark .module-tag { color: #d0c0b0; }
+        body.dark .obs-module { color: #d0c0b0; }
+        .obs-module .icon { font-size: 0.8rem; margin-left: 0.2rem; }
         
         .badge {
             display: inline-block;
@@ -209,13 +205,6 @@
         .btn-reject { background: rgba(200,50,50,0.15); color: #6a1a1a; }
         body.dark .btn-reject { color: #f1948a; }
         .btn-reject:hover { background: rgba(200,50,50,0.25); }
-        .btn-module {
-            background: rgba(40,116,166,0.1);
-            color: #2874a6;
-            border: 1px solid rgba(40,116,166,0.15);
-        }
-        body.dark .btn-module { color: #85c1e9; }
-        .btn-module:hover { background: rgba(40,116,166,0.2); }
         
         .empty-state {
             text-align: center;
@@ -300,7 +289,6 @@
     <script>
         let allObservations = [];
         let currentFilter = 'all';
-        let currentLang = 'fa';
         
         async function loadObservations() {
             try {
@@ -358,22 +346,17 @@
                     pending: `<span class="badge badge-pending">⏳ در انتظار</span>`
                 };
                 
-                // نمایش ماژول‌ها
-                const modulesHtml = obs.modules && obs.modules.length > 0
-                    ? obs.modules.map(mod => {
-                        return `<span class="module-tag">${mod}</span>`;
-                    }).join('')
-                    : '<span class="module-tag">بدون ماژول</span>';
+                // ===== نمایش فقط یک ماژول انتخاب‌شده =====
+                const moduleHtml = obs.module 
+                    ? `<div class="obs-module"><span class="icon">📌</span> ${obs.module}</div>`
+                    : '<div class="obs-module" style="opacity:0.5;">بدون ماژول</div>';
                 
-                // دکمه‌های اقدام
                 const isPending = obs.status === 'pending';
                 const actionButtons = isPending ? `
                     <div class="obs-actions">
                         <button class="btn-small btn-approve" onclick="updateStatus('${obs.number}', 'approve_all')">✅ تایید کل</button>
                         <button class="btn-small btn-reject" onclick="updateStatus('${obs.number}', 'reject_all')">❌ رد کل</button>
-                        <button class="btn-small btn-module" onclick="approveModule('${obs.number}', 'همفکری با دیگران')">🤝 تایید همفکری</button>
-                        <button class="btn-small btn-module" onclick="approveModule('${obs.number}', 'مشاهدات مرتبط دیگران')">👁️ تایید مشاهدات مرتبط</button>
-                        <button class="btn-small btn-module" onclick="approveModule('${obs.number}', 'ارجاع به ۵ همفرهنگ')">📤 تایید ارجاع</button>
+                        ${obs.module ? `<button class="btn-small btn-approve" onclick="approveModule('${obs.number}', '${obs.module}')" style="background:rgba(40,116,166,0.1);color:#2874a6;border:1px solid rgba(40,116,166,0.15);">✅ تایید ماژول</button>` : ''}
                     </div>
                 ` : '';
                 
@@ -389,9 +372,7 @@
                         <div class="obs-body">
                             <p>${obs.observation || 'متن مشاهده موجود نیست'}</p>
                         </div>
-                        <div class="obs-modules">
-                            ${modulesHtml}
-                        </div>
+                        ${moduleHtml}
                         ${actionButtons}
                     </div>
                 `;
@@ -417,8 +398,8 @@
             }
         }
         
-        async function approveModule(issueNumber, moduleType) {
-            if (!confirm(`آیا از تایید ماژول "${moduleType}" اطمینان دارید؟`)) return;
+        async function approveModule(issueNumber, moduleName) {
+            if (!confirm(`آیا از تایید ماژول "${moduleName}" اطمینان دارید؟`)) return;
             
             try {
                 const response = await fetch('/api/approve-connection', {
@@ -428,7 +409,7 @@
                         issueNumber, 
                         action: 'approve_module', 
                         type: 'observation',
-                        moduleType: moduleType
+                        moduleType: moduleName
                     })
                 });
                 const result = await response.json();
