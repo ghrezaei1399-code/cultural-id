@@ -40,6 +40,53 @@
         body.dark .back-link { color: #f0e8d0; }
         .back-link:hover { background: rgba(255,255,255,0.08); }
         
+        .lang-group {
+            display: flex;
+            gap: 0.3rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.3rem;
+            border-radius: 30px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+        }
+        .lang-btn {
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            border: none;
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: transparent;
+            color: #888;
+        }
+        .lang-btn.active {
+            background: rgba(212, 175, 55, 0.25);
+            color: #2a1a0a;
+        }
+        body.dark .lang-btn.active {
+            background: rgba(212, 175, 55, 0.2);
+            color: #f9e79f;
+        }
+        .lang-btn:not(.active):hover {
+            background: rgba(212, 175, 55, 0.08);
+            color: #2a1a0a;
+        }
+        body.dark .lang-btn:not(.active):hover { color: #f0e8d0; }
+        
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: 0.3s;
+            color: #0a0a1a;
+        }
+        body.dark .theme-toggle { color: #f9e79f; background: rgba(0, 0, 0, 0.2); }
+        .theme-toggle:hover { transform: scale(1.1); }
+        
         .page-title {
             font-size: 1.6rem;
             font-weight: 800;
@@ -219,57 +266,149 @@
 </head>
 <body>
     <div class="container">
+        <!-- ===== نوار بالا با زبان و تم ===== -->
         <div class="top-bar">
-            <a href="admin.html" class="back-link">↩ بازگشت به داشبورد</a>
+            <a href="admin.html" class="back-link" id="backLink">↩ بازگشت به داشبورد</a>
+            <div class="lang-group">
+                <button onclick="setLanguage('fa')" id="langFa" class="lang-btn active">🇮🇷 فارسی</button>
+                <button onclick="setLanguage('en')" id="langEn" class="lang-btn">🇬🇧 English</button>
+            </div>
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
         </div>
         
-        <h1 class="page-title">👁️ مدیریت مشاهدات</h1>
-        <div class="page-subtitle">بررسی و تأیید مشاهدات خام ثبت‌شده توسط کاربران</div>
+        <h1 class="page-title" id="pageTitle">👁️ مدیریت مشاهدات</h1>
+        <div class="page-subtitle" id="pageSubtitle">بررسی و تأیید مشاهدات خام ثبت‌شده توسط کاربران</div>
         
         <div class="stats-mini">
             <div class="stat-mini">
                 <span class="number" id="totalObs">۰</span>
-                <div class="label">کل مشاهدات</div>
+                <div class="label" id="labelTotal">کل مشاهدات</div>
             </div>
             <div class="stat-mini">
                 <span class="number" id="pendingObs">۰</span>
-                <div class="label">⏳ در انتظار</div>
+                <div class="label" id="labelPending">⏳ در انتظار</div>
             </div>
             <div class="stat-mini">
                 <span class="number" id="approvedObs">۰</span>
-                <div class="label">✅ تایید شده</div>
+                <div class="label" id="labelApproved">✅ تایید شده</div>
             </div>
             <div class="stat-mini">
                 <span class="number" id="rejectedObs">۰</span>
-                <div class="label">❌ رد شده</div>
+                <div class="label" id="labelRejected">❌ رد شده</div>
             </div>
         </div>
         
         <div class="filter-bar">
-            <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">📋 همه</button>
-            <button class="filter-btn" data-filter="pending" onclick="setFilter('pending')">⏳ در انتظار</button>
-            <button class="filter-btn" data-filter="approved" onclick="setFilter('approved')">✅ تایید شده</button>
-            <button class="filter-btn" data-filter="rejected" onclick="setFilter('rejected')">❌ رد شده</button>
+            <button class="filter-btn active" data-filter="all" onclick="setFilter('all')" id="filterAll">📋 همه</button>
+            <button class="filter-btn" data-filter="pending" onclick="setFilter('pending')" id="filterPending">⏳ در انتظار</button>
+            <button class="filter-btn" data-filter="approved" onclick="setFilter('approved')" id="filterApproved">✅ تایید شده</button>
+            <button class="filter-btn" data-filter="rejected" onclick="setFilter('rejected')" id="filterRejected">❌ رد شده</button>
         </div>
         
         <div id="observationsList" class="observations-list">
-            <div class="empty-state">در حال بارگذاری...</div>
+            <div class="empty-state" id="loadingText">در حال بارگذاری...</div>
         </div>
         
         <div style="text-align:center; margin-top:2rem;">
-            <a href="admin.html" class="btn-back-bottom">↩ بازگشت به پنل ادمین</a>
+            <a href="admin.html" class="btn-back-bottom" id="backToAdminBtn">↩ بازگشت به پنل ادمین</a>
         </div>
     </div>
     
     <script>
         let allObservations = [];
         let currentFilter = 'all';
+        let currentLang = 'fa';
+        
+        // ===== دیکشنری ترجمه =====
+        const translations = {
+            fa: {
+                backLink: '↩ بازگشت به داشبورد',
+                pageTitle: '👁️ مدیریت مشاهدات',
+                pageSubtitle: 'بررسی و تأیید مشاهدات خام ثبت‌شده توسط کاربران',
+                labelTotal: 'کل مشاهدات',
+                labelPending: '⏳ در انتظار',
+                labelApproved: '✅ تایید شده',
+                labelRejected: '❌ رد شده',
+                filterAll: '📋 همه',
+                filterPending: '⏳ در انتظار',
+                filterApproved: '✅ تایید شده',
+                filterRejected: '❌ رد شده',
+                loading: 'در حال بارگذاری...',
+                noObservations: 'هیچ مشاهده‌ای با این وضعیت وجود ندارد',
+                approved: 'تایید شده',
+                rejected: 'رد شده',
+                pending: 'در انتظار',
+                approveBtn: '✅ تایید',
+                rejectBtn: '❌ رد',
+                backToAdmin: '↩ بازگشت به پنل ادمین',
+                error: 'خطا در دریافت مشاهدات'
+            },
+            en: {
+                backLink: '↩ Back to Dashboard',
+                pageTitle: '👁️ Observations Management',
+                pageSubtitle: 'Review and approve raw observations submitted by users',
+                labelTotal: 'Total Observations',
+                labelPending: '⏳ Pending',
+                labelApproved: '✅ Approved',
+                labelRejected: '❌ Rejected',
+                filterAll: '📋 All',
+                filterPending: '⏳ Pending',
+                filterApproved: '✅ Approved',
+                filterRejected: '❌ Rejected',
+                loading: 'Loading...',
+                noObservations: 'No observations with this status',
+                approved: 'Approved',
+                rejected: 'Rejected',
+                pending: 'Pending',
+                approveBtn: '✅ Approve',
+                rejectBtn: '❌ Reject',
+                backToAdmin: '↩ Back to Admin Panel',
+                error: 'Error loading observations'
+            }
+        };
+        
+        function t(key) {
+            return translations[currentLang] && translations[currentLang][key] ? translations[currentLang][key] : key;
+        }
+        
+        // ===== تغییر زبان =====
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.getElementById('langFa').className = 'lang-btn' + (lang === 'fa' ? ' active' : '');
+            document.getElementById('langEn').className = 'lang-btn' + (lang === 'en' ? ' active' : '');
+            
+            document.getElementById('backLink').textContent = t('backLink');
+            document.getElementById('pageTitle').textContent = t('pageTitle');
+            document.getElementById('pageSubtitle').textContent = t('pageSubtitle');
+            document.getElementById('labelTotal').textContent = t('labelTotal');
+            document.getElementById('labelPending').textContent = t('labelPending');
+            document.getElementById('labelApproved').textContent = t('labelApproved');
+            document.getElementById('labelRejected').textContent = t('labelRejected');
+            document.getElementById('filterAll').textContent = t('filterAll');
+            document.getElementById('filterPending').textContent = t('filterPending');
+            document.getElementById('filterApproved').textContent = t('filterApproved');
+            document.getElementById('filterRejected').textContent = t('filterRejected');
+            document.getElementById('loadingText').textContent = t('loading');
+            document.getElementById('backToAdminBtn').textContent = t('backToAdmin');
+        }
+        
+        // ===== تم =====
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            const btn = document.getElementById('themeToggle');
+            btn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+            localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+        }
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark');
+            document.getElementById('themeToggle').textContent = '☀️';
+        }
         
         async function loadObservations() {
             try {
                 const response = await fetch('/api/get-connection-requests?type=observations');
                 const data = await response.json();
-                if (!response.ok) throw new Error(data.error || 'خطا در دریافت مشاهدات');
+                if (!response.ok) throw new Error(data.error || t('error'));
                 
                 allObservations = data.observations || [];
                 updateStats();
@@ -277,7 +416,7 @@
             } catch (error) {
                 console.error('Error:', error);
                 document.getElementById('observationsList').innerHTML = 
-                    `<div class="empty-state" style="color:red;">خطا: ${error.message}</div>`;
+                    `<div class="empty-state" style="color:red;">${t('error')}: ${error.message}</div>`;
             }
         }
         
@@ -310,21 +449,21 @@
             }
             
             if (filtered.length === 0) {
-                container.innerHTML = `<div class="empty-state">هیچ مشاهده‌ای با این وضعیت وجود ندارد</div>`;
+                container.innerHTML = `<div class="empty-state">${t('noObservations')}</div>`;
                 return;
             }
             
             container.innerHTML = filtered.map(obs => {
                 const statusMap = {
-                    approved: `<span class="badge badge-approved">✅ تایید شده</span>`,
-                    rejected: `<span class="badge badge-rejected">❌ رد شده</span>`,
-                    pending: `<span class="badge badge-pending">⏳ در انتظار</span>`
+                    approved: `<span class="badge badge-approved">✅ ${t('approved')}</span>`,
+                    rejected: `<span class="badge badge-rejected">❌ ${t('rejected')}</span>`,
+                    pending: `<span class="badge badge-pending">⏳ ${t('pending')}</span>`
                 };
                 
                 const actionButtons = obs.status === 'pending' ? `
                     <div style="margin-top:0.8rem; display:flex; gap:0.3rem; flex-wrap:wrap;">
-                        <button class="btn-small btn-approve" onclick="updateStatus('${obs.number}', 'approve')">✅ تایید</button>
-                        <button class="btn-small btn-reject" onclick="updateStatus('${obs.number}', 'reject')">❌ رد</button>
+                        <button class="btn-small btn-approve" onclick="updateStatus('${obs.number}', 'approve')">${t('approveBtn')}</button>
+                        <button class="btn-small btn-reject" onclick="updateStatus('${obs.number}', 'reject')">${t('rejectBtn')}</button>
                     </div>
                 ` : '';
                 
@@ -335,7 +474,7 @@
                                 <span class="obs-code">#${obs.number} - ${obs.cardCode || 'ناشناس'}</span>
                                 ${statusMap[obs.status] || ''}
                             </div>
-                            <div class="obs-meta">${new Date(obs.createdAt).toLocaleString('fa-IR')}</div>
+                            <div class="obs-meta">${new Date(obs.createdAt).toLocaleString(currentLang === 'fa' ? 'fa-IR' : 'en-US')}</div>
                         </div>
                         <div class="obs-body">
                             <p>${obs.observation || 'متن مشاهده موجود نیست'}</p>
@@ -347,7 +486,11 @@
         }
         
         async function updateStatus(issueNumber, action) {
-            if (!confirm(`آیا از ${action === 'approve' ? 'تایید' : 'رد'} این مشاهده اطمینان دارید؟`)) return;
+            const confirmMsg = currentLang === 'fa'
+                ? `آیا از ${action === 'approve' ? 'تایید' : 'رد'} این مشاهده اطمینان دارید؟`
+                : `Are you sure you want to ${action === 'approve' ? 'approve' : 'reject'} this observation?`;
+            
+            if (!confirm(confirmMsg)) return;
             
             try {
                 const response = await fetch('/api/approve-connection', {
@@ -360,7 +503,7 @@
                 alert(result.message);
                 loadObservations();
             } catch (error) {
-                alert('خطا: ' + error.message);
+                alert((currentLang === 'fa' ? 'خطا: ' : 'Error: ') + error.message);
             }
         }
         
