@@ -3,6 +3,7 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
+
   const token = process.env.OBSERVER_TOKEN || process.env.GH_TOKEN;
   if (!token) {
     return res.status(500).json({ error: 'Token is not configured' });
@@ -35,11 +36,13 @@ module.exports = async function handler(req, res) {
 
       const issueData = await response.json();
 
+      // ===== تشخیص وضعیت =====
       const labels = issueData.labels.map(l => l.name);
       let status = 'pending';
       if (labels.includes('approved')) status = 'approved';
       else if (labels.includes('rejected')) status = 'rejected';
 
+      // ===== استخراج متن مشاهده =====
       const bodyLines = issueData.body.split('\n');
       let observation = '';
       let inObservation = false;
@@ -55,33 +58,60 @@ module.exports = async function handler(req, res) {
       }
       observation = observation.trim() || issueData.body.substring(0, 200);
 
+      // ===== استخراج بسته راهنما از کامنت‌ها =====
       let guide = null;
       if (status === 'approved') {
-        const commentsResponse = await fetch(issueData.comments_url, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/vnd.github.v3+json'
-          }
-        });
-        if (commentsResponse.ok) {
-          const comments = await commentsResponse.json();
-          for (const comment of comments) {
-            if (comment.body.includes('### بسته راهنمای اقدام عملی')) {
-              const levels = { individual: '', network: '', policy: '' };
-              const lines = comment.body.split('\n');
-              let currentLevel = '';
-              for (const line of lines) {
-                if (line.includes('**سطح فردی**')) currentLevel = 'individual';
-                else if (line.includes('**سطح شبکه‌ای**')) currentLevel = 'network';
-                else if (line.includes('**سطح سیاستی**')) currentLevel = 'policy';
-                else if (currentLevel && line.trim() && !line.includes('---')) {
-                  levels[currentLevel] += line.trim() + ' ';
+        try {
+          const commentsResponse = await fetch(issueData.comments_url, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Accept': 'application/vnd.github.v3+json'
+            }
+          });
+          if (commentsResponse.ok) {
+            const comments = await commentsResponse.json();
+            for (const comment of comments) {
+              if (comment.body && comment.body.includes('### بسته راهنمای اقدام عملی')) {
+                const lines = comment.body.split('\n');
+                let currentLevel = '';
+                const levels = { individual: '', network: '', policy: '' };
+                
+                for (const line of lines) {
+                  const trimmedLine = line.trim();
+                  if (trimmedLine.includes('**سطح فردی**')) {
+                    currentLevel = 'individual';
+                    continue;
+                  } else if (trimmedLine.includes('**سطح شبکه‌ای**')) {
+                    currentLevel = 'network';
+                    continue;
+                  } else if (trimmedLine.includes('**سطح سیاستی**')) {
+                    currentLevel = 'policy';
+                    continue;
+                  } else if (trimmedLine.includes('---') && currentLevel) {
+                    continue;
+                  } else if (currentLevel && trimmedLine && !trimmedLine.startsWith('*')) {
+                    if (levels[currentLevel]) {
+                      levels[currentLevel] += ' ' + trimmedLine;
+                    } else {
+                      levels[currentLevel] = trimmedLine;
+                    }
+                  }
                 }
+                
+                // پاکسازی
+                for (const key of ['individual', 'network', 'policy']) {
+                  if (levels[key]) {
+                    levels[key] = levels[key].trim();
+                  }
+                }
+                
+                guide = levels;
+                break;
               }
-              guide = levels;
-              break;
             }
           }
+        } catch (e) {
+          console.error('Error fetching comments:', e);
         }
       }
 
