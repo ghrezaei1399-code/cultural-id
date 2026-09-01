@@ -22,7 +22,7 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'Invalid JSON in request body' });
     }
 
-    const { cardCode, type, observations, description, targetCardCode } = parsedBody;
+    const { cardCode, type, observations } = parsedBody;
 
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
@@ -33,7 +33,6 @@ module.exports = async function handler(req, res) {
         return res.status(400).json({ error: 'کد کارت الزامی است' });
       }
 
-      // ===== نگاشت نام ماژول‌ها =====
       const moduleNames = {
         'collaboration': 'همفکری با دیگران',
         'related': 'مشاهدات مرتبط دیگران',
@@ -46,7 +45,7 @@ module.exports = async function handler(req, res) {
           continue;
         }
 
-        const selectedModules = obs.modules.map(m => moduleNames[m] || m).join('، ') || 'هیچ‌کدام';
+        const selectedModule = obs.module ? moduleNames[obs.module] || obs.module : 'هیچ‌کدام';
 
         const issueTitle = `مشاهده خام: ${cardCode}`;
         const issueBody = `
@@ -55,8 +54,8 @@ module.exports = async function handler(req, res) {
 **مشاهده خام:**
 ${obs.text}
 
-**ماژول‌های انتخاب‌شده:**
-${selectedModules}
+**ماژول انتخاب‌شده:**
+${selectedModule}
 
 ---
 *این مشاهده توسط کاربر ثبت شده و در انتظار بررسی است.*
@@ -86,7 +85,7 @@ ${selectedModules}
           number: issueData.number,
           url: issueData.html_url,
           observation: obs.text.substring(0, 50) + '...',
-          modules: obs.modules
+          module: selectedModule
         });
       }
 
