@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>ثبت مشاهدات | مجتمع هم‌اندیشی سپهر خردمندی</title>
     <style>
+        /* ===== استایل‌های قبلی ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
@@ -36,7 +37,6 @@
         }
         body.dark .page-subtitle { color: #c8b890; }
         
-        /* ===== پیام هشدار ایمیل ===== */
         .email-warning {
             background: rgba(212, 175, 55, 0.12);
             border: 2px solid #d4af37;
@@ -47,18 +47,29 @@
             font-weight: 700;
             color: #8a6d1f;
             animation: pulse-warning 2s infinite;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
         body.dark .email-warning { background: rgba(212, 175, 55, 0.05); color: #f9e79f; }
         @keyframes pulse-warning {
             0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
+            50% { transform: scale(1.01); }
             100% { transform: scale(1); }
         }
-        .email-warning a { color: #2874a6; text-decoration: none; }
-        body.dark .email-warning a { color: #85c1e9; }
-        .email-warning .icon { font-size: 1.5rem; display: inline-block; margin-left: 0.5rem; }
+        .email-warning a {
+            color: #2874a6;
+            text-decoration: none;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            background: rgba(40,116,166,0.1);
+        }
+        body.dark .email-warning a { color: #85c1e9; background: rgba(40,116,166,0.05); }
+        .email-warning .icon { font-size: 1.5rem; }
+        .email-warning .sep { opacity: 0.3; }
         
-        /* ===== راهنما ===== */
         .guide-banner {
             background: rgba(212,175,55,0.06);
             border: 1px solid rgba(212,175,55,0.15);
@@ -83,7 +94,30 @@
         }
         body.dark .guide-banner .keyword-hint { background: rgba(212,175,55,0.05); }
         
-        /* ===== باکس‌های مشاهده ===== */
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #2a1a0a;
+            margin-bottom: 0.3rem;
+        }
+        body.dark .form-group label { color: #e8d8c8; }
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 16px;
+            border: 2px solid rgba(212,175,55,0.2);
+            background: rgba(255,255,255,0.5);
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: #1a0a0a;
+            outline: none;
+            transition: 0.3s;
+        }
+        body.dark .form-group input { background: rgba(0,0,0,0.15); color: #f0e8d0; border-color: rgba(212,175,55,0.15); }
+        .form-group input:focus { border-color: #d4af37; box-shadow: 0 0 0 4px rgba(212,175,55,0.08); }
+        
         .observation-box {
             background: rgba(255,255,255,0.5);
             border-radius: 20px;
@@ -132,7 +166,7 @@
             box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
         }
         
-        /* ===== ماژول‌های هر باکس ===== */
+        /* ===== ماژول‌های هر باکس (فقط یکی قابل انتخاب) ===== */
         .box-modules {
             display: flex;
             gap: 0.8rem;
@@ -149,20 +183,24 @@
             color: #4a3a2a;
             cursor: pointer;
             transition: 0.3s;
-            text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 0.3rem;
         }
         body.dark .box-module-btn { color: #d0c0b0; background: rgba(0,0,0,0.1); }
-        .box-module-btn:hover {
-            background: rgba(212,175,55,0.15);
-            transform: translateY(-2px);
-        }
+        .box-module-btn:hover { background: rgba(212,175,55,0.15); transform: translateY(-2px); }
         body.dark .box-module-btn:hover { background: rgba(212,175,55,0.08); }
         .box-module-btn .icon { font-size: 1rem; }
+        .box-module-btn.active {
+            background: rgba(212,175,55,0.25);
+            border-color: #d4af37;
+        }
+        body.dark .box-module-btn.active { background: rgba(212,175,55,0.15); }
+        .box-module-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
         
-        /* ===== دکمه اضافه کردن باکس ===== */
         .add-box-btn {
             width: 100%;
             padding: 0.8rem;
@@ -178,8 +216,12 @@
         }
         body.dark .add-box-btn { color: #f9e79f; border-color: rgba(212,175,55,0.15); }
         .add-box-btn:hover { background: rgba(212,175,55,0.05); border-color: #d4af37; }
+        .add-box-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            border-color: rgba(212,175,55,0.1);
+        }
         
-        /* ===== دکمه‌ها ===== */
         .btn {
             padding: 0.8rem 2rem;
             border-radius: 40px;
@@ -270,6 +312,7 @@
             .back-row { flex-direction: column; align-items: center; }
             .observation-box .box-header { flex-direction: column; align-items: stretch; }
             .box-modules { justify-content: center; }
+            .email-warning { flex-direction: column; }
         }
     </style>
 </head>
@@ -278,15 +321,14 @@
         <h1 class="page-title">👁️ ثبت مشاهدات خام</h1>
         <div class="page-subtitle">گزارش پدیده‌های فرهنگی، اجتماعی و انسانی بدون تفسیر و قضاوت</div>
         
-        <!-- ===== پیام هشدار ایمیل ===== -->
         <div class="email-warning">
             <span class="icon">⚠️</span>
             بدون ثبت پست الکترونیک، مشاهدات شما فقط برای مجتمع هم‌اندیشی ثبت می‌شود.
             <a href="edit-fa.html">📧 ثبت ایمیل</a>
-            | <a href="about-fa.html#wisdom">🧠 آشنایی با سپهر خردمندی</a>
+            <span class="sep">|</span>
+            <a href="about-fa.html#wisdom">🧠 آشنایی با سپهر خردمندی</a>
         </div>
         
-        <!-- ===== راهنما ===== -->
         <div class="guide-banner">
             <strong>📌 راهنمای ثبت مشاهده:</strong><br>
             • مشاهده‌ی خود را <strong>بدون تفسیر و قضاوت</strong> بنویسید.<br>
@@ -299,20 +341,15 @@
             <span class="keyword-hint">#حکمرانی</span>
             <span class="keyword-hint">#محیط_زیست</span>
             <br>
-            • هر مشاهده را در یک باکس جداگانه ثبت کنید. می‌توانید چندین مشاهده از موضوعات مختلف داشته باشید.
+            • هر مشاهده را در یک باکس جداگانه ثبت کنید. <strong>حداکثر ۵ مشاهده</strong> می‌توانید ثبت کنید.
+            • برای هر مشاهده فقط <strong>یک ماژول</strong> می‌توانید انتخاب کنید.
         </div>
         
-        <!-- ===== کد کارت ===== -->
-        <div class="form-group" style="margin-bottom:1.5rem;">
-            <label for="userCode" style="display:block;font-weight:700;font-size:0.9rem;color:#2a1a0a;margin-bottom:0.3rem;">
-                🔑 کد کارت هویت فرهنگی
-            </label>
-            <input type="text" id="userCode" placeholder="مثلاً: CIM-1234-5678-ABCDE" 
-                   style="width:100%;padding:0.8rem 1rem;border-radius:16px;border:2px solid rgba(212,175,55,0.2);background:rgba(255,255,255,0.5);font-family:inherit;font-size:0.95rem;color:#1a0a0a;outline:none;transition:0.3s;"
-                   required />
+        <div class="form-group">
+            <label for="userCode">🔑 کد کارت هویت فرهنگی</label>
+            <input type="text" id="userCode" placeholder="مثلاً: CIM-1234-5678-ABCDE" required />
         </div>
         
-        <!-- ===== باکس‌های مشاهده ===== -->
         <div id="observationsContainer">
             <div class="observation-box" data-index="0">
                 <div class="box-header">
@@ -323,36 +360,32 @@
                 </div>
                 <textarea placeholder="مشاهده خام خود را بنویسید..." class="obs-text"></textarea>
                 <div class="box-modules">
-                    <button class="box-module-btn" onclick="toggleModule(this)">
+                    <button class="box-module-btn" onclick="selectModule(this, 'collaboration')">
                         <span class="icon">🤝</span> همفکری با دیگران
                     </button>
-                    <button class="box-module-btn" onclick="toggleModule(this)">
+                    <button class="box-module-btn" onclick="selectModule(this, 'related')">
                         <span class="icon">👁️</span> مشاهدات مرتبط دیگران
                     </button>
-                    <button class="box-module-btn" onclick="toggleModule(this)">
+                    <button class="box-module-btn" onclick="selectModule(this, 'referral')">
                         <span class="icon">📤</span> ارجاع به ۵ همفرهنگ
                     </button>
                 </div>
             </div>
         </div>
         
-        <!-- ===== دکمه اضافه کردن باکس ===== -->
-        <button class="add-box-btn" onclick="addObservationBox()">➕ افزودن مشاهده جدید</button>
+        <button class="add-box-btn" id="addBoxBtn" onclick="addObservationBox()">➕ افزودن مشاهده جدید (حداکثر ۵)</button>
         
-        <!-- ===== دکمه‌ها ===== -->
         <div class="actions">
             <button type="button" class="btn btn-secondary" onclick="window.location.href='index.html'">↩ بازگشت</button>
             <button type="button" class="btn btn-primary" id="submitBtn" onclick="submitObservations()">📤 ثبت همه مشاهدات</button>
         </div>
         
-        <!-- ===== نتیجه ===== -->
         <div id="resultBox" class="result-box">
             <div class="title" id="resultTitle">✅ مشاهدات با موفقیت ثبت شد</div>
             <div class="tracking" id="resultTracking">شماره پیگیری: ---</div>
             <div id="resultError" style="display:none;" class="error"></div>
         </div>
         
-        <!-- ===== بازگشت ===== -->
         <div class="back-row">
             <a href="track-observation.html" class="btn-back" style="background:rgba(40,116,166,0.1);border-color:rgba(40,116,166,0.2);">🔍 پیگیری مشاهدات</a>
             <a href="index.html" class="btn-back">↩ بازگشت به صفحه اصلی</a>
@@ -365,8 +398,13 @@
     
     <script>
         let boxCounter = 1;
+        const MAX_BOXES = 5;
         
         function addObservationBox() {
+            if (boxCounter >= MAX_BOXES) {
+                alert('حداکثر ۵ مشاهده می‌توانید ثبت کنید.');
+                return;
+            }
             boxCounter++;
             const container = document.getElementById('observationsContainer');
             const newBox = document.createElement('div');
@@ -381,37 +419,61 @@
                 </div>
                 <textarea placeholder="مشاهده خام خود را بنویسید..." class="obs-text"></textarea>
                 <div class="box-modules">
-                    <button class="box-module-btn" onclick="toggleModule(this)">
+                    <button class="box-module-btn" onclick="selectModule(this, 'collaboration')">
                         <span class="icon">🤝</span> همفکری با دیگران
                     </button>
-                    <button class="box-module-btn" onclick="toggleModule(this)">
+                    <button class="box-module-btn" onclick="selectModule(this, 'related')">
                         <span class="icon">👁️</span> مشاهدات مرتبط دیگران
                     </button>
-                    <button class="box-module-btn" onclick="toggleModule(this)">
+                    <button class="box-module-btn" onclick="selectModule(this, 'referral')">
                         <span class="icon">📤</span> ارجاع به ۵ همفرهنگ
                     </button>
                 </div>
             `;
             container.appendChild(newBox);
+            
+            // بررسی وضعیت دکمه افزودن
+            updateAddButton();
         }
         
         function removeBox(btn) {
             const box = btn.closest('.observation-box');
             if (document.querySelectorAll('.observation-box').length > 1) {
                 box.remove();
+                // بازنشانی شمارنده
+                const boxes = document.querySelectorAll('.observation-box');
+                boxes.forEach((b, i) => {
+                    b.querySelector('.box-title').textContent = `📝 مشاهده ${i + 1}`;
+                });
+                boxCounter = boxes.length;
+                updateAddButton();
             } else {
                 alert('حداقل یک باکس مشاهده باید وجود داشته باشد.');
             }
         }
         
-        function toggleModule(btn) {
-            btn.classList.toggle('active');
-            if (btn.classList.contains('active')) {
-                btn.style.background = 'rgba(212,175,55,0.2)';
-                btn.style.borderColor = '#d4af37';
+        function selectModule(btn, moduleType) {
+            const box = btn.closest('.observation-box');
+            const allModules = box.querySelectorAll('.box-module-btn');
+            
+            // حذف انتخاب از سایر ماژول‌ها
+            allModules.forEach(m => {
+                m.classList.remove('active');
+            });
+            
+            // انتخاب ماژول فعلی
+            btn.classList.add('active');
+            btn.dataset.module = moduleType;
+        }
+        
+        function updateAddButton() {
+            const addBtn = document.getElementById('addBoxBtn');
+            if (boxCounter >= MAX_BOXES) {
+                addBtn.disabled = true;
+                addBtn.textContent = '⚠️ حداکثر ۵ مشاهده ثبت شده است';
             } else {
-                btn.style.background = '';
-                btn.style.borderColor = '';
+                addBtn.disabled = false;
+                addBtn.textContent = `➕ افزودن مشاهده جدید (${boxCounter}/${MAX_BOXES})`;
             }
         }
         
@@ -428,14 +490,8 @@
             
             boxes.forEach((box, index) => {
                 const text = box.querySelector('.obs-text').value.trim();
-                const modules = box.querySelectorAll('.box-module-btn.active');
-                const selectedModules = [];
-                modules.forEach(m => {
-                    const label = m.textContent.trim();
-                    if (label.includes('همفکری')) selectedModules.push('collaboration');
-                    else if (label.includes('مشاهدات مرتبط')) selectedModules.push('related');
-                    else if (label.includes('ارجاع')) selectedModules.push('referral');
-                });
+                const selectedModule = box.querySelector('.box-module-btn.active');
+                const moduleType = selectedModule ? selectedModule.dataset.module : null;
                 
                 if (!text) {
                     alert(`لطفاً مشاهده ${index + 1} را پر کنید.`);
@@ -445,11 +501,19 @@
                 
                 observations.push({
                     text: text,
-                    modules: selectedModules
+                    module: moduleType
                 });
             });
             
             if (hasError) return;
+            
+            // بررسی اینکه آیا همه مشاهدات ماژول دارند
+            const noModule = observations.some(o => !o.module);
+            if (noModule) {
+                if (!confirm('برخی مشاهدات ماژول انتخاب نشده‌اند. آیا می‌خواهید ادامه دهید؟')) {
+                    return;
+                }
+            }
             
             const submitBtn = document.getElementById('submitBtn');
             const resultBox = document.getElementById('resultBox');
@@ -485,13 +549,8 @@
                 
                 submitBtn.textContent = '✅ ثبت شد';
                 
-                // پاک کردن فرم
                 document.querySelectorAll('.obs-text').forEach(t => t.value = '');
-                document.querySelectorAll('.box-module-btn.active').forEach(b => {
-                    b.classList.remove('active');
-                    b.style.background = '';
-                    b.style.borderColor = '';
-                });
+                document.querySelectorAll('.box-module-btn.active').forEach(b => b.classList.remove('active'));
                 
             } catch (error) {
                 console.error('Error:', error);
@@ -503,6 +562,9 @@
                 submitBtn.disabled = false;
             }
         }
+        
+        // مقداردهی اولیه
+        updateAddButton();
     </script>
 </body>
 </html>
