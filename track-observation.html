@@ -193,7 +193,24 @@
         .error-msg { color: #c0392b; text-align: center; padding: 0.5rem; }
         body.dark .error-msg { color: #f1948a; }
         
-        .back-row { display: flex; justify-content: center; margin-top: 2rem; }
+        /* ===== ماژول‌ها ===== */
+        .modules-display {
+            display: none;
+            margin-top: 0.8rem;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+        .module-tag {
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            border: 1px solid rgba(212,175,55,0.3);
+            background: rgba(212,175,55,0.08);
+        }
+        body.dark .module-tag { border-color: rgba(212,175,55,0.2); }
+        
+        .back-row { display: flex; justify-content: center; margin-top: 2rem; gap: 1rem; flex-wrap: wrap; }
         .btn-back {
             padding: 0.7rem 2rem;
             border-radius: 40px;
@@ -208,6 +225,11 @@
         body.dark .btn-back { color: #f0e8d0; background: rgba(0,0,0,0.1); }
         .btn-back:hover { background: rgba(255,255,255,0.5); transform: translateY(-2px); }
         body.dark .btn-back:hover { background: rgba(255,255,255,0.05); }
+        .btn-back-obs {
+            background: rgba(212,175,55,0.1);
+            border-color: rgba(212,175,55,0.2);
+        }
+        body.dark .btn-back-obs { background: rgba(212,175,55,0.05); }
         
         .note {
             font-size: 0.7rem;
@@ -223,6 +245,7 @@
             .actions { flex-direction: column; }
             .actions .btn { width: 100%; text-align: center; }
             .track-box { padding: 1.2rem; }
+            .back-row { flex-direction: column; align-items: center; }
         }
     </style>
 </head>
@@ -238,7 +261,7 @@
             </div>
             
             <div class="actions">
-                <button type="button" class="btn btn-secondary" onclick="window.location.href='index.html'">↩ بازگشت</button>
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='observer-fa.html'">📝 ثبت مشاهده</button>
                 <button type="button" class="btn btn-primary" id="trackBtn">🔍 بررسی</button>
             </div>
         </div>
@@ -247,7 +270,11 @@
             <span class="status-icon" id="statusIcon">⏳</span>
             <div class="status-title" id="statusTitle">در حال بررسی</div>
             <div id="observationDisplay" class="observation-text"></div>
-            <div id="guideContainer" class="guide-box">
+            
+            <!-- ===== نمایش ماژول‌ها ===== -->
+            <div id="modulesDisplay" class="modules-display"></div>
+            
+            <div id="guideContainer" class="guide-box" style="display:none;">
                 <div class="level">
                     <span class="level-label">📍 سطح فردی (اقدام شخصی)</span>
                     <div class="level-text" id="levelIndividual">...</div>
@@ -264,7 +291,9 @@
             <div id="errorMsg" class="error-msg" style="display:none;"></div>
         </div>
         
+        <!-- ===== دکمه‌های بازگشت اصلاح‌شده ===== -->
         <div class="back-row">
+            <a href="observer-fa.html" class="btn-back btn-back-obs">📝 بازگشت به ثبت مشاهده</a>
             <a href="index.html" class="btn-back">↩ بازگشت به صفحه اصلی</a>
         </div>
         
@@ -280,6 +309,7 @@
             const statusIcon = document.getElementById('statusIcon');
             const statusTitle = document.getElementById('statusTitle');
             const observationDisplay = document.getElementById('observationDisplay');
+            const modulesDisplay = document.getElementById('modulesDisplay');
             const guideContainer = document.getElementById('guideContainer');
             const errorMsg = document.getElementById('errorMsg');
             
@@ -290,6 +320,7 @@
             
             resultBox.className = 'result-box';
             resultBox.style.display = 'none';
+            modulesDisplay.style.display = 'none';
             guideContainer.style.display = 'none';
             errorMsg.style.display = 'none';
             
@@ -315,16 +346,20 @@
                     statusTitle.textContent = 'تأیید شده';
                     observationDisplay.textContent = result.observation || 'مشاهده‌ی شما تأیید شد.';
                     
-                    // ===== نمایش بسته راهنما =====
-                    guideContainer.style.display = 'block';
+                    // نمایش ماژول‌ها
+                    if (result.modules && result.modules.length > 0) {
+                        modulesDisplay.innerHTML = result.modules.map(mod => 
+                            `<span class="module-tag">${mod}</span>`
+                        ).join('');
+                        modulesDisplay.style.display = 'flex';
+                    }
+                    
+                    // نمایش بسته راهنما
                     if (result.guide) {
                         document.getElementById('levelIndividual').textContent = result.guide.individual || '---';
                         document.getElementById('levelNetwork').textContent = result.guide.network || '---';
                         document.getElementById('levelPolicy').textContent = result.guide.policy || '---';
-                    } else {
-                        document.getElementById('levelIndividual').textContent = 'راهنمایی برای این مشاهده تولید نشده است.';
-                        document.getElementById('levelNetwork').textContent = '---';
-                        document.getElementById('levelPolicy').textContent = '---';
+                        guideContainer.style.display = 'block';
                     }
                 } else if (result.status === 'rejected') {
                     resultBox.className = 'result-box rejected';
