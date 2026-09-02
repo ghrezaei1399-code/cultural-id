@@ -25,5 +25,17 @@
   "status": "approved",
   "rank": 0,
   "country": "Iran",
-  "statusUpdatedAt": "2026-09-02T07:45:50.187Z"
+  "statusUpdatedAt": "2026-09-02T07:45:50.187Z",
+  "achievements": [
+    {
+      "title": "کتاب",
+      "description": "آسیب شناسی فساد",
+      "category": "science",
+      "fileUrl": "https://raw.githubusercontent.com/ghrezaei1399-code/cultural-id/main/uploads/1788335365153-v6eqk.jpg",
+      "fileName": "1788335365153-v6eqk.jpg",
+      "status": "pending",
+      "uploadDate": "2026-09-02T07:49:26.764Z",
+      "section": "identity-card"
+    }
+  ]
 }
