@@ -60,8 +60,7 @@
         }
         body.dark .form-group label { color: #e8d8c8; }
         .form-group input,
-        .form-group textarea,
-        .form-group select {
+        .form-group textarea {
             width: 100%;
             padding: 0.8rem 1rem;
             border-radius: 16px;
@@ -74,21 +73,18 @@
             outline: none;
         }
         body.dark .form-group input,
-        body.dark .form-group textarea,
-        body.dark .form-group select {
+        body.dark .form-group textarea {
             background: rgba(255, 255, 255, 0.02);
             color: #e8d8c8;
             border-color: rgba(255, 255, 255, 0.02);
         }
         .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
+        .form-group textarea:focus {
             border-color: rgba(60, 30, 10, 0.05);
             background: rgba(255, 255, 255, 0.03);
         }
         body.dark .form-group input:focus,
-        body.dark .form-group textarea:focus,
-        body.dark .form-group select:focus {
+        body.dark .form-group textarea:focus {
             border-color: rgba(255, 255, 255, 0.05);
             background: rgba(255, 255, 255, 0.03);
         }
@@ -148,28 +144,6 @@
         }
         .btn-secondary:hover { background: rgba(60, 30, 10, 0.03); transform: scale(1.02); }
         body.dark .btn-secondary:hover { background: rgba(255, 255, 255, 0.03); }
-        .btn-success {
-            background: rgba(50, 200, 50, 0.1);
-            color: #0a5a0a;
-            border: 1px solid rgba(50, 200, 50, 0.2);
-        }
-        body.dark .btn-success {
-            background: rgba(50, 200, 50, 0.05);
-            color: #80b080;
-            border-color: rgba(50, 200, 50, 0.1);
-        }
-        .btn-success:hover { background: rgba(50, 200, 50, 0.2); transform: scale(1.02); }
-        .btn-warning {
-            background: rgba(255, 200, 50, 0.1);
-            color: #8a7a0a;
-            border: 1px solid rgba(255, 200, 50, 0.2);
-        }
-        body.dark .btn-warning {
-            background: rgba(255, 200, 50, 0.05);
-            color: #c8b080;
-            border-color: rgba(255, 200, 50, 0.1);
-        }
-        .btn-warning:hover { background: rgba(255, 200, 50, 0.2); transform: scale(1.02); }
         .note {
             text-align: center;
             font-size: 0.75rem;
@@ -209,28 +183,6 @@
             background: rgba(200, 50, 50, 0.01);
             border-color: rgba(200, 50, 50, 0.01);
         }
-        .message-box.info {
-            display: block;
-            background: rgba(50, 150, 200, 0.05);
-            border: 1px solid rgba(50, 150, 200, 0.05);
-            color: #0a4a6a;
-        }
-        body.dark .message-box.info {
-            color: #80b0c0;
-            background: rgba(50, 150, 200, 0.01);
-            border-color: rgba(50, 150, 200, 0.01);
-        }
-        .message-box.pending {
-            display: block;
-            background: rgba(255, 200, 50, 0.08);
-            border: 1px solid rgba(255, 200, 50, 0.15);
-            color: #8a7a0a;
-        }
-        body.dark .message-box.pending {
-            color: #c8b080;
-            background: rgba(255, 200, 50, 0.03);
-            border-color: rgba(255, 200, 50, 0.08);
-        }
         .theme-toggle {
             position: fixed;
             top: 1rem;
@@ -251,269 +203,39 @@
         }
         .theme-toggle:hover { transform: scale(1.1); }
         @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
-        
-        .status-box {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            text-align: center;
-        }
-        body.dark .status-box { background: rgba(0, 0, 0, 0.1); }
-        .status-box .big-icon { font-size: 2.5rem; display: block; margin-bottom: 0.5rem; }
-        .status-box h3 { color: #8a6d1f; margin-bottom: 0.3rem; }
-        body.dark .status-box h3 { color: #f9e79f; }
-        .status-box p { color: #4a3a2a; font-size: 0.9rem; line-height: 1.8; }
-        body.dark .status-box p { color: #d0c0b0; }
-        .connections-list {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 1rem;
-            margin-top: 1rem;
-            max-height: 300px;
-            overflow-y: auto;
-            text-align: right;
-        }
-        body.dark .connections-list { background: rgba(0, 0, 0, 0.1); }
-        .connections-list .email-item {
-            padding: 0.5rem;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
-            font-family: monospace;
-            font-size: 0.85rem;
-            color: #2874a6;
-            text-align: right;
-        }
-        body.dark .connections-list .email-item { color: #85c1e9; }
-        .invite-box {
-            background: rgba(52, 152, 219, 0.08);
-            border-radius: 16px;
-            padding: 1.5rem;
-            border: 2px solid rgba(52, 152, 219, 0.3);
-            text-align: center;
-        }
-        body.dark .invite-box { background: rgba(52, 152, 219, 0.05); border-color: rgba(52, 152, 219, 0.2); }
-        .invite-box .big-icon { font-size: 3rem; display: block; margin-bottom: 0.5rem; }
-        .invite-box h3 { color: #2874a6; margin-bottom: 0.5rem; }
-        body.dark .invite-box h3 { color: #85c1e9; }
-        .invite-box p { color: #4a3a2a; font-size: 0.9rem; line-height: 1.8; }
-        body.dark .invite-box p { color: #d0c0b0; }
-        .hidden { display: none !important; }
-        
-        .email-warning {
-            background: rgba(220, 53, 69, 0.08);
-            border: 2px solid rgba(220, 53, 69, 0.3);
-            border-radius: 16px;
-            padding: 1.5rem;
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-        body.dark .email-warning { background: rgba(220, 53, 69, 0.03); border-color: rgba(220, 53, 69, 0.2); }
-        .email-warning .big-icon { font-size: 2.5rem; display: block; margin-bottom: 0.5rem; }
-        .email-warning h3 { color: #c0392b; margin-bottom: 0.3rem; }
-        body.dark .email-warning h3 { color: #f1948a; }
-        .email-warning p { color: #4a3a2a; font-size: 0.9rem; line-height: 1.8; }
-        body.dark .email-warning p { color: #d0c0b0; }
-        
-        .tracking-box {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid rgba(52, 152, 219, 0.3);
-            text-align: center;
-        }
-        body.dark .tracking-box { background: rgba(0, 0, 0, 0.1); }
-        .tracking-box .big-icon { font-size: 2.5rem; display: block; margin-bottom: 0.5rem; }
-        .tracking-box h3 { color: #2874a6; margin-bottom: 0.3rem; }
-        body.dark .tracking-box h3 { color: #85c1e9; }
-        .tracking-box p { color: #4a3a2a; font-size: 0.9rem; line-height: 1.8; }
-        body.dark .tracking-box p { color: #d0c0b0; }
-
-        .bottom-modules {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.8rem;
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid rgba(212, 175, 55, 0.2);
-        }
-        .bottom-module {
-            text-align: center;
-            padding: 1rem 0.8rem;
-            border-radius: 20px;
-            transition: all 0.3s;
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(212, 175, 55, 0.15);
-        }
-        body.dark .bottom-module { background: rgba(0, 0, 0, 0.1); }
-        .bottom-module:hover { transform: translateY(-3px); }
-        .bottom-module .icon { font-size: 1.8rem; display: block; margin-bottom: 0.3rem; }
-        .bottom-module .label { font-weight: 700; font-size: 0.85rem; color: #8a6d1f; }
-        body.dark .bottom-module .label { color: #f9e79f; }
-        .bottom-module .desc { font-size: 0.65rem; opacity: 0.7; color: #4a3a2a; }
-        body.dark .bottom-module .desc { color: #c8b890; }
-        .bottom-module a { text-decoration: none; display: block; }
-        
-        @media (max-width: 768px) {
-            .bottom-modules { grid-template-columns: 1fr; }
-        }
     </style>
 </head>
 <body>
     <button class="theme-toggle" id="themeToggle"></button>
 
     <div class="container">
-        <!-- ===== مرحله ۱: احراز هویت ===== -->
-        <div id="step1">
-            <h1 id="pageTitle">🤝 درخواست ارتباط با هم‌فکران</h1>
-            <div class="subtitle" id="pageSubtitle">ارتباط با دیگران بر اساس ارزش‌های فرهنگی مشترک</div>
+        <h1 id="pageTitle">🤝 درخواست ارتباط با هم‌فکران</h1>
+        <div class="subtitle" id="pageSubtitle">ارتباط با دیگران بر اساس ارزش‌های فرهنگی مشترک</div>
 
-            <div class="status-box">
-                <span class="big-icon">🔐</span>
-                <h3>ورود با کد عضویت</h3>
-                <p>برای ادامه، کد کارت هویت فرهنگی خود را وارد کنید</p>
+        <div id="messageBox" class="message-box"></div>
+
+        <form id="requestForm">
+            <input type="hidden" id="requestType" value="connection" />
+
+            <div class="form-group">
+                <label id="codeLabel">کد کارت شما</label>
+                <input type="text" id="cardCode" placeholder="مثلاً: CIM-1234-5678-A" required />
             </div>
 
             <div class="form-group">
-                <label>کد کارت شما</label>
-                <input type="text" id="authCardCode" placeholder="مثلاً: CIM-1234-5678-ABCDE" required />
-            </div>
-
-            <button onclick="verifyUser()" class="btn btn-primary" id="authBtn" style="width:100%;">🔍 بررسی کد</button>
-
-            <div id="authError" class="message-box error" style="display:none; margin-top:1rem;"></div>
-
-            <!-- ===== بخش پیگیری با کد پیگیری ===== -->
-            <div class="tracking-box" style="margin-top:1.5rem; border-color: rgba(212, 175, 55, 0.3);">
-                <span class="big-icon">🔍</span>
-                <h3>پیگیری درخواست</h3>
-                <p>اگر قبلاً درخواست ارسال کرده‌اید، کد پیگیری خود را وارد کنید</p>
-                <div class="form-group" style="margin-top:0.5rem; margin-bottom:0.5rem;">
-                    <input type="text" id="trackingCode" placeholder="کد پیگیری را وارد کنید" />
-                </div>
-                <button onclick="trackRequest()" class="btn btn-primary" style="width:100%;">🔍 پیگیری</button>
-                <div id="trackingResult" class="message-box" style="margin-top:0.5rem;"></div>
-            </div>
-        </div>
-
-        <!-- ===== مرحله ۲: محتوای اصلی (بعد از احراز) ===== -->
-        <div id="step2" class="hidden">
-            <h1 id="pageTitle2">🤝 درخواست ارتباط با هم‌فکران</h1>
-            <div class="subtitle" id="pageSubtitle2">ارتباط با دیگران بر اساس ارزش‌های فرهنگی مشترک</div>
-
-            <div id="messageBox" class="message-box"></div>
-
-            <!-- ===== وضعیت درخواست قبلی ===== -->
-            <div id="requestStatusBox" class="hidden">
-                <div class="status-box">
-                    <span class="big-icon" id="statusIcon">⏳</span>
-                    <h3 id="statusTitle">در حال بررسی</h3>
-                    <p id="statusDesc">درخواست شما توسط ادمین بررسی می‌شود.</p>
-                    <div id="statusDetail" class="message-box pending" style="display:none;"></div>
-                </div>
-            </div>
-
-            <!-- ===== لیست ایمیل‌های هم‌فکران ===== -->
-            <div id="connectionsBox" class="hidden">
-                <div class="status-box" style="border-color: #27ae60;">
-                    <span class="big-icon">✅</span>
-                    <h3 style="color: #27ae60;">لیست هم‌فکران شما</h3>
-                    <p>لیست ایمیل‌های هم‌فکرانی که بر اساس ارزش‌های مشترک شما پیدا شده‌اند:</p>
-                    <div id="connectionsList" class="connections-list"></div>
-                    <div class="note" style="margin-top:1rem; border-top: none;">
-                        💡 از این ایمیل‌ها برای ارتباط مستقیم با هم‌فکران خود استفاده کنید.
-                    </div>
-                </div>
-            </div>
-
-            <!-- ===== هشدار: ایمیل ثبت نشده ===== -->
-            <div id="noEmailBox" class="hidden">
-                <div class="email-warning">
-                    <span class="big-icon">⚠️</span>
-                    <h3>آدرس ایمیل شما ثبت نشده است!</h3>
-                    <p>برای استفاده از بخش ارتباط با هم‌فکران، ابتدا باید آدرس ایمیل خود را ثبت کنید.</p>
-                </div>
-                <div class="btn-group">
-                    <a href="edit-fa.html" class="btn btn-primary">✏️ ویرایش اطلاعات و ثبت ایمیل</a>
-                    <a href="index.html" class="btn btn-secondary">↩ بازگشت</a>
-                </div>
-            </div>
-
-            <!-- ===== فرم درخواست ===== -->
-            <div id="requestFormBox">
-                <form id="requestForm">
-                    <input type="hidden" id="requestType" value="connection" />
-
-                    <!-- ===== حذف فیلد "کد کارت طرف مقابل" ===== -->
-
-                    <div class="form-group">
-                        <label>📝 توضیح دلیل درخواست ارتباط</label>
-                        <textarea id="description" rows="4" placeholder="چرا می‌خواهید با هم‌فکران خود ارتباط برقرار کنید؟ چه اهداف فرهنگی یا همکاری‌هایی دارید؟" required></textarea>
-                    </div>
-
-                    <div class="btn-group">
-                        <button type="submit" class="btn btn-primary" id="submitBtn">📤 ارسال درخواست برای ادمین</button>
-                        <a href="index.html" class="btn btn-secondary">↩ بازگشت</a>
-                    </div>
-                </form>
-            </div>
-
-            <div class="note">
-                🔒 درخواست شما به ادمین ارسال می‌شود و پس از بررسی، نتیجه به شما اعلام خواهد شد.
-            </div>
-        </div>
-
-        <!-- ===== مرحله ۳: دعوت به عضویت (غیرعضو) ===== -->
-        <div id="notMemberBox" class="hidden">
-            <h1>🌍 به جمع هم‌فرهنگان جهان بپیوندید!</h1>
-            <div class="subtitle">شما هنوز عضو کارت جهانی هویت هوشمند فرهنگی نیستید.</div>
-
-            <div class="invite-box">
-                <span class="big-icon">🪪</span>
-                <h3>ثبت‌نام کنید</h3>
-                <p>برای استفاده از امکانات ارتباط با هم‌فکران، ابتدا ثبت‌نام کنید و کارت هویت فرهنگی خود را دریافت کنید.</p>
+                <label>توضیحات درخواست</label>
+                <textarea id="description" placeholder="توضیح دهید که چه نوع ارتباطی یا چه دلیلی برای انصراف دارید..."></textarea>
             </div>
 
             <div class="btn-group">
-                <a href="register-fa.html" class="btn btn-primary">🪪 ثبت‌نام و دریافت کارت</a>
+                <button type="submit" class="btn btn-primary" id="submitBtn">📨 ارسال درخواست</button>
                 <a href="index.html" class="btn btn-secondary">↩ بازگشت</a>
             </div>
-        </div>
+        </form>
 
-        <!-- ===== ماژول‌های پایین صفحه ===== -->
-        <div class="bottom-modules" id="bottomModules">
-            <div class="bottom-module">
-                <a href="request-fa.html">
-                    <span class="icon">📤</span>
-                    <div class="label">ارسال درخواست</div>
-                    <div class="desc">درخواست ارتباط با هم‌فکران</div>
-                </a>
-            </div>
-            <div class="bottom-module">
-                <a href="index.html">
-                    <span class="icon">🏠</span>
-                    <div class="label">بازگشت به صفحه اصلی</div>
-                    <div class="desc">صفحه اصلی کارت هویت</div>
-                </a>
-            </div>
-            <div class="bottom-module">
-                <a href="about-fa.html">
-                    <span class="icon">📖</span>
-                    <div class="label">درباره پروژه</div>
-                    <div class="desc">فلسفه و اهداف</div>
-                </a>
-            </div>
-            <div class="bottom-module">
-                <a href="observer-fa.html">
-                    <span class="icon">🧠</span>
-                    <div class="label">مجتمع هم‌اندیشی</div>
-                    <div class="desc">سپهر خردمندی</div>
-                </a>
-            </div>
+        <div class="note">
+            🔒 درخواست شما به ادمین ارسال می‌شود و پس از بررسی، نتیجه به شما اعلام خواهد شد.
         </div>
-
     </div>
 
     <script>
@@ -539,183 +261,41 @@
             });
         })();
 
-        let verifiedUser = null;
+        // ===== تشخیص نوع درخواست از URL =====
+        function detectRequestType() {
+            const params = new URLSearchParams(window.location.search);
+            const type = params.get('type');
+            
+            const titleEl = document.getElementById('pageTitle');
+            const subtitleEl = document.getElementById('pageSubtitle');
+            const requestTypeInput = document.getElementById('requestType');
+            const submitBtn = document.getElementById('submitBtn');
+            const codeLabel = document.getElementById('codeLabel');
+            const descInput = document.getElementById('description');
 
-        // ===== احراز هویت =====
-        async function verifyUser() {
-            const code = document.getElementById('authCardCode').value.trim();
-            const errorEl = document.getElementById('authError');
-            const btn = document.getElementById('authBtn');
-
-            if (!code) {
-                errorEl.textContent = '❌ لطفاً کد عضویت خود را وارد کنید.';
-                errorEl.style.display = 'block';
-                return;
-            }
-
-            errorEl.style.display = 'none';
-            btn.disabled = true;
-            btn.textContent = '⏳ در حال بررسی...';
-
-            try {
-                const response = await fetch('/api/get-users?t=' + new Date().getTime());
-                if (!response.ok) throw new Error('خطا در ارتباط با سرور');
-                
-                const data = await response.json();
-                const user = data.users.find(u => u.cardCode === code);
-
-                // ===== غیرعضو =====
-                if (!user) {
-                    document.getElementById('step1').classList.add('hidden');
-                    document.getElementById('step2').classList.add('hidden');
-                    document.getElementById('notMemberBox').classList.remove('hidden');
-                    btn.disabled = false;
-                    btn.textContent = '🔍 بررسی کد';
-                    return;
-                }
-
-                // ===== عضو اما تایید نشده =====
-                if (user.status !== 'approved') {
-                    errorEl.textContent = '❌ حساب کاربری شما تایید نشده است. لطفاً منتظر تایید ادمین باشید.';
-                    errorEl.style.display = 'block';
-                    btn.disabled = false;
-                    btn.textContent = '🔍 بررسی کد';
-                    return;
-                }
-
-                // ===== عضو تایید شده =====
-                verifiedUser = user;
-                document.getElementById('step1').classList.add('hidden');
-                document.getElementById('step2').classList.remove('hidden');
-                document.getElementById('notMemberBox').classList.add('hidden');
-                
-                localStorage.setItem('verifiedCode', code);
-
-                // ===== بررسی ایمیل =====
-                if (user.communicationEmail && user.communicationEmail.length > 5) {
-                    document.getElementById('noEmailBox').classList.add('hidden');
-                    document.getElementById('requestFormBox').classList.remove('hidden');
-                    checkExistingRequest(code);
-                } else {
-                    document.getElementById('noEmailBox').classList.remove('hidden');
-                    document.getElementById('requestFormBox').classList.add('hidden');
-                    document.getElementById('requestStatusBox').classList.add('hidden');
-                    document.getElementById('connectionsBox').classList.add('hidden');
-                }
-
-            } catch (error) {
-                errorEl.textContent = '❌ ' + error.message;
-                errorEl.style.display = 'block';
-            }
-
-            btn.disabled = false;
-            btn.textContent = '🔍 بررسی کد';
-        }
-
-        // ===== پیگیری با کد پیگیری =====
-        async function trackRequest() {
-            const trackingCode = document.getElementById('trackingCode').value.trim();
-            const resultEl = document.getElementById('trackingResult');
-
-            if (!trackingCode) {
-                resultEl.className = 'message-box error';
-                resultEl.textContent = '❌ لطفاً کد پیگیری را وارد کنید.';
-                resultEl.style.display = 'block';
-                return;
-            }
-
-            resultEl.style.display = 'none';
-            resultEl.className = 'message-box';
-
-            try {
-                const response = await fetch('/api/get-request-by-tracking?trackingCode=' + trackingCode);
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || 'خطا در دریافت اطلاعات');
-                }
-
-                const req = data.request;
-
-                if (req.status === 'approved') {
-                    resultEl.className = 'message-box success';
-                    resultEl.innerHTML = '✅ درخواست شما تایید شده است.<br>' +
-                        (req.connections && req.connections.length > 0 
-                            ? '📧 ' + req.connections.length + ' ایمیل هم‌فکر برای شما ارسال شده است.' 
-                            : 'هیچ هم‌فکری با ایمیل ثبت‌شده یافت نشد.');
-                } else if (req.status === 'rejected') {
-                    resultEl.className = 'message-box error';
-                    resultEl.textContent = '❌ درخواست شما رد شده است.';
-                } else {
-                    resultEl.className = 'message-box pending';
-                    resultEl.textContent = '⏳ درخواست شما در حال بررسی است. لطفاً صبور باشید.';
-                }
-                resultEl.style.display = 'block';
-
-            } catch (error) {
-                resultEl.className = 'message-box error';
-                resultEl.textContent = '❌ ' + error.message;
-                resultEl.style.display = 'block';
+            if (type === 'delete') {
+                // حالت انصراف از عضویت
+                titleEl.textContent = '⚠️ درخواست انصراف از عضویت';
+                subtitleEl.textContent = 'حذف اطلاعات فرهنگی شما از شبکه هم‌فرهنگان';
+                requestTypeInput.value = 'delete';
+                codeLabel.textContent = 'کد کارت هویت فرهنگی شما';
+                descInput.placeholder = 'لطفاً دلیل انصراف خود را بنویسید (اختیاری)...';
+                submitBtn.textContent = '🚪 ثبت درخواست انصراف';
+                submitBtn.className = 'btn btn-danger';
+            } else {
+                // حالت پیش‌فرض: ارتباط با هم‌فکران
+                titleEl.textContent = '🤝 درخواست ارتباط با هم‌فکران';
+                subtitleEl.textContent = 'ارتباط با دیگران بر اساس ارزش‌های فرهنگی مشترک';
+                requestTypeInput.value = 'connection';
+                codeLabel.textContent = 'کد کارت شما';
+                descInput.placeholder = 'توضیح دهید که چه نوع ارتباطی مد نظر دارید...';
+                submitBtn.textContent = '📨 ارسال درخواست';
+                submitBtn.className = 'btn btn-primary';
             }
         }
 
-        // ===== بررسی درخواست قبلی =====
-        async function checkExistingRequest(cardCode) {
-            try {
-                const response = await fetch('/api/get-user-requests?cardCode=' + cardCode);
-                if (!response.ok) return;
-                
-                const data = await response.json();
-                if (data.requests && data.requests.length > 0) {
-                    const latest = data.requests[data.requests.length - 1];
-                    
-                    if (latest.status === 'approved' && latest.connections && latest.connections.length > 0) {
-                        // ===== نمایش لیست ایمیل‌ها =====
-                        document.getElementById('connectionsBox').classList.remove('hidden');
-                        document.getElementById('requestStatusBox').classList.add('hidden');
-                        document.getElementById('requestFormBox').classList.add('hidden');
-                        
-                        const listDiv = document.getElementById('connectionsList');
-                        listDiv.innerHTML = latest.connections.map(email => 
-                            `<div class="email-item">📧 ${email}</div>`
-                        ).join('');
-                        
-                    } else if (latest.status === 'pending') {
-                        // ===== در انتظار تایید =====
-                        document.getElementById('requestStatusBox').classList.remove('hidden');
-                        document.getElementById('connectionsBox').classList.add('hidden');
-                        document.getElementById('requestFormBox').classList.add('hidden');
-                        
-                        document.getElementById('statusIcon').textContent = '⏳';
-                        document.getElementById('statusTitle').textContent = 'درخواست شما در حال بررسی است';
-                        document.getElementById('statusDesc').textContent = 'درخواست شما توسط ادمین بررسی می‌شود. لطفاً صبور باشید.';
-                        
-                        const detail = document.getElementById('statusDetail');
-                        detail.className = 'message-box pending';
-                        detail.textContent = '⏳ تاریخ ارسال: ' + new Date(latest.createdAt).toLocaleString('fa-IR') + ' | کد پیگیری: ' + (latest.trackingCode || '---');
-                        detail.style.display = 'block';
-                        
-                    } else if (latest.status === 'rejected') {
-                        // ===== رد شده - اجازه ارسال مجدد =====
-                        document.getElementById('requestStatusBox').classList.add('hidden');
-                        document.getElementById('connectionsBox').classList.add('hidden');
-                        document.getElementById('requestFormBox').classList.remove('hidden');
-                        
-                        const statusBox = document.getElementById('messageBox');
-                        statusBox.className = 'message-box error';
-                        statusBox.textContent = '❌ درخواست قبلی شما رد شده است. می‌توانید درخواست جدید ارسال کنید.';
-                        statusBox.style.display = 'block';
-                    }
-                } else {
-                    // ===== هیچ درخواستی وجود ندارد =====
-                    document.getElementById('requestStatusBox').classList.add('hidden');
-                    document.getElementById('connectionsBox').classList.add('hidden');
-                    document.getElementById('requestFormBox').classList.remove('hidden');
-                }
-            } catch (e) {
-                console.log('Error checking requests:', e);
-            }
-        }
+        // ===== اجرای تشخیص نوع درخواست هنگام بارگذاری =====
+        document.addEventListener('DOMContentLoaded', detectRequestType);
 
         // ===== Show Message =====
         function showMessage(text, type) {
@@ -744,16 +324,12 @@
             submitBtn.textContent = '⏳ در حال ارسال...';
 
             try {
-                const cardCode = localStorage.getItem('verifiedCode');
+                const cardCode = document.getElementById('cardCode').value.trim();
                 const requestType = document.getElementById('requestType').value;
                 const description = document.getElementById('description').value.trim();
 
                 if (!cardCode) {
-                    throw new Error('لطفاً ابتدا کد خود را تأیید کنید.');
-                }
-
-                if (!description) {
-                    throw new Error('لطفاً توضیح دلیل درخواست خود را وارد کنید.');
+                    throw new Error('لطفاً کد کارت خود را وارد کنید.');
                 }
 
                 const response = await fetch('/api/submit-request', {
@@ -763,7 +339,6 @@
                         cardCode: cardCode,
                         type: requestType,
                         description: description
-                        // targetCardCode حذف شد
                     })
                 });
 
@@ -773,27 +348,26 @@
                     throw new Error(result.error || 'خطا در ارسال درخواست');
                 }
 
-                // ===== موفقیت =====
-                document.getElementById('requestFormBox').classList.add('hidden');
-                document.getElementById('requestStatusBox').classList.remove('hidden');
-                
-                document.getElementById('statusIcon').textContent = '✅';
-                document.getElementById('statusTitle').textContent = 'درخواست شما با موفقیت ارسال شد';
-                document.getElementById('statusDesc').textContent = 'درخواست شما توسط ادمین بررسی می‌شود. نتیجه در همین صفحه به شما اعلام خواهد شد.';
-                
-                const detail = document.getElementById('statusDetail');
-                detail.className = 'message-box success';
-                detail.textContent = '✅ کد پیگیری: ' + (result.trackingCode || '---');
-                detail.style.display = 'block';
-
+                // ===== نمایش کد پیگیری =====
+                const trackingCode = result.trackingCode || '---';
+                const successMsg = requestType === 'delete' 
+                    ? `✅ درخواست انصراف شما با موفقیت ثبت شد. کد پیگیری: ${trackingCode}` 
+                    : `✅ درخواست ارتباط شما با موفقیت ارسال شد. کد پیگیری: ${trackingCode}`;
+                    
+                showMessage(successMsg, 'success');
                 submitBtn.textContent = '✅ ارسال شد';
+
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 3000);
 
             } catch (error) {
                 console.error('Error:', error);
-                showMessage('❌ ' + error.message, 'error');
+                showMessage(`❌ خطا: ${error.message}`, 'error');
                 isSubmitting = false;
                 submitBtn.disabled = false;
-                submitBtn.textContent = '📤 ارسال درخواست';
+                const requestType = document.getElementById('requestType').value;
+                submitBtn.textContent = requestType === 'delete' ? '🚪 ثبت درخواست انصراف' : '📨 ارسال درخواست';
             }
         });
     </script>
