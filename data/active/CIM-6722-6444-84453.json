@@ -3,7 +3,7 @@
   "displayCode": "CIM - 6722 - 6444 - شجاعت",
   "optionalCode": "شجاعت",
   "values": [
-    "برادری",
+    "ایمان",
     "تحول",
     "شبکه سازی",
     "فرهنگی سازی",
@@ -22,7 +22,7 @@
   ],
   "communicationEmail": "gh_rezaei2003@yahoo.com",
   "registrationDate": "2026-08-30T20:23:24.107Z",
-  "status": "approved",
+  "status": "pending_edit",
   "rank": 0,
   "country": "Iran",
   "statusUpdatedAt": "2026-08-31T11:08:56.636Z",
@@ -68,6 +68,9 @@
       "section": "identity-card"
     }
   ],
-  "lastEditRequest": "2026-08-31T11:08:20.975Z",
-  "editLocked": true
+  "lastEditRequest": "2026-09-02T10:45:56.628Z",
+  "editLocked": true,
+  "pendingChanges": [
+    "value_0"
+  ]
 }
