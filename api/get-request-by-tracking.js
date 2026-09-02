@@ -54,8 +54,8 @@ module.exports = async function handler(req, res) {
           inObservation = true;
           continue;
         }
-        if (line.includes('**ماژول‌های انتخاب‌شده:**')) {
-          const mods = line.replace('**ماژول‌های انتخاب‌شده:**', '').trim();
+        if (line.includes('**ماژول انتخاب‌شده:**')) {
+          const mods = line.replace('**ماژول انتخاب‌شده:**', '').trim();
           if (mods && mods !== 'هیچ‌کدام') {
             modules = mods.split('،').map(m => m.trim());
           }
@@ -67,6 +67,22 @@ module.exports = async function handler(req, res) {
         if (line.includes('---')) break;
       }
       observation = observation.trim() || issueData.body.substring(0, 200);
+
+      // ===== خواندن moduleResult از پوشه data/module-results/ =====
+      let moduleResult = null;
+      try {
+        const modulePath = `data/module-results/${trackingCode}.json`;
+        const moduleRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${modulePath}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (moduleRes.ok) {
+          const moduleData = await moduleRes.json();
+          const moduleContent = JSON.parse(Buffer.from(moduleData.content, 'base64').toString('utf8'));
+          moduleResult = moduleContent.moduleResult;
+        }
+      } catch (e) {
+        console.error('Error reading module result:', e);
+      }
 
       // ===== استخراج بسته راهنما از کامنت‌ها =====
       let guide = null;
@@ -128,6 +144,7 @@ module.exports = async function handler(req, res) {
         status: status,
         observation: observation,
         modules: modules,
+        moduleResult: moduleResult,
         guide: guide,
         issueUrl: issueData.html_url,
         createdAt: issueData.created_at
