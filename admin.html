@@ -268,6 +268,156 @@
         body.dark .btn-back { color: #f0e8d0; }
         .btn-back:hover { background: rgba(255, 255, 255, 0.08); transform: translateY(-2px); }
 
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 2rem;
+            max-width: 750px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        body.dark .modal { background: rgba(30, 30, 50, 0.95); }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+            padding-bottom: 1rem;
+        }
+        body.dark .modal-header { border-bottom-color: rgba(255, 255, 255, 0.05); }
+        .modal-header h2 { font-size: 1.2rem; color: #0a0a1a; }
+        body.dark .modal-header h2 { color: #f0e8d0; }
+        .modal-close {
+            background: rgba(200, 50, 50, 0.1);
+            border: none;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #6a1a1a;
+        }
+        body.dark .modal-close { color: #f1948a; }
+        .modal-body .info-row {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+        }
+        body.dark .modal-body .info-row { border-bottom-color: rgba(255, 255, 255, 0.03); }
+        .modal-body .info-label { font-weight: 700; color: #2a2a3a; font-size: 0.8rem; }
+        body.dark .modal-body .info-label { color: #c8b890; }
+        .modal-body .info-value { color: #0a0a1a; font-size: 0.85rem; }
+        body.dark .modal-body .info-value { color: #e8dcc0; }
+        .modal-actions {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn-modal {
+            padding: 0.6rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-modal.approve { background: rgba(50, 200, 50, 0.2); color: #0a6a0a; }
+        body.dark .btn-modal.approve { color: #82e0aa; }
+        .btn-modal.reject { background: rgba(200, 50, 50, 0.2); color: #6a1a1a; }
+        body.dark .btn-modal.reject { color: #f1948a; }
+
+        .highlight-change {
+            background-color: rgba(255, 200, 0, 0.12) !important;
+            border-right: 3px solid #d4af37 !important;
+            padding-right: 10px !important;
+            border-radius: 4px;
+        }
+        .highlight-change .info-label::after {
+            content: ' ✏️ تغییر یافته';
+            color: #b7791f;
+            font-weight: 800;
+            font-size: 0.7rem;
+            margin-right: 5px;
+        }
+
+        /* ===== استایل جدید برای نمایش ارزش‌ها ===== */
+        .values-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            margin-top: 0.3rem;
+        }
+        .value-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.3rem 0.5rem;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.03);
+            border-right: 3px solid transparent;
+        }
+        body.dark .value-item { background: rgba(0,0,0,0.05); }
+        .value-item .value-index {
+            font-weight: 700;
+            color: #888;
+            font-size: 0.7rem;
+            min-width: 25px;
+        }
+        .value-item .value-text {
+            font-size: 0.85rem;
+            color: #2a1a0a;
+            flex: 1;
+        }
+        body.dark .value-item .value-text { color: #f0e8d0; }
+        .value-item.changed {
+            background: rgba(255, 200, 50, 0.08);
+            border-right-color: #d4af37;
+        }
+        body.dark .value-item.changed { background: rgba(255, 200, 50, 0.03); }
+        .value-item.changed .value-text {
+            color: #8a6d1f;
+            font-weight: 700;
+        }
+        body.dark .value-item.changed .value-text { color: #f9e79f; }
+        .value-item .change-badge {
+            font-size: 0.6rem;
+            background: rgba(255, 140, 0, 0.15);
+            color: #c65102;
+            padding: 0.1rem 0.5rem;
+            border-radius: 12px;
+            font-weight: 700;
+        }
+        body.dark .value-item .change-badge { color: #f9e79f; background: rgba(255,140,0,0.05); }
+
+        .email-change-badge {
+            font-size: 0.7rem;
+            background: rgba(255, 140, 0, 0.15);
+            color: #c65102;
+            padding: 0.1rem 0.6rem;
+            border-radius: 12px;
+            font-weight: 700;
+            margin-right: 0.5rem;
+        }
+        body.dark .email-change-badge { color: #f9e79f; background: rgba(255,140,0,0.05); }
+
         @media (max-width: 768px) {
             .container { padding: 1.2rem; }
             .modules-grid { grid-template-columns: 1fr 1fr; }
@@ -275,6 +425,7 @@
             .top-bar { flex-direction: column; align-items: stretch; }
             .lang-group { justify-content: center; }
             .theme-toggle { align-self: center; }
+            .modal-body .info-row { grid-template-columns: 1fr; }
         }
         @media (max-width: 480px) {
             .modules-grid { grid-template-columns: 1fr; }
@@ -320,7 +471,6 @@
                 <span class="desc" id="modDeleteDesc">مدیریت انصراف از عضویت</span>
                 <span class="badge-module" id="badgeDelete">0</span>
             </a>
-            <!-- ===== کارت جدید ===== -->
             <a href="admin-observations.html" class="module-card">
                 <span class="icon">👁️</span>
                 <span class="label" id="modObservations">مدیریت مشاهدات</span>
@@ -374,6 +524,18 @@
         </div>
     </div>
 
+    <!-- ===== مودال ===== -->
+    <div class="modal-overlay" id="userModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle">جزئیات کاربر</h2>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-actions" id="modalActions"></div>
+        </div>
+    </div>
+
     <script>
         let allUsers = [];
         let allCountries = [];
@@ -406,7 +568,22 @@
                 saveDetailedText: '📋 ذخیره آمار تفکیکی',
                 backHomeBtn: '↩ بازگشت به صفحه اصلی',
                 statsSaved: '✅ آمار ذخیره شد',
-                statsError: '❌ خطا در ذخیره آمار'
+                statsError: '❌ خطا در ذخیره آمار',
+                statusPending: 'در انتظار',
+                statusApproved: 'تأیید شده',
+                statusRejected: 'رد شده',
+                statusEdit: '⚠️ در انتظار تایید ویرایش',
+                approveBtn: '✓ تأیید',
+                rejectBtn: '✗ رد',
+                approveEditBtn: '✓ تأیید ویرایش',
+                rejectEditBtn: '✗ رد ویرایش (بازگشت به وضعیت قبلی)',
+                noEmail: 'ثبت نشده',
+                allowYes: '✅ بله',
+                allowNo: '❌ خیر',
+                badgeGolden: '🌟 طلایی',
+                badgeSilver: '🥈 نقره‌ای',
+                badgeBronze: '🥉 برنزی',
+                modalTitle: 'جزئیات فرهنگی: '
             },
             en: {
                 pageTitle: '🛡️ Admin Dashboard',
@@ -434,7 +611,22 @@
                 saveDetailedText: '📋 Save Detailed Statistics',
                 backHomeBtn: '↩ Back to Home',
                 statsSaved: '✅ Statistics saved',
-                statsError: '❌ Error saving statistics'
+                statsError: '❌ Error saving statistics',
+                statusPending: 'Pending',
+                statusApproved: 'Approved',
+                statusRejected: 'Rejected',
+                statusEdit: '⚠️ Pending Edit Approval',
+                approveBtn: '✓ Approve',
+                rejectBtn: '✗ Reject',
+                approveEditBtn: '✓ Approve Edit',
+                rejectEditBtn: '✗ Reject Edit (Revert)',
+                noEmail: 'Not registered',
+                allowYes: '✅ Yes',
+                allowNo: '❌ No',
+                badgeGolden: '🌟 Golden',
+                badgeSilver: '🥈 Silver',
+                badgeBronze: '🥉 Bronze',
+                modalTitle: 'Cultural Details: '
             }
         };
 
@@ -535,7 +727,6 @@
             document.getElementById('badgeDelete').textContent = '0';
             document.getElementById('badgeDelete').className = 'badge-module';
 
-            // ===== نشانگر برای مدیریت مشاهدات =====
             fetch('/api/get-connection-requests?type=observations')
                 .then(res => res.json())
                 .then(data => {
@@ -633,6 +824,137 @@
                 console.error(e);
             }
         }
+
+        function viewUser(cardCode) {
+            const user = allUsers.find(u => u.cardCode === cardCode);
+            if (!user) return;
+
+            const status = user.status || 'pending';
+            let statusText = tr('statusPending');
+            if (status === 'approved') statusText = tr('statusApproved');
+            else if (status === 'rejected') statusText = tr('statusRejected');
+            else if (status === 'pending_edit') statusText = tr('statusEdit');
+
+            document.getElementById('modalTitle').textContent = tr('modalTitle') + user.cardCode;
+            
+            const changed = user.pendingChanges || [];
+            const hl = (field) => changed.includes(field) ? 'highlight-change' : '';
+
+            // ===== ساخت لیست ارزش‌ها با نمایش تغییرات =====
+            const values = user.values || [];
+            let valuesHtml = '';
+            
+            if (values.length > 0) {
+                valuesHtml = `<div class="values-list">`;
+                values.forEach((val, index) => {
+                    const isChanged = changed.includes(`value_${index}`) || changed.includes('values');
+                    const changeBadge = isChanged ? `<span class="change-badge">✏️ در انتظار تغییر</span>` : '';
+                    valuesHtml += `
+                        <div class="value-item ${isChanged ? 'changed' : ''}">
+                            <span class="value-index">${index + 1}.</span>
+                            <span class="value-text">${val || '---'}</span>
+                            ${changeBadge}
+                        </div>
+                    `;
+                });
+                valuesHtml += `</div>`;
+            } else {
+                valuesHtml = '---';
+            }
+
+            // ===== نمایش ایمیل با نشانگر تغییر =====
+            const emailChanged = changed.includes('communicationEmail');
+            const emailBadge = emailChanged ? `<span class="email-change-badge">✏️ در انتظار تغییر</span>` : '';
+            const emailDisplay = user.communicationEmail 
+                ? `${user.communicationEmail} ${emailBadge}`
+                : tr('noEmail');
+
+            const body = document.getElementById('modalBody');
+            body.innerHTML = `
+                <div class="info-row ${hl('cardCode')}"><div class="info-label">کد کارت:</div><div class="info-value" style="font-family: monospace;">${user.cardCode}</div></div>
+                <div class="info-row ${hl('optionalCode')}"><div class="info-label">کد اختیاری:</div><div class="info-value" style="font-family: monospace; color:#d4af37;">${user.optionalCode || tr('noEmail')}</div></div>
+                <div class="info-row"><div class="info-label">رتبه ثبت‌نام:</div><div class="info-value">${user.rank}</div></div>
+                <div class="info-row"><div class="info-label">کشور (از IP):</div><div class="info-value">${user.country || '---'}</div></div>
+                <div class="info-row"><div class="info-label">تاریخ ثبت‌نام:</div><div class="info-value">${user.registrationDate ? new Date(user.registrationDate).toLocaleDateString('fa-IR') : '---'}</div></div>
+                ${user.lastEditRequest ? `<div class="info-row"><div class="info-label">تاریخ آخرین درخواست ویرایش:</div><div class="info-value">${new Date(user.lastEditRequest).toLocaleString('fa-IR')}</div></div>` : ''}
+                <div class="info-row"><div class="info-label">نشان:</div><div class="info-value"><span class="badge badge-${user.badge}">${user.badge === 'golden' ? tr('badgeGolden') : user.badge === 'silver' ? tr('badgeSilver') : tr('badgeBronze')}</span></div></div>
+                <div class="info-row"><div class="info-label">وضعیت:</div><div class="info-value"><span class="badge ${status === 'pending_edit' ? 'badge-edit' : 'badge-' + status}">${statusText}</span></div></div>
+                
+                <!-- ===== ارزش‌های فرهنگی با نمایش تغییرات ===== -->
+                <div class="info-row ${hl('values')}">
+                    <div class="info-label">ارزش‌های فرهنگی:</div>
+                    <div class="info-value">${valuesHtml}</div>
+                </div>
+                
+                <!-- ===== ایمیل با نمایش تغییرات ===== -->
+                <div class="info-row ${hl('communicationEmail')}">
+                    <div class="info-label">ایمیل ارتباطی:</div>
+                    <div class="info-value">${emailDisplay}</div>
+                </div>
+                
+                <div class="info-row"><div class="info-label">اجازه ارتباط:</div><div class="info-value">${user.allowConnection ? tr('allowYes') : tr('allowNo')}</div></div>
+                ${user.culturalInfo ? `<div class="info-row"><div class="info-label">اطلاعات فرهنگی:</div><div class="info-value">${user.culturalInfo}</div></div>` : ''}
+            `;
+
+            const actions = document.getElementById('modalActions');
+            if (status === 'pending_edit') {
+                actions.innerHTML = `
+                    <button class="btn-modal approve" onclick="approveUser('${user.cardCode}')">${tr('approveEditBtn')}</button>
+                    <button class="btn-modal reject" onclick="rejectEditUser('${user.cardCode}')">${tr('rejectEditBtn')}</button>
+                `;
+            } else {
+                actions.innerHTML = `
+                    <button class="btn-modal approve" onclick="approveUser('${user.cardCode}')">${tr('approveBtn')}</button>
+                    <button class="btn-modal reject" onclick="rejectUser('${user.cardCode}')">${tr('rejectBtn')}</button>
+                `;
+            }
+
+            document.getElementById('userModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('userModal').classList.remove('active');
+        }
+
+        async function updateStatus(cardCode, newStatus) {
+            try {
+                const response = await fetch('/api/update-user-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cardCode, status: newStatus })
+                });
+
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'خطا در بروزرسانی وضعیت');
+
+                alert(newStatus === 'approved' ? '✅ کاربر با موفقیت تأیید شد.' : '❌ کاربر با موفقیت رد شد.');
+                closeModal();
+                loadData();
+
+            } catch (error) {
+                console.error('Error updating status:', error);
+                alert('خطا: ' + error.message);
+            }
+        }
+
+        async function approveUser(cardCode) {
+            if (!confirm(`آیا از تأیید نهایی کاربر با کد ${cardCode} اطمینان دارید؟`)) return;
+            await updateStatus(cardCode, 'approved');
+        }
+
+        async function rejectUser(cardCode) {
+            if (!confirm(`آیا از رد کردن کاربر با کد ${cardCode} اطمینان دارید؟ کاربر از لیست فعال حذف خواهد شد.`)) return;
+            await updateStatus(cardCode, 'rejected');
+        }
+
+        async function rejectEditUser(cardCode) {
+            if (!confirm(`آیا از رد درخواست ویرایش کاربر با کد ${cardCode} اطمینان دارید؟ اطلاعات قبلی کاربر حفظ می‌شود.`)) return;
+            await updateStatus(cardCode, 'pending');
+        }
+
+        document.getElementById('userModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
 
         loadData();
         setInterval(loadData, 30000);
