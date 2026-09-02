@@ -4,7 +4,8 @@
   "senderCode": "CIM-3501-3915-69366",
   "type": "connection",
   "description": "محبت",
-  "status": "pending",
+  "status": "approved",
   "createdAt": "2026-09-02T19:24:28.042Z",
-  "updatedAt": "2026-09-02T19:24:28.044Z"
+  "updatedAt": "2026-09-02T19:24:28.044Z",
+  "approvedAt": "2026-09-02T19:25:01.096Z"
 }
