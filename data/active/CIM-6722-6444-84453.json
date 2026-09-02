@@ -20,7 +20,7 @@
     2,
     1
   ],
-  "communicationEmail": "gh_rezaei2003@yahoo.com",
+  "communicationEmail": "ghrezaei1399@gmail.com",
   "registrationDate": "2026-08-30T20:23:24.107Z",
   "status": "pending_edit",
   "rank": 0,
@@ -68,9 +68,10 @@
       "section": "identity-card"
     }
   ],
-  "lastEditRequest": "2026-09-02T10:45:56.628Z",
+  "lastEditRequest": "2026-09-02T10:46:26.676Z",
   "editLocked": true,
   "pendingChanges": [
-    "value_0"
+    "value_0",
+    "communicationEmail"
   ]
 }
