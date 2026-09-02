@@ -360,7 +360,7 @@
         }
         .value-item {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 0.5rem;
             padding: 0.4rem 0.6rem;
             border-radius: 8px;
@@ -375,12 +375,15 @@
             font-size: 0.8rem;
             min-width: 28px;
             text-align: left;
+            flex-shrink: 0;
+            margin-top: 1px;
         }
         .value-item .value-text {
             font-size: 0.85rem;
             color: #2a1a0a;
             flex: 1;
             word-break: break-word;
+            line-height: 1.5;
         }
         body.dark .value-item .value-text { color: #f0e8d0; }
         .value-item.changed {
@@ -397,6 +400,8 @@
             font-weight: 700;
             white-space: nowrap;
             border: 1px solid rgba(255, 140, 0, 0.15);
+            flex-shrink: 0;
+            margin-top: 1px;
         }
         body.dark .value-item .change-badge { 
             color: #f9e79f; 
@@ -862,13 +867,21 @@
             const changed = user.pendingChanges || [];
             const hl = (field) => changed.includes(field) ? 'highlight-change' : '';
 
+            // ===== تبدیل رشته ارزش‌ها به آرایه =====
+            let valuesArray = [];
+            if (typeof user.values === 'string' && user.values.trim()) {
+                // جدا کردن بر اساس کاما، نقطه‌ویرگول، یا خط جدید
+                valuesArray = user.values.split(/[،,;؛\n]+/).map(v => v.trim()).filter(v => v.length > 0);
+            } else if (Array.isArray(user.values)) {
+                valuesArray = user.values;
+            }
+
             // ===== ساخت لیست شماره‌دار ارزش‌های فرهنگی با برچسب تغییر =====
-            const values = user.values || [];
             let valuesHtml = '';
-            
-            if (values.length > 0) {
+            if (valuesArray.length > 0) {
                 valuesHtml = `<div class="values-list">`;
-                values.forEach((val, index) => {
+                valuesArray.forEach((val, index) => {
+                    // بررسی تغییر: اگر pendingChanges شامل value_${index} باشد یا کل values
                     const isChanged = changed.includes(`value_${index}`) || changed.includes('values');
                     const changeBadge = isChanged ? `<span class="change-badge">✏️ ${tr('changeBadge')}</span>` : '';
                     valuesHtml += `
