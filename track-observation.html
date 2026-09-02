@@ -326,12 +326,13 @@
                 return;
             }
             
+            // Reset
             resultBox.className = 'result-box';
             resultBox.style.display = 'none';
-            modulesDisplay.style.display = 'none';
-            moduleResultBox.style.display = 'none';
-            guideContainer.style.display = 'none';
-            errorMsg.style.display = 'none';
+            if (modulesDisplay) modulesDisplay.style.display = 'none';
+            if (moduleResultBox) moduleResultBox.style.display = 'none';
+            if (guideContainer) guideContainer.style.display = 'none';
+            if (errorMsg) errorMsg.style.display = 'none';
             
             try {
                 const response = await fetch(`/api/get-request-by-tracking?type=observation&trackingCode=${trackingCode}`);
@@ -348,7 +349,7 @@
                     statusIcon.textContent = '⏳';
                     statusTitle.textContent = 'در انتظار بررسی';
                     observationDisplay.textContent = result.observation || 'مشاهده‌ی شما در صف بررسی است.';
-                    guideContainer.style.display = 'none';
+                    if (guideContainer) guideContainer.style.display = 'none';
                 } else if (result.status === 'approved') {
                     resultBox.className = 'result-box approved';
                     statusIcon.textContent = '✅';
@@ -356,7 +357,7 @@
                     observationDisplay.textContent = result.observation || 'مشاهده‌ی شما تأیید شد.';
                     
                     // نمایش ماژول‌ها
-                    if (result.modules && result.modules.length > 0) {
+                    if (result.modules && result.modules.length > 0 && modulesDisplay) {
                         modulesDisplay.innerHTML = result.modules.map(mod => 
                             `<span class="module-tag">${mod}</span>`
                         ).join('');
@@ -364,7 +365,7 @@
                     }
                     
                     // ===== نمایش نتیجه ماژول =====
-                    if (result.moduleResult) {
+                    if (result.moduleResult && moduleResultBox) {
                         moduleResultBox.style.display = 'block';
                         let html = '<div class="title">📊 نتیجه ماژول انتخاب‌شده</div>';
                         
@@ -384,10 +385,13 @@
                     }
                     
                     // نمایش بسته راهنما
-                    if (result.guide) {
-                        document.getElementById('levelIndividual').textContent = result.guide.individual || '---';
-                        document.getElementById('levelNetwork').textContent = result.guide.network || '---';
-                        document.getElementById('levelPolicy').textContent = result.guide.policy || '---';
+                    if (result.guide && guideContainer) {
+                        const levelIndividual = document.getElementById('levelIndividual');
+                        const levelNetwork = document.getElementById('levelNetwork');
+                        const levelPolicy = document.getElementById('levelPolicy');
+                        if (levelIndividual) levelIndividual.textContent = result.guide.individual || '---';
+                        if (levelNetwork) levelNetwork.textContent = result.guide.network || '---';
+                        if (levelPolicy) levelPolicy.textContent = result.guide.policy || '---';
                         guideContainer.style.display = 'block';
                     }
                 } else if (result.status === 'rejected') {
@@ -395,18 +399,21 @@
                     statusIcon.textContent = '❌';
                     statusTitle.textContent = 'رد شده';
                     observationDisplay.textContent = result.observation || 'مشاهده‌ی شما رد شد.';
-                    guideContainer.style.display = 'none';
+                    if (guideContainer) guideContainer.style.display = 'none';
                 }
                 
             } catch (error) {
+                console.error('Error:', error);
                 resultBox.style.display = 'block';
                 resultBox.className = 'result-box rejected';
                 statusIcon.textContent = '❌';
                 statusTitle.textContent = 'خطا';
                 observationDisplay.textContent = '';
-                guideContainer.style.display = 'none';
-                errorMsg.textContent = error.message || 'مشاهده‌ای با این کد پیدا نشد.';
-                errorMsg.style.display = 'block';
+                if (guideContainer) guideContainer.style.display = 'none';
+                if (errorMsg) {
+                    errorMsg.textContent = error.message || 'مشاهده‌ای با این کد پیدا نشد.';
+                    errorMsg.style.display = 'block';
+                }
             }
         });
     </script>
