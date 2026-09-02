@@ -22,15 +22,17 @@ module.exports = async function handler(req, res) {
     const userData = JSON.parse(jsonString);
 
     // ============================================================
-    // ===== منطق هوشمند تایید یا رد ویرایش =====
+    // ===== منطق تایید یا رد ویرایش =====
     // ============================================================
     if (userData.status === 'pending_edit') {
       
       if (status === 'approved') {
-        // ===== تأیید ویرایش: اعمال تغییرات =====
+        // ============================================================
+        // ===== تأیید ویرایش: اعمال تغییرات از pendingChanges =====
+        // ============================================================
         const pending = userData.pendingChanges || {};
         
-        // ۱. اعمال تغییرات ارزش‌ها
+        // ۱. اعمال تغییرات کامل ارزش‌ها
         if (pending.values) {
           userData.values = pending.values;
           userData.priorities = pending.priorities || userData.priorities;
@@ -61,7 +63,9 @@ module.exports = async function handler(req, res) {
         userData.previousValues = undefined;
         
       } else if (status === 'pending') {
+        // ============================================================
         // ===== رد ویرایش: برگشت به حالت قبل =====
+        // ============================================================
         if (userData.previousValues) {
           userData.values = userData.previousValues.values;
           userData.optionalCode = userData.previousValues.optionalCode;
@@ -73,7 +77,6 @@ module.exports = async function handler(req, res) {
           
           userData.previousValues = undefined;
         }
-        // پاک کردن pendingChanges
         userData.pendingChanges = {};
       }
     }
@@ -100,4 +103,4 @@ module.exports = async function handler(req, res) {
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
-}
+};
