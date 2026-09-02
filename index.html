@@ -127,8 +127,7 @@
         body.dark .module-cancel { background: rgba(90, 40, 40, 0.7); border-color: rgba(241, 148, 138, 0.5); color: #f1948a; }
 
         .golden-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 1.2rem; 
             margin: 2rem 0; padding: 1.5rem; 
             background: linear-gradient(135deg, rgba(255, 248, 220, 0.4), rgba(253, 246, 227, 0.6)); 
@@ -400,10 +399,25 @@
     </div>
     <div class="cta-note">بدون اطلاعات شخصی • کاملاً ناشناس • ۲ دقیقه</div>
 
+    <!-- ===== ماژول‌های ارتباط و حذف (اصلاح شده) ===== -->
     <div class="modules">
-        <a href="edit-fa.html" class="module-btn module-edit"><span class="icon">✏️</span><span class="label">ویرایش اطلاعات</span><span class="desc">فقط یک بار امکان تغییر دارد</span></a>
-        <a href="request-fa.html?type=connection" class="module-btn module-connect"><span class="icon">🤝</span><span class="label">ارتباط</span><span class="desc">با هم‌فکران</span></a>
-        <a href="request-fa.html?type=delete" class="module-btn module-cancel"><span class="icon">🗑️</span><span class="label">انصراف</span><span class="desc">حذف حساب کاربری</span></a>
+        <a href="edit-fa.html" class="module-btn module-edit">
+            <span class="icon">✏️</span>
+            <span class="label">ویرایش اطلاعات</span>
+            <span class="desc">فقط یک بار امکان تغییر دارد</span>
+        </a>
+        <!-- ===== ماژول ارتباط با هم‌فکران ===== -->
+        <a href="request-fa.html?type=connection" class="module-btn module-connect">
+            <span class="icon">🤝</span>
+            <span class="label">ارتباط با هم‌فکران</span>
+            <span class="desc">درخواست ارتباط با دیگران</span>
+        </a>
+        <!-- ===== ماژول انصراف از عضویت ===== -->
+        <a href="request-fa.html?type=delete" class="module-btn module-cancel">
+            <span class="icon">🗑️</span>
+            <span class="label">انصراف از عضویت</span>
+            <span class="desc">حذف حساب کاربری</span>
+        </a>
     </div>
 
     <!-- ===== بخش پایینی: سه ماژول ===== -->
