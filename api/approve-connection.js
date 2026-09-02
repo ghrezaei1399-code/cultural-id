@@ -76,23 +76,53 @@ ${guide.policy}
 
           // ===== اجرای ماژول انتخاب‌شده =====
           const selectedModule = extractModuleFromIssue(issueData.body);
+          let moduleResult = null;
           
           if (selectedModule === 'ارجاع به ۵ همفرهنگ') {
             const likeMinded = await getLikeMinded(issueData, token);
-            if (likeMinded.length > 0) {
-              await saveReferralData({
-                issueNumber: issueNumber,
-                cardCode: extractCardCode(issueData.body),
-                likeMinded: likeMinded,
-                selected: [],
-                status: 'pending_admin_selection'
-              }, token);
-            }
+            moduleResult = {
+              type: 'referral',
+              candidates: likeMinded,
+              selected: [],
+              status: 'pending_admin_selection'
+            };
+            newLabels.push('referral');
+          } else if (selectedModule === 'همفکری با دیگران') {
+            moduleResult = {
+              type: 'collaboration',
+              status: 'ready'
+            };
+            newLabels.push('collaboration');
+          } else if (selectedModule === 'مشاهدات مرتبط دیگران') {
+            const related = await findRelatedObservations(issueData, token);
+            moduleResult = {
+              type: 'related',
+              observations: related,
+              status: 'ready'
+            };
+            newLabels.push('related');
+          }
+          
+          // ===== ذخیره نتیجه‌ی ماژول =====
+          if (moduleResult) {
+            await saveModuleResult(issueNumber, moduleResult, token);
           }
 
         } else {
           newLabels.push('rejected');
           newLabels.push('observation');
+          
+          await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/comments`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+              'Accept': 'application/vnd.github.v3+json'
+            },
+            body: JSON.stringify({
+              body: '❌ این مشاهده با توجه به اصول آزمایشگاه سپهر خردمندی رد شد.'
+            })
+          });
         }
 
         await updateIssueLabels(issueNumber, newLabels, token, action === 'approve_all' ? 'open' : 'closed');
@@ -105,7 +135,6 @@ ${guide.policy}
 
       // ===== ذخیره تحلیل ۵ سطحی =====
       if (action === 'save_analysis' && analysis) {
-        // ذخیره تحلیل در فایل JSON مخصوص
         const analysisPath = `data/analyses/${issueNumber}.json`;
         const analysisData = {
           issueNumber: issueNumber,
@@ -114,7 +143,6 @@ ${guide.policy}
           updatedAt: new Date().toISOString()
         };
         
-        // ابتدا بررسی می‌کنیم که فایل وجود دارد یا نه
         let existingSha = null;
         try {
           const existingRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${analysisPath}`, {
@@ -143,12 +171,10 @@ ${guide.policy}
           body: JSON.stringify(body)
         });
 
-        // اگر امتیاز ۵ است، برچسب gallery را اضافه کن
         if (score === 5) {
           newLabels.push('gallery');
         }
         
-        // اگر issue قبلاً approved نبود، آن را approved کن
         if (!currentLabels.includes('approved')) {
           newLabels.push('approved');
           newLabels.push('observation');
@@ -164,7 +190,6 @@ ${guide.policy}
 
       // ===== ارسال به گالری (امتیاز ۵) =====
       if (action === 'submit_gallery') {
-        // بررسی اینکه تحلیل وجود دارد
         const analysisPath = `data/analyses/${issueNumber}.json`;
         const analysisRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${analysisPath}`, {
           headers: { 'Authorization': `Bearer ${token}` }
@@ -181,7 +206,6 @@ ${guide.policy}
           return res.status(400).json({ error: 'برای ارسال به گالری، امتیاز باید ۵ باشد.' });
         }
         
-        // اضافه کردن برچسب gallery
         const newLabels = currentLabels.filter(l => l !== 'pending-review');
         if (!newLabels.includes('gallery')) newLabels.push('gallery');
         if (!newLabels.includes('approved')) newLabels.push('approved');
@@ -418,12 +442,85 @@ async function getLikeMinded(issueData, token) {
   }
 }
 
-async function saveReferralData(data, token) {
+async function findRelatedObservations(issueData, token) {
   try {
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
-    const path = `data/referrals/${data.issueNumber}.json`;
-    const content = Buffer.from(JSON.stringify(data, null, 2), 'utf8').toString('base64');
+    
+    const response = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/issues?labels=observation&state=all&per_page=50`,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      }
+    );
+    if (!response.ok) return [];
+    
+    const issues = await response.json();
+    const currentBody = issueData.body || '';
+    const currentKeywords = extractKeywords(currentBody);
+    
+    const related = issues
+      .filter(issue => issue.number !== issueData.number)
+      .map(issue => {
+        const keywords = extractKeywords(issue.body || '');
+        const matchCount = keywords.filter(k => currentKeywords.includes(k)).length;
+        return {
+          number: issue.number,
+          observation: issue.body ? issue.body.substring(0, 150) : '',
+          matchCount: matchCount,
+          similarityScore: Math.round((matchCount / Math.max(currentKeywords.length, 1)) * 100)
+        };
+      })
+      .filter(issue => issue.matchCount > 0)
+      .sort((a, b) => b.similarityScore - a.similarityScore)
+      .slice(0, 5);
+    
+    return related;
+  } catch (e) {
+    console.error('Error finding related observations:', e);
+    return [];
+  }
+}
+
+function extractKeywords(text) {
+  if (!text) return [];
+  const words = text.replace(/[.,/#!$%^&*;:{}=-_`~()]/g, '').split(/\s+/);
+  const filtered = words.filter(w => w.length > 3);
+  return [...new Set(filtered)];
+}
+
+async function saveModuleResult(issueNumber, moduleResult, token) {
+  const owner = 'ghrezaei1399-code';
+  const repo = 'cultural-id';
+  const path = `data/module-results/${issueNumber}.json`;
+  
+  const data = {
+    issueNumber: issueNumber,
+    moduleResult: moduleResult,
+    updatedAt: new Date().toISOString()
+  };
+  
+  const content = Buffer.from(JSON.stringify(data, null, 2), 'utf8').toString('base64');
+  
+  try {
+    let sha = null;
+    const existingRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (existingRes.ok) {
+      const existingData = await existingRes.json();
+      sha = existingData.sha;
+    }
+    
+    const body = {
+      message: `Module result for issue #${issueNumber}`,
+      content: content,
+      branch: 'main'
+    };
+    if (sha) body.sha = sha;
     
     await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
       method: 'PUT',
@@ -431,14 +528,10 @@ async function saveReferralData(data, token) {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        message: `Referral data for issue #${data.issueNumber}`,
-        content: content,
-        branch: 'main'
-      })
+      body: JSON.stringify(body)
     });
   } catch (e) {
-    console.error('Error saving referral data:', e);
+    console.error('Error saving module result:', e);
   }
 }
 
