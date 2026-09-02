@@ -22,10 +22,10 @@
   ],
   "communicationEmail": "ghrezaei1399@gmail.com",
   "registrationDate": "2026-09-02T07:43:28.677Z",
-  "status": "pending_edit",
+  "status": "approved",
   "rank": 0,
   "country": "Iran",
-  "statusUpdatedAt": "2026-09-02T07:45:50.187Z",
+  "statusUpdatedAt": "2026-09-02T08:03:35.923Z",
   "achievements": [
     {
       "title": "کتاب",
@@ -38,18 +38,6 @@
       "section": "identity-card"
     }
   ],
-  "previousValues": {
-    "values": [
-      "مقابله با فرهنگ مصرف گرایی",
-      "ضرورت تحول در سازماندهی تعامل بین مردم و مسئولین فرهنگی",
-      "استفاده از شبکه های اجتماعی فراگیر برای توسعه فعالیت های فرهنگی",
-      "پاسداشت اسطوره های فرهنگی ملل در کشورهای دیگر",
-      "دوست داشتن همه ی مردم جهان",
-      "خشونت پرهیزی",
-      "همبستگی"
-    ],
-    "optionalCode": "32323",
-    "communicationEmail": "ghrezaei1399@gmail.com"
-  },
-  "lastEditRequest": "2026-09-02T07:59:18.865Z"
+  "lastEditRequest": "2026-09-02T07:59:18.865Z",
+  "editLocked": true
 }
