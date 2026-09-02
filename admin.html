@@ -351,65 +351,84 @@
             border-radius: 4px;
         }
 
-        /* ===== استایل جدید برای نمایش ارزش‌ها ===== */
+        /* ===== استایل جدید برای نمایش ارزش‌ها با شماره و برچسب تغییر ===== */
         .values-list {
             display: flex;
             flex-direction: column;
-            gap: 0.3rem;
-            margin-top: 0.3rem;
+            gap: 0.4rem;
+            margin-top: 0.2rem;
         }
         .value-item {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.3rem 0.5rem;
-            border-radius: 6px;
-            background: rgba(255,255,255,0.03);
+            padding: 0.4rem 0.6rem;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.04);
             border-right: 3px solid transparent;
+            transition: all 0.2s;
         }
-        body.dark .value-item { background: rgba(0,0,0,0.05); }
+        body.dark .value-item { background: rgba(0,0,0,0.08); }
         .value-item .value-index {
             font-weight: 700;
-            color: #888;
-            font-size: 0.7rem;
-            min-width: 25px;
+            color: #d4af37;
+            font-size: 0.8rem;
+            min-width: 28px;
+            text-align: left;
         }
         .value-item .value-text {
             font-size: 0.85rem;
             color: #2a1a0a;
             flex: 1;
+            word-break: break-word;
         }
         body.dark .value-item .value-text { color: #f0e8d0; }
         .value-item.changed {
-            background: rgba(255, 200, 50, 0.08);
+            background: rgba(255, 200, 50, 0.10);
             border-right-color: #d4af37;
         }
-        body.dark .value-item.changed { background: rgba(255, 200, 50, 0.03); }
-        .value-item.changed .value-text {
-            color: #8a6d1f;
-            font-weight: 700;
-        }
-        body.dark .value-item.changed .value-text { color: #f9e79f; }
+        body.dark .value-item.changed { background: rgba(255, 200, 50, 0.05); }
         .value-item .change-badge {
             font-size: 0.6rem;
             background: rgba(255, 140, 0, 0.15);
-            color: #c65102;
-            padding: 0.1rem 0.5rem;
-            border-radius: 12px;
+            color: #b85a00;
+            padding: 0.15rem 0.6rem;
+            border-radius: 20px;
             font-weight: 700;
+            white-space: nowrap;
+            border: 1px solid rgba(255, 140, 0, 0.15);
         }
-        body.dark .value-item .change-badge { color: #f9e79f; background: rgba(255,140,0,0.05); }
+        body.dark .value-item .change-badge { 
+            color: #f9e79f; 
+            background: rgba(255, 140, 0, 0.08);
+            border-color: rgba(255, 140, 0, 0.10);
+        }
 
         .email-change-badge {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             background: rgba(255, 140, 0, 0.15);
-            color: #c65102;
+            color: #b85a00;
             padding: 0.1rem 0.6rem;
-            border-radius: 12px;
+            border-radius: 20px;
             font-weight: 700;
             margin-right: 0.5rem;
+            border: 1px solid rgba(255, 140, 0, 0.15);
         }
-        body.dark .email-change-badge { color: #f9e79f; background: rgba(255,140,0,0.05); }
+        body.dark .email-change-badge { 
+            color: #f9e79f; 
+            background: rgba(255, 140, 0, 0.08);
+            border-color: rgba(255, 140, 0, 0.10);
+        }
+
+        .badge-edit {
+            background: #fff3cd;
+            color: #856404;
+            padding: 0.2rem 0.7rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        body.dark .badge-edit { background: #665a2a; color: #f9e79f; }
 
         @media (max-width: 768px) {
             .container { padding: 1.2rem; }
@@ -576,7 +595,10 @@
                 badgeGolden: '🌟 طلایی',
                 badgeSilver: '🥈 نقره‌ای',
                 badgeBronze: '🥉 برنزی',
-                modalTitle: 'جزئیات فرهنگی: '
+                modalTitle: 'جزئیات فرهنگی: ',
+                pendingChangeLabel: '✏️ در انتظار تغییر',
+                changeBadge: 'در انتظار تغییر',
+                valuesTitle: '🎯 ارزش‌های فرهنگی'
             },
             en: {
                 pageTitle: '🛡️ Admin Dashboard',
@@ -619,7 +641,10 @@
                 badgeGolden: '🌟 Golden',
                 badgeSilver: '🥈 Silver',
                 badgeBronze: '🥉 Bronze',
-                modalTitle: 'Cultural Details: '
+                modalTitle: 'Cultural Details: ',
+                pendingChangeLabel: '✏️ Pending Change',
+                changeBadge: 'Pending Change',
+                valuesTitle: '🎯 Cultural Values'
             }
         };
 
@@ -818,6 +843,9 @@
             }
         }
 
+        // ================================================================
+        // ===== تابع viewUser اصلاح شده با لیست شماره‌دار و برچسب تغییرات =====
+        // ================================================================
         function viewUser(cardCode) {
             const user = allUsers.find(u => u.cardCode === cardCode);
             if (!user) return;
@@ -830,10 +858,11 @@
 
             document.getElementById('modalTitle').textContent = tr('modalTitle') + user.cardCode;
             
+            // ===== تعیین فیلدهای تغییر کرده =====
             const changed = user.pendingChanges || [];
             const hl = (field) => changed.includes(field) ? 'highlight-change' : '';
 
-            // ===== نمایش ارزش‌ها به‌صورت لیست شماره‌دار =====
+            // ===== ساخت لیست شماره‌دار ارزش‌های فرهنگی با برچسب تغییر =====
             const values = user.values || [];
             let valuesHtml = '';
             
@@ -841,7 +870,7 @@
                 valuesHtml = `<div class="values-list">`;
                 values.forEach((val, index) => {
                     const isChanged = changed.includes(`value_${index}`) || changed.includes('values');
-                    const changeBadge = isChanged ? `<span class="change-badge">✏️ در انتظار تغییر</span>` : '';
+                    const changeBadge = isChanged ? `<span class="change-badge">✏️ ${tr('changeBadge')}</span>` : '';
                     valuesHtml += `
                         <div class="value-item ${isChanged ? 'changed' : ''}">
                             <span class="value-index">${index + 1}.</span>
@@ -855,13 +884,14 @@
                 valuesHtml = '---';
             }
 
-            // ===== نمایش ایمیل با نشانگر تغییر =====
+            // ===== نمایش ایمیل با برچسب تغییر =====
             const emailChanged = changed.includes('communicationEmail');
-            const emailBadge = emailChanged ? `<span class="email-change-badge">✏️ در انتظار تغییر</span>` : '';
+            const emailBadge = emailChanged ? `<span class="email-change-badge">✏️ ${tr('changeBadge')}</span>` : '';
             const emailDisplay = user.communicationEmail 
                 ? `${user.communicationEmail} ${emailBadge}`
                 : tr('noEmail');
 
+            // ===== ساخت بدنه مودال =====
             const body = document.getElementById('modalBody');
             body.innerHTML = `
                 <div class="info-row ${hl('cardCode')}"><div class="info-label">کد کارت:</div><div class="info-value" style="font-family: monospace;">${user.cardCode}</div></div>
@@ -871,15 +901,15 @@
                 <div class="info-row"><div class="info-label">تاریخ ثبت‌نام:</div><div class="info-value">${user.registrationDate ? new Date(user.registrationDate).toLocaleDateString('fa-IR') : '---'}</div></div>
                 ${user.lastEditRequest ? `<div class="info-row"><div class="info-label">تاریخ آخرین درخواست ویرایش:</div><div class="info-value">${new Date(user.lastEditRequest).toLocaleString('fa-IR')}</div></div>` : ''}
                 <div class="info-row"><div class="info-label">نشان:</div><div class="info-value"><span class="badge badge-${user.badge}">${user.badge === 'golden' ? tr('badgeGolden') : user.badge === 'silver' ? tr('badgeSilver') : tr('badgeBronze')}</span></div></div>
-                <div class="info-row"><div class="info-label">وضعیت:</div><div class="info-value"><span class="badge ${status === 'pending_edit' ? 'badge-edit' : 'badge-' + status}">${statusText}</span></div></div>
+                <div class="info-row"><div class="info-label">وضعیت:</div><div class="info-value"><span class="${status === 'pending_edit' ? 'badge-edit' : 'badge-' + status}">${statusText}</span></div></div>
                 
-                <!-- ===== ارزش‌های فرهنگی با نمایش تغییرات ===== -->
+                <!-- ===== ارزش‌های فرهنگی با شماره و برچسب تغییر ===== -->
                 <div class="info-row ${hl('values')}">
-                    <div class="info-label">ارزش‌های فرهنگی:</div>
+                    <div class="info-label">${tr('valuesTitle')}:</div>
                     <div class="info-value">${valuesHtml}</div>
                 </div>
                 
-                <!-- ===== ایمیل با نمایش تغییرات ===== -->
+                <!-- ===== ایمیل با برچسب تغییر ===== -->
                 <div class="info-row ${hl('communicationEmail')}">
                     <div class="info-label">ایمیل ارتباطی:</div>
                     <div class="info-value">${emailDisplay}</div>
@@ -889,6 +919,7 @@
                 ${user.culturalInfo ? `<div class="info-row"><div class="info-label">اطلاعات فرهنگی:</div><div class="info-value">${user.culturalInfo}</div></div>` : ''}
             `;
 
+            // ===== دکمه‌های اقدام =====
             const actions = document.getElementById('modalActions');
             if (status === 'pending_edit') {
                 actions.innerHTML = `
@@ -904,6 +935,9 @@
 
             document.getElementById('userModal').classList.add('active');
         }
+        // ================================================================
+        // ===== پایان تابع viewUser اصلاح شده =============================
+        // ================================================================
 
         function closeModal() {
             document.getElementById('userModal').classList.remove('active');
