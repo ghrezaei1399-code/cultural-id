@@ -22,10 +22,10 @@
   ],
   "communicationEmail": "ghrezaei1399@gmail.com",
   "registrationDate": "2026-08-31T10:50:52.241Z",
-  "status": "pending_edit",
+  "status": "approved",
   "rank": 0,
   "country": "Iran",
-  "statusUpdatedAt": "2026-08-31T10:53:26.873Z",
+  "statusUpdatedAt": "2026-09-02T10:19:12.095Z",
   "achievements": [
     {
       "title": " Art Smartography",
@@ -41,5 +41,6 @@
   "pendingChanges": [
     "value_0"
   ],
-  "lastEditRequest": "2026-09-02T10:13:41.834Z"
+  "lastEditRequest": "2026-09-02T10:13:41.834Z",
+  "editLocked": true
 }
