@@ -3,7 +3,7 @@
   "displayCode": "CIM - 3501 - 3915 - 32323",
   "optionalCode": "32323",
   "values": [
-    "مقابله با فرهنگ مصرف گرایی",
+    "حراست از ابزار های فرهنگ ساز سنتی مثل شعر و داستان و دیگر هنرهای بشری",
     "ضرورت تحول در سازماندهی تعامل بین مردم و مسئولین فرهنگی",
     "استفاده از شبکه های اجتماعی فراگیر برای توسعه فعالیت های فرهنگی",
     "پاسداشت اسطوره های فرهنگی ملل در کشورهای دیگر",
@@ -22,7 +22,7 @@
   ],
   "communicationEmail": "gh_rezaei2003@yahoo.com",
   "registrationDate": "2026-09-02T07:43:28.677Z",
-  "status": "approved",
+  "status": "pending_edit",
   "rank": 0,
   "country": "Iran",
   "statusUpdatedAt": "2026-09-02T15:11:53.401Z",
@@ -38,11 +38,12 @@
       "section": "identity-card"
     }
   ],
-  "lastEditRequest": "2026-09-02T10:19:47.413Z",
+  "lastEditRequest": "2026-09-02T15:13:15.534Z",
   "editLocked": true,
   "pendingChanges": [
     "value_5",
     "communicationEmail",
-    "value_4"
+    "value_4",
+    "value_0"
   ]
 }
