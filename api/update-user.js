@@ -47,27 +47,27 @@ module.exports = async function handler(req, res) {
     const userDataRaw = await userRes.json();
     const userData = JSON.parse(Buffer.from(userDataRaw.content, 'base64').toString('utf8'));
 
-    // ===== ذخیره تغییرات به صورت آبجکت =====
+    // ============================================================
+    // ===== اصلاح: ذخیره تغییرات به صورت آبجکت با مقدار جدید =====
+    // ============================================================
     if (!userData.pendingChanges) {
       userData.pendingChanges = {};
     }
 
-    // ۱. تغییر ایمیل
+    // ۱. تغییر ایمیل - ذخیره مقدار جدید
     if (communicationEmail !== undefined) {
+      // ذخیره مقدار جدید در pendingChanges
       userData.pendingChanges.communicationEmail = communicationEmail;
     }
 
-    // ۲. تغییر ارزش‌ها (تکی یا کامل)
+    // ۲. تغییر ارزش‌ها - ذخیره مقدار جدید
     if (values && priorities) {
       if (updateIndex !== undefined) {
-        // تغییر تکی - مقدار جدید را ذخیره کن
+        // تغییر تکی - ذخیره مقدار جدید
         const newValue = values[updateIndex];
         const newPriority = priorities[updateIndex];
         
-        // ذخیره مقدار جدید در pendingChanges
         userData.pendingChanges[`value_${updateIndex}`] = newValue;
-        
-        // همچنین اگر می‌خواهید اولویت هم ذخیره شود:
         userData.pendingChanges[`priority_${updateIndex}`] = newPriority;
         
       } else {
