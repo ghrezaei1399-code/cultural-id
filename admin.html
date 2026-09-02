@@ -863,14 +863,14 @@
 
             document.getElementById('modalTitle').textContent = tr('modalTitle') + user.cardCode;
             
-            // ===== تعیین فیلدهای تغییر کرده =====
-            const changed = user.pendingChanges || [];
-            const hl = (field) => changed.includes(field) ? 'highlight-change' : '';
+            // ===== pendingChanges به صورت آبجکت =====
+            const pending = user.pendingChanges || {};
+            const changedKeys = Object.keys(pending);
+            const hl = (field) => changedKeys.includes(field) ? 'highlight-change' : '';
 
             // ===== تبدیل رشته ارزش‌ها به آرایه =====
             let valuesArray = [];
             if (typeof user.values === 'string' && user.values.trim()) {
-                // جدا کردن بر اساس کاما، نقطه‌ویرگول، یا خط جدید
                 valuesArray = user.values.split(/[،,;؛\n]+/).map(v => v.trim()).filter(v => v.length > 0);
             } else if (Array.isArray(user.values)) {
                 valuesArray = user.values;
@@ -881,13 +881,23 @@
             if (valuesArray.length > 0) {
                 valuesHtml = `<div class="values-list">`;
                 valuesArray.forEach((val, index) => {
-                    // بررسی تغییر: اگر pendingChanges شامل value_${index} باشد یا کل values
-                    const isChanged = changed.includes(`value_${index}`) || changed.includes('values');
-                    const changeBadge = isChanged ? `<span class="change-badge">✏️ ${tr('changeBadge')}</span>` : '';
+                    // بررسی تغییر: اگر pendingChanges شامل value_${index} باشد
+                    const key = `value_${index}`;
+                    const isChanged = changedKeys.includes(key);
+                    const newValue = isChanged ? pending[key] : null;
+                    
+                    let displayText = val || '---';
+                    let changeBadge = '';
+                    
+                    if (isChanged && newValue) {
+                        displayText = `${val} ➜ ${newValue}`;
+                        changeBadge = `<span class="change-badge">✏️ ${tr('changeBadge')}</span>`;
+                    }
+                    
                     valuesHtml += `
                         <div class="value-item ${isChanged ? 'changed' : ''}">
                             <span class="value-index">${index + 1}.</span>
-                            <span class="value-text">${val || '---'}</span>
+                            <span class="value-text">${displayText}</span>
                             ${changeBadge}
                         </div>
                     `;
@@ -898,11 +908,15 @@
             }
 
             // ===== نمایش ایمیل با برچسب تغییر =====
-            const emailChanged = changed.includes('communicationEmail');
-            const emailBadge = emailChanged ? `<span class="email-change-badge">✏️ ${tr('changeBadge')}</span>` : '';
-            const emailDisplay = user.communicationEmail 
-                ? `${user.communicationEmail} ${emailBadge}`
-                : tr('noEmail');
+            const emailChanged = changedKeys.includes('communicationEmail');
+            const newEmail = emailChanged ? pending.communicationEmail : null;
+            let emailDisplay = user.communicationEmail || tr('noEmail');
+            let emailBadge = '';
+            
+            if (emailChanged && newEmail) {
+                emailDisplay = `${user.communicationEmail || '---'} ➜ ${newEmail}`;
+                emailBadge = `<span class="email-change-badge">✏️ ${tr('changeBadge')}</span>`;
+            }
 
             // ===== ساخت بدنه مودال =====
             const body = document.getElementById('modalBody');
@@ -925,7 +939,7 @@
                 <!-- ===== ایمیل با برچسب تغییر ===== -->
                 <div class="info-row ${hl('communicationEmail')}">
                     <div class="info-label">ایمیل ارتباطی:</div>
-                    <div class="info-value">${emailDisplay}</div>
+                    <div class="info-value">${emailDisplay} ${emailBadge}</div>
                 </div>
                 
                 <div class="info-row"><div class="info-label">اجازه ارتباط:</div><div class="info-value">${user.allowConnection ? tr('allowYes') : tr('allowNo')}</div></div>
