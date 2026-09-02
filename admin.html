@@ -848,7 +848,7 @@
         }
 
         // ================================================================
-        // ===== تابع viewUser - اصلاح شده با پشتیبانی از آرایه و آبجکت =====
+        // ===== تابع viewUser - اصلاح شده نهایی =====
         // ================================================================
         function viewUser(cardCode) {
             try {
@@ -878,20 +878,20 @@
                         changedKeys.forEach(key => {
                             pending[key] = 'تغییر درخواستی';
                         });
-                    } else if (typeof user.pendingChanges === 'object') {
+                    } else if (typeof user.pendingChanges === 'object' && user.pendingChanges !== null) {
                         // حالت جدید: آبجکت
                         pending = user.pendingChanges;
                         changedKeys = Object.keys(pending);
                     }
                 }
 
-                // ===== تابع کمکی برای بررسی تغییر =====
-                function isChanged(field) {
-                    return changedKeys.includes(field);
+                // ===== تابع کمکی برای بررسی تغییر - بدون استفاده از includes روی آبجکت =====
+                function isFieldChanged(field) {
+                    return changedKeys.indexOf(field) !== -1;
                 }
 
                 function getHighlightClass(field) {
-                    return isChanged(field) ? 'highlight-change' : '';
+                    return isFieldChanged(field) ? 'highlight-change' : '';
                 }
 
                 // ===== تبدیل رشته ارزش‌ها به آرایه =====
@@ -908,7 +908,7 @@
                     valuesHtml = `<div class="values-list">`;
                     valuesArray.forEach((val, index) => {
                         const key = `value_${index}`;
-                        const changed = isChanged(key);
+                        const changed = isFieldChanged(key);
                         const newValue = changed && pending[key] ? pending[key] : null;
                         
                         let displayText = val || '---';
@@ -935,7 +935,7 @@
                 }
 
                 // ===== نمایش ایمیل با برچسب تغییر =====
-                const emailChanged = isChanged('communicationEmail');
+                const emailChanged = isFieldChanged('communicationEmail');
                 const newEmail = emailChanged && pending.communicationEmail ? pending.communicationEmail : null;
                 let emailDisplay = user.communicationEmail || tr('noEmail');
                 let emailBadge = '';
