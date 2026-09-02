@@ -159,7 +159,6 @@
         }
         body.dark .result-box .observation-text { background: rgba(0,0,0,0.1); }
         
-        /* ===== نمایش ماژول‌ها ===== */
         .modules-display {
             display: none;
             margin-top: 0.8rem;
@@ -176,7 +175,6 @@
         }
         body.dark .module-tag { border-color: rgba(212,175,55,0.2); }
         
-        /* ===== نتیجه‌ی ماژول ===== */
         .module-result-box {
             margin-top: 1rem;
             padding: 1rem;
@@ -295,30 +293,9 @@
             <span class="status-icon" id="statusIcon">⏳</span>
             <div class="status-title" id="statusTitle">در حال بررسی</div>
             <div id="observationDisplay" class="observation-text"></div>
-            
-            <!-- ===== نمایش ماژول‌ها ===== -->
             <div id="modulesDisplay" class="modules-display"></div>
-            
-            <!-- ===== نمایش نتیجه‌ی ماژول ===== -->
-            <div id="moduleResultBox" class="module-result-box" style="display:none;">
-                <div class="title">📊 نتیجه‌ی ماژول انتخاب‌شده</div>
-                <div id="moduleResultContent"></div>
-            </div>
-            
-            <div id="guideContainer" class="guide-box" style="display:none;">
-                <div class="level">
-                    <span class="level-label">📍 سطح فردی (اقدام شخصی)</span>
-                    <div class="level-text" id="levelIndividual">...</div>
-                </div>
-                <div class="level">
-                    <span class="level-label">🌐 سطح شبکه‌ای (کنشگری جمعی)</span>
-                    <div class="level-text" id="levelNetwork">...</div>
-                </div>
-                <div class="level">
-                    <span class="level-label">🏛️ سطح سیاستی/مدیریتی (تأثیر ساختاری)</span>
-                    <div class="level-text" id="levelPolicy">...</div>
-                </div>
-            </div>
+            <div id="moduleResultBox" class="module-result-box" style="display:none;"></div>
+            <div id="guideContainer" class="guide-box" style="display:none;"></div>
             <div id="errorMsg" class="error-msg" style="display:none;"></div>
         </div>
         
@@ -341,7 +318,6 @@
             const observationDisplay = document.getElementById('observationDisplay');
             const modulesDisplay = document.getElementById('modulesDisplay');
             const moduleResultBox = document.getElementById('moduleResultBox');
-            const moduleResultContent = document.getElementById('moduleResultContent');
             const guideContainer = document.getElementById('guideContainer');
             const errorMsg = document.getElementById('errorMsg');
             
@@ -379,7 +355,7 @@
                     statusTitle.textContent = 'تأیید شده';
                     observationDisplay.textContent = result.observation || 'مشاهده‌ی شما تأیید شد.';
                     
-                    // ===== نمایش ماژول‌ها =====
+                    // نمایش ماژول‌ها
                     if (result.modules && result.modules.length > 0) {
                         modulesDisplay.innerHTML = result.modules.map(mod => 
                             `<span class="module-tag">${mod}</span>`
@@ -387,13 +363,27 @@
                         modulesDisplay.style.display = 'flex';
                     }
                     
-                    // ===== نمایش نتیجه‌ی ماژول =====
+                    // نمایش نتیجه ماژول
                     if (result.moduleResult) {
                         moduleResultBox.style.display = 'block';
-                        moduleResultContent.innerHTML = renderModuleResult(result.moduleResult);
+                        let html = '<div class="title">📊 نتیجه ماژول انتخاب‌شده</div>';
+                        
+                        if (result.moduleResult.type === 'referral') {
+                            const selected = result.moduleResult.selected || [];
+                            html += `
+                                <div>✅ ${selected.length} هم‌فکر انتخاب شد</div>
+                                ${selected.length > 0 ? selected.map(s => `<div class="item">${s}</div>`).join('') : '<div class="item">هنوز هم‌فکری انتخاب نشده است.</div>'}
+                            `;
+                        } else if (result.moduleResult.type === 'collaboration') {
+                            html += `<div style="color:#27ae60;">✅ ماژول همفکری فعال شد</div>`;
+                        } else if (result.moduleResult.type === 'related') {
+                            const related = result.moduleResult.observations || [];
+                            html += `<div>🔗 ${related.length} مشاهده مرتبط</div>`;
+                        }
+                        moduleResultBox.innerHTML = html;
                     }
                     
-                    // ===== نمایش بسته راهنما =====
+                    // نمایش بسته راهنما
                     if (result.guide) {
                         document.getElementById('levelIndividual').textContent = result.guide.individual || '---';
                         document.getElementById('levelNetwork').textContent = result.guide.network || '---';
@@ -419,40 +409,6 @@
                 errorMsg.style.display = 'block';
             }
         });
-        
-        // ===== تابع نمایش نتیجه‌ی ماژول =====
-        function renderModuleResult(moduleResult) {
-            if (!moduleResult) return '<span style="color:#888;">در انتظار اجرای ماژول...</span>';
-            
-            if (moduleResult.type === 'referral') {
-                const candidates = moduleResult.candidates || [];
-                const selected = moduleResult.selected || [];
-                if (candidates.length === 0) {
-                    return '<span style="color:#888;">هیچ هم‌فکری یافت نشد.</span>';
-                }
-                return `
-                    <p style="font-weight:700;font-size:0.85rem;color:#2874a6;margin-bottom:0.5rem;">لیست هم‌فکران ارجاع‌شده (${selected.length} نفر):</p>
-                    ${selected.map(c => `
-                        <div class="item">✅ ${c}</div>
-                    `).join('')}
-                    ${selected.length === 0 ? '<span style="color:#888;">هنوز هم‌فکری انتخاب نشده است.</span>' : ''}
-                `;
-            } else if (moduleResult.type === 'collaboration') {
-                return '<span style="color:#27ae60;">✅ ماژول همفکری فعال شد. می‌توانید وارد صفحه‌ی همفکری شوید.</span>';
-            } else if (moduleResult.type === 'related') {
-                const related = moduleResult.observations || [];
-                if (related.length === 0) {
-                    return '<span style="color:#888;">هیچ مشاهده‌ی مرتبطی یافت نشد.</span>';
-                }
-                return `
-                    <p style="font-weight:700;font-size:0.85rem;color:#2874a6;margin-bottom:0.5rem;">مشاهدات مرتبط:</p>
-                    ${related.map(r => `
-                        <div class="item">#${r.number} - ${r.observation.substring(0, 80)}...</div>
-                    `).join('')}
-                `;
-            }
-            return '<span style="color:#888;">نتیجه‌ای ثبت نشده است.</span>';
-        }
     </script>
 </body>
 </html>
