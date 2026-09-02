@@ -603,7 +603,8 @@
                 modalTitle: 'جزئیات فرهنگی: ',
                 pendingChangeLabel: '✏️ در انتظار تغییر',
                 changeBadge: 'در انتظار تغییر',
-                valuesTitle: '🎯 ارزش‌های فرهنگی'
+                valuesTitle: '🎯 ارزش‌های فرهنگی',
+                pendingChanges: 'تغییرات در انتظار'
             },
             en: {
                 pageTitle: '🛡️ Admin Dashboard',
@@ -649,7 +650,8 @@
                 modalTitle: 'Cultural Details: ',
                 pendingChangeLabel: '✏️ Pending Change',
                 changeBadge: 'Pending Change',
-                valuesTitle: '🎯 Cultural Values'
+                valuesTitle: '🎯 Cultural Values',
+                pendingChanges: 'Pending Changes'
             }
         };
 
@@ -849,121 +851,149 @@
         }
 
         // ================================================================
-        // ===== تابع viewUser اصلاح شده با لیست شماره‌دار و برچسب تغییرات =====
+        // ===== تابع viewUser - پشتیبانی از هر دو حالت (آرایه و آبجکت) =====
         // ================================================================
         function viewUser(cardCode) {
-            const user = allUsers.find(u => u.cardCode === cardCode);
-            if (!user) return;
+            try {
+                const user = allUsers.find(u => u.cardCode === cardCode);
+                if (!user) {
+                    alert('کاربر یافت نشد');
+                    return;
+                }
 
-            const status = user.status || 'pending';
-            let statusText = tr('statusPending');
-            if (status === 'approved') statusText = tr('statusApproved');
-            else if (status === 'rejected') statusText = tr('statusRejected');
-            else if (status === 'pending_edit') statusText = tr('statusEdit');
+                const status = user.status || 'pending';
+                let statusText = tr('statusPending');
+                if (status === 'approved') statusText = tr('statusApproved');
+                else if (status === 'rejected') statusText = tr('statusRejected');
+                else if (status === 'pending_edit') statusText = tr('statusEdit');
 
-            document.getElementById('modalTitle').textContent = tr('modalTitle') + user.cardCode;
-            
-            // ===== pendingChanges به صورت آبجکت =====
-            const pending = user.pendingChanges || {};
-            const changedKeys = Object.keys(pending);
-            const hl = (field) => changedKeys.includes(field) ? 'highlight-change' : '';
-
-            // ===== تبدیل رشته ارزش‌ها به آرایه =====
-            let valuesArray = [];
-            if (typeof user.values === 'string' && user.values.trim()) {
-                valuesArray = user.values.split(/[،,;؛\n]+/).map(v => v.trim()).filter(v => v.length > 0);
-            } else if (Array.isArray(user.values)) {
-                valuesArray = user.values;
-            }
-
-            // ===== ساخت لیست شماره‌دار ارزش‌های فرهنگی با برچسب تغییر =====
-            let valuesHtml = '';
-            if (valuesArray.length > 0) {
-                valuesHtml = `<div class="values-list">`;
-                valuesArray.forEach((val, index) => {
-                    // بررسی تغییر: اگر pendingChanges شامل value_${index} باشد
-                    const key = `value_${index}`;
-                    const isChanged = changedKeys.includes(key);
-                    const newValue = isChanged ? pending[key] : null;
-                    
-                    let displayText = val || '---';
-                    let changeBadge = '';
-                    
-                    if (isChanged && newValue) {
-                        displayText = `${val} ➜ ${newValue}`;
-                        changeBadge = `<span class="change-badge">✏️ ${tr('changeBadge')}</span>`;
+                document.getElementById('modalTitle').textContent = tr('modalTitle') + user.cardCode;
+                
+                // ===== پردازش pendingChanges: هم آرایه و هم آبجکت =====
+                let pending = {};
+                let changedKeys = [];
+                
+                if (user.pendingChanges) {
+                    if (Array.isArray(user.pendingChanges)) {
+                        // حالت قدیمی: آرایه
+                        changedKeys = user.pendingChanges;
+                        // برای نمایش بهتر، مقدار جدید را از خود کاربر نمی‌دانیم، فقط نام فیلدها را داریم
+                        pending = {};
+                        changedKeys.forEach(key => {
+                            pending[key] = 'تغییر درخواستی';
+                        });
+                    } else if (typeof user.pendingChanges === 'object') {
+                        // حالت جدید: آبجکت
+                        pending = user.pendingChanges;
+                        changedKeys = Object.keys(pending);
                     }
+                }
+
+                const hl = (field) => changedKeys.includes(field) ? 'highlight-change' : '';
+
+                // ===== تبدیل رشته ارزش‌ها به آرایه =====
+                let valuesArray = [];
+                if (typeof user.values === 'string' && user.values.trim()) {
+                    valuesArray = user.values.split(/[،,;؛\n]+/).map(v => v.trim()).filter(v => v.length > 0);
+                } else if (Array.isArray(user.values)) {
+                    valuesArray = user.values;
+                }
+
+                // ===== ساخت لیست شماره‌دار ارزش‌های فرهنگی با برچسب تغییر =====
+                let valuesHtml = '';
+                if (valuesArray.length > 0) {
+                    valuesHtml = `<div class="values-list">`;
+                    valuesArray.forEach((val, index) => {
+                        const key = `value_${index}`;
+                        const isChanged = changedKeys.includes(key);
+                        const newValue = isChanged && pending[key] ? pending[key] : null;
+                        
+                        let displayText = val || '---';
+                        let changeBadge = '';
+                        
+                        if (isChanged && newValue && newValue !== 'تغییر درخواستی') {
+                            displayText = `${val} ➜ ${newValue}`;
+                            changeBadge = `<span class="change-badge">✏️ ${tr('changeBadge')}</span>`;
+                        } else if (isChanged) {
+                            // حالت آرایه قدیمی که مقدار جدید را نمی‌دانیم
+                            changeBadge = `<span class="change-badge">✏️ ${tr('changeBadge')}</span>`;
+                        }
+                        
+                        valuesHtml += `
+                            <div class="value-item ${isChanged ? 'changed' : ''}">
+                                <span class="value-index">${index + 1}.</span>
+                                <span class="value-text">${displayText}</span>
+                                ${changeBadge}
+                            </div>
+                        `;
+                    });
+                    valuesHtml += `</div>`;
+                } else {
+                    valuesHtml = '---';
+                }
+
+                // ===== نمایش ایمیل با برچسب تغییر =====
+                const emailChanged = changedKeys.includes('communicationEmail');
+                const newEmail = emailChanged && pending.communicationEmail ? pending.communicationEmail : null;
+                let emailDisplay = user.communicationEmail || tr('noEmail');
+                let emailBadge = '';
+                
+                if (emailChanged && newEmail && newEmail !== 'تغییر درخواستی') {
+                    emailDisplay = `${user.communicationEmail || '---'} ➜ ${newEmail}`;
+                    emailBadge = `<span class="email-change-badge">✏️ ${tr('changeBadge')}</span>`;
+                } else if (emailChanged) {
+                    emailBadge = `<span class="email-change-badge">✏️ ${tr('changeBadge')}</span>`;
+                }
+
+                // ===== ساخت بدنه مودال =====
+                const body = document.getElementById('modalBody');
+                body.innerHTML = `
+                    <div class="info-row ${hl('cardCode')}"><div class="info-label">کد کارت:</div><div class="info-value" style="font-family: monospace;">${user.cardCode}</div></div>
+                    <div class="info-row ${hl('optionalCode')}"><div class="info-label">کد اختیاری:</div><div class="info-value" style="font-family: monospace; color:#d4af37;">${user.optionalCode || tr('noEmail')}</div></div>
+                    <div class="info-row"><div class="info-label">رتبه ثبت‌نام:</div><div class="info-value">${user.rank}</div></div>
+                    <div class="info-row"><div class="info-label">کشور (از IP):</div><div class="info-value">${user.country || '---'}</div></div>
+                    <div class="info-row"><div class="info-label">تاریخ ثبت‌نام:</div><div class="info-value">${user.registrationDate ? new Date(user.registrationDate).toLocaleDateString('fa-IR') : '---'}</div></div>
+                    ${user.lastEditRequest ? `<div class="info-row"><div class="info-label">تاریخ آخرین درخواست ویرایش:</div><div class="info-value">${new Date(user.lastEditRequest).toLocaleString('fa-IR')}</div></div>` : ''}
+                    <div class="info-row"><div class="info-label">نشان:</div><div class="info-value"><span class="badge badge-${user.badge}">${user.badge === 'golden' ? tr('badgeGolden') : user.badge === 'silver' ? tr('badgeSilver') : tr('badgeBronze')}</span></div></div>
+                    <div class="info-row"><div class="info-label">وضعیت:</div><div class="info-value"><span class="${status === 'pending_edit' ? 'badge-edit' : 'badge-' + status}">${statusText}</span></div></div>
                     
-                    valuesHtml += `
-                        <div class="value-item ${isChanged ? 'changed' : ''}">
-                            <span class="value-index">${index + 1}.</span>
-                            <span class="value-text">${displayText}</span>
-                            ${changeBadge}
-                        </div>
+                    <!-- ===== ارزش‌های فرهنگی با شماره و برچسب تغییر ===== -->
+                    <div class="info-row ${hl('values')}">
+                        <div class="info-label">${tr('valuesTitle')}:</div>
+                        <div class="info-value">${valuesHtml}</div>
+                    </div>
+                    
+                    <!-- ===== ایمیل با برچسب تغییر ===== -->
+                    <div class="info-row ${hl('communicationEmail')}">
+                        <div class="info-label">ایمیل ارتباطی:</div>
+                        <div class="info-value">${emailDisplay} ${emailBadge}</div>
+                    </div>
+                    
+                    <div class="info-row"><div class="info-label">اجازه ارتباط:</div><div class="info-value">${user.allowConnection ? tr('allowYes') : tr('allowNo')}</div></div>
+                    ${user.culturalInfo ? `<div class="info-row"><div class="info-label">اطلاعات فرهنگی:</div><div class="info-value">${user.culturalInfo}</div></div>` : ''}
+                `;
+
+                // ===== دکمه‌های اقدام =====
+                const actions = document.getElementById('modalActions');
+                if (status === 'pending_edit') {
+                    actions.innerHTML = `
+                        <button class="btn-modal approve" onclick="approveUser('${user.cardCode}')">${tr('approveEditBtn')}</button>
+                        <button class="btn-modal reject" onclick="rejectEditUser('${user.cardCode}')">${tr('rejectEditBtn')}</button>
                     `;
-                });
-                valuesHtml += `</div>`;
-            } else {
-                valuesHtml = '---';
-            }
+                } else {
+                    actions.innerHTML = `
+                        <button class="btn-modal approve" onclick="approveUser('${user.cardCode}')">${tr('approveBtn')}</button>
+                        <button class="btn-modal reject" onclick="rejectUser('${user.cardCode}')">${tr('rejectBtn')}</button>
+                    `;
+                }
 
-            // ===== نمایش ایمیل با برچسب تغییر =====
-            const emailChanged = changedKeys.includes('communicationEmail');
-            const newEmail = emailChanged ? pending.communicationEmail : null;
-            let emailDisplay = user.communicationEmail || tr('noEmail');
-            let emailBadge = '';
-            
-            if (emailChanged && newEmail) {
-                emailDisplay = `${user.communicationEmail || '---'} ➜ ${newEmail}`;
-                emailBadge = `<span class="email-change-badge">✏️ ${tr('changeBadge')}</span>`;
-            }
-
-            // ===== ساخت بدنه مودال =====
-            const body = document.getElementById('modalBody');
-            body.innerHTML = `
-                <div class="info-row ${hl('cardCode')}"><div class="info-label">کد کارت:</div><div class="info-value" style="font-family: monospace;">${user.cardCode}</div></div>
-                <div class="info-row ${hl('optionalCode')}"><div class="info-label">کد اختیاری:</div><div class="info-value" style="font-family: monospace; color:#d4af37;">${user.optionalCode || tr('noEmail')}</div></div>
-                <div class="info-row"><div class="info-label">رتبه ثبت‌نام:</div><div class="info-value">${user.rank}</div></div>
-                <div class="info-row"><div class="info-label">کشور (از IP):</div><div class="info-value">${user.country || '---'}</div></div>
-                <div class="info-row"><div class="info-label">تاریخ ثبت‌نام:</div><div class="info-value">${user.registrationDate ? new Date(user.registrationDate).toLocaleDateString('fa-IR') : '---'}</div></div>
-                ${user.lastEditRequest ? `<div class="info-row"><div class="info-label">تاریخ آخرین درخواست ویرایش:</div><div class="info-value">${new Date(user.lastEditRequest).toLocaleString('fa-IR')}</div></div>` : ''}
-                <div class="info-row"><div class="info-label">نشان:</div><div class="info-value"><span class="badge badge-${user.badge}">${user.badge === 'golden' ? tr('badgeGolden') : user.badge === 'silver' ? tr('badgeSilver') : tr('badgeBronze')}</span></div></div>
-                <div class="info-row"><div class="info-label">وضعیت:</div><div class="info-value"><span class="${status === 'pending_edit' ? 'badge-edit' : 'badge-' + status}">${statusText}</span></div></div>
+                document.getElementById('userModal').classList.add('active');
                 
-                <!-- ===== ارزش‌های فرهنگی با شماره و برچسب تغییر ===== -->
-                <div class="info-row ${hl('values')}">
-                    <div class="info-label">${tr('valuesTitle')}:</div>
-                    <div class="info-value">${valuesHtml}</div>
-                </div>
-                
-                <!-- ===== ایمیل با برچسب تغییر ===== -->
-                <div class="info-row ${hl('communicationEmail')}">
-                    <div class="info-label">ایمیل ارتباطی:</div>
-                    <div class="info-value">${emailDisplay} ${emailBadge}</div>
-                </div>
-                
-                <div class="info-row"><div class="info-label">اجازه ارتباط:</div><div class="info-value">${user.allowConnection ? tr('allowYes') : tr('allowNo')}</div></div>
-                ${user.culturalInfo ? `<div class="info-row"><div class="info-label">اطلاعات فرهنگی:</div><div class="info-value">${user.culturalInfo}</div></div>` : ''}
-            `;
-
-            // ===== دکمه‌های اقدام =====
-            const actions = document.getElementById('modalActions');
-            if (status === 'pending_edit') {
-                actions.innerHTML = `
-                    <button class="btn-modal approve" onclick="approveUser('${user.cardCode}')">${tr('approveEditBtn')}</button>
-                    <button class="btn-modal reject" onclick="rejectEditUser('${user.cardCode}')">${tr('rejectEditBtn')}</button>
-                `;
-            } else {
-                actions.innerHTML = `
-                    <button class="btn-modal approve" onclick="approveUser('${user.cardCode}')">${tr('approveBtn')}</button>
-                    <button class="btn-modal reject" onclick="rejectUser('${user.cardCode}')">${tr('rejectBtn')}</button>
-                `;
+            } catch (error) {
+                console.error('Error in viewUser:', error);
+                alert('خطا در نمایش اطلاعات کاربر: ' + error.message);
             }
-
-            document.getElementById('userModal').classList.add('active');
         }
-        // ================================================================
-        // ===== پایان تابع viewUser اصلاح شده =============================
         // ================================================================
 
         function closeModal() {
