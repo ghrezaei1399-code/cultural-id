@@ -1,63 +1,111 @@
+// api/update-user.js
 module.exports = async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
   const token = process.env.GH_TOKEN;
-  if (!token) return res.status(500).json({ error: 'GH_TOKEN is not configured' });
-
-  const { code } = req.query;
-  const updates = req.body;
-  if (!code) return res.status(400).json({ error: 'کد کارت الزامی است' });
-
-  const owner = 'ghrezaei1399-code';
-  const repo = 'cultural-id';
-  const path = `data/active/${code}.json`;
+  if (!token) {
+    return res.status(500).json({ error: 'GH_TOKEN not configured' });
+  }
 
   try {
-    const fileResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
-      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
-    });
-    if (!fileResponse.ok) throw new Error('کاربر یافت نشد');
-
-    const fileData = await fileResponse.json();
-    const jsonString = Buffer.from(fileData.content, 'base64').toString('utf8');
-    const userData = JSON.parse(jsonString);
-
-    // ⭐ جلوگیری از ویرایش مجدد اگر قبلاً قفل شده است
-    if (userData.editLocked) {
-      return res.status(403).json({ error: 'شما قبلاً از حق ویرایش خود استفاده کرده‌اید و امکان تغییر مجدد وجود ندارد.' });
+    let body = '';
+    for await (const chunk of req) {
+      body += chunk;
     }
-
-    // ⭐ ذخیره نسخه پشتیبان قبل از اعمال تغییرات
-    userData.previousValues = {
-      values: userData.values,
-      optionalCode: userData.optionalCode,
-      communicationEmail: userData.communicationEmail
-    };
-
-    // اعمال تغییرات جدید
-    if (updates.values) userData.values = updates.values;
-    if (updates.optionalCode !== undefined) {
-      userData.optionalCode = updates.optionalCode;
-      const parts = userData.cardCode.split('-');
-      const opt = updates.optionalCode.trim();
-      userData.displayCode = opt ? `CIM - ${parts[1]} - ${parts[2]} - ${opt}` : `CIM - ${parts[1]} - ${parts[2]}`;
-    }
-    if (updates.communicationEmail !== undefined) userData.communicationEmail = updates.communicationEmail;
     
-    userData.status = 'pending_edit';
-    userData.lastEditRequest = new Date().toISOString();
+    let parsedBody;
+    try {
+      parsedBody = JSON.parse(body);
+    } catch (e) {
+      return res.status(400).json({ error: 'Invalid JSON in request body' });
+    }
 
-    const newJsonString = JSON.stringify(userData, null, 2);
-    const newContent = Buffer.from(newJsonString, 'utf8').toString('base64');
+    const { cardCode, communicationEmail, values, priorities, updateIndex } = parsedBody;
 
-    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
-      method: 'PUT',
-      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: `Edit request for ${code}`, content: newContent, sha: fileData.sha, branch: 'main' })
+    if (!cardCode) {
+      return res.status(400).json({ error: 'کد کارت الزامی است' });
+    }
+
+    const owner = 'ghrezaei1399-code';
+    const repo = 'cultural-id';
+    const userPath = `data/active/${cardCode}.json`;
+
+    // دریافت اطلاعات کاربر
+    const userRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
     });
 
-    return res.status(200).json({ success: true, message: 'درخواست ویرایش ثبت شد.' });
+    if (!userRes.ok) {
+      if (userRes.status === 404) {
+        return res.status(404).json({ error: 'کاربر یافت نشد' });
+      }
+      return res.status(userRes.status).json({ error: 'خطا در دریافت اطلاعات کاربر' });
+    }
+
+    const userDataRaw = await userRes.json();
+    const userData = JSON.parse(Buffer.from(userDataRaw.content, 'base64').toString('utf8'));
+
+    // ===== ذخیره تغییرات =====
+    let changedFields = [];
+
+    // ۱. تغییر ایمیل
+    if (communicationEmail !== undefined) {
+      userData.communicationEmail = communicationEmail;
+      changedFields.push('communicationEmail');
+    }
+
+    // ۲. تغییر ارزش‌ها (تکی یا کامل)
+    if (values && priorities) {
+      if (updateIndex !== undefined) {
+        // تغییر تکی
+        if (userData.values && userData.values[updateIndex] !== undefined) {
+          userData.values[updateIndex] = values[updateIndex];
+          userData.priorities[updateIndex] = priorities[updateIndex];
+          changedFields.push(`value_${updateIndex}`);
+        }
+      } else {
+        // تغییر کامل
+        userData.values = values;
+        userData.priorities = priorities;
+        changedFields.push('values');
+      }
+    }
+
+    // ثبت درخواست ویرایش
+    if (!userData.pendingChanges) {
+      userData.pendingChanges = [];
+    }
+    userData.pendingChanges = [...new Set([...userData.pendingChanges, ...changedFields])];
+    userData.lastEditRequest = new Date().toISOString();
+    userData.status = 'pending_edit';
+
+    const newContent = Buffer.from(JSON.stringify(userData, null, 2), 'utf8').toString('base64');
+
+    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: `Edit request for ${cardCode}`,
+        content: newContent,
+        sha: userDataRaw.sha,
+        branch: 'main'
+      })
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'تغییرات با موفقیت ثبت شد و منتظر تأیید ادمین است.',
+      changedFields: changedFields,
+      pendingChanges: userData.pendingChanges
+    });
+
   } catch (error) {
+    console.error('Update User Error:', error);
     return res.status(500).json({ error: error.message });
   }
-}
+};
