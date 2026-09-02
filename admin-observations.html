@@ -108,9 +108,10 @@
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
-            max-height: 800px;
+            max-height: 900px;
             overflow-y: auto;
             padding-left: 0.3rem;
+            padding-right: 0.3rem;
         }
         .observations-list::-webkit-scrollbar {
             width: 6px;
@@ -301,10 +302,12 @@
         
         .scroll-hint {
             text-align: center;
-            padding: 0.5rem;
+            padding: 0.8rem;
             color: #888;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             border-top: 1px solid rgba(212,175,55,0.1);
+            margin-top: 0.5rem;
+            font-weight: 700;
         }
         
         .btn-back-bottom {
@@ -396,6 +399,7 @@
         
         function renderObservations() {
             const container = document.getElementById('observationsList');
+            
             let filtered = allObservations;
             if (currentFilter === 'pending') filtered = filtered.filter(o => o.status === 'pending');
             else if (currentFilter === 'approved') filtered = filtered.filter(o => o.status === 'approved' && o.score !== 5);
@@ -407,12 +411,14 @@
                 return;
             }
             
-            const showCount = 5;
-            const displayed = filtered.slice(0, showCount);
-            const remaining = filtered.length - showCount;
+            // ===== نمایش همه مشاهدات در لیست با اسکرول =====
+            let html = filtered.map(obs => renderObservationCard(obs)).join('');
             
-            let html = displayed.map(obs => renderObservationCard(obs)).join('');
-            if (remaining > 0) html += `<div class="scroll-hint">⬇️ ${remaining} مشاهده دیگر وجود دارد (اسکرول کنید)</div>`;
+            // ===== اگر بیش از ۵ مورد باشد، پیام اسکرول =====
+            if (filtered.length > 5) {
+                html += `<div class="scroll-hint">⬇️ ${filtered.length} مشاهده وجود دارد (اسکرول کنید)</div>`;
+            }
+            
             container.innerHTML = html;
         }
         
