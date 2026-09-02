@@ -47,37 +47,37 @@ module.exports = async function handler(req, res) {
     const userDataRaw = await userRes.json();
     const userData = JSON.parse(Buffer.from(userDataRaw.content, 'base64').toString('utf8'));
 
-    // ===== ذخیره تغییرات =====
-    let changedFields = [];
+    // ===== ذخیره تغییرات به صورت آبجکت =====
+    if (!userData.pendingChanges) {
+      userData.pendingChanges = {};
+    }
 
     // ۱. تغییر ایمیل
     if (communicationEmail !== undefined) {
-      userData.communicationEmail = communicationEmail;
-      changedFields.push('communicationEmail');
+      userData.pendingChanges.communicationEmail = communicationEmail;
     }
 
     // ۲. تغییر ارزش‌ها (تکی یا کامل)
     if (values && priorities) {
       if (updateIndex !== undefined) {
-        // تغییر تکی
-        if (userData.values && userData.values[updateIndex] !== undefined) {
-          userData.values[updateIndex] = values[updateIndex];
-          userData.priorities[updateIndex] = priorities[updateIndex];
-          changedFields.push(`value_${updateIndex}`);
-        }
+        // تغییر تکی - مقدار جدید را ذخیره کن
+        const newValue = values[updateIndex];
+        const newPriority = priorities[updateIndex];
+        
+        // ذخیره مقدار جدید در pendingChanges
+        userData.pendingChanges[`value_${updateIndex}`] = newValue;
+        
+        // همچنین اگر می‌خواهید اولویت هم ذخیره شود:
+        userData.pendingChanges[`priority_${updateIndex}`] = newPriority;
+        
       } else {
         // تغییر کامل
-        userData.values = values;
-        userData.priorities = priorities;
-        changedFields.push('values');
+        userData.pendingChanges.values = values;
+        userData.pendingChanges.priorities = priorities;
       }
     }
 
-    // ثبت درخواست ویرایش
-    if (!userData.pendingChanges) {
-      userData.pendingChanges = [];
-    }
-    userData.pendingChanges = [...new Set([...userData.pendingChanges, ...changedFields])];
+    // ثبت زمان درخواست
     userData.lastEditRequest = new Date().toISOString();
     userData.status = 'pending_edit';
 
@@ -100,7 +100,6 @@ module.exports = async function handler(req, res) {
     return res.status(200).json({
       success: true,
       message: 'تغییرات با موفقیت ثبت شد و منتظر تأیید ادمین است.',
-      changedFields: changedFields,
       pendingChanges: userData.pendingChanges
     });
 
