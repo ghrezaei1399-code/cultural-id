@@ -127,7 +127,8 @@
         body.dark .module-cancel { background: rgba(90, 40, 40, 0.7); border-color: rgba(241, 148, 138, 0.5); color: #f1948a; }
 
         .golden-row {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.2rem; 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.2rem; 
             margin: 2rem 0; padding: 1.5rem; 
             background: linear-gradient(135deg, rgba(255, 248, 220, 0.4), rgba(253, 246, 227, 0.6)); 
             border-radius: 32px; border: 1px solid rgba(212, 175, 55, 0.3);
@@ -139,10 +140,10 @@
         }
         .golden-btn {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 1.5rem 1rem; border-radius: 28px; text-decoration: none; text-align: center;
-            font-weight: 900; font-size: 1.1rem; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            min-height: 120px; position: relative; overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1); border: none;
+            padding: 1.2rem 0.8rem; border-radius: 28px; text-decoration: none; text-align: center;
+            font-weight: 900; font-size: 1rem; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            min-height: 100px; position: relative; overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08); border: none;
         }
         .golden-btn::after {
             content: ''; position: absolute; bottom: 0; right: 0; width: 100%; height: 4px;
@@ -150,7 +151,7 @@
             transform: translateX(100%); transition: 0.6s;
         }
         .golden-btn:hover::after { transform: translateX(-100%); }
-        .golden-btn:hover { transform: translateY(-6px) scale(1.03); box-shadow: 0 15px 35px rgba(0,0,0,0.15); }
+        .golden-btn:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 15px 35px rgba(0,0,0,0.12); }
         
         .btn-register { 
             background: linear-gradient(135deg, #d4af37 0%, #f9e79f 50%, #d4af37 100%); 
@@ -214,13 +215,33 @@
         }
         body.dark .golden-gallery-box { background: linear-gradient(135deg, #3a2f20, #2a2418); border-color: #d4af37; }
         
-        .gallery-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
-        .gallery-title { font-size: 1.4rem; font-weight: 900; color: #8a6d1f; display: flex; align-items: center; gap: 0.5rem; }
+        .gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .gallery-title {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: #8a6d1f;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
         body.dark .gallery-title { color: #f9e79f; }
         
         .filter-select {
-            padding: 0.6rem 1.2rem; border-radius: 20px; border: 1px solid #d4af37;
-            background: #fff; color: #8a6d1f; font-weight: 700; cursor: pointer; outline: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            border: 1px solid #d4af37;
+            background: #fff;
+            color: #8a6d1f;
+            font-weight: 700;
+            cursor: pointer;
+            outline: none;
         }
 
         .achievements-list { display: flex; flex-direction: column; gap: 0.8rem; max-height: 400px; overflow-y: auto; padding-right: 0.5rem; }
@@ -239,23 +260,43 @@
         .item-meta { font-size: 0.75rem; color: #8a6d1f; font-weight: 600; }
         
         .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center;
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
             backdrop-filter: blur(5px);
         }
         .modal-overlay.active { display: flex; animation: fadeIn 0.3s; }
         .modal-content {
-            background: #fff; width: 90%; max-width: 800px; max-height: 90vh;
-            border-radius: 24px; overflow-y: auto; position: relative;
+            background: #fff;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            border-radius: 24px;
+            overflow-y: auto;
+            position: relative;
             box-shadow: 0 25px 50px rgba(0,0,0,0.3);
         }
         body.dark .modal-content { background: #2a2418; color: #f0e8d0; }
         .modal-media { width: 100%; max-height: 400px; object-fit: contain; background: #000; }
         .modal-body { padding: 2rem; }
         .modal-close {
-            position: absolute; top: 1rem; right: 1rem; background: rgba(0,0,0,0.5);
-            color: #fff; width: 40px; height: 40px; border-radius: 50%; border: none;
-            font-size: 1.5rem; cursor: pointer; z-index: 10;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 10;
         }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
@@ -268,7 +309,7 @@
             .site-title { font-size: 1.3rem; }
             .modules { grid-template-columns: 1fr 1fr; }
             .golden-row { grid-template-columns: 1fr; padding: 1rem; gap: 1rem; }
-            .golden-btn { min-height: 100px; font-size: 1rem; padding: 1.2rem 0.8rem; }
+            .golden-btn { min-height: 80px; font-size: 0.9rem; padding: 1rem 0.8rem; }
             .bottom-modules-wrapper { grid-template-columns: 1fr !important; }
             .real-card-sample { transform: none; max-width: 100%; }
             .gallery-header { flex-direction: column; text-align: center; }
@@ -337,6 +378,7 @@
         <p style="text-align: center; margin-top: 1rem; font-size: 0.8rem; opacity: 0.8;">This is exactly the beautiful card you will receive after registration.</p>
     </div>
 
+    <!-- ===== Golden Row with 4 Modules ===== -->
     <div class="golden-row">
         <a href="register-en.html" class="golden-btn btn-register">
             <span style="font-size:1.8rem; margin-bottom:0.5rem;">🪪</span>
@@ -350,15 +392,33 @@
             <span style="font-size:1.8rem; margin-bottom:0.5rem;">🏆</span>
             Achievements Gallery
         </a>
+        <a href="atlas-gallery.html" class="golden-btn btn-gallery" style="background: linear-gradient(135deg, #8a6d1f 0%, #d4af37 50%, #8a6d1f 100%); color: #fff;">
+            <span style="font-size:1.8rem; margin-bottom:0.5rem;">🏛️</span>
+            Atlas of Emergence
+        </a>
     </div>
     <div class="cta-note">No personal info • Completely anonymous • 2 minutes</div>
 
+    <!-- ===== Modules: Edit, Connect, Cancel ===== -->
     <div class="modules">
-        <a href="edit-en.html" class="module-btn module-edit"><span class="icon">✏️</span><span class="label">Edit Info</span><span class="desc">Only one change allowed</span></a>
-        <a href="request-en.html?type=connection" class="module-btn module-connect"><span class="icon">🤝</span><span class="label">Connect</span><span class="desc">With like-minded people</span></a>
-        <a href="request-en.html?type=delete" class="module-btn module-cancel"><span class="icon">🗑️</span><span class="label">Cancel</span><span class="desc">Delete account</span></a>
+        <a href="edit-en.html" class="module-btn module-edit">
+            <span class="icon">✏️</span>
+            <span class="label">Edit Info</span>
+            <span class="desc">Only one change allowed</span>
+        </a>
+        <a href="request-en.html?type=connection" class="module-btn module-connect">
+            <span class="icon">🤝</span>
+            <span class="label">Connect with Peers</span>
+            <span class="desc">Request connection with others</span>
+        </a>
+        <a href="request-en.html?type=delete" class="module-btn module-cancel">
+            <span class="icon">🗑️</span>
+            <span class="label">Cancel Membership</span>
+            <span class="desc">Delete your account</span>
+        </a>
     </div>
 
+    <!-- ===== Bottom Modules ===== -->
     <div class="bottom-modules-wrapper">
         <div class="bottom-module bottom-about">
             <h3>📖 About Project</h3>
