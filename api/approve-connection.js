@@ -9,7 +9,7 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: 'Token is not configured' });
   }
 
-  const { fileName, action, issueNumber, type, moduleType, analysis, score } = req.body;
+  const { fileName, action, issueNumber, type, moduleType, analysis, score, selected } = req.body;
   const owner = 'ghrezaei1399-code';
   const repo = 'cultural-id';
 
@@ -216,6 +216,48 @@ ${guide.policy}
         return res.status(200).json({
           success: true,
           message: '⭐ مشاهده با امتیاز ۵ به گالری اطلس ظهور ارسال شد.'
+        });
+      }
+
+      // ===== انتخاب هم‌فکران توسط ادمین =====
+      if (action === 'select_referral' && selected) {
+        // دریافت نتیجه ماژول
+        const modulePath = `data/module-results/${issueNumber}.json`;
+        const moduleRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${modulePath}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!moduleRes.ok) {
+          return res.status(404).json({ error: 'نتیجه‌ی ماژول یافت نشد' });
+        }
+        
+        const moduleDataRaw = await moduleRes.json();
+        const moduleData = JSON.parse(Buffer.from(moduleDataRaw.content, 'base64').toString('utf8'));
+        
+        // به‌روزرسانی انتخاب‌ها
+        moduleData.moduleResult.selected = selected;
+        moduleData.moduleResult.status = 'completed';
+        moduleData.updatedAt = new Date().toISOString();
+        
+        const newContent = Buffer.from(JSON.stringify(moduleData, null, 2), 'utf8').toString('base64');
+        
+        await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${modulePath}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: `Referral selected for issue #${issueNumber}`,
+            content: newContent,
+            sha: moduleDataRaw.sha,
+            branch: 'main'
+          })
+        });
+
+        return res.status(200).json({
+          success: true,
+          message: `${selected.length} هم‌فکر با موفقیت انتخاب شدند.`
         });
       }
 
