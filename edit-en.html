@@ -3,224 +3,445 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Edit Information | Global Smart Cultural ID</title>
+    <title>Edit Info | Global Smart Cultural ID</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', 'Vazir', sans-serif; min-height: 100vh; padding: 0.8rem; background: linear-gradient(135deg, #fdf6e3 0%, #e8f4f8 50%, #f5e6d3 100%); background-attachment: fixed; color: #2a1a0a; }
-        body.dark { background: linear-gradient(135deg, #3a2f20 0%, #2a2418 50%, #4a3a28 100%); color: #f0e8d0; }
-        .container { max-width: 700px; width: 100%; margin: 0 auto; }
-        .header { text-align: center; padding: 1rem; background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(253, 246, 227, 0.8)); border-radius: 20px; border: 2px solid rgba(212, 175, 55, 0.4); box-shadow: 0 6px 20px rgba(212, 175, 55, 0.15); margin-bottom: 0.8rem; }
-        body.dark .header { background: linear-gradient(135deg, rgba(74, 58, 40, 0.7), rgba(58, 47, 32, 0.8)); border-color: rgba(212, 175, 55, 0.5); }
-        .logo-wrap { display: flex; align-items: center; justify-content: center; gap: 0.8rem; }
-        .main-logo { width: 60px; height: 60px; object-fit: contain; filter: drop-shadow(0 4px 12px rgba(212, 175, 55, 0.4)); }
-        .title-wrap h1 { font-size: 1.2rem; font-weight: 900; color: #8a6d1f; }
-        body.dark .title-wrap h1 { color: #f9e79f; }
-        .subtitle { font-size: 0.75rem; color: #6a5a3a; margin-top: 0.3rem; }
-        body.dark .subtitle { color: #c8b890; }
+        body {
+            font-family: 'Segoe UI', 'Vazir', sans-serif;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            background: linear-gradient(135deg, #fdf6e3 0%, #e8f4f8 50%, #f5e6d3 100%);
+            color: #2a1a0a;
+        }
+        body.dark {
+            background: linear-gradient(135deg, #3a2f20 0%, #2a2418 50%, #4a3a28 100%);
+            color: #f0e8d0;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #8a6d1f;
+            text-align: center;
+            margin-bottom: 0.2rem;
+        }
+        body.dark .page-title { color: #f9e79f; }
+        .page-subtitle {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #6a5a3a;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(212,175,55,0.15);
+            padding-bottom: 1rem;
+        }
+        body.dark .page-subtitle { color: #c8b890; }
         
-        .message-box { display: none; padding: 1rem; border-radius: 16px; text-align: center; margin-bottom: 0.8rem; font-size: 0.9rem; font-weight: 600; line-height: 1.6; }
-        .message-box.success { display: block; background: rgba(39, 174, 96, 0.15); border: 2px solid rgba(39, 174, 96, 0.4); color: #1e7a1e; }
-        body.dark .message-box.success { color: #82e0aa; }
-        .message-box.error { display: block; background: rgba(220, 80, 60, 0.15); border: 2px solid rgba(220, 80, 60, 0.4); color: #a93226; }
-        body.dark .message-box.error { color: #f1948a; }
-        .message-box.info { display: block; background: rgba(212, 175, 55, 0.15); border: 2px solid rgba(212, 175, 55, 0.4); color: #8a6d1f; }
-        body.dark .message-box.info { color: #f9e79f; }
-
-        .code-entry-box { background: rgba(255, 255, 255, 0.7); border: 2px solid rgba(212, 175, 55, 0.4); border-radius: 20px; padding: 2rem; text-align: center; margin-bottom: 1rem; }
-        body.dark .code-entry-box { background: rgba(0, 0, 0, 0.3); border-color: rgba(212, 175, 55, 0.5); }
-        .code-entry-box input { width: 100%; max-width: 300px; padding: 0.8rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); font-family: 'Courier New', monospace; font-size: 1.1rem; text-align: center; margin-bottom: 1rem; }
-        body.dark .code-entry-box input { background: rgba(0,0,0,0.3); color: #f0e8d0; border-color: rgba(255,255,255,0.1); }
-
-        .value-box { border-radius: 18px; padding: 0.9rem 1rem; margin-bottom: 0.6rem; border: 2px solid; }
-        .value-box .value-title { font-weight: 800; font-size: 0.95rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
-        .value-box textarea { width: 100%; min-height: 90px; padding: 0.7rem; border-radius: 12px; border: 1px solid rgba(0, 0, 0, 0.1); background: rgba(255, 255, 255, 0.7); font-family: inherit; font-size: 0.85rem; color: #2a1a0a; resize: vertical; }
-        body.dark .value-box textarea { background: rgba(0, 0, 0, 0.3); color: #f0e8d0; border-color: rgba(255, 255, 255, 0.1); }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #2a1a0a;
+            margin-bottom: 0.3rem;
+        }
+        body.dark .form-group label { color: #e8d8c8; }
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 16px;
+            border: 2px solid rgba(212,175,55,0.2);
+            background: rgba(255,255,255,0.5);
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: #1a0a0a;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        body.dark .form-group input {
+            background: rgba(0,0,0,0.15);
+            color: #f0e8d0;
+            border-color: rgba(212,175,55,0.15);
+        }
+        .form-group input:focus {
+            border-color: #d4af37;
+            box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
+        }
         
-        .value-1 { background: rgba(255, 248, 220, 0.85); border-color: rgba(212, 175, 55, 0.5); } body.dark .value-1 { background: rgba(74, 58, 40, 0.7); } .value-1 .value-title { color: #8a6d1f; } body.dark .value-1 .value-title { color: #f9e79f; }
-        .value-2 { background: rgba(220, 240, 255, 0.85); border-color: rgba(100, 170, 220, 0.5); } body.dark .value-2 { background: rgba(40, 60, 80, 0.7); } .value-2 .value-title { color: #2874a6; } body.dark .value-2 .value-title { color: #85c1e9; }
-        .value-3 { background: rgba(220, 245, 220, 0.85); border-color: rgba(100, 180, 100, 0.5); } body.dark .value-3 { background: rgba(40, 70, 40, 0.7); } .value-3 .value-title { color: #1e7a1e; } body.dark .value-3 .value-title { color: #82e0aa; }
-        .value-4 { background: rgba(240, 225, 250, 0.85); border-color: rgba(160, 120, 200, 0.5); } body.dark .value-4 { background: rgba(70, 50, 90, 0.7); } .value-4 .value-title { color: #6a3d9a; } body.dark .value-4 .value-title { color: #d2b4de; }
-        .value-5 { background: rgba(220, 245, 245, 0.85); border-color: rgba(80, 180, 180, 0.5); } body.dark .value-5 { background: rgba(40, 70, 70, 0.7); } .value-5 .value-title { color: #148f77; } body.dark .value-5 .value-title { color: #76d7c4; }
-        .value-6 { background: rgba(255, 225, 215, 0.85); border-color: rgba(220, 120, 100, 0.5); } body.dark .value-6 { background: rgba(90, 50, 50, 0.7); } .value-6 .value-title { color: #a93226; } body.dark .value-6 .value-title { color: #f1948a; }
-        .value-7 { background: rgba(255, 235, 200, 0.85); border-color: rgba(230, 160, 50, 0.5); } body.dark .value-7 { background: rgba(80, 60, 30, 0.7); } .value-7 .value-title { color: #b7791f; } body.dark .value-7 .value-title { color: #f3c46a; }
-
-        .form-group { background: rgba(220, 240, 255, 0.85); border-radius: 18px; padding: 0.9rem 1rem; margin-bottom: 0.6rem; border: 2px solid rgba(100, 170, 220, 0.4); }
-        body.dark .form-group { background: rgba(40, 60, 80, 0.7); border-color: rgba(133, 193, 233, 0.4); }
-        .form-group label { display: block; font-weight: 700; font-size: 0.85rem; color: #2874a6; margin-bottom: 0.4rem; } body.dark .form-group label { color: #85c1e9; }
-        .form-group input { width: 100%; padding: 0.6rem 0.8rem; border-radius: 12px; border: 1px solid rgba(0, 0, 0, 0.1); background: rgba(255, 255, 255, 0.7); font-family: inherit; font-size: 0.85rem; color: #2a1a0a; }
-        body.dark .form-group input { background: rgba(0, 0, 0, 0.3); color: #f0e8d0; border-color: rgba(255, 255, 255, 0.1); }
-        .form-group small { display: block; margin-top: 0.3rem; font-size: 0.7rem; color: #6a5a3a; opacity: 0.8; } body.dark .form-group small { color: #c8b890; }
-
-        .btn-group { display: flex; gap: 0.6rem; margin-top: 1rem; flex-wrap: wrap; }
-        .btn { flex: 1; padding: 0.8rem 1.2rem; border-radius: 40px; font-weight: 800; font-size: 0.9rem; text-decoration: none; text-align: center; border: none; cursor: pointer; transition: all 0.3s ease; min-width: 120px; }
-        .btn-primary { background: linear-gradient(135deg, #d4af37 0%, #f9e79f 50%, #d4af37 100%); color: #2a1a0a; box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4); }
-        .btn-primary:hover { transform: translateY(-2px); } .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-        .btn-secondary { background: rgba(255, 255, 255, 0.6); color: #2a1a0a; border: 2px solid rgba(212, 175, 55, 0.4); }
-        body.dark .btn-secondary { background: rgba(0, 0, 0, 0.3); color: #f9e79f; border-color: rgba(212, 175, 55, 0.5); }
-
-        .hidden { display: none !important; }
-        .note { text-align: center; font-size: 0.7rem; color: #6a5a3a; margin-top: 1rem; padding-top: 0.8rem; border-top: 1px solid rgba(212, 175, 55, 0.2); } body.dark .note { color: #c8b890; }
+        .value-item {
+            background: rgba(255,255,255,0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(212,175,55,0.15);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        body.dark .value-item { background: rgba(0,0,0,0.1); }
+        .value-item .value-label {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #8a6d1f;
+            min-width: 100px;
+        }
+        body.dark .value-item .value-label { color: #f9e79f; }
+        .value-item .value-input {
+            flex: 1;
+            min-width: 150px;
+            padding: 0.5rem 0.8rem;
+            border-radius: 8px;
+            border: 1px solid rgba(212,175,55,0.2);
+            background: rgba(255,255,255,0.3);
+            font-family: inherit;
+            font-size: 0.85rem;
+            color: #1a0a0a;
+            outline: none;
+        }
+        body.dark .value-item .value-input {
+            background: rgba(0,0,0,0.1);
+            color: #f0e8d0;
+            border-color: rgba(212,175,55,0.1);
+        }
+        .value-item .value-input:focus {
+            border-color: #d4af37;
+            box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
+        }
+        
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #d4af37, #f9e79f);
+            color: #2a1a0a;
+            box-shadow: 0 4px 15px rgba(212,175,55,0.25);
+        }
+        body.dark .btn-primary { background: linear-gradient(135deg, #8a6d1f, #d4af37); color: #fff; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(212,175,55,0.35); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .btn-secondary {
+            background: rgba(255,255,255,0.5);
+            color: #4a3a2a;
+            border: 1px solid rgba(212,175,55,0.3);
+        }
+        body.dark .btn-secondary { background: rgba(0,0,0,0.2); color: #f0e8d0; }
+        .btn-secondary:hover { background: rgba(255,255,255,0.8); transform: translateY(-2px); }
+        body.dark .btn-secondary:hover { background: rgba(255,255,255,0.05); }
+        .btn-success {
+            background: rgba(39,174,96,0.15);
+            color: #1e7a1e;
+            border: 1px solid rgba(39,174,96,0.2);
+        }
+        body.dark .btn-success { color: #82e0aa; background: rgba(39,174,96,0.05); }
+        .btn-success:hover { background: rgba(39,174,96,0.25); }
+        
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .btn-group .btn { flex: 1; min-width: 140px; }
+        
+        .message-box {
+            display: none;
+            padding: 1rem;
+            border-radius: 16px;
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        .message-box.success {
+            display: block;
+            background: rgba(50,200,50,0.05);
+            border: 1px solid rgba(50,200,50,0.05);
+            color: #0a5a0a;
+        }
+        .message-box.error {
+            display: block;
+            background: rgba(200,50,50,0.05);
+            border: 1px solid rgba(200,50,50,0.05);
+            color: #5a0a0a;
+        }
+        .message-box.info {
+            display: block;
+            background: rgba(50,150,200,0.05);
+            border: 1px solid rgba(50,150,200,0.05);
+            color: #0a4a6a;
+        }
+        
+        .note {
+            font-size: 0.7rem;
+            color: #6a5a3a;
+            margin-top: 1.5rem;
+            text-align: center;
+            opacity: 0.6;
+        }
+        body.dark .note { color: #a8a8b8; }
+        
+        .back-row { display: flex; justify-content: center; margin-top: 2rem; }
+        .btn-back {
+            padding: 0.7rem 2rem;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-decoration: none;
+            background: rgba(255,255,255,0.3);
+            color: #0a0a1a;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s;
+        }
+        body.dark .btn-back { color: #f0e8d0; background: rgba(0,0,0,0.1); }
+        .btn-back:hover { background: rgba(255,255,255,0.5); transform: translateY(-2px); }
+        body.dark .btn-back:hover { background: rgba(255,255,255,0.05); }
+        
+        .code-input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 16px;
+            border: 2px solid rgba(212,175,55,0.2);
+            background: rgba(255,255,255,0.5);
+            font-family: monospace;
+            font-size: 1rem;
+            text-align: center;
+            letter-spacing: 1px;
+            color: #1a0a0a;
+            outline: none;
+            transition: 0.3s;
+        }
+        body.dark .code-input {
+            background: rgba(0,0,0,0.15);
+            color: #f0e8d0;
+            border-color: rgba(212,175,55,0.15);
+        }
+        .code-input:focus {
+            border-color: #d4af37;
+            box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .value-item { flex-direction: column; align-items: stretch; }
+            .value-item .value-label { min-width: auto; }
+            .btn-group { flex-direction: column; }
+            .btn-group .btn { width: 100%; }
+        }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="header">
-        <div class="logo-wrap">
-            <img src="assets/logo-en.png" alt="Logo" class="main-logo" />
-            <div class="title-wrap">
-                <h1>Edit Cultural Information</h1>
-                <div class="subtitle">Global Smart Cultural Identity Card</div>
+    <div class="container">
+        <h1 class="page-title">✏️ Edit Information</h1>
+        <div class="page-subtitle">Edit cultural values and contact information</div>
+        
+        <div id="messageBox" class="message-box"></div>
+        
+        <div class="form-group">
+            <label>🔑 Cultural Identity Card Code</label>
+            <input type="text" id="cardCode" class="code-input" placeholder="e.g. CIM-1234-5678-ABCDE" />
+        </div>
+        
+        <button class="btn btn-primary" id="loadBtn" onclick="loadUserData()" style="width:100%;">🔍 Load Data</button>
+        
+        <div id="editSection" style="display:none; margin-top: 2rem;">
+            <div class="form-group">
+                <label>📧 Communication Email</label>
+                <div class="value-item">
+                    <span class="value-label">Email:</span>
+                    <input type="email" id="emailInput" class="value-input" placeholder="Enter your email" />
+                    <button class="btn btn-success" onclick="saveField('email')">💾 Save Email</button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>📋 Cultural Values (7 values)</label>
+                <div id="valuesContainer"></div>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="window.location.href='index-en.html'">↩ Back</button>
             </div>
         </div>
+        
+        <div class="back-row">
+            <a href="index-en.html" class="btn-back">↩ Back to Home</a>
+        </div>
+        
+        <div class="note">
+            🔒 Each change is saved separately and will be applied after admin approval.
+        </div>
     </div>
-
-    <div id="messageBox" class="message-box"></div>
-
-    <div id="codeEntrySection" class="code-entry-box">
-        <h3 style="margin-bottom: 1rem; color: #8a6d1f;">🔑 Enter Card Code</h3>
-        <p style="font-size: 0.85rem; margin-bottom: 1rem; color: #6a5a3a;">Please enter your card code to fetch your information.</p>
-        <input type="text" id="inputCardCode" placeholder="e.g., CIM-1234-5678-XXXX" />
-        <br>
-        <button class="btn btn-primary" onclick="fetchUserData()" style="max-width: 200px;">Fetch Information</button>
-    </div>
-
-    <form id="editForm" class="hidden">
-        <div class="form-group">
-            <label>🔑 Your Card Code (Unchangeable)</label>
-            <div style="background: rgba(212, 175, 55, 0.1); border: 2px solid rgba(212, 175, 55, 0.4); padding: 0.6rem; border-radius: 12px; font-family: 'Courier New', monospace; font-size: 1rem; color: #8a6d1f; font-weight: 700; text-align: center;" id="displayCardCode">---</div>
-        </div>
-
-        <div class="value-box value-1"><label class="value-title"> 1. Indigenous Values</label><textarea id="v1" required></textarea></div>
-        <div class="value-box value-2"><label class="value-title">📚 2. Individual Knowledge</label><textarea id="v2" required></textarea></div>
-        <div class="value-box value-3"><label class="value-title"> 3. Collective Cooperation</label><textarea id="v3" required></textarea></div>
-        <div class="value-box value-4"><label class="value-title">🌍 4. Cultural Diversity</label><textarea id="v4" required></textarea></div>
-        <div class="value-box value-5"><label class="value-title">️ 5. Global Sustainable Peace</label><textarea id="v5" required></textarea></div>
-        <div class="value-box value-6"><label class="value-title">🕊️ 6. Elimination of Violence</label><textarea id="v6" required></textarea></div>
-        <div class="value-box value-7"><label class="value-title">🔗 7. Cultural Unity</label><textarea id="v7" required></textarea></div>
-
-        <div class="form-group">
-            <label>🔑 Optional Code (up to 5 characters)</label>
-            <input type="text" id="optionalCode" maxlength="5" />
-            <small>This code will be displayed at the end of your card ID</small>
-        </div>
-
-        <div class="form-group">
-            <label>📧 Communication Email (Optional)</label>
-            <input type="email" id="communicationEmail" />
-            <small>Only used for connecting with like-minded people</small>
-        </div>
-
-        <div class="btn-group">
-            <button type="submit" class="btn btn-primary" id="submitBtn">💾 Save Changes</button>
-            <button type="button" class="btn btn-secondary" onclick="resetForm()">↩ Back & Enter New Code</button>
-        </div>
-    </form>
-
-    <div class="note">⚠️ Note: Your changes will be reviewed by the admin and applied upon approval.</div>
-</div>
-
-<script>
-    let currentCardCode = '';
-
-    function showMessage(text, type) {
-        const box = document.getElementById('messageBox');
-        box.innerHTML = text;
-        box.className = 'message-box ' + type;
-        box.style.display = 'block';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    function hideMessage() { document.getElementById('messageBox').style.display = 'none'; }
-
-    async function fetchUserData() {
-        const code = document.getElementById('inputCardCode').value.trim();
-        if (!code) { showMessage('❌ Please enter your card code.', 'error'); return; }
-
-        try {
-            showMessage('⏳ Fetching information...', 'info');
-            const response = await fetch(`/api/get-user?code=${code}`);
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.error || 'Card code not found.');
-
-            const user = data.user;
-            
-            // ⭐ Check edit lock
-            if (user.editLocked === true) {
-                showMessage('️ You have already edited your information and it was approved by the admin. Further editing is not allowed.', 'error');
-                return;
-            }
-            
-            // ⭐ Check if previous edit is still pending
-            if (user.status === 'pending_edit') {
-                showMessage('⚠️ You have already submitted an edit request that is still pending admin review. Please wait.', 'error');
-                return;
-            }
-
-            currentCardCode = code;
-
-            document.getElementById('displayCardCode').textContent = user.cardCode || code;
-            if (user.values && user.values.length === 7) {
-                document.getElementById('v1').value = user.values[0];
-                document.getElementById('v2').value = user.values[1];
-                document.getElementById('v3').value = user.values[2];
-                document.getElementById('v4').value = user.values[3];
-                document.getElementById('v5').value = user.values[4];
-                document.getElementById('v6').value = user.values[5];
-                document.getElementById('v7').value = user.values[6];
-            }
-            document.getElementById('optionalCode').value = user.optionalCode || '';
-            document.getElementById('communicationEmail').value = user.communicationEmail || '';
-
-            document.getElementById('codeEntrySection').classList.add('hidden');
-            document.getElementById('editForm').classList.remove('hidden');
-            hideMessage();
-        } catch (error) { showMessage(`❌ Error: ${error.message}`, 'error'); }
-    }
-
-    function resetForm() {
-        document.getElementById('editForm').classList.add('hidden');
-        document.getElementById('codeEntrySection').classList.remove('hidden');
-        document.getElementById('inputCardCode').value = '';
-        hideMessage(); currentCardCode = '';
-    }
-
-    document.getElementById('editForm').addEventListener('submit', async function(e) {
-        e.preventDefault(); hideMessage();
-        const submitBtn = document.getElementById('submitBtn');
-        submitBtn.disabled = true; submitBtn.textContent = '⏳ Submitting...';
-
-        try {
-            const values = [
-                document.getElementById('v1').value.trim(), document.getElementById('v2').value.trim(),
-                document.getElementById('v3').value.trim(), document.getElementById('v4').value.trim(),
-                document.getElementById('v5').value.trim(), document.getElementById('v6').value.trim(),
-                document.getElementById('v7').value.trim()
-            ];
-            for (let v of values) { if (!v) throw new Error('Please fill in all 7 cultural values.'); }
-
-            const userData = {
-                values: values,
-                optionalCode: document.getElementById('optionalCode').value.trim(),
-                communicationEmail: document.getElementById('communicationEmail').value.trim()
-            };
-
-            const response = await fetch(`/api/update-user?code=${currentCardCode}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(userData),
-            });
-            const result = await response.json();
-
-            if (response.ok && result.success) {
-                showMessage('✅ Changes and corrections will be saved upon admin approval, otherwise they will be canceled.', 'success');
-                submitBtn.textContent = '✅ Submitted';
-                setTimeout(() => { window.location.href = 'index-en.html'; }, 3000);
-            } else { throw new Error(result.error || 'Error saving changes'); }
-        } catch (error) {
-            console.error('Error:', error);
-            showMessage(`❌ Error: ${error.message}`, 'error');
-            submitBtn.disabled = false; submitBtn.textContent = '💾 Save Changes';
+    
+    <script>
+        let currentUser = null;
+        
+        function showMessage(text, type) {
+            const box = document.getElementById('messageBox');
+            box.textContent = text;
+            box.className = 'message-box ' + type;
+            box.style.display = 'block';
         }
-    });
-</script>
+        
+        function hideMessage() {
+            const box = document.getElementById('messageBox');
+            box.style.display = 'none';
+            box.className = 'message-box';
+        }
+        
+        async function loadUserData() {
+            const cardCode = document.getElementById('cardCode').value.trim();
+            if (!cardCode) {
+                showMessage('Please enter your card code.', 'error');
+                return;
+            }
+            
+            const btn = document.getElementById('loadBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Loading...';
+            hideMessage();
+            
+            try {
+                const response = await fetch('/api/get-user?cardCode=' + encodeURIComponent(cardCode));
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.error || 'Error loading data');
+                }
+                
+                currentUser = result.user;
+                displayUserData(currentUser);
+                document.getElementById('editSection').style.display = 'block';
+                showMessage('✅ User data loaded.', 'success');
+                
+            } catch (error) {
+                showMessage('❌ ' + error.message, 'error');
+            }
+            
+            btn.disabled = false;
+            btn.textContent = '🔍 Load Data';
+        }
+        
+        function displayUserData(user) {
+            document.getElementById('emailInput').value = user.communicationEmail || '';
+            
+            const container = document.getElementById('valuesContainer');
+            container.innerHTML = '';
+            
+            const values = user.values || [];
+            const priorities = user.priorities || [];
+            
+            for (let i = 0; i < 7; i++) {
+                const val = values[i] || '';
+                const priority = priorities[i] || 0;
+                
+                const div = document.createElement('div');
+                div.className = 'value-item';
+                div.innerHTML = `
+                    <span class="value-label">Value ${i+1}:</span>
+                    <input type="text" id="value-${i}" class="value-input" value="${val}" placeholder="Value ${i+1}" />
+                    <span class="value-label">Priority (1-7):</span>
+                    <input type="number" id="priority-${i}" class="value-input" value="${priority}" min="1" max="7" placeholder="Priority" style="max-width:80px;" />
+                    <button class="btn btn-success" onclick="saveValue(${i})">💾 Save</button>
+                `;
+                container.appendChild(div);
+            }
+        }
+        
+        async function saveField(field) {
+            const cardCode = document.getElementById('cardCode').value.trim();
+            if (!cardCode || !currentUser) {
+                showMessage('Please load user data first.', 'error');
+                return;
+            }
+            
+            hideMessage();
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '⏳ Saving...';
+            
+            try {
+                let updateData = { cardCode };
+                
+                if (field === 'email') {
+                    const email = document.getElementById('emailInput').value.trim();
+                    updateData.communicationEmail = email;
+                }
+                
+                const response = await fetch('/api/update-user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updateData)
+                });
+                
+                const result = await response.json();
+                if (!response.ok) {
+                    throw new Error(result.error || 'Error saving changes');
+                }
+                
+                showMessage('✅ Changes saved. Waiting for admin approval.', 'success');
+                
+            } catch (error) {
+                showMessage('❌ ' + error.message, 'error');
+            }
+            
+            btn.disabled = false;
+            btn.textContent = '💾 Save';
+        }
+        
+        async function saveValue(index) {
+            const cardCode = document.getElementById('cardCode').value.trim();
+            if (!cardCode || !currentUser) {
+                showMessage('Please load user data first.', 'error');
+                return;
+            }
+            
+            hideMessage();
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '⏳ Saving...';
+            
+            try {
+                const value = document.getElementById(`value-${index}`).value.trim();
+                const priority = parseInt(document.getElementById(`priority-${index}`).value) || 0;
+                
+                const values = [...(currentUser.values || [])];
+                const priorities = [...(currentUser.priorities || [])];
+                
+                values[index] = value;
+                priorities[index] = priority;
+                
+                const response = await fetch('/api/update-user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        cardCode,
+                        values,
+                        priorities,
+                        updateIndex: index
+                    })
+                });
+                
+                const result = await response.json();
+                if (!response.ok) {
+                    throw new Error(result.error || 'Error saving changes');
+                }
+                
+                currentUser.values = values;
+                currentUser.priorities = priorities;
+                
+                showMessage(`✅ Value ${index+1} saved. Waiting for admin approval.`, 'success');
+                
+            } catch (error) {
+                showMessage('❌ ' + error.message, 'error');
+            }
+            
+            btn.disabled = false;
+            btn.textContent = '💾 Save';
+        }
+    </script>
 </body>
 </html>
