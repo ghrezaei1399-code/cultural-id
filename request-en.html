@@ -60,8 +60,7 @@
         }
         body.dark .form-group label { color: #e8d8c8; }
         .form-group input,
-        .form-group textarea,
-        .form-group select {
+        .form-group textarea {
             width: 100%;
             padding: 0.8rem 1rem;
             border-radius: 16px;
@@ -74,21 +73,18 @@
             outline: none;
         }
         body.dark .form-group input,
-        body.dark .form-group textarea,
-        body.dark .form-group select {
+        body.dark .form-group textarea {
             background: rgba(255, 255, 255, 0.02);
             color: #e8d8c8;
             border-color: rgba(255, 255, 255, 0.02);
         }
         .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
+        .form-group textarea:focus {
             border-color: rgba(60, 30, 10, 0.05);
             background: rgba(255, 255, 255, 0.03);
         }
         body.dark .form-group input:focus,
-        body.dark .form-group textarea:focus,
-        body.dark .form-group select:focus {
+        body.dark .form-group textarea:focus {
             border-color: rgba(255, 255, 255, 0.05);
             background: rgba(255, 255, 255, 0.03);
         }
@@ -148,28 +144,6 @@
         }
         .btn-secondary:hover { background: rgba(60, 30, 10, 0.03); transform: scale(1.02); }
         body.dark .btn-secondary:hover { background: rgba(255, 255, 255, 0.03); }
-        .btn-success {
-            background: rgba(50, 200, 50, 0.1);
-            color: #0a5a0a;
-            border: 1px solid rgba(50, 200, 50, 0.2);
-        }
-        body.dark .btn-success {
-            background: rgba(50, 200, 50, 0.05);
-            color: #80b080;
-            border-color: rgba(50, 200, 50, 0.1);
-        }
-        .btn-success:hover { background: rgba(50, 200, 50, 0.2); transform: scale(1.02); }
-        .btn-warning {
-            background: rgba(255, 200, 50, 0.1);
-            color: #8a7a0a;
-            border: 1px solid rgba(255, 200, 50, 0.2);
-        }
-        body.dark .btn-warning {
-            background: rgba(255, 200, 50, 0.05);
-            color: #c8b080;
-            border-color: rgba(255, 200, 50, 0.1);
-        }
-        .btn-warning:hover { background: rgba(255, 200, 50, 0.2); transform: scale(1.02); }
         .note {
             text-align: center;
             font-size: 0.75rem;
@@ -209,28 +183,6 @@
             background: rgba(200, 50, 50, 0.01);
             border-color: rgba(200, 50, 50, 0.01);
         }
-        .message-box.info {
-            display: block;
-            background: rgba(50, 150, 200, 0.05);
-            border: 1px solid rgba(50, 150, 200, 0.05);
-            color: #0a4a6a;
-        }
-        body.dark .message-box.info {
-            color: #80b0c0;
-            background: rgba(50, 150, 200, 0.01);
-            border-color: rgba(50, 150, 200, 0.01);
-        }
-        .message-box.pending {
-            display: block;
-            background: rgba(255, 200, 50, 0.08);
-            border: 1px solid rgba(255, 200, 50, 0.15);
-            color: #8a7a0a;
-        }
-        body.dark .message-box.pending {
-            color: #c8b080;
-            background: rgba(255, 200, 50, 0.03);
-            border-color: rgba(255, 200, 50, 0.08);
-        }
         .theme-toggle {
             position: fixed;
             top: 1rem;
@@ -251,269 +203,39 @@
         }
         .theme-toggle:hover { transform: scale(1.1); }
         @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
-        
-        .status-box {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            text-align: center;
-        }
-        body.dark .status-box { background: rgba(0, 0, 0, 0.1); }
-        .status-box .big-icon { font-size: 2.5rem; display: block; margin-bottom: 0.5rem; }
-        .status-box h3 { color: #8a6d1f; margin-bottom: 0.3rem; }
-        body.dark .status-box h3 { color: #f9e79f; }
-        .status-box p { color: #4a3a2a; font-size: 0.9rem; line-height: 1.8; }
-        body.dark .status-box p { color: #d0c0b0; }
-        .connections-list {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 1rem;
-            margin-top: 1rem;
-            max-height: 300px;
-            overflow-y: auto;
-            text-align: left;
-        }
-        body.dark .connections-list { background: rgba(0, 0, 0, 0.1); }
-        .connections-list .email-item {
-            padding: 0.5rem;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
-            font-family: monospace;
-            font-size: 0.85rem;
-            color: #2874a6;
-            text-align: left;
-        }
-        body.dark .connections-list .email-item { color: #85c1e9; }
-        .invite-box {
-            background: rgba(52, 152, 219, 0.08);
-            border-radius: 16px;
-            padding: 1.5rem;
-            border: 2px solid rgba(52, 152, 219, 0.3);
-            text-align: center;
-        }
-        body.dark .invite-box { background: rgba(52, 152, 219, 0.05); border-color: rgba(52, 152, 219, 0.2); }
-        .invite-box .big-icon { font-size: 3rem; display: block; margin-bottom: 0.5rem; }
-        .invite-box h3 { color: #2874a6; margin-bottom: 0.5rem; }
-        body.dark .invite-box h3 { color: #85c1e9; }
-        .invite-box p { color: #4a3a2a; font-size: 0.9rem; line-height: 1.8; }
-        body.dark .invite-box p { color: #d0c0b0; }
-        .hidden { display: none !important; }
-        
-        .email-warning {
-            background: rgba(220, 53, 69, 0.08);
-            border: 2px solid rgba(220, 53, 69, 0.3);
-            border-radius: 16px;
-            padding: 1.5rem;
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-        body.dark .email-warning { background: rgba(220, 53, 69, 0.03); border-color: rgba(220, 53, 69, 0.2); }
-        .email-warning .big-icon { font-size: 2.5rem; display: block; margin-bottom: 0.5rem; }
-        .email-warning h3 { color: #c0392b; margin-bottom: 0.3rem; }
-        body.dark .email-warning h3 { color: #f1948a; }
-        .email-warning p { color: #4a3a2a; font-size: 0.9rem; line-height: 1.8; }
-        body.dark .email-warning p { color: #d0c0b0; }
-        
-        .tracking-box {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid rgba(52, 152, 219, 0.3);
-            text-align: center;
-        }
-        body.dark .tracking-box { background: rgba(0, 0, 0, 0.1); }
-        .tracking-box .big-icon { font-size: 2.5rem; display: block; margin-bottom: 0.5rem; }
-        .tracking-box h3 { color: #2874a6; margin-bottom: 0.3rem; }
-        body.dark .tracking-box h3 { color: #85c1e9; }
-        .tracking-box p { color: #4a3a2a; font-size: 0.9rem; line-height: 1.8; }
-        body.dark .tracking-box p { color: #d0c0b0; }
-
-        .bottom-modules {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.8rem;
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid rgba(212, 175, 55, 0.2);
-        }
-        .bottom-module {
-            text-align: center;
-            padding: 1rem 0.8rem;
-            border-radius: 20px;
-            transition: all 0.3s;
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(212, 175, 55, 0.15);
-        }
-        body.dark .bottom-module { background: rgba(0, 0, 0, 0.1); }
-        .bottom-module:hover { transform: translateY(-3px); }
-        .bottom-module .icon { font-size: 1.8rem; display: block; margin-bottom: 0.3rem; }
-        .bottom-module .label { font-weight: 700; font-size: 0.85rem; color: #8a6d1f; }
-        body.dark .bottom-module .label { color: #f9e79f; }
-        .bottom-module .desc { font-size: 0.65rem; opacity: 0.7; color: #4a3a2a; }
-        body.dark .bottom-module .desc { color: #c8b890; }
-        .bottom-module a { text-decoration: none; display: block; }
-        
-        @media (max-width: 768px) {
-            .bottom-modules { grid-template-columns: 1fr; }
-        }
     </style>
 </head>
 <body>
     <button class="theme-toggle" id="themeToggle"></button>
 
     <div class="container">
-        <!-- ===== Step 1: Authentication ===== -->
-        <div id="step1">
-            <h1 id="pageTitle">🤝 Request Connection</h1>
-            <div class="subtitle" id="pageSubtitle">Connect with others based on shared cultural values</div>
+        <h1 id="pageTitle">🤝 Request Connection</h1>
+        <div class="subtitle" id="pageSubtitle">Connect with others based on shared cultural values</div>
 
-            <div class="status-box">
-                <span class="big-icon">🔐</span>
-                <h3>Login with Membership Code</h3>
-                <p>Enter your cultural identity card code to continue</p>
+        <div id="messageBox" class="message-box"></div>
+
+        <form id="requestForm">
+            <input type="hidden" id="requestType" value="connection" />
+
+            <div class="form-group">
+                <label id="codeLabel">Your Card Code</label>
+                <input type="text" id="cardCode" placeholder="e.g. CIM-1234-5678-A" required />
             </div>
 
             <div class="form-group">
-                <label>Your Card Code</label>
-                <input type="text" id="authCardCode" placeholder="e.g. CIM-1234-5678-ABCDE" required />
-            </div>
-
-            <button onclick="verifyUser()" class="btn btn-primary" id="authBtn" style="width:100%;">🔍 Verify Code</button>
-
-            <div id="authError" class="message-box error" style="display:none; margin-top:1rem;"></div>
-
-            <!-- ===== Tracking Section ===== -->
-            <div class="tracking-box" style="margin-top:1.5rem; border-color: rgba(212, 175, 55, 0.3);">
-                <span class="big-icon">🔍</span>
-                <h3>Track Your Request</h3>
-                <p>If you have already submitted a request, enter your tracking code</p>
-                <div class="form-group" style="margin-top:0.5rem; margin-bottom:0.5rem;">
-                    <input type="text" id="trackingCode" placeholder="Enter tracking code" />
-                </div>
-                <button onclick="trackRequest()" class="btn btn-primary" style="width:100%;">🔍 Track</button>
-                <div id="trackingResult" class="message-box" style="margin-top:0.5rem;"></div>
-            </div>
-        </div>
-
-        <!-- ===== Step 2: Main Content ===== -->
-        <div id="step2" class="hidden">
-            <h1 id="pageTitle2">🤝 Request Connection</h1>
-            <div class="subtitle" id="pageSubtitle2">Connect with others based on shared cultural values</div>
-
-            <div id="messageBox" class="message-box"></div>
-
-            <!-- ===== Previous Request Status ===== -->
-            <div id="requestStatusBox" class="hidden">
-                <div class="status-box">
-                    <span class="big-icon" id="statusIcon">⏳</span>
-                    <h3 id="statusTitle">Under Review</h3>
-                    <p id="statusDesc">Your request is being reviewed by the admin.</p>
-                    <div id="statusDetail" class="message-box pending" style="display:none;"></div>
-                </div>
-            </div>
-
-            <!-- ===== Connections List ===== -->
-            <div id="connectionsBox" class="hidden">
-                <div class="status-box" style="border-color: #27ae60;">
-                    <span class="big-icon">✅</span>
-                    <h3 style="color: #27ae60;">Your Like-minded List</h3>
-                    <p>List of like-minded people found based on your shared values:</p>
-                    <div id="connectionsList" class="connections-list"></div>
-                    <div class="note" style="margin-top:1rem; border-top: none;">
-                        💡 Use these emails to connect directly with your like-minded people.
-                    </div>
-                </div>
-            </div>
-
-            <!-- ===== Warning: No Email Registered ===== -->
-            <div id="noEmailBox" class="hidden">
-                <div class="email-warning">
-                    <span class="big-icon">⚠️</span>
-                    <h3>Your email address is not registered!</h3>
-                    <p>To use the connection feature, you must first register your email address.</p>
-                </div>
-                <div class="btn-group">
-                    <a href="edit-en.html" class="btn btn-primary">✏️ Edit Info & Add Email</a>
-                    <a href="index-en.html" class="btn btn-secondary">↩ Back</a>
-                </div>
-            </div>
-
-            <!-- ===== Request Form ===== -->
-            <div id="requestFormBox">
-                <form id="requestForm">
-                    <input type="hidden" id="requestType" value="connection" />
-
-                    <!-- ===== Removed "Target Card Code" field ===== -->
-
-                    <div class="form-group">
-                        <label>📝 Explain why you want to connect</label>
-                        <textarea id="description" rows="4" placeholder="Why do you want to connect with like-minded people? What cultural goals or collaborations do you have?" required></textarea>
-                    </div>
-
-                    <div class="btn-group">
-                        <button type="submit" class="btn btn-primary" id="submitBtn">📤 Submit Request to Admin</button>
-                        <a href="index-en.html" class="btn btn-secondary">↩ Back</a>
-                    </div>
-                </form>
-            </div>
-
-            <div class="note">
-                🔒 Your request will be sent to the admin and you will receive the response on this page.
-            </div>
-        </div>
-
-        <!-- ===== Step 3: Invitation to Register ===== -->
-        <div id="notMemberBox" class="hidden">
-            <h1>🌍 Join the Global Cultural Community!</h1>
-            <div class="subtitle">You are not yet a member of the Global Smart Cultural Identity Card.</div>
-
-            <div class="invite-box">
-                <span class="big-icon">🪪</span>
-                <h3>Register Now</h3>
-                <p>To use the connection features, register now and get your cultural identity card.</p>
+                <label>Request Details</label>
+                <textarea id="description" placeholder="Explain what kind of connection or reason for cancellation..."></textarea>
             </div>
 
             <div class="btn-group">
-                <a href="register-en.html" class="btn btn-primary">🪪 Register & Get Card</a>
+                <button type="submit" class="btn btn-primary" id="submitBtn">📨 Submit Request</button>
                 <a href="index-en.html" class="btn btn-secondary">↩ Back</a>
             </div>
-        </div>
+        </form>
 
-        <!-- ===== Bottom Modules ===== -->
-        <div class="bottom-modules" id="bottomModules">
-            <div class="bottom-module">
-                <a href="request-en.html">
-                    <span class="icon">📤</span>
-                    <div class="label">Submit Request</div>
-                    <div class="desc">Request connection with like-minded</div>
-                </a>
-            </div>
-            <div class="bottom-module">
-                <a href="index-en.html">
-                    <span class="icon">🏠</span>
-                    <div class="label">Back to Home</div>
-                    <div class="desc">Main card page</div>
-                </a>
-            </div>
-            <div class="bottom-module">
-                <a href="about-en.html">
-                    <span class="icon">📖</span>
-                    <div class="label">About Project</div>
-                    <div class="desc">Philosophy and goals</div>
-                </a>
-            </div>
-            <div class="bottom-module">
-                <a href="observer-en.html">
-                    <span class="icon">🧠</span>
-                    <div class="label">Wisdom Council</div>
-                    <div class="desc">Sphere of wisdom</div>
-                </a>
-            </div>
+        <div class="note">
+            🔒 Your request will be sent to the admin and you will be notified after review.
         </div>
-
     </div>
 
     <script>
@@ -539,183 +261,41 @@
             });
         })();
 
-        let verifiedUser = null;
+        // ===== Detect request type from URL =====
+        function detectRequestType() {
+            const params = new URLSearchParams(window.location.search);
+            const type = params.get('type');
+            
+            const titleEl = document.getElementById('pageTitle');
+            const subtitleEl = document.getElementById('pageSubtitle');
+            const requestTypeInput = document.getElementById('requestType');
+            const submitBtn = document.getElementById('submitBtn');
+            const codeLabel = document.getElementById('codeLabel');
+            const descInput = document.getElementById('description');
 
-        // ===== Authentication =====
-        async function verifyUser() {
-            const code = document.getElementById('authCardCode').value.trim();
-            const errorEl = document.getElementById('authError');
-            const btn = document.getElementById('authBtn');
-
-            if (!code) {
-                errorEl.textContent = '❌ Please enter your membership code.';
-                errorEl.style.display = 'block';
-                return;
-            }
-
-            errorEl.style.display = 'none';
-            btn.disabled = true;
-            btn.textContent = '⏳ Checking...';
-
-            try {
-                const response = await fetch('/api/get-users?t=' + new Date().getTime());
-                if (!response.ok) throw new Error('Server connection error');
-                
-                const data = await response.json();
-                const user = data.users.find(u => u.cardCode === code);
-
-                // ===== Not a Member =====
-                if (!user) {
-                    document.getElementById('step1').classList.add('hidden');
-                    document.getElementById('step2').classList.add('hidden');
-                    document.getElementById('notMemberBox').classList.remove('hidden');
-                    btn.disabled = false;
-                    btn.textContent = '🔍 Verify Code';
-                    return;
-                }
-
-                // ===== Member but not approved =====
-                if (user.status !== 'approved') {
-                    errorEl.textContent = '❌ Your account is not approved yet. Please wait for admin approval.';
-                    errorEl.style.display = 'block';
-                    btn.disabled = false;
-                    btn.textContent = '🔍 Verify Code';
-                    return;
-                }
-
-                // ===== Approved Member =====
-                verifiedUser = user;
-                document.getElementById('step1').classList.add('hidden');
-                document.getElementById('step2').classList.remove('hidden');
-                document.getElementById('notMemberBox').classList.add('hidden');
-                
-                localStorage.setItem('verifiedCode', code);
-
-                // ===== Check Email =====
-                if (user.communicationEmail && user.communicationEmail.length > 5) {
-                    document.getElementById('noEmailBox').classList.add('hidden');
-                    document.getElementById('requestFormBox').classList.remove('hidden');
-                    checkExistingRequest(code);
-                } else {
-                    document.getElementById('noEmailBox').classList.remove('hidden');
-                    document.getElementById('requestFormBox').classList.add('hidden');
-                    document.getElementById('requestStatusBox').classList.add('hidden');
-                    document.getElementById('connectionsBox').classList.add('hidden');
-                }
-
-            } catch (error) {
-                errorEl.textContent = '❌ ' + error.message;
-                errorEl.style.display = 'block';
-            }
-
-            btn.disabled = false;
-            btn.textContent = '🔍 Verify Code';
-        }
-
-        // ===== Track Request =====
-        async function trackRequest() {
-            const trackingCode = document.getElementById('trackingCode').value.trim();
-            const resultEl = document.getElementById('trackingResult');
-
-            if (!trackingCode) {
-                resultEl.className = 'message-box error';
-                resultEl.textContent = '❌ Please enter tracking code.';
-                resultEl.style.display = 'block';
-                return;
-            }
-
-            resultEl.style.display = 'none';
-            resultEl.className = 'message-box';
-
-            try {
-                const response = await fetch('/api/get-request-by-tracking?trackingCode=' + trackingCode);
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || 'Error retrieving request');
-                }
-
-                const req = data.request;
-
-                if (req.status === 'approved') {
-                    resultEl.className = 'message-box success';
-                    resultEl.innerHTML = '✅ Your request has been approved.<br>' +
-                        (req.connections && req.connections.length > 0 
-                            ? '📧 ' + req.connections.length + ' like-minded emails have been sent to you.' 
-                            : 'No like-minded people with registered emails found.');
-                } else if (req.status === 'rejected') {
-                    resultEl.className = 'message-box error';
-                    resultEl.textContent = '❌ Your request has been rejected.';
-                } else {
-                    resultEl.className = 'message-box pending';
-                    resultEl.textContent = '⏳ Your request is being reviewed. Please be patient.';
-                }
-                resultEl.style.display = 'block';
-
-            } catch (error) {
-                resultEl.className = 'message-box error';
-                resultEl.textContent = '❌ ' + error.message;
-                resultEl.style.display = 'block';
+            if (type === 'delete') {
+                // Cancellation mode
+                titleEl.textContent = '⚠️ Membership Cancellation Request';
+                subtitleEl.textContent = 'Remove your cultural data from the network';
+                requestTypeInput.value = 'delete';
+                codeLabel.textContent = 'Your Cultural Identity Card Code';
+                descInput.placeholder = 'Please state your reason for cancellation (optional)...';
+                submitBtn.textContent = '🚪 Submit Cancellation';
+                submitBtn.className = 'btn btn-danger';
+            } else {
+                // Default: Connection Request
+                titleEl.textContent = '🤝 Request Connection';
+                subtitleEl.textContent = 'Connect with others based on shared cultural values';
+                requestTypeInput.value = 'connection';
+                codeLabel.textContent = 'Your Card Code';
+                descInput.placeholder = 'Explain what kind of connection you are looking for...';
+                submitBtn.textContent = '📨 Submit Request';
+                submitBtn.className = 'btn btn-primary';
             }
         }
 
-        // ===== Check Existing Request =====
-        async function checkExistingRequest(cardCode) {
-            try {
-                const response = await fetch('/api/get-user-requests?cardCode=' + cardCode);
-                if (!response.ok) return;
-                
-                const data = await response.json();
-                if (data.requests && data.requests.length > 0) {
-                    const latest = data.requests[data.requests.length - 1];
-                    
-                    if (latest.status === 'approved' && latest.connections && latest.connections.length > 0) {
-                        // ===== Show Connections List =====
-                        document.getElementById('connectionsBox').classList.remove('hidden');
-                        document.getElementById('requestStatusBox').classList.add('hidden');
-                        document.getElementById('requestFormBox').classList.add('hidden');
-                        
-                        const listDiv = document.getElementById('connectionsList');
-                        listDiv.innerHTML = latest.connections.map(email => 
-                            `<div class="email-item">📧 ${email}</div>`
-                        ).join('');
-                        
-                    } else if (latest.status === 'pending') {
-                        // ===== Pending Approval =====
-                        document.getElementById('requestStatusBox').classList.remove('hidden');
-                        document.getElementById('connectionsBox').classList.add('hidden');
-                        document.getElementById('requestFormBox').classList.add('hidden');
-                        
-                        document.getElementById('statusIcon').textContent = '⏳';
-                        document.getElementById('statusTitle').textContent = 'Your request is being reviewed';
-                        document.getElementById('statusDesc').textContent = 'Your request is being reviewed by the admin. Please be patient.';
-                        
-                        const detail = document.getElementById('statusDetail');
-                        detail.className = 'message-box pending';
-                        detail.textContent = '⏳ Submitted on: ' + new Date(latest.createdAt).toLocaleString('en-US') + ' | Tracking Code: ' + (latest.trackingCode || '---');
-                        detail.style.display = 'block';
-                        
-                    } else if (latest.status === 'rejected') {
-                        // ===== Rejected - Allow Resubmission =====
-                        document.getElementById('requestStatusBox').classList.add('hidden');
-                        document.getElementById('connectionsBox').classList.add('hidden');
-                        document.getElementById('requestFormBox').classList.remove('hidden');
-                        
-                        const statusBox = document.getElementById('messageBox');
-                        statusBox.className = 'message-box error';
-                        statusBox.textContent = '❌ Your previous request was rejected. You can submit a new request.';
-                        statusBox.style.display = 'block';
-                    }
-                } else {
-                    // ===== No Requests Exist =====
-                    document.getElementById('requestStatusBox').classList.add('hidden');
-                    document.getElementById('connectionsBox').classList.add('hidden');
-                    document.getElementById('requestFormBox').classList.remove('hidden');
-                }
-            } catch (e) {
-                console.log('Error checking requests:', e);
-            }
-        }
+        // ===== Run detection on load =====
+        document.addEventListener('DOMContentLoaded', detectRequestType);
 
         // ===== Show Message =====
         function showMessage(text, type) {
@@ -744,16 +324,12 @@
             submitBtn.textContent = '⏳ Submitting...';
 
             try {
-                const cardCode = localStorage.getItem('verifiedCode');
+                const cardCode = document.getElementById('cardCode').value.trim();
                 const requestType = document.getElementById('requestType').value;
                 const description = document.getElementById('description').value.trim();
 
                 if (!cardCode) {
-                    throw new Error('Please verify your code first.');
-                }
-
-                if (!description) {
-                    throw new Error('Please explain why you want to connect.');
+                    throw new Error('Please enter your card code.');
                 }
 
                 const response = await fetch('/api/submit-request', {
@@ -763,7 +339,6 @@
                         cardCode: cardCode,
                         type: requestType,
                         description: description
-                        // targetCardCode removed
                     })
                 });
 
@@ -773,27 +348,26 @@
                     throw new Error(result.error || 'Error submitting request');
                 }
 
-                // ===== Success =====
-                document.getElementById('requestFormBox').classList.add('hidden');
-                document.getElementById('requestStatusBox').classList.remove('hidden');
-                
-                document.getElementById('statusIcon').textContent = '✅';
-                document.getElementById('statusTitle').textContent = 'Your request has been submitted successfully';
-                document.getElementById('statusDesc').textContent = 'Your request is being reviewed by the admin. You will receive the response on this page.';
-                
-                const detail = document.getElementById('statusDetail');
-                detail.className = 'message-box success';
-                detail.textContent = '✅ Tracking Code: ' + (result.trackingCode || '---');
-                detail.style.display = 'block';
-
+                // ===== Display tracking code =====
+                const trackingCode = result.trackingCode || '---';
+                const successMsg = requestType === 'delete' 
+                    ? `✅ Your cancellation request has been submitted. Tracking Code: ${trackingCode}` 
+                    : `✅ Your connection request has been sent. Tracking Code: ${trackingCode}`;
+                    
+                showMessage(successMsg, 'success');
                 submitBtn.textContent = '✅ Sent';
+
+                setTimeout(() => {
+                    window.location.href = 'index-en.html';
+                }, 3000);
 
             } catch (error) {
                 console.error('Error:', error);
-                showMessage('❌ ' + error.message, 'error');
+                showMessage(`❌ Error: ${error.message}`, 'error');
                 isSubmitting = false;
                 submitBtn.disabled = false;
-                submitBtn.textContent = '📤 Submit Request';
+                const requestType = document.getElementById('requestType').value;
+                submitBtn.textContent = requestType === 'delete' ? '🚪 Submit Cancellation' : '📨 Submit Request';
             }
         });
     </script>
