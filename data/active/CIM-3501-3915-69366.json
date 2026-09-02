@@ -7,7 +7,7 @@
     "ضرورت تحول در سازماندهی تعامل بین مردم و مسئولین فرهنگی",
     "استفاده از شبکه های اجتماعی فراگیر برای توسعه فعالیت های فرهنگی",
     "پاسداشت اسطوره های فرهنگی ملل در کشورهای دیگر",
-    "دوست داشتن همه ی مردم جهان",
+    "برادری بین ملل",
     "مبارزه به تمامی مظاهر خشونت",
     "توافق بر اصول فرهنگی مشترک با دیگر فرهنگ ها"
   ],
@@ -22,7 +22,7 @@
   ],
   "communicationEmail": "gh_rezaei2003@yahoo.com",
   "registrationDate": "2026-09-02T07:43:28.677Z",
-  "status": "approved",
+  "status": "pending_edit",
   "rank": 0,
   "country": "Iran",
   "statusUpdatedAt": "2026-09-02T10:14:11.777Z",
@@ -38,10 +38,11 @@
       "section": "identity-card"
     }
   ],
-  "lastEditRequest": "2026-09-02T10:01:54.717Z",
+  "lastEditRequest": "2026-09-02T10:19:47.413Z",
   "editLocked": true,
   "pendingChanges": [
     "value_5",
-    "communicationEmail"
+    "communicationEmail",
+    "value_4"
   ]
 }
