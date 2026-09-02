@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>مدیریت مشاهدات | داشبورد ادمین</title>
     <style>
+        /* ===== استایل‌های قبلی ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
@@ -13,10 +14,7 @@
             background: linear-gradient(135deg, #fdf6e3 0%, #e8f4f8 50%, #f5e6d3 100%);
             color: #2a1a0a;
         }
-        body.dark {
-            background: linear-gradient(135deg, #3a2f20 0%, #2a2418 50%, #4a3a28 100%);
-            color: #f0e8d0;
-        }
+        body.dark { background: linear-gradient(135deg, #3a2f20 0%, #2a2418 50%, #4a3a28 100%); color: #f0e8d0; }
         .container { max-width: 1200px; margin: 0 auto; }
         .top-bar {
             display: flex;
@@ -152,31 +150,6 @@
         }
         body.dark .obs-code { color: #f9e79f; }
         .obs-meta { font-size: 0.7rem; color: #888; }
-        .obs-body {
-            margin-top: 0.5rem;
-            padding: 0.8rem;
-            background: rgba(255,255,255,0.2);
-            border-radius: 8px;
-            border-right: 3px solid rgba(212,175,55,0.3);
-        }
-        body.dark .obs-body { background: rgba(0,0,0,0.1); }
-        .obs-body p { font-size: 0.9rem; color: #4a4a5a; line-height: 1.6; }
-        body.dark .obs-body p { color: #b0b0c0; }
-        
-        .obs-module {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            padding: 0.2rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            border: 1px solid rgba(212,175,55,0.2);
-            background: rgba(255,255,255,0.1);
-            color: #4a3a2a;
-            margin-top: 0.8rem;
-        }
-        body.dark .obs-module { color: #d0c0b0; }
         
         .badge {
             display: inline-block;
@@ -188,7 +161,6 @@
         .badge-approved { background: rgba(50,200,50,0.15); color: #0a6a0a; }
         .badge-rejected { background: rgba(200,50,50,0.15); color: #6a1a1a; }
         .badge-pending { background: rgba(255,200,50,0.15); color: #8a7a0a; }
-        .badge-score-5 { background: rgba(212,175,55,0.25); color: #8a6d1f; border: 1px solid #d4af37; }
         .badge-edit {
             background: rgba(255, 140, 0, 0.25);
             color: #c65102;
@@ -211,34 +183,6 @@
         .btn-reject { background: rgba(200,50,50,0.15); color: #6a1a1a; }
         body.dark .btn-reject { color: #f1948a; }
         .btn-reject:hover { background: rgba(200,50,50,0.25); }
-        .btn-module {
-            background: rgba(40,116,166,0.1);
-            color: #2874a6;
-            border: 1px solid rgba(40,116,166,0.15);
-        }
-        body.dark .btn-module { color: #85c1e9; }
-        .btn-module:hover { background: rgba(40,116,166,0.2); }
-        
-        .module-result-box {
-            margin-top: 0.8rem;
-            padding: 0.8rem;
-            background: rgba(40,116,166,0.05);
-            border-radius: 8px;
-            border: 1px solid rgba(40,116,166,0.1);
-        }
-        .module-result-box .title {
-            font-weight: 700;
-            font-size: 0.8rem;
-            color: #2874a6;
-            margin-bottom: 0.3rem;
-        }
-        .module-result-box .item {
-            padding: 0.2rem 0.4rem;
-            background: rgba(255,255,255,0.3);
-            border-radius: 4px;
-            margin-bottom: 0.2rem;
-            font-size: 0.75rem;
-        }
         
         .empty-state {
             text-align: center;
@@ -252,58 +196,6 @@
             flex-wrap: wrap;
             margin-top: 1rem;
         }
-        
-        .analysis-box {
-            margin-top: 1rem;
-            padding: 1rem;
-            background: rgba(212,175,55,0.05);
-            border-radius: 12px;
-            border: 1px solid rgba(212,175,55,0.2);
-            display: none;
-        }
-        .analysis-box.active { display: block; }
-        .analysis-box .title {
-            font-weight: 800;
-            font-size: 0.9rem;
-            color: #8a6d1f;
-            margin-bottom: 0.8rem;
-        }
-        .analysis-box .matrix-item { margin-bottom: 0.8rem; }
-        .analysis-box .matrix-item label {
-            display: block;
-            font-weight: 700;
-            font-size: 0.8rem;
-            color: #2a1a0a;
-            margin-bottom: 0.2rem;
-        }
-        .analysis-box .matrix-item textarea {
-            width: 100%;
-            padding: 0.5rem;
-            border-radius: 8px;
-            border: 1px solid rgba(212,175,55,0.2);
-            background: rgba(255,255,255,0.5);
-            font-family: inherit;
-            font-size: 0.85rem;
-            color: #1a0a0a;
-            resize: vertical;
-            min-height: 40px;
-            outline: none;
-        }
-        .score-section {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin-top: 1rem;
-        }
-        .score-section select {
-            padding: 0.3rem 0.8rem;
-            border-radius: 8px;
-            border: 1px solid rgba(212,175,55,0.2);
-            background: rgba(255,255,255,0.5);
-            font-size: 0.9rem;
-        }
-        .score-hint { font-size: 0.7rem; color: #888; }
         
         .scroll-hint {
             text-align: center;
@@ -327,6 +219,7 @@
             transition: 0.3s;
         }
         
+        /* ===== استایل نمایش ویرایش‌ها ===== */
         .edit-changes-box {
             margin-top: 1rem;
             padding: 1rem;
@@ -344,27 +237,45 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.3rem 0.5rem;
+            padding: 0.5rem 0.8rem;
             background: rgba(255,255,255,0.3);
-            border-radius: 4px;
+            border-radius: 6px;
             margin-bottom: 0.3rem;
             font-size: 0.8rem;
+            flex-wrap: wrap;
+            gap: 0.3rem;
         }
         body.dark .edit-changes-box .change-item { background: rgba(0,0,0,0.1); }
+        .edit-changes-box .change-item .field-name {
+            font-weight: 700;
+            color: #8a6d1f;
+            min-width: 120px;
+        }
+        body.dark .edit-changes-box .change-item .field-name { color: #f9e79f; }
         .edit-changes-box .change-item .old-value {
             color: #888;
             text-decoration: line-through;
+            background: rgba(200,50,50,0.05);
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
         }
+        .edit-changes-box .change-item .arrow { color: #888; margin: 0 0.3rem; }
         .edit-changes-box .change-item .new-value {
             color: #27ae60;
             font-weight: 700;
+            background: rgba(39,174,96,0.05);
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+        }
+        .edit-changes-box .change-item .actions {
+            display: flex;
+            gap: 0.3rem;
         }
         
         @media (max-width: 768px) {
             .container { padding: 1.2rem; }
             .top-bar { flex-direction: column; align-items: stretch; }
-            .obs-header { flex-direction: column; align-items: stretch; }
-            .obs-actions { flex-direction: column; }
+            .edit-changes-box .change-item { flex-direction: column; align-items: stretch; }
         }
     </style>
 </head>
@@ -410,13 +321,11 @@
         
         async function loadData() {
             try {
-                // دریافت مشاهدات
                 const obsResponse = await fetch('/api/get-connection-requests?type=observations');
                 const obsData = await obsResponse.json();
                 if (!obsResponse.ok) throw new Error(obsData.error || 'خطا در دریافت مشاهدات');
                 allObservations = obsData.observations || [];
                 
-                // دریافت کاربران برای اطلاعات ویرایش
                 const usersResponse = await fetch('/api/get-users?t=' + new Date().getTime());
                 const usersData = await usersResponse.json();
                 if (!usersResponse.ok) throw new Error(usersData.error || 'خطا در دریافت کاربران');
@@ -435,8 +344,6 @@
             const pending = allObservations.filter(o => o.status === 'pending').length;
             const approved = allObservations.filter(o => o.status === 'approved' && o.score !== 5).length;
             const score5 = allObservations.filter(o => o.score === 5).length;
-            
-            // ===== تعداد درخواست‌های ویرایش =====
             const editRequests = allUsers.filter(u => u.status === 'pending_edit').length;
             
             document.getElementById('totalObs').textContent = total;
@@ -457,6 +364,11 @@
         function renderObservations() {
             const container = document.getElementById('observationsList');
             
+            if (currentFilter === 'edit') {
+                renderEditRequests();
+                return;
+            }
+            
             let filtered = allObservations;
             if (currentFilter === 'pending') {
                 filtered = filtered.filter(o => o.status === 'pending');
@@ -466,10 +378,6 @@
                 filtered = filtered.filter(o => o.score === 5);
             } else if (currentFilter === 'rejected') {
                 filtered = filtered.filter(o => o.status === 'rejected');
-            } else if (currentFilter === 'edit') {
-                // ===== نمایش کاربران با درخواست ویرایش =====
-                renderEditRequests();
-                return;
             }
             
             if (filtered.length === 0) {
@@ -477,7 +385,32 @@
                 return;
             }
             
-            let html = filtered.map(obs => renderObservationCard(obs)).join('');
+            let html = filtered.map(obs => {
+                // ===== کارت مشاهده =====
+                const statusMap = {
+                    approved: `<span class="badge badge-approved">✅ تایید شده</span>`,
+                    rejected: `<span class="badge badge-rejected">❌ رد شده</span>`,
+                    pending: `<span class="badge badge-pending">⏳ در انتظار</span>`
+                };
+                const scoreBadge = obs.score === 5 ? `<span class="badge badge-score-5">⭐ امتیاز ۵</span>` : '';
+                
+                return `
+                    <div class="obs-card">
+                        <div class="obs-header">
+                            <div>
+                                <span class="obs-code">#${obs.number} - ${obs.cardCode || 'ناشناس'}</span>
+                                ${statusMap[obs.status] || ''}
+                                ${scoreBadge}
+                            </div>
+                            <div class="obs-meta">${new Date(obs.createdAt).toLocaleString('fa-IR')}</div>
+                        </div>
+                        <div class="obs-body">
+                            <p>${obs.observation || 'متن مشاهده موجود نیست'}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
             if (filtered.length > 5) {
                 html += `<div class="scroll-hint">⬇️ ${filtered.length} مشاهده وجود دارد (اسکرول کنید)</div>`;
             }
@@ -485,7 +418,7 @@
             container.innerHTML = html;
         }
         
-        // ===== رندر درخواست‌های ویرایش =====
+        // ===== رندر درخواست‌های ویرایش با جزئیات کامل =====
         function renderEditRequests() {
             const container = document.getElementById('observationsList');
             const editUsers = allUsers.filter(u => u.status === 'pending_edit');
@@ -497,35 +430,41 @@
             
             let html = editUsers.map(user => {
                 const pendingChanges = user.pendingChanges || [];
+                
+                // ===== ساخت لیست تغییرات با جزئیات کامل =====
                 const changesHtml = pendingChanges.map(field => {
                     let displayField = field;
                     let oldValue = '---';
                     let newValue = '---';
+                    let isEmail = false;
+                    let valueIndex = -1;
                     
+                    // ===== تشخیص نوع فیلد =====
                     if (field === 'communicationEmail') {
                         displayField = '📧 ایمیل ارتباطی';
-                        oldValue = user.oldData?.communicationEmail || '---';
-                        newValue = user.communicationEmail || '---';
+                        isEmail = true;
+                        oldValue = user.oldData?.communicationEmail || 'ثبت نشده';
+                        newValue = user.communicationEmail || 'ثبت نشده';
                     } else if (field.startsWith('value_')) {
-                        const index = parseInt(field.split('_')[1]);
-                        displayField = `📋 ارزش ${index + 1}`;
-                        oldValue = user.oldData?.values?.[index] || '---';
-                        newValue = user.values?.[index] || '---';
+                        valueIndex = parseInt(field.split('_')[1]);
+                        displayField = `📋 ارزش فرهنگی ${valueIndex + 1}`;
+                        oldValue = user.oldData?.values?.[valueIndex] || 'خالی';
+                        newValue = user.values?.[valueIndex] || 'خالی';
                     } else if (field === 'values') {
-                        displayField = '📋 تمام ارزش‌ها';
-                        oldValue = user.oldData?.values?.join(', ') || '---';
-                        newValue = user.values?.join(', ') || '---';
+                        displayField = '📋 همه ارزش‌ها';
+                        oldValue = user.oldData?.values?.join('، ') || '---';
+                        newValue = user.values?.join('، ') || '---';
                     }
                     
                     return `
                         <div class="change-item">
-                            <span>${displayField}</span>
-                            <span>
-                                <span class="old-value">${oldValue}</span>
-                                ➜
-                                <span class="new-value">${newValue}</span>
-                            </span>
+                            <span class="field-name">${displayField}</span>
                             <div>
+                                <span class="old-value">${oldValue}</span>
+                                <span class="arrow">➜</span>
+                                <span class="new-value">${newValue}</span>
+                            </div>
+                            <div class="actions">
                                 <button class="btn-small btn-approve" onclick="approveEdit('${user.cardCode}', '${field}')">✅</button>
                                 <button class="btn-small btn-reject" onclick="rejectEdit('${user.cardCode}', '${field}')">❌</button>
                             </div>
@@ -539,13 +478,17 @@
                             <div>
                                 <span class="obs-code">✏️ ${user.cardCode}</span>
                                 <span class="badge badge-edit">در انتظار ویرایش</span>
+                                <span style="font-size:0.7rem;color:#888;margin-right:0.5rem;">${pendingChanges.length} تغییر</span>
                             </div>
                             <div class="obs-meta">${user.lastEditRequest ? new Date(user.lastEditRequest).toLocaleString('fa-IR') : ''}</div>
                         </div>
+                        
+                        <!-- ===== نمایش تمام تغییرات ===== -->
                         <div class="edit-changes-box">
-                            <div class="title">📝 تغییرات درخواستی:</div>
+                            <div class="title">📝 تغییرات درخواستی (${pendingChanges.length} مورد):</div>
                             ${changesHtml}
                         </div>
+                        
                         <div class="obs-actions">
                             <button class="btn-small btn-approve" onclick="approveAllEdits('${user.cardCode}')">✅ تایید همه</button>
                             <button class="btn-small btn-reject" onclick="rejectAllEdits('${user.cardCode}')">❌ رد همه</button>
@@ -557,7 +500,7 @@
             container.innerHTML = html;
         }
         
-        // ===== تایید ویرایش تکی =====
+        // ===== توابع تایید/رد =====
         async function approveEdit(cardCode, field) {
             if (!confirm(`آیا از تایید ویرایش "${field}" برای کاربر ${cardCode} اطمینان دارید؟`)) return;
             
@@ -580,7 +523,6 @@
             }
         }
         
-        // ===== رد ویرایش تکی =====
         async function rejectEdit(cardCode, field) {
             if (!confirm(`آیا از رد ویرایش "${field}" برای کاربر ${cardCode} اطمینان دارید؟`)) return;
             
@@ -603,7 +545,6 @@
             }
         }
         
-        // ===== تایید همه ویرایش‌ها =====
         async function approveAllEdits(cardCode) {
             if (!confirm(`آیا از تایید همه ویرایش‌های کاربر ${cardCode} اطمینان دارید؟`)) return;
             
@@ -625,7 +566,6 @@
             }
         }
         
-        // ===== رد همه ویرایش‌ها =====
         async function rejectAllEdits(cardCode) {
             if (!confirm(`آیا از رد همه ویرایش‌های کاربر ${cardCode} اطمینان دارید؟`)) return;
             
@@ -646,14 +586,6 @@
                 alert('خطا: ' + error.message);
             }
         }
-        
-        // ===== کارت مشاهده =====
-        function renderObservationCard(obs) {
-            // ... کد قبلی ...
-        }
-        
-        // ===== سایر توابع =====
-        // ... (توابع قبلی)
         
         loadData();
         setInterval(loadData, 30000);
