@@ -21,23 +21,60 @@ module.exports = async function handler(req, res) {
     const jsonString = Buffer.from(fileData.content, 'base64').toString('utf8');
     const userData = JSON.parse(jsonString);
 
-    // ⭐ منطق هوشمند تایید یا رد ویرایش
+    // ============================================================
+    // ===== منطق هوشمند تایید یا رد ویرایش =====
+    // ============================================================
     if (userData.status === 'pending_edit') {
+      
       if (status === 'approved') {
-        userData.editLocked = true; // قفل کردن برای همیشه
-        userData.previousValues = undefined; // حذف نسخه پشتیبان
-      } else if (status === 'pending') { // یعنی ادمین "رد" کرده و باید به حالت قبل برگردد
+        // ===== تأیید ویرایش: اعمال تغییرات =====
+        const pending = userData.pendingChanges || {};
+        
+        // ۱. اعمال تغییرات ارزش‌ها
+        if (pending.values) {
+          userData.values = pending.values;
+          userData.priorities = pending.priorities || userData.priorities;
+        }
+        
+        // ۲. اعمال تغییرات تکی ارزش‌ها
+        for (let i = 0; i < 7; i++) {
+          const key = `value_${i}`;
+          const priorityKey = `priority_${i}`;
+          if (pending[key] !== undefined) {
+            if (!userData.values) userData.values = [];
+            userData.values[i] = pending[key];
+          }
+          if (pending[priorityKey] !== undefined) {
+            if (!userData.priorities) userData.priorities = [];
+            userData.priorities[i] = pending[priorityKey];
+          }
+        }
+        
+        // ۳. اعمال تغییر ایمیل
+        if (pending.communicationEmail !== undefined) {
+          userData.communicationEmail = pending.communicationEmail;
+        }
+        
+        // ۴. پاک کردن pendingChanges
+        userData.pendingChanges = {};
+        userData.editLocked = true;
+        userData.previousValues = undefined;
+        
+      } else if (status === 'pending') {
+        // ===== رد ویرایش: برگشت به حالت قبل =====
         if (userData.previousValues) {
           userData.values = userData.previousValues.values;
           userData.optionalCode = userData.previousValues.optionalCode;
           userData.communicationEmail = userData.previousValues.communicationEmail;
-          // بازسازی displayCode بر اساس کد قبلی
+          
           const parts = userData.cardCode.split('-');
           const opt = userData.previousValues.optionalCode?.trim() || '';
           userData.displayCode = opt ? `CIM - ${parts[1]} - ${parts[2]} - ${opt}` : `CIM - ${parts[1]} - ${parts[2]}`;
           
           userData.previousValues = undefined;
         }
+        // پاک کردن pendingChanges
+        userData.pendingChanges = {};
       }
     }
 
@@ -50,10 +87,16 @@ module.exports = async function handler(req, res) {
     await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
       method: 'PUT',
       headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: `Admin action: ${status} for ${cardCode}`, content: newContent, sha: fileData.sha, branch: 'main' })
+      body: JSON.stringify({ 
+        message: `Admin action: ${status} for ${cardCode}`, 
+        content: newContent, 
+        sha: fileData.sha, 
+        branch: 'main' 
+      })
     });
 
     return res.status(200).json({ success: true });
+
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
