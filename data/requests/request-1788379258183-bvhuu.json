@@ -4,7 +4,8 @@
   "senderCode": "CIM-7939-3882-70712",
   "type": "connection",
   "description": "دوستی",
-  "status": "pending",
+  "status": "approved",
   "createdAt": "2026-09-02T20:00:58.183Z",
-  "updatedAt": "2026-09-02T20:00:58.185Z"
+  "updatedAt": "2026-09-02T20:00:58.185Z",
+  "approvedAt": "2026-09-02T20:01:28.466Z"
 }
