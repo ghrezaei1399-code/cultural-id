@@ -25,5 +25,17 @@
   "status": "approved",
   "rank": 0,
   "country": "Iran",
-  "statusUpdatedAt": "2026-09-02T19:35:49.881Z"
+  "statusUpdatedAt": "2026-09-02T19:35:49.881Z",
+  "achievements": [
+    {
+      "title": "ویترین خرد",
+      "description": "انتخاب هوشمندانه و خردمندانه ",
+      "category": "science",
+      "fileUrl": "https://raw.githubusercontent.com/ghrezaei1399-code/cultural-id/main/uploads/1788377891711-7i70hq.jpg",
+      "fileName": "1788377891711-7i70hq.jpg",
+      "status": "pending",
+      "uploadDate": "2026-09-02T19:38:13.319Z",
+      "section": "identity-card"
+    }
+  ]
 }
