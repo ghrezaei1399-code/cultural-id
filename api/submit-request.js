@@ -22,7 +22,7 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'Invalid JSON in request body' });
     }
 
-    const { cardCode, type, observations } = parsedBody;
+    const { cardCode, type, description, observations } = parsedBody;
 
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
@@ -102,12 +102,55 @@ ${selectedModule}
       });
     }
 
-    // ===== درخواست‌های معمولی =====
+    // ===== درخواست‌های معمولی (ارتباط یا حذف) =====
     if (!cardCode || !type) {
       return res.status(400).json({ error: 'کد کارت و نوع درخواست الزامی است' });
     }
 
-    return res.status(200).json({ success: true, message: 'درخواست ثبت شد' });
+    // ===== تولید کد پیگیری یکتا =====
+    const trackingCode = `REQ-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+
+    // ===== ذخیره درخواست =====
+    const fileName = `request-${Date.now()}-${Math.random().toString(36).substring(7)}.json`;
+    const requestPath = `data/requests/${fileName}`;
+
+    const requestData = {
+      fileName: fileName,
+      trackingCode: trackingCode,
+      senderCode: cardCode,
+      type: type,
+      description: description || '',
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    const newContent = Buffer.from(JSON.stringify(requestData, null, 2), 'utf8').toString('base64');
+
+    const saveRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${requestPath}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: `Request from ${cardCode} - ${trackingCode}`,
+        content: newContent,
+        branch: 'main'
+      })
+    });
+
+    if (!saveRes.ok) {
+      const errorData = await saveRes.json().catch(() => ({}));
+      throw new Error(errorData.message || 'خطا در ذخیره درخواست');
+    }
+
+    return res.status(200).json({
+      success: true,
+      trackingCode: trackingCode,
+      requestId: fileName,
+      message: 'درخواست شما با موفقیت ثبت شد'
+    });
 
   } catch (error) {
     console.error('Submit Request Error:', error);
