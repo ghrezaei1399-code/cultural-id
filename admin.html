@@ -350,13 +350,6 @@
             padding-right: 10px !important;
             border-radius: 4px;
         }
-        .highlight-change .info-label::after {
-            content: ' ✏️ تغییر یافته';
-            color: #b7791f;
-            font-weight: 800;
-            font-size: 0.7rem;
-            margin-right: 5px;
-        }
 
         /* ===== استایل جدید برای نمایش ارزش‌ها ===== */
         .values-list {
@@ -840,7 +833,7 @@
             const changed = user.pendingChanges || [];
             const hl = (field) => changed.includes(field) ? 'highlight-change' : '';
 
-            // ===== ساخت لیست ارزش‌ها با نمایش تغییرات =====
+            // ===== نمایش ارزش‌ها به‌صورت لیست شماره‌دار =====
             const values = user.values || [];
             let valuesHtml = '';
             
