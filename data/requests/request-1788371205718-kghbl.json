@@ -4,7 +4,8 @@
   "senderCode": "CIM-3179-5154-15254",
   "type": "connection",
   "description": "دوستی",
-  "status": "pending",
+  "status": "approved",
   "createdAt": "2026-09-02T17:46:45.718Z",
-  "updatedAt": "2026-09-02T17:46:45.721Z"
+  "updatedAt": "2026-09-02T17:46:45.721Z",
+  "approvedAt": "2026-09-02T17:47:13.443Z"
 }
