@@ -4,7 +4,8 @@
   "senderCode": "CIM-3501-3915-69366",
   "type": "connection",
   "description": "اشنایی",
-  "status": "pending",
+  "status": "approved",
   "createdAt": "2026-09-02T17:54:32.555Z",
-  "updatedAt": "2026-09-02T17:54:32.557Z"
+  "updatedAt": "2026-09-02T17:54:32.557Z",
+  "approvedAt": "2026-09-02T17:55:11.050Z"
 }
