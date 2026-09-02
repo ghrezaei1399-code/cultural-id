@@ -3,7 +3,7 @@
   "displayCode": "CIM - 5332 - 8189 - 11222",
   "optionalCode": "11222",
   "values": [
-    "Art",
+    "book",
     "Smartography",
     "A New Perspective on Technological Art",
     "With the Learning of 21 Principles",
@@ -22,7 +22,7 @@
   ],
   "communicationEmail": "ghrezaei1399@gmail.com",
   "registrationDate": "2026-08-31T10:50:52.241Z",
-  "status": "approved",
+  "status": "pending_edit",
   "rank": 0,
   "country": "Iran",
   "statusUpdatedAt": "2026-08-31T10:53:26.873Z",
@@ -37,5 +37,9 @@
       "uploadDate": "2026-08-31T10:54:52.868Z",
       "section": "identity-card"
     }
-  ]
+  ],
+  "pendingChanges": [
+    "value_0"
+  ],
+  "lastEditRequest": "2026-09-02T10:13:41.834Z"
 }
