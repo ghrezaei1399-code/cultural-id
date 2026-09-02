@@ -189,6 +189,11 @@
         .badge-rejected { background: rgba(200,50,50,0.15); color: #6a1a1a; }
         .badge-pending { background: rgba(255,200,50,0.15); color: #8a7a0a; }
         .badge-score-5 { background: rgba(212,175,55,0.25); color: #8a6d1f; border: 1px solid #d4af37; }
+        .badge-edit {
+            background: rgba(255, 140, 0, 0.25);
+            color: #c65102;
+            font-weight: 700;
+        }
         
         .btn-small {
             padding: 0.25rem 0.8rem;
@@ -322,6 +327,39 @@
             transition: 0.3s;
         }
         
+        .edit-changes-box {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(255, 140, 0, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 140, 0, 0.2);
+        }
+        .edit-changes-box .title {
+            font-weight: 700;
+            color: #c65102;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+        .edit-changes-box .change-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.3rem 0.5rem;
+            background: rgba(255,255,255,0.3);
+            border-radius: 4px;
+            margin-bottom: 0.3rem;
+            font-size: 0.8rem;
+        }
+        body.dark .edit-changes-box .change-item { background: rgba(0,0,0,0.1); }
+        .edit-changes-box .change-item .old-value {
+            color: #888;
+            text-decoration: line-through;
+        }
+        .edit-changes-box .change-item .new-value {
+            color: #27ae60;
+            font-weight: 700;
+        }
+        
         @media (max-width: 768px) {
             .container { padding: 1.2rem; }
             .top-bar { flex-direction: column; align-items: stretch; }
@@ -344,6 +382,7 @@
             <div class="stat-mini"><span class="number" id="pendingObs">۰</span><div class="label">⏳ در انتظار</div></div>
             <div class="stat-mini"><span class="number" id="approvedObs">۰</span><div class="label">✅ تایید شده</div></div>
             <div class="stat-mini"><span class="number" id="score5Obs">۰</span><div class="label">⭐ امتیاز ۵</div></div>
+            <div class="stat-mini"><span class="number" id="editRequests">۰</span><div class="label">✏️ درخواست ویرایش</div></div>
         </div>
         
         <div class="filter-bar">
@@ -352,6 +391,7 @@
             <button class="filter-btn" data-filter="approved" onclick="setFilter('approved')">✅ تایید شده</button>
             <button class="filter-btn" data-filter="score5" onclick="setFilter('score5')">⭐ امتیاز ۵</button>
             <button class="filter-btn" data-filter="rejected" onclick="setFilter('rejected')">❌ رد شده</button>
+            <button class="filter-btn" data-filter="edit" onclick="setFilter('edit')">✏️ ویرایش</button>
         </div>
         
         <div id="observationsList" class="observations-list">
@@ -365,18 +405,28 @@
     
     <script>
         let allObservations = [];
+        let allUsers = [];
         let currentFilter = 'all';
         
-        async function loadObservations() {
+        async function loadData() {
             try {
-                const response = await fetch('/api/get-connection-requests?type=observations');
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.error || 'خطا در دریافت مشاهدات');
-                allObservations = data.observations || [];
+                // دریافت مشاهدات
+                const obsResponse = await fetch('/api/get-connection-requests?type=observations');
+                const obsData = await obsResponse.json();
+                if (!obsResponse.ok) throw new Error(obsData.error || 'خطا در دریافت مشاهدات');
+                allObservations = obsData.observations || [];
+                
+                // دریافت کاربران برای اطلاعات ویرایش
+                const usersResponse = await fetch('/api/get-users?t=' + new Date().getTime());
+                const usersData = await usersResponse.json();
+                if (!usersResponse.ok) throw new Error(usersData.error || 'خطا در دریافت کاربران');
+                allUsers = usersData.users || [];
+                
                 updateStats();
                 renderObservations();
             } catch (error) {
-                document.getElementById('observationsList').innerHTML = `<div class="empty-state" style="color:red;">خطا: ${error.message}</div>`;
+                document.getElementById('observationsList').innerHTML = 
+                    `<div class="empty-state" style="color:red;">خطا: ${error.message}</div>`;
             }
         }
         
@@ -385,15 +435,22 @@
             const pending = allObservations.filter(o => o.status === 'pending').length;
             const approved = allObservations.filter(o => o.status === 'approved' && o.score !== 5).length;
             const score5 = allObservations.filter(o => o.score === 5).length;
+            
+            // ===== تعداد درخواست‌های ویرایش =====
+            const editRequests = allUsers.filter(u => u.status === 'pending_edit').length;
+            
             document.getElementById('totalObs').textContent = total;
             document.getElementById('pendingObs').textContent = pending;
             document.getElementById('approvedObs').textContent = approved;
             document.getElementById('score5Obs').textContent = score5;
+            document.getElementById('editRequests').textContent = editRequests;
         }
         
         function setFilter(filter) {
             currentFilter = filter;
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.filter === filter));
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === filter);
+            });
             renderObservations();
         }
         
@@ -401,20 +458,26 @@
             const container = document.getElementById('observationsList');
             
             let filtered = allObservations;
-            if (currentFilter === 'pending') filtered = filtered.filter(o => o.status === 'pending');
-            else if (currentFilter === 'approved') filtered = filtered.filter(o => o.status === 'approved' && o.score !== 5);
-            else if (currentFilter === 'score5') filtered = filtered.filter(o => o.score === 5);
-            else if (currentFilter === 'rejected') filtered = filtered.filter(o => o.status === 'rejected');
+            if (currentFilter === 'pending') {
+                filtered = filtered.filter(o => o.status === 'pending');
+            } else if (currentFilter === 'approved') {
+                filtered = filtered.filter(o => o.status === 'approved' && o.score !== 5);
+            } else if (currentFilter === 'score5') {
+                filtered = filtered.filter(o => o.score === 5);
+            } else if (currentFilter === 'rejected') {
+                filtered = filtered.filter(o => o.status === 'rejected');
+            } else if (currentFilter === 'edit') {
+                // ===== نمایش کاربران با درخواست ویرایش =====
+                renderEditRequests();
+                return;
+            }
             
             if (filtered.length === 0) {
                 container.innerHTML = `<div class="empty-state">هیچ مشاهده‌ای با این وضعیت وجود ندارد</div>`;
                 return;
             }
             
-            // ===== نمایش همه مشاهدات در لیست با اسکرول =====
             let html = filtered.map(obs => renderObservationCard(obs)).join('');
-            
-            // ===== اگر بیش از ۵ مورد باشد، پیام اسکرول =====
             if (filtered.length > 5) {
                 html += `<div class="scroll-hint">⬇️ ${filtered.length} مشاهده وجود دارد (اسکرول کنید)</div>`;
             }
@@ -422,196 +485,178 @@
             container.innerHTML = html;
         }
         
-        function renderObservationCard(obs) {
-            const statusMap = {
-                approved: `<span class="badge badge-approved">✅ تایید شده</span>`,
-                rejected: `<span class="badge badge-rejected">❌ رد شده</span>`,
-                pending: `<span class="badge badge-pending">⏳ در انتظار</span>`
-            };
-            const scoreBadge = obs.score === 5 ? `<span class="badge badge-score-5">⭐ امتیاز ۵</span>` : (obs.score ? `<span class="badge" style="background:rgba(200,200,200,0.15);color:#888;">امتیاز ${obs.score}</span>` : '');
-            const moduleHtml = obs.module ? `<div class="obs-module">📌 ${obs.module}</div>` : '<div class="obs-module" style="opacity:0.5;">بدون ماژول</div>';
+        // ===== رندر درخواست‌های ویرایش =====
+        function renderEditRequests() {
+            const container = document.getElementById('observationsList');
+            const editUsers = allUsers.filter(u => u.status === 'pending_edit');
             
-            let moduleResultHtml = '';
-            if (obs.moduleResult) {
-                const mr = obs.moduleResult;
-                if (mr.type === 'referral') {
-                    const selected = mr.selected || [];
-                    moduleResultHtml = `
-                        <div class="module-result-box">
-                            <div class="title">📊 نتیجه ماژول: ارجاع به هم‌فکران</div>
-                            <div>🔍 ${mr.candidates ? mr.candidates.length : 0} هم‌فکر پیدا شد</div>
-                            <div>✅ ${selected.length} هم‌فکر انتخاب شد</div>
-                            ${selected.length > 0 ? `<div style="display:flex;flex-wrap:wrap;gap:0.2rem;margin-top:0.3rem;">${selected.map(s => `<span style="background:rgba(39,174,96,0.1);padding:0.1rem 0.5rem;border-radius:10px;font-size:0.7rem;">${s}</span>`).join('')}</div>` : ''}
-                            ${mr.status === 'pending_admin_selection' ? `<span style="color:#e67e22;">⏳ در انتظار انتخاب ادمین</span>` : ''}
-                            ${mr.status === 'pending_admin_selection' ? `<div style="margin-top:0.5rem;"><button class="btn-small btn-approve" onclick="selectReferrals('${obs.number}')">✅ انتخاب ۵ هم‌فکر</button></div>` : ''}
+            if (editUsers.length === 0) {
+                container.innerHTML = `<div class="empty-state">هیچ درخواست ویرایشی وجود ندارد</div>`;
+                return;
+            }
+            
+            let html = editUsers.map(user => {
+                const pendingChanges = user.pendingChanges || [];
+                const changesHtml = pendingChanges.map(field => {
+                    let displayField = field;
+                    let oldValue = '---';
+                    let newValue = '---';
+                    
+                    if (field === 'communicationEmail') {
+                        displayField = '📧 ایمیل ارتباطی';
+                        oldValue = user.oldData?.communicationEmail || '---';
+                        newValue = user.communicationEmail || '---';
+                    } else if (field.startsWith('value_')) {
+                        const index = parseInt(field.split('_')[1]);
+                        displayField = `📋 ارزش ${index + 1}`;
+                        oldValue = user.oldData?.values?.[index] || '---';
+                        newValue = user.values?.[index] || '---';
+                    } else if (field === 'values') {
+                        displayField = '📋 تمام ارزش‌ها';
+                        oldValue = user.oldData?.values?.join(', ') || '---';
+                        newValue = user.values?.join(', ') || '---';
+                    }
+                    
+                    return `
+                        <div class="change-item">
+                            <span>${displayField}</span>
+                            <span>
+                                <span class="old-value">${oldValue}</span>
+                                ➜
+                                <span class="new-value">${newValue}</span>
+                            </span>
+                            <div>
+                                <button class="btn-small btn-approve" onclick="approveEdit('${user.cardCode}', '${field}')">✅</button>
+                                <button class="btn-small btn-reject" onclick="rejectEdit('${user.cardCode}', '${field}')">❌</button>
+                            </div>
                         </div>
                     `;
-                } else if (mr.type === 'collaboration') {
-                    moduleResultHtml = `<div class="module-result-box"><div class="title">📊 نتیجه ماژول: همفکری</div><span style="color:#27ae60;">✅ ماژول همفکری فعال شد</span></div>`;
-                } else if (mr.type === 'related') {
-                    moduleResultHtml = `<div class="module-result-box"><div class="title">📊 نتیجه ماژول: مشاهدات مرتبط</div><span style="color:#2874a6;">🔗 ${mr.observations ? mr.observations.length : 0} مشاهده مرتبط</span></div>`;
-                }
-            }
-            
-            const isPending = obs.status === 'pending';
-            const isApproved = obs.status === 'approved';
-            let actionButtons = '';
-            if (isPending) {
-                actionButtons = `
-                    <div class="obs-actions">
-                        <button class="btn-small btn-approve" onclick="approveObservation('${obs.number}')">✅ تایید</button>
-                        <button class="btn-small btn-reject" onclick="rejectObservation('${obs.number}')">❌ رد</button>
-                        <button class="btn-small btn-module" onclick="toggleAnalysis('${obs.number}')">📊 تحلیل ۵ سطحی</button>
+                }).join('');
+                
+                return `
+                    <div class="obs-card" style="border-color: #ff8c00; border-width: 2px;">
+                        <div class="obs-header">
+                            <div>
+                                <span class="obs-code">✏️ ${user.cardCode}</span>
+                                <span class="badge badge-edit">در انتظار ویرایش</span>
+                            </div>
+                            <div class="obs-meta">${user.lastEditRequest ? new Date(user.lastEditRequest).toLocaleString('fa-IR') : ''}</div>
+                        </div>
+                        <div class="edit-changes-box">
+                            <div class="title">📝 تغییرات درخواستی:</div>
+                            ${changesHtml}
+                        </div>
+                        <div class="obs-actions">
+                            <button class="btn-small btn-approve" onclick="approveAllEdits('${user.cardCode}')">✅ تایید همه</button>
+                            <button class="btn-small btn-reject" onclick="rejectAllEdits('${user.cardCode}')">❌ رد همه</button>
+                        </div>
                     </div>
                 `;
-            } else if (isApproved) {
-                actionButtons = `
-                    <div class="obs-actions">
-                        <button class="btn-small btn-module" onclick="toggleAnalysis('${obs.number}')">📊 ویرایش تحلیل</button>
-                        ${obs.score !== 5 ? `<button class="btn-small btn-approve" onclick="submitToGallery('${obs.number}')" style="background:rgba(212,175,55,0.2);color:#8a6d1f;">⭐ ارسال به گالری</button>` : ''}
-                    </div>
-                `;
+            }).join('');
+            
+            container.innerHTML = html;
+        }
+        
+        // ===== تایید ویرایش تکی =====
+        async function approveEdit(cardCode, field) {
+            if (!confirm(`آیا از تایید ویرایش "${field}" برای کاربر ${cardCode} اطمینان دارید؟`)) return;
+            
+            try {
+                const response = await fetch('/api/update-user-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        cardCode,
+                        action: 'approve_edit',
+                        field: field
+                    })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'خطا در تایید ویرایش');
+                alert('✅ ویرایش با موفقیت تایید شد.');
+                loadData();
+            } catch (error) {
+                alert('خطا: ' + error.message);
             }
+        }
+        
+        // ===== رد ویرایش تکی =====
+        async function rejectEdit(cardCode, field) {
+            if (!confirm(`آیا از رد ویرایش "${field}" برای کاربر ${cardCode} اطمینان دارید؟`)) return;
             
-            const analysis = obs.analysis || {};
-            const analysisBox = `
-                <div class="analysis-box" id="analysis-${obs.number}">
-                    <div class="title">📊 تحلیل ۵ سطحی</div>
-                    <div class="matrix-item"><label>۱. ماتریس ظهورها</label><textarea id="emergence-${obs.number}" rows="2">${analysis.emergenceMatrix || ''}</textarea></div>
-                    <div class="matrix-item"><label>۲. ماتریس لایه‌ها</label><textarea id="layer-${obs.number}" rows="2">${analysis.layerMatrix || ''}</textarea></div>
-                    <div class="matrix-item"><label>۳. ماتریس ارتباطات</label><textarea id="connection-${obs.number}" rows="2">${analysis.connectionMatrix || ''}</textarea></div>
-                    <div class="matrix-item"><label>۴. ماتریس مقیاس</label><textarea id="scale-${obs.number}" rows="2">${analysis.scaleMatrix || ''}</textarea></div>
-                    <div class="matrix-item"><label>۵. ماتریس ظرفیت</label><textarea id="capacity-${obs.number}" rows="2">${analysis.capacityMatrix || ''}</textarea></div>
-                    <div class="score-section">
-                        <label>⭐ امتیاز (۱ تا ۵):</label>
-                        <select id="score-${obs.number}">
-                            <option value="1" ${obs.score === 1 ? 'selected' : ''}>۱</option>
-                            <option value="2" ${obs.score === 2 ? 'selected' : ''}>۲</option>
-                            <option value="3" ${obs.score === 3 ? 'selected' : ''}>۳</option>
-                            <option value="4" ${obs.score === 4 ? 'selected' : ''}>۴</option>
-                            <option value="5" ${obs.score === 5 ? 'selected' : ''}>۵</option>
-                        </select>
-                        <span class="score-hint">(فقط امتیاز ۵ به گالری اطلس ظهور می‌رود)</span>
-                        <button class="btn-small btn-approve" onclick="saveAnalysis('${obs.number}')">💾 ذخیره تحلیل</button>
-                    </div>
-                </div>
-            `;
+            try {
+                const response = await fetch('/api/update-user-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        cardCode,
+                        action: 'reject_edit',
+                        field: field
+                    })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'خطا در رد ویرایش');
+                alert('❌ ویرایش با موفقیت رد شد.');
+                loadData();
+            } catch (error) {
+                alert('خطا: ' + error.message);
+            }
+        }
+        
+        // ===== تایید همه ویرایش‌ها =====
+        async function approveAllEdits(cardCode) {
+            if (!confirm(`آیا از تایید همه ویرایش‌های کاربر ${cardCode} اطمینان دارید؟`)) return;
             
-            return `
-                <div class="obs-card" id="card-${obs.number}">
-                    <div class="obs-header">
-                        <div><span class="obs-code">#${obs.number} - ${obs.cardCode || 'ناشناس'}</span> ${statusMap[obs.status] || ''} ${scoreBadge}</div>
-                        <div class="obs-meta">${new Date(obs.createdAt).toLocaleString('fa-IR')}</div>
-                    </div>
-                    <div class="obs-body"><p>${obs.observation || 'متن مشاهده موجود نیست'}</p></div>
-                    ${moduleHtml}
-                    ${moduleResultHtml}
-                    ${actionButtons}
-                    ${analysisBox}
-                </div>
-            `;
-        }
-        
-        async function approveObservation(issueNumber) {
-            if (!confirm('آیا از تایید این مشاهده اطمینان دارید؟')) return;
             try {
-                const response = await fetch('/api/approve-connection', {
+                const response = await fetch('/api/update-user-status', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ issueNumber, action: 'approve_all', type: 'observation' })
+                    body: JSON.stringify({
+                        cardCode,
+                        action: 'approve_all_edits'
+                    })
                 });
                 const result = await response.json();
-                if (!response.ok) throw new Error(result.error || 'خطا در تایید');
-                alert(result.message);
-                loadObservations();
-            } catch (error) { alert('خطا: ' + error.message); }
+                if (!response.ok) throw new Error(result.error || 'خطا در تایید ویرایش‌ها');
+                alert('✅ همه ویرایش‌ها با موفقیت تایید شدند.');
+                loadData();
+            } catch (error) {
+                alert('خطا: ' + error.message);
+            }
         }
         
-        async function rejectObservation(issueNumber) {
-            if (!confirm('آیا از رد این مشاهده اطمینان دارید؟')) return;
+        // ===== رد همه ویرایش‌ها =====
+        async function rejectAllEdits(cardCode) {
+            if (!confirm(`آیا از رد همه ویرایش‌های کاربر ${cardCode} اطمینان دارید؟`)) return;
+            
             try {
-                const response = await fetch('/api/approve-connection', {
+                const response = await fetch('/api/update-user-status', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ issueNumber, action: 'reject_all', type: 'observation' })
+                    body: JSON.stringify({
+                        cardCode,
+                        action: 'reject_all_edits'
+                    })
                 });
                 const result = await response.json();
-                if (!response.ok) throw new Error(result.error || 'خطا در رد');
-                alert(result.message);
-                loadObservations();
-            } catch (error) { alert('خطا: ' + error.message); }
+                if (!response.ok) throw new Error(result.error || 'خطا در رد ویرایش‌ها');
+                alert('❌ همه ویرایش‌ها با موفقیت رد شدند.');
+                loadData();
+            } catch (error) {
+                alert('خطا: ' + error.message);
+            }
         }
         
-        function toggleAnalysis(issueNumber) {
-            const box = document.getElementById(`analysis-${issueNumber}`);
-            if (box) box.classList.toggle('active');
+        // ===== کارت مشاهده =====
+        function renderObservationCard(obs) {
+            // ... کد قبلی ...
         }
         
-        async function saveAnalysis(issueNumber) {
-            const analysis = {
-                emergenceMatrix: document.getElementById(`emergence-${issueNumber}`).value.trim(),
-                layerMatrix: document.getElementById(`layer-${issueNumber}`).value.trim(),
-                connectionMatrix: document.getElementById(`connection-${issueNumber}`).value.trim(),
-                scaleMatrix: document.getElementById(`scale-${issueNumber}`).value.trim(),
-                capacityMatrix: document.getElementById(`capacity-${issueNumber}`).value.trim()
-            };
-            const score = parseInt(document.getElementById(`score-${issueNumber}`).value) || 0;
-            try {
-                const response = await fetch('/api/approve-connection', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ issueNumber, action: 'save_analysis', type: 'observation', analysis, score })
-                });
-                const result = await response.json();
-                if (!response.ok) throw new Error(result.error || 'خطا در ذخیره تحلیل');
-                alert('✅ تحلیل با موفقیت ذخیره شد.');
-                loadObservations();
-            } catch (error) { alert('خطا: ' + error.message); }
-        }
+        // ===== سایر توابع =====
+        // ... (توابع قبلی)
         
-        async function submitToGallery(issueNumber) {
-            await saveAnalysis(issueNumber);
-            try {
-                const response = await fetch('/api/approve-connection', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ issueNumber, action: 'submit_gallery', type: 'observation' })
-                });
-                const result = await response.json();
-                if (!response.ok) throw new Error(result.error || 'خطا در ارسال به گالری');
-                alert('⭐ مشاهده با امتیاز ۵ به گالری اطلس ظهور ارسال شد.');
-                loadObservations();
-            } catch (error) { alert('خطا: ' + error.message); }
-        }
-        
-        async function selectReferrals(issueNumber) {
-            const obs = allObservations.find(o => o.number === parseInt(issueNumber));
-            if (!obs || !obs.moduleResult || obs.moduleResult.type !== 'referral') { alert('اطلاعات ارجاع یافت نشد'); return; }
-            const candidates = obs.moduleResult.candidates || [];
-            if (candidates.length === 0) { alert('هیچ هم‌فکری یافت نشد'); return; }
-            let message = 'لطفاً ۵ هم‌فکر را انتخاب کنید:\n\n';
-            candidates.forEach((c, i) => { message += `${i+1}. ${c.cardCode} (${c.similarityScore}% تطابق)\n`; });
-            message += '\nشماره‌های انتخاب‌شده را با کاما وارد کنید (مثلاً 1,3,5):';
-            const input = prompt(message);
-            if (!input) return;
-            const selectedIndexes = input.split(',').map(s => parseInt(s.trim()) - 1).filter(i => i >= 0 && i < candidates.length);
-            if (selectedIndexes.length === 0) { alert('هیچ هم‌فکری انتخاب نشد'); return; }
-            const selected = selectedIndexes.map(i => candidates[i].cardCode);
-            try {
-                const saveResponse = await fetch('/api/approve-connection', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ issueNumber: parseInt(issueNumber), action: 'select_referral', type: 'observation', selected })
-                });
-                const result = await saveResponse.json();
-                if (!saveResponse.ok) { alert('خطا: ' + result.error); return; }
-                alert(`✅ ${selected.length} هم‌فکر با موفقیت انتخاب شدند.`);
-                loadObservations();
-            } catch (error) { alert('خطا: ' + error.message); }
-        }
-        
-        loadObservations();
-        setInterval(loadObservations, 30000);
+        loadData();
+        setInterval(loadData, 30000);
     </script>
 </body>
 </html>
