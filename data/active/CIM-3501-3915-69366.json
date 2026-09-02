@@ -8,7 +8,7 @@
     "استفاده از شبکه های اجتماعی فراگیر برای توسعه فعالیت های فرهنگی",
     "پاسداشت اسطوره های فرهنگی ملل در کشورهای دیگر",
     "دوست داشتن همه ی مردم جهان",
-    "خشونت پرهیزی",
+    "مبارزه به تمامی مظاهر خشونت",
     "توافق بر اصول فرهنگی مشترک با دیگر فرهنگ ها"
   ],
   "priorities": [
@@ -22,7 +22,7 @@
   ],
   "communicationEmail": "ghrezaei1399@gmail.com",
   "registrationDate": "2026-09-02T07:43:28.677Z",
-  "status": "approved",
+  "status": "pending_edit",
   "rank": 0,
   "country": "Iran",
   "statusUpdatedAt": "2026-09-02T08:03:35.923Z",
@@ -38,6 +38,9 @@
       "section": "identity-card"
     }
   ],
-  "lastEditRequest": "2026-09-02T07:59:18.865Z",
-  "editLocked": true
+  "lastEditRequest": "2026-09-02T10:01:20.863Z",
+  "editLocked": true,
+  "pendingChanges": [
+    "value_5"
+  ]
 }
