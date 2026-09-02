@@ -162,12 +162,14 @@
             border: 1px solid rgba(50,200,50,0.05);
             color: #0a5a0a;
         }
+        body.dark .message-box.success { color: #80b080; }
         .message-box.error {
             display: block;
             background: rgba(200,50,50,0.05);
             border: 1px solid rgba(200,50,50,0.05);
             color: #5a0a0a;
         }
+        body.dark .message-box.error { color: #b08080; }
         .message-box.info {
             display: block;
             background: rgba(50,150,200,0.05);
@@ -294,8 +296,10 @@
         
         async function loadUserData() {
             const cardCode = document.getElementById('cardCode').value.trim();
+            const errorMsg = document.getElementById('messageBox');
+            
             if (!cardCode) {
-                showMessage('لطفاً کد کارت خود را وارد کنید.', 'error');
+                showMessage('❌ لطفاً کد کارت خود را وارد کنید.', 'error');
                 return;
             }
             
@@ -305,19 +309,28 @@
             hideMessage();
             
             try {
-                const response = await fetch('/api/get-user?cardCode=' + encodeURIComponent(cardCode));
-                const result = await response.json();
+                // ===== استفاده از API صحیح =====
+                const response = await fetch('/api/get-users?t=' + new Date().getTime());
+                const data = await response.json();
                 
                 if (!response.ok) {
-                    throw new Error(result.error || 'خطا در دریافت اطلاعات');
+                    throw new Error(data.error || 'خطا در دریافت اطلاعات');
                 }
                 
-                currentUser = result.user;
+                // پیدا کردن کاربر مورد نظر
+                const user = data.users.find(u => u.cardCode === cardCode);
+                
+                if (!user) {
+                    throw new Error('کاربری با این کد یافت نشد.');
+                }
+                
+                currentUser = user;
                 displayUserData(currentUser);
                 document.getElementById('editSection').style.display = 'block';
                 showMessage('✅ اطلاعات کاربر بارگذاری شد.', 'success');
                 
             } catch (error) {
+                console.error('Error:', error);
                 showMessage('❌ ' + error.message, 'error');
             }
             
@@ -336,7 +349,6 @@
             const values = user.values || [];
             const priorities = user.priorities || [];
             
-            // نمایش ۷ ارزش
             for (let i = 0; i < 7; i++) {
                 const val = values[i] || '';
                 const priority = priorities[i] || 0;
@@ -357,7 +369,7 @@
         async function saveField(field) {
             const cardCode = document.getElementById('cardCode').value.trim();
             if (!cardCode || !currentUser) {
-                showMessage('لطفاً ابتدا اطلاعات کاربر را بارگذاری کنید.', 'error');
+                showMessage('❌ لطفاً ابتدا اطلاعات کاربر را بارگذاری کنید.', 'error');
                 return;
             }
             
@@ -387,6 +399,11 @@
                 
                 showMessage('✅ تغییرات با موفقیت ذخیره شد. منتظر تأیید ادمین باشید.', 'success');
                 
+                // به‌روزرسانی currentUser
+                if (field === 'email') {
+                    currentUser.communicationEmail = document.getElementById('emailInput').value.trim();
+                }
+                
             } catch (error) {
                 showMessage('❌ ' + error.message, 'error');
             }
@@ -398,7 +415,7 @@
         async function saveValue(index) {
             const cardCode = document.getElementById('cardCode').value.trim();
             if (!cardCode || !currentUser) {
-                showMessage('لطفاً ابتدا اطلاعات کاربر را بارگذاری کنید.', 'error');
+                showMessage('❌ لطفاً ابتدا اطلاعات کاربر را بارگذاری کنید.', 'error');
                 return;
             }
             
@@ -411,11 +428,9 @@
                 const value = document.getElementById(`value-${index}`).value.trim();
                 const priority = parseInt(document.getElementById(`priority-${index}`).value) || 0;
                 
-                // دریافت ارزش‌های فعلی
                 const values = [...(currentUser.values || [])];
                 const priorities = [...(currentUser.priorities || [])];
                 
-                // به‌روزرسانی ارزش مورد نظر
                 values[index] = value;
                 priorities[index] = priority;
                 
@@ -435,7 +450,6 @@
                     throw new Error(result.error || 'خطا در ذخیره تغییرات');
                 }
                 
-                // به‌روزرسانی currentUser
                 currentUser.values = values;
                 currentUser.priorities = priorities;
                 
