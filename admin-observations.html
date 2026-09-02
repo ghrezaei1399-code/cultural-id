@@ -108,19 +108,19 @@
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
-            max-height: 700px;
+            max-height: 800px;
             overflow-y: auto;
             padding-left: 0.3rem;
         }
         .observations-list::-webkit-scrollbar {
-            width: 4px;
+            width: 6px;
         }
         .observations-list::-webkit-scrollbar-track {
             background: rgba(255,255,255,0.02);
             border-radius: 10px;
         }
         .observations-list::-webkit-scrollbar-thumb {
-            background: rgba(212,175,55,0.2);
+            background: rgba(212,175,55,0.3);
             border-radius: 10px;
         }
         
@@ -176,7 +176,6 @@
             margin-top: 0.8rem;
         }
         body.dark .obs-module { color: #d0c0b0; }
-        .obs-module .icon { font-size: 0.8rem; margin-left: 0.2rem; }
         
         .badge {
             display: inline-block;
@@ -214,6 +213,27 @@
         body.dark .btn-module { color: #85c1e9; }
         .btn-module:hover { background: rgba(40,116,166,0.2); }
         
+        .module-result-box {
+            margin-top: 0.8rem;
+            padding: 0.8rem;
+            background: rgba(40,116,166,0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(40,116,166,0.1);
+        }
+        .module-result-box .title {
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: #2874a6;
+            margin-bottom: 0.3rem;
+        }
+        .module-result-box .item {
+            padding: 0.2rem 0.4rem;
+            background: rgba(255,255,255,0.3);
+            border-radius: 4px;
+            margin-bottom: 0.2rem;
+            font-size: 0.75rem;
+        }
+        
         .empty-state {
             text-align: center;
             padding: 3rem;
@@ -227,7 +247,6 @@
             margin-top: 1rem;
         }
         
-        /* ===== باکس تحلیل ۵ سطحی ===== */
         .analysis-box {
             margin-top: 1rem;
             padding: 1rem;
@@ -236,21 +255,14 @@
             border: 1px solid rgba(212,175,55,0.2);
             display: none;
         }
-        body.dark .analysis-box { background: rgba(212,175,55,0.02); border-color: rgba(212,175,55,0.1); }
         .analysis-box.active { display: block; }
         .analysis-box .title {
             font-weight: 800;
             font-size: 0.9rem;
             color: #8a6d1f;
             margin-bottom: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
-        body.dark .analysis-box .title { color: #f9e79f; }
-        .analysis-box .matrix-item {
-            margin-bottom: 0.8rem;
-        }
+        .analysis-box .matrix-item { margin-bottom: 0.8rem; }
         .analysis-box .matrix-item label {
             display: block;
             font-weight: 700;
@@ -258,7 +270,6 @@
             color: #2a1a0a;
             margin-bottom: 0.2rem;
         }
-        body.dark .analysis-box .matrix-item label { color: #e8d8c8; }
         .analysis-box .matrix-item textarea {
             width: 100%;
             padding: 0.5rem;
@@ -271,52 +282,30 @@
             resize: vertical;
             min-height: 40px;
             outline: none;
-            transition: 0.3s;
         }
-        body.dark .analysis-box .matrix-item textarea {
-            background: rgba(0,0,0,0.1);
-            color: #f0e8d0;
-            border-color: rgba(212,175,55,0.1);
-        }
-        .analysis-box .matrix-item textarea:focus {
-            border-color: #d4af37;
-            box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
-        }
-        
-        /* ===== امتیازدهی ===== */
         .score-section {
-            margin-top: 1rem;
             display: flex;
             align-items: center;
             gap: 1rem;
             flex-wrap: wrap;
+            margin-top: 1rem;
         }
-        .score-section label {
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: #2a1a0a;
-        }
-        body.dark .score-section label { color: #e8d8c8; }
         .score-section select {
             padding: 0.3rem 0.8rem;
             border-radius: 8px;
             border: 1px solid rgba(212,175,55,0.2);
             background: rgba(255,255,255,0.5);
             font-size: 0.9rem;
-            color: #1a0a0a;
-            outline: none;
         }
-        body.dark .score-section select {
-            background: rgba(0,0,0,0.1);
-            color: #f0e8d0;
-            border-color: rgba(212,175,55,0.1);
-        }
-        .score-section .score-hint {
-            font-size: 0.7rem;
+        .score-hint { font-size: 0.7rem; color: #888; }
+        
+        .scroll-hint {
+            text-align: center;
+            padding: 0.5rem;
             color: #888;
-            font-style: italic;
+            font-size: 0.8rem;
+            border-top: 1px solid rgba(212,175,55,0.1);
         }
-        body.dark .score-section .score-hint { color: #a8a8b8; }
         
         .btn-back-bottom {
             display: inline-block;
@@ -329,16 +318,12 @@
             font-weight: 700;
             transition: 0.3s;
         }
-        body.dark .btn-back-bottom { color: #f9e79f; background: rgba(212,175,55,0.15); }
-        .btn-back-bottom:hover { background: rgba(212,175,55,0.3); }
         
         @media (max-width: 768px) {
             .container { padding: 1.2rem; }
             .top-bar { flex-direction: column; align-items: stretch; }
             .obs-header { flex-direction: column; align-items: stretch; }
             .obs-actions { flex-direction: column; }
-            .obs-actions .btn-small { width: 100%; text-align: center; }
-            .score-section { flex-direction: column; align-items: stretch; }
         }
     </style>
 </head>
@@ -352,22 +337,10 @@
         <div class="page-subtitle">بررسی، تحلیل و امتیازدهی مشاهدات خام</div>
         
         <div class="stats-mini">
-            <div class="stat-mini">
-                <span class="number" id="totalObs">۰</span>
-                <div class="label">کل مشاهدات</div>
-            </div>
-            <div class="stat-mini">
-                <span class="number" id="pendingObs">۰</span>
-                <div class="label">⏳ در انتظار</div>
-            </div>
-            <div class="stat-mini">
-                <span class="number" id="approvedObs">۰</span>
-                <div class="label">✅ تایید شده</div>
-            </div>
-            <div class="stat-mini">
-                <span class="number" id="score5Obs">۰</span>
-                <div class="label">⭐ امتیاز ۵</div>
-            </div>
+            <div class="stat-mini"><span class="number" id="totalObs">۰</span><div class="label">کل مشاهدات</div></div>
+            <div class="stat-mini"><span class="number" id="pendingObs">۰</span><div class="label">⏳ در انتظار</div></div>
+            <div class="stat-mini"><span class="number" id="approvedObs">۰</span><div class="label">✅ تایید شده</div></div>
+            <div class="stat-mini"><span class="number" id="score5Obs">۰</span><div class="label">⭐ امتیاز ۵</div></div>
         </div>
         
         <div class="filter-bar">
@@ -390,30 +363,25 @@
     <script>
         let allObservations = [];
         let currentFilter = 'all';
-        let currentEditing = null;
         
         async function loadObservations() {
             try {
                 const response = await fetch('/api/get-connection-requests?type=observations');
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || 'خطا در دریافت مشاهدات');
-                
                 allObservations = data.observations || [];
                 updateStats();
                 renderObservations();
             } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('observationsList').innerHTML = 
-                    `<div class="empty-state" style="color:red;">خطا: ${error.message}</div>`;
+                document.getElementById('observationsList').innerHTML = `<div class="empty-state" style="color:red;">خطا: ${error.message}</div>`;
             }
         }
         
         function updateStats() {
             const total = allObservations.length;
             const pending = allObservations.filter(o => o.status === 'pending').length;
-            const approved = allObservations.filter(o => o.status === 'approved').length;
+            const approved = allObservations.filter(o => o.status === 'approved' && o.score !== 5).length;
             const score5 = allObservations.filter(o => o.score === 5).length;
-            
             document.getElementById('totalObs').textContent = total;
             document.getElementById('pendingObs').textContent = pending;
             document.getElementById('approvedObs').textContent = approved;
@@ -422,184 +390,155 @@
         
         function setFilter(filter) {
             currentFilter = filter;
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.filter === filter);
-            });
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.filter === filter));
             renderObservations();
         }
         
         function renderObservations() {
             const container = document.getElementById('observationsList');
-            
             let filtered = allObservations;
-            if (currentFilter === 'pending') {
-                filtered = filtered.filter(o => o.status === 'pending');
-            } else if (currentFilter === 'approved') {
-                filtered = filtered.filter(o => o.status === 'approved' && o.score !== 5);
-            } else if (currentFilter === 'score5') {
-                filtered = filtered.filter(o => o.score === 5);
-            } else if (currentFilter === 'rejected') {
-                filtered = filtered.filter(o => o.status === 'rejected');
-            }
+            if (currentFilter === 'pending') filtered = filtered.filter(o => o.status === 'pending');
+            else if (currentFilter === 'approved') filtered = filtered.filter(o => o.status === 'approved' && o.score !== 5);
+            else if (currentFilter === 'score5') filtered = filtered.filter(o => o.score === 5);
+            else if (currentFilter === 'rejected') filtered = filtered.filter(o => o.status === 'rejected');
             
             if (filtered.length === 0) {
                 container.innerHTML = `<div class="empty-state">هیچ مشاهده‌ای با این وضعیت وجود ندارد</div>`;
                 return;
             }
             
-            container.innerHTML = filtered.map(obs => {
-                const statusMap = {
-                    approved: `<span class="badge badge-approved">✅ تایید شده</span>`,
-                    rejected: `<span class="badge badge-rejected">❌ رد شده</span>`,
-                    pending: `<span class="badge badge-pending">⏳ در انتظار</span>`
-                };
-                
-                const scoreBadge = obs.score === 5 ? 
-                    `<span class="badge badge-score-5">⭐ امتیاز ۵</span>` : 
-                    (obs.score ? `<span class="badge" style="background:rgba(200,200,200,0.15);color:#888;">امتیاز ${obs.score}</span>` : '');
-                
-                const moduleHtml = obs.module 
-                    ? `<div class="obs-module"><span class="icon">📌</span> ${obs.module}</div>`
-                    : '<div class="obs-module" style="opacity:0.5;">بدون ماژول</div>';
-                
-                const isPending = obs.status === 'pending';
-                const isApproved = obs.status === 'approved';
-                
-                // تحلیل ۵ سطحی
-                const analysis = obs.analysis || {};
-                const hasAnalysis = analysis.emergenceMatrix || analysis.layerMatrix || analysis.connectionMatrix || analysis.scaleMatrix || analysis.capacityMatrix;
-                
-                let actionButtons = '';
-                if (isPending) {
-                    actionButtons = `
-                        <div class="obs-actions">
-                            <button class="btn-small btn-approve" onclick="approveObservation('${obs.number}')">✅ تایید</button>
-                            <button class="btn-small btn-reject" onclick="rejectObservation('${obs.number}')">❌ رد</button>
-                            <button class="btn-small btn-module" onclick="toggleAnalysis('${obs.number}')">📊 تحلیل ۵ سطحی</button>
-                        </div>
-                    `;
-                } else if (isApproved) {
-                    actionButtons = `
-                        <div class="obs-actions">
-                            <button class="btn-small btn-module" onclick="toggleAnalysis('${obs.number}')">📊 ویرایش تحلیل</button>
-                            ${obs.score !== 5 ? `<button class="btn-small btn-approve" onclick="submitToGallery('${obs.number}')" style="background:rgba(212,175,55,0.2);color:#8a6d1f;">⭐ ارسال به گالری</button>` : ''}
-                        </div>
-                    `;
-                }
-                
-                // باکس تحلیل (مخفی در ابتدا)
-                const analysisBoxId = `analysis-${obs.number}`;
-                const analysisBox = `
-                    <div class="analysis-box" id="${analysisBoxId}">
-                        <div class="title">📊 تحلیل ۵ سطحی</div>
-                        <div class="matrix-item">
-                            <label>۱. ماتریس ظهورها (چه چیزهایی ظهور کرده‌اند؟)</label>
-                            <textarea id="emergence-${obs.number}" rows="2">${analysis.emergenceMatrix || ''}</textarea>
-                        </div>
-                        <div class="matrix-item">
-                            <label>۲. ماتریس لایه‌ها (فردی، اجتماعی، نهادی، جهانی)</label>
-                            <textarea id="layer-${obs.number}" rows="2">${analysis.layerMatrix || ''}</textarea>
-                        </div>
-                        <div class="matrix-item">
-                            <label>۳. ماتریس ارتباطات (ارتباط با چه ظهورهای دیگری؟)</label>
-                            <textarea id="connection-${obs.number}" rows="2">${analysis.connectionMatrix || ''}</textarea>
-                        </div>
-                        <div class="matrix-item">
-                            <label>۴. ماتریس مقیاس (محلی، ملی، منطقه‌ای، جهانی)</label>
-                            <textarea id="scale-${obs.number}" rows="2">${analysis.scaleMatrix || ''}</textarea>
-                        </div>
-                        <div class="matrix-item">
-                            <label>۵. ماتریس ظرفیت (چه ظرفیت‌هایی در این پدیده وجود دارند؟)</label>
-                            <textarea id="capacity-${obs.number}" rows="2">${analysis.capacityMatrix || ''}</textarea>
-                        </div>
-                        <div class="score-section">
-                            <label>⭐ امتیاز (۱ تا ۵):</label>
-                            <select id="score-${obs.number}">
-                                <option value="1" ${obs.score === 1 ? 'selected' : ''}>۱</option>
-                                <option value="2" ${obs.score === 2 ? 'selected' : ''}>۲</option>
-                                <option value="3" ${obs.score === 3 ? 'selected' : ''}>۳</option>
-                                <option value="4" ${obs.score === 4 ? 'selected' : ''}>۴</option>
-                                <option value="5" ${obs.score === 5 ? 'selected' : ''}>۵</option>
-                            </select>
-                            <span class="score-hint">(فقط امتیاز ۵ به گالری اطلس ظهور می‌رود)</span>
-                            <button class="btn-small btn-approve" onclick="saveAnalysis('${obs.number}')">💾 ذخیره تحلیل</button>
-                        </div>
-                    </div>
-                `;
-                
-                return `
-                    <div class="obs-card" id="card-${obs.number}">
-                        <div class="obs-header">
-                            <div>
-                                <span class="obs-code">#${obs.number} - ${obs.cardCode || 'ناشناس'}</span>
-                                ${statusMap[obs.status] || ''}
-                                ${scoreBadge}
-                            </div>
-                            <div class="obs-meta">${new Date(obs.createdAt).toLocaleString('fa-IR')}</div>
-                        </div>
-                        <div class="obs-body">
-                            <p>${obs.observation || 'متن مشاهده موجود نیست'}</p>
-                        </div>
-                        ${moduleHtml}
-                        ${actionButtons}
-                        ${analysisBox}
-                    </div>
-                `;
-            }).join('');
+            const showCount = 5;
+            const displayed = filtered.slice(0, showCount);
+            const remaining = filtered.length - showCount;
+            
+            let html = displayed.map(obs => renderObservationCard(obs)).join('');
+            if (remaining > 0) html += `<div class="scroll-hint">⬇️ ${remaining} مشاهده دیگر وجود دارد (اسکرول کنید)</div>`;
+            container.innerHTML = html;
         }
         
-        function toggleAnalysis(issueNumber) {
-            const box = document.getElementById(`analysis-${issueNumber}`);
-            if (box) {
-                box.classList.toggle('active');
-                if (box.classList.contains('active')) {
-                    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        function renderObservationCard(obs) {
+            const statusMap = {
+                approved: `<span class="badge badge-approved">✅ تایید شده</span>`,
+                rejected: `<span class="badge badge-rejected">❌ رد شده</span>`,
+                pending: `<span class="badge badge-pending">⏳ در انتظار</span>`
+            };
+            const scoreBadge = obs.score === 5 ? `<span class="badge badge-score-5">⭐ امتیاز ۵</span>` : (obs.score ? `<span class="badge" style="background:rgba(200,200,200,0.15);color:#888;">امتیاز ${obs.score}</span>` : '');
+            const moduleHtml = obs.module ? `<div class="obs-module">📌 ${obs.module}</div>` : '<div class="obs-module" style="opacity:0.5;">بدون ماژول</div>';
+            
+            let moduleResultHtml = '';
+            if (obs.moduleResult) {
+                const mr = obs.moduleResult;
+                if (mr.type === 'referral') {
+                    const selected = mr.selected || [];
+                    moduleResultHtml = `
+                        <div class="module-result-box">
+                            <div class="title">📊 نتیجه ماژول: ارجاع به هم‌فکران</div>
+                            <div>🔍 ${mr.candidates ? mr.candidates.length : 0} هم‌فکر پیدا شد</div>
+                            <div>✅ ${selected.length} هم‌فکر انتخاب شد</div>
+                            ${selected.length > 0 ? `<div style="display:flex;flex-wrap:wrap;gap:0.2rem;margin-top:0.3rem;">${selected.map(s => `<span style="background:rgba(39,174,96,0.1);padding:0.1rem 0.5rem;border-radius:10px;font-size:0.7rem;">${s}</span>`).join('')}</div>` : ''}
+                            ${mr.status === 'pending_admin_selection' ? `<span style="color:#e67e22;">⏳ در انتظار انتخاب ادمین</span>` : ''}
+                            ${mr.status === 'pending_admin_selection' ? `<div style="margin-top:0.5rem;"><button class="btn-small btn-approve" onclick="selectReferrals('${obs.number}')">✅ انتخاب ۵ هم‌فکر</button></div>` : ''}
+                        </div>
+                    `;
+                } else if (mr.type === 'collaboration') {
+                    moduleResultHtml = `<div class="module-result-box"><div class="title">📊 نتیجه ماژول: همفکری</div><span style="color:#27ae60;">✅ ماژول همفکری فعال شد</span></div>`;
+                } else if (mr.type === 'related') {
+                    moduleResultHtml = `<div class="module-result-box"><div class="title">📊 نتیجه ماژول: مشاهدات مرتبط</div><span style="color:#2874a6;">🔗 ${mr.observations ? mr.observations.length : 0} مشاهده مرتبط</span></div>`;
                 }
             }
+            
+            const isPending = obs.status === 'pending';
+            const isApproved = obs.status === 'approved';
+            let actionButtons = '';
+            if (isPending) {
+                actionButtons = `
+                    <div class="obs-actions">
+                        <button class="btn-small btn-approve" onclick="approveObservation('${obs.number}')">✅ تایید</button>
+                        <button class="btn-small btn-reject" onclick="rejectObservation('${obs.number}')">❌ رد</button>
+                        <button class="btn-small btn-module" onclick="toggleAnalysis('${obs.number}')">📊 تحلیل ۵ سطحی</button>
+                    </div>
+                `;
+            } else if (isApproved) {
+                actionButtons = `
+                    <div class="obs-actions">
+                        <button class="btn-small btn-module" onclick="toggleAnalysis('${obs.number}')">📊 ویرایش تحلیل</button>
+                        ${obs.score !== 5 ? `<button class="btn-small btn-approve" onclick="submitToGallery('${obs.number}')" style="background:rgba(212,175,55,0.2);color:#8a6d1f;">⭐ ارسال به گالری</button>` : ''}
+                    </div>
+                `;
+            }
+            
+            const analysis = obs.analysis || {};
+            const analysisBox = `
+                <div class="analysis-box" id="analysis-${obs.number}">
+                    <div class="title">📊 تحلیل ۵ سطحی</div>
+                    <div class="matrix-item"><label>۱. ماتریس ظهورها</label><textarea id="emergence-${obs.number}" rows="2">${analysis.emergenceMatrix || ''}</textarea></div>
+                    <div class="matrix-item"><label>۲. ماتریس لایه‌ها</label><textarea id="layer-${obs.number}" rows="2">${analysis.layerMatrix || ''}</textarea></div>
+                    <div class="matrix-item"><label>۳. ماتریس ارتباطات</label><textarea id="connection-${obs.number}" rows="2">${analysis.connectionMatrix || ''}</textarea></div>
+                    <div class="matrix-item"><label>۴. ماتریس مقیاس</label><textarea id="scale-${obs.number}" rows="2">${analysis.scaleMatrix || ''}</textarea></div>
+                    <div class="matrix-item"><label>۵. ماتریس ظرفیت</label><textarea id="capacity-${obs.number}" rows="2">${analysis.capacityMatrix || ''}</textarea></div>
+                    <div class="score-section">
+                        <label>⭐ امتیاز (۱ تا ۵):</label>
+                        <select id="score-${obs.number}">
+                            <option value="1" ${obs.score === 1 ? 'selected' : ''}>۱</option>
+                            <option value="2" ${obs.score === 2 ? 'selected' : ''}>۲</option>
+                            <option value="3" ${obs.score === 3 ? 'selected' : ''}>۳</option>
+                            <option value="4" ${obs.score === 4 ? 'selected' : ''}>۴</option>
+                            <option value="5" ${obs.score === 5 ? 'selected' : ''}>۵</option>
+                        </select>
+                        <span class="score-hint">(فقط امتیاز ۵ به گالری اطلس ظهور می‌رود)</span>
+                        <button class="btn-small btn-approve" onclick="saveAnalysis('${obs.number}')">💾 ذخیره تحلیل</button>
+                    </div>
+                </div>
+            `;
+            
+            return `
+                <div class="obs-card" id="card-${obs.number}">
+                    <div class="obs-header">
+                        <div><span class="obs-code">#${obs.number} - ${obs.cardCode || 'ناشناس'}</span> ${statusMap[obs.status] || ''} ${scoreBadge}</div>
+                        <div class="obs-meta">${new Date(obs.createdAt).toLocaleString('fa-IR')}</div>
+                    </div>
+                    <div class="obs-body"><p>${obs.observation || 'متن مشاهده موجود نیست'}</p></div>
+                    ${moduleHtml}
+                    ${moduleResultHtml}
+                    ${actionButtons}
+                    ${analysisBox}
+                </div>
+            `;
         }
         
         async function approveObservation(issueNumber) {
             if (!confirm('آیا از تایید این مشاهده اطمینان دارید؟')) return;
-            
             try {
                 const response = await fetch('/api/approve-connection', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        issueNumber, 
-                        action: 'approve_all', 
-                        type: 'observation' 
-                    })
+                    body: JSON.stringify({ issueNumber, action: 'approve_all', type: 'observation' })
                 });
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.error || 'خطا در تایید');
                 alert(result.message);
                 loadObservations();
-            } catch (error) {
-                alert('خطا: ' + error.message);
-            }
+            } catch (error) { alert('خطا: ' + error.message); }
         }
         
         async function rejectObservation(issueNumber) {
             if (!confirm('آیا از رد این مشاهده اطمینان دارید؟')) return;
-            
             try {
                 const response = await fetch('/api/approve-connection', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        issueNumber, 
-                        action: 'reject_all', 
-                        type: 'observation' 
-                    })
+                    body: JSON.stringify({ issueNumber, action: 'reject_all', type: 'observation' })
                 });
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.error || 'خطا در رد');
                 alert(result.message);
                 loadObservations();
-            } catch (error) {
-                alert('خطا: ' + error.message);
-            }
+            } catch (error) { alert('خطا: ' + error.message); }
+        }
+        
+        function toggleAnalysis(issueNumber) {
+            const box = document.getElementById(`analysis-${issueNumber}`);
+            if (box) box.classList.toggle('active');
         }
         
         async function saveAnalysis(issueNumber) {
@@ -610,52 +549,59 @@
                 scaleMatrix: document.getElementById(`scale-${issueNumber}`).value.trim(),
                 capacityMatrix: document.getElementById(`capacity-${issueNumber}`).value.trim()
             };
-            
             const score = parseInt(document.getElementById(`score-${issueNumber}`).value) || 0;
-            
             try {
                 const response = await fetch('/api/approve-connection', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        issueNumber, 
-                        action: 'save_analysis',
-                        type: 'observation',
-                        analysis: analysis,
-                        score: score
-                    })
+                    body: JSON.stringify({ issueNumber, action: 'save_analysis', type: 'observation', analysis, score })
                 });
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.error || 'خطا در ذخیره تحلیل');
                 alert('✅ تحلیل با موفقیت ذخیره شد.');
                 loadObservations();
-            } catch (error) {
-                alert('خطا: ' + error.message);
-            }
+            } catch (error) { alert('خطا: ' + error.message); }
         }
         
         async function submitToGallery(issueNumber) {
-            // ابتدا تحلیل را ذخیره می‌کنیم
             await saveAnalysis(issueNumber);
-            
-            // سپس امتیاز ۵ را اعمال می‌کنیم
             try {
                 const response = await fetch('/api/approve-connection', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        issueNumber, 
-                        action: 'submit_gallery',
-                        type: 'observation'
-                    })
+                    body: JSON.stringify({ issueNumber, action: 'submit_gallery', type: 'observation' })
                 });
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.error || 'خطا در ارسال به گالری');
                 alert('⭐ مشاهده با امتیاز ۵ به گالری اطلس ظهور ارسال شد.');
                 loadObservations();
-            } catch (error) {
-                alert('خطا: ' + error.message);
-            }
+            } catch (error) { alert('خطا: ' + error.message); }
+        }
+        
+        async function selectReferrals(issueNumber) {
+            const obs = allObservations.find(o => o.number === parseInt(issueNumber));
+            if (!obs || !obs.moduleResult || obs.moduleResult.type !== 'referral') { alert('اطلاعات ارجاع یافت نشد'); return; }
+            const candidates = obs.moduleResult.candidates || [];
+            if (candidates.length === 0) { alert('هیچ هم‌فکری یافت نشد'); return; }
+            let message = 'لطفاً ۵ هم‌فکر را انتخاب کنید:\n\n';
+            candidates.forEach((c, i) => { message += `${i+1}. ${c.cardCode} (${c.similarityScore}% تطابق)\n`; });
+            message += '\nشماره‌های انتخاب‌شده را با کاما وارد کنید (مثلاً 1,3,5):';
+            const input = prompt(message);
+            if (!input) return;
+            const selectedIndexes = input.split(',').map(s => parseInt(s.trim()) - 1).filter(i => i >= 0 && i < candidates.length);
+            if (selectedIndexes.length === 0) { alert('هیچ هم‌فکری انتخاب نشد'); return; }
+            const selected = selectedIndexes.map(i => candidates[i].cardCode);
+            try {
+                const saveResponse = await fetch('/api/approve-connection', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ issueNumber: parseInt(issueNumber), action: 'select_referral', type: 'observation', selected })
+                });
+                const result = await saveResponse.json();
+                if (!saveResponse.ok) { alert('خطا: ' + result.error); return; }
+                alert(`✅ ${selected.length} هم‌فکر با موفقیت انتخاب شدند.`);
+                loadObservations();
+            } catch (error) { alert('خطا: ' + error.message); }
         }
         
         loadObservations();
