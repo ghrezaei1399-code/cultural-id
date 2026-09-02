@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>مدیریت مشاهدات | داشبورد ادمین</title>
     <style>
-        /* ===== استایل‌های قبلی ===== */
+        /* ===== استایل‌های کامل ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
@@ -219,7 +219,7 @@
             transition: 0.3s;
         }
         
-        /* ===== استایل نمایش ویرایش‌ها ===== */
+        /* ===== استایل ویرایش ===== */
         .edit-changes-box {
             margin-top: 1rem;
             padding: 1rem;
@@ -249,7 +249,7 @@
         .edit-changes-box .change-item .field-name {
             font-weight: 700;
             color: #8a6d1f;
-            min-width: 120px;
+            min-width: 140px;
         }
         body.dark .edit-changes-box .change-item .field-name { color: #f9e79f; }
         .edit-changes-box .change-item .old-value {
@@ -272,10 +272,64 @@
             gap: 0.3rem;
         }
         
+        /* ===== استایل ارزش‌ها در مودال ===== */
+        .value-compare {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+        }
+        body.dark .value-compare { background: rgba(0,0,0,0.05); }
+        .value-compare .old-col {
+            border-left: 1px solid rgba(200,50,50,0.2);
+            padding-left: 0.5rem;
+        }
+        body.dark .value-compare .old-col { border-left-color: rgba(200,50,50,0.1); }
+        .value-compare .new-col {
+            padding-right: 0.5rem;
+        }
+        .value-compare .col-title {
+            font-weight: 700;
+            font-size: 0.7rem;
+            color: #888;
+            margin-bottom: 0.3rem;
+        }
+        .value-compare .value-item-compare {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.2rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            font-size: 0.85rem;
+        }
+        .value-compare .value-item-compare .index {
+            color: #888;
+            font-size: 0.7rem;
+            min-width: 30px;
+        }
+        .value-compare .value-item-compare .old-text {
+            color: #888;
+            text-decoration: line-through;
+        }
+        .value-compare .value-item-compare .new-text {
+            color: #27ae60;
+            font-weight: 700;
+        }
+        .value-compare .changed {
+            background: rgba(255, 200, 50, 0.08);
+            border-radius: 4px;
+            padding: 0.1rem 0.3rem;
+        }
+        
         @media (max-width: 768px) {
             .container { padding: 1.2rem; }
             .top-bar { flex-direction: column; align-items: stretch; }
             .edit-changes-box .change-item { flex-direction: column; align-items: stretch; }
+            .value-compare { grid-template-columns: 1fr; }
+            .value-compare .old-col { border-left: none; border-bottom: 1px solid rgba(200,50,50,0.1); }
         }
     </style>
 </head>
@@ -386,7 +440,6 @@
             }
             
             let html = filtered.map(obs => {
-                // ===== کارت مشاهده =====
                 const statusMap = {
                     approved: `<span class="badge badge-approved">✅ تایید شده</span>`,
                     rejected: `<span class="badge badge-rejected">❌ رد شده</span>`,
@@ -418,7 +471,7 @@
             container.innerHTML = html;
         }
         
-        // ===== رندر درخواست‌های ویرایش با جزئیات کامل =====
+        // ===== رندر درخواست‌های ویرایش با نمایش کامل ارزش‌ها =====
         function renderEditRequests() {
             const container = document.getElementById('observationsList');
             const editUsers = allUsers.filter(u => u.status === 'pending_edit');
@@ -430,47 +483,78 @@
             
             let html = editUsers.map(user => {
                 const pendingChanges = user.pendingChanges || [];
+                const oldValues = user.oldData?.values || [];
+                const newValues = user.values || [];
                 
-                // ===== ساخت لیست تغییرات با جزئیات کامل =====
-                const changesHtml = pendingChanges.map(field => {
-                    let displayField = field;
-                    let oldValue = '---';
-                    let newValue = '---';
-                    let isEmail = false;
-                    let valueIndex = -1;
-                    
-                    // ===== تشخیص نوع فیلد =====
-                    if (field === 'communicationEmail') {
-                        displayField = '📧 ایمیل ارتباطی';
-                        isEmail = true;
-                        oldValue = user.oldData?.communicationEmail || 'ثبت نشده';
-                        newValue = user.communicationEmail || 'ثبت نشده';
-                    } else if (field.startsWith('value_')) {
-                        valueIndex = parseInt(field.split('_')[1]);
-                        displayField = `📋 ارزش فرهنگی ${valueIndex + 1}`;
-                        oldValue = user.oldData?.values?.[valueIndex] || 'خالی';
-                        newValue = user.values?.[valueIndex] || 'خالی';
-                    } else if (field === 'values') {
-                        displayField = '📋 همه ارزش‌ها';
-                        oldValue = user.oldData?.values?.join('، ') || '---';
-                        newValue = user.values?.join('، ') || '---';
-                    }
-                    
-                    return `
+                // ===== تشخیص تغییرات ارزش‌ها به‌صورت دقیق =====
+                let changesHtml = '';
+                
+                // ۱. تغییرات ایمیل
+                if (pendingChanges.includes('communicationEmail')) {
+                    changesHtml += `
                         <div class="change-item">
-                            <span class="field-name">${displayField}</span>
+                            <span class="field-name">📧 ایمیل ارتباطی</span>
                             <div>
-                                <span class="old-value">${oldValue}</span>
+                                <span class="old-value">${user.oldData?.communicationEmail || 'ثبت نشده'}</span>
                                 <span class="arrow">➜</span>
-                                <span class="new-value">${newValue}</span>
+                                <span class="new-value">${user.communicationEmail || 'ثبت نشده'}</span>
                             </div>
                             <div class="actions">
-                                <button class="btn-small btn-approve" onclick="approveEdit('${user.cardCode}', '${field}')">✅</button>
-                                <button class="btn-small btn-reject" onclick="rejectEdit('${user.cardCode}', '${field}')">❌</button>
+                                <button class="btn-small btn-approve" onclick="approveEdit('${user.cardCode}', 'communicationEmail')">✅</button>
+                                <button class="btn-small btn-reject" onclick="rejectEdit('${user.cardCode}', 'communicationEmail')">❌</button>
                             </div>
                         </div>
                     `;
-                }).join('');
+                }
+                
+                // ۲. تغییرات ارزش‌ها (۷ ارزش)
+                const valueChanges = [];
+                for (let i = 0; i < 7; i++) {
+                    const oldVal = oldValues[i] || '';
+                    const newVal = newValues[i] || '';
+                    if (oldVal !== newVal) {
+                        valueChanges.push({ index: i, oldVal, newVal });
+                    }
+                }
+                
+                if (valueChanges.length > 0) {
+                    changesHtml += `
+                        <div class="change-item" style="flex-direction:column; align-items:stretch;">
+                            <span class="field-name" style="margin-bottom:0.3rem;">📋 ارزش‌های فرهنگی (${valueChanges.length} تغییر)</span>
+                            <div class="value-compare">
+                                <div class="old-col">
+                                    <div class="col-title">📌 مقدار قبلی</div>
+                                    ${valueChanges.map(v => `
+                                        <div class="value-item-compare">
+                                            <span class="index">${v.index+1}.</span>
+                                            <span class="old-text">${v.oldVal || '(خالی)'}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                <div class="new-col">
+                                    <div class="col-title">✨ مقدار جدید</div>
+                                    ${valueChanges.map(v => `
+                                        <div class="value-item-compare">
+                                            <span class="index">${v.index+1}.</span>
+                                            <span class="new-text">${v.newVal || '(خالی)'}</span>
+                                            <button class="btn-small btn-approve" onclick="approveEdit('${user.cardCode}', 'value_${v.index}')" style="font-size:0.6rem;">✅</button>
+                                            <button class="btn-small btn-reject" onclick="rejectEdit('${user.cardCode}', 'value_${v.index}')" style="font-size:0.6rem;">❌</button>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            <div style="margin-top:0.5rem; display:flex; gap:0.3rem;">
+                                <button class="btn-small btn-approve" onclick="approveAllEdits('${user.cardCode}')">✅ تایید همه ارزش‌ها</button>
+                                <button class="btn-small btn-reject" onclick="rejectAllEdits('${user.cardCode}')">❌ رد همه ارزش‌ها</button>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // ۳. اگر هیچ تغییری یافت نشد
+                if (!changesHtml) {
+                    changesHtml = `<div style="color:#888;padding:0.5rem;">هیچ تغییری یافت نشد.</div>`;
+                }
                 
                 return `
                     <div class="obs-card" style="border-color: #ff8c00; border-width: 2px;">
@@ -483,15 +567,9 @@
                             <div class="obs-meta">${user.lastEditRequest ? new Date(user.lastEditRequest).toLocaleString('fa-IR') : ''}</div>
                         </div>
                         
-                        <!-- ===== نمایش تمام تغییرات ===== -->
                         <div class="edit-changes-box">
                             <div class="title">📝 تغییرات درخواستی (${pendingChanges.length} مورد):</div>
                             ${changesHtml}
-                        </div>
-                        
-                        <div class="obs-actions">
-                            <button class="btn-small btn-approve" onclick="approveAllEdits('${user.cardCode}')">✅ تایید همه</button>
-                            <button class="btn-small btn-reject" onclick="rejectAllEdits('${user.cardCode}')">❌ رد همه</button>
                         </div>
                     </div>
                 `;
