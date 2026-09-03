@@ -471,6 +471,7 @@
                 submitBtn.textContent = '✅ Registered';
                 
                 setTimeout(() => {
+                    // استفاده از cardCode یکپارچه برای انتقال به صفحه کارت
                     window.location.href = `card-en.html?code=${result.cardCode}`;
                 }, 1500);
 
