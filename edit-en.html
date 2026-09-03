@@ -45,7 +45,7 @@
             text-align: center;
             color: #b85a00;
             font-weight: 700;
-            display: none;
+            display: none; /* Controlled by JS */
         }
         body.dark .warning-box { background: rgba(255, 140, 0, 0.05); color: #f9e79f; }
         
@@ -274,7 +274,7 @@
             const cardCode = document.getElementById('cardCode').value.trim();
             if (!cardCode) { showMessage('❌ Please enter your card code.', 'error'); return; }
             
-            // Show warning immediately
+            // Show warning immediately upon checking
             document.getElementById('globalWarning').style.display = 'block';
 
             try {
