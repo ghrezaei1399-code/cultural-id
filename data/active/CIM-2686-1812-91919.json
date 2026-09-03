@@ -1,0 +1,28 @@
+{
+  "cardCode": "CIM-2686-1812-91919",
+  "displayCode": "CIM - 2686 - 1812 - 91919",
+  "optionalCode": "91919",
+  "values": [
+    "po",
+    "poo",
+    "pooo",
+    "poooo",
+    "pooooo",
+    "poooooo",
+    "pooooooo"
+  ],
+  "priorities": [
+    4,
+    5,
+    6,
+    7,
+    3,
+    2,
+    1
+  ],
+  "communicationEmail": "ghrezaei1399@gmail.com",
+  "registrationDate": "2026-09-03T20:54:14.954Z",
+  "status": "pending",
+  "rank": 0,
+  "country": "Iran"
+}
