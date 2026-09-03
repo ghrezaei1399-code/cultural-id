@@ -9,7 +9,7 @@
     "گاری",
     "کالسکه",
     "درشکه",
-    "قطار"
+    "هواپیما"
   ],
   "priorities": [
     7,
@@ -22,30 +22,11 @@
   ],
   "communicationEmail": "ghrezaei1399@gmail.com",
   "registrationDate": "2026-09-03T10:24:41.079Z",
-  "status": "pending_edit",
+  "status": "approved",
   "rank": 0,
   "country": "Iran",
-  "statusUpdatedAt": "2026-09-03T15:35:10.687Z",
-  "pendingChanges": {
-    "communicationEmail": "ghrezaei1399@gmail.com",
-    "values": [
-      "ماشین",
-      "موتور",
-      "دوچرخه",
-      "گاری",
-      "کالسکه",
-      "درشکه",
-      "هواپیما"
-    ],
-    "priorities": [
-      7,
-      6,
-      5,
-      4,
-      3,
-      2,
-      1
-    ]
-  },
-  "lastEditRequest": "2026-09-03T17:46:49.696Z"
+  "statusUpdatedAt": "2026-09-03T19:43:49.128Z",
+  "pendingChanges": {},
+  "lastEditRequest": "2026-09-03T17:46:49.696Z",
+  "editLocked": true
 }
