@@ -1,0 +1,28 @@
+{
+  "cardCode": "CIM-9346-4469-98110",
+  "displayCode": "CIM - 9346 - 4469 - 55555",
+  "optionalCode": "55555",
+  "values": [
+    "ارتباطات",
+    "فرستنده",
+    "گیرنده",
+    "پیام",
+    "اختلال",
+    "رسانه",
+    "هوش مصنوعی"
+  ],
+  "priorities": [
+    7,
+    6,
+    5,
+    4,
+    3,
+    2,
+    1
+  ],
+  "communicationEmail": "ghrezaei1399@gmail.com",
+  "registrationDate": "2026-09-03T09:44:25.518Z",
+  "status": "pending",
+  "rank": 0,
+  "country": "Iran"
+}
