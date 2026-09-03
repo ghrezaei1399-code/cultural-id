@@ -22,7 +22,7 @@
   ],
   "communicationEmail": "ghrezaei1399@gmail.com",
   "registrationDate": "2026-08-31T10:50:52.241Z",
-  "status": "approved",
+  "status": "pending_edit",
   "rank": 0,
   "country": "Iran",
   "statusUpdatedAt": "2026-09-03T08:53:00.501Z",
@@ -41,6 +41,6 @@
   "pendingChanges": [
     "value_0"
   ],
-  "lastEditRequest": "2026-09-02T10:13:41.834Z",
+  "lastEditRequest": "2026-09-03T16:17:48.062Z",
   "editLocked": true
 }
