@@ -45,6 +45,7 @@
             text-align: center;
             color: #b85a00;
             font-weight: 700;
+            display: none; /* در ابتدا مخفی است */
         }
         body.dark .warning-box { background: rgba(255, 140, 0, 0.05); color: #f9e79f; }
         
@@ -137,13 +138,15 @@
         body.dark .btn-primary { background: linear-gradient(135deg, #8a6d1f, #d4af37); color: #fff; }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(212,175,55,0.35); }
         .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-        .btn-success {
-            background: rgba(39,174,96,0.15);
-            color: #1e7a1e;
-            border: 1px solid rgba(39,174,96,0.2);
+        .btn-submit {
+            background: #2874a6;
+            color: #fff;
+            width: 100%;
+            margin-top: 1rem;
+            padding: 1rem;
+            font-size: 1rem;
         }
-        body.dark .btn-success { color: #82e0aa; background: rgba(39,174,96,0.05); }
-        .btn-success:hover { background: rgba(39,174,96,0.25); }
+        body.dark .btn-submit { background: #5dade2; }
         
         .message-box {
             display: none;
@@ -221,35 +224,33 @@
         
         <div id="messageBox" class="message-box"></div>
         
-        <div class="form-group">
-            <label>🔑 کد کارت هویت فرهنگی</label>
-            <input type="text" id="cardCode" class="code-input" placeholder="مثلاً: CIM-1234-5678-ABCDE" />
+        <!-- مرحله ۱: ورود کد -->
+        <div id="step1">
+            <div class="form-group">
+                <label>🔑 کد کارت هویت فرهنگی</label>
+                <input type="text" id="cardCode" class="code-input" placeholder="مثلاً: CIM-1234-5678-ABCDE" />
+            </div>
+            <button class="btn btn-primary" onclick="checkEligibility()" style="width:100%">بررسی امکان ویرایش</button>
         </div>
-        
-        <button class="btn btn-primary" id="loadBtn" onclick="loadUserData()" style="width:100%;">🔍 بارگذاری اطلاعات</button>
-        
-        <div id="editSection" style="display:none; margin-top: 2rem;">
-            <div class="warning-box">
-                ⚠️ توجه: شما فقط <strong>یک بار</strong> امکان درخواست ویرایش اطلاعات را دارید. پس از ارسال، تغییرات شما باید توسط ادمین تأیید شود.
+
+        <!-- مرحله ۲: فرم ویرایش کامل -->
+        <div id="step2" style="display:none; margin-top: 2rem;">
+            <div class="warning-box" style="display:block;">
+                ⚠️ توجه: شما فقط <strong>یک بار</strong> امکان ارسال درخواست ویرایش دارید. لطفاً تمام تغییرات خود را اعمال کرده و سپس دکمه ثبت نهایی را بزنید.
             </div>
 
             <div class="form-group">
-                <label>📧 ایمیل ارتباطی</label>
-                <div class="value-item">
-                    <span class="value-label">ایمیل:</span>
-                    <input type="email" id="emailInput" class="value-input" placeholder="ایمیل خود را وارد کنید" />
-                    <button class="btn btn-success" onclick="requestEdit('email')">💾 ثبت درخواست تغییر ایمیل</button>
-                </div>
+                <label>📧 ایمیل ارتباطی جدید</label>
+                <input type="email" id="emailInput" class="value-input" placeholder="ایمیل جدید خود را وارد کنید" />
             </div>
             
             <div class="form-group">
-                <label>📋 ارزش‌های فرهنگی (۷ ارزش)</label>
+                <label>📋 ارزش‌های فرهنگی جدید (۷ ارزش)</label>
                 <div id="valuesContainer"></div>
             </div>
             
-            <div class="back-row">
-                <a href="index.html" class="btn-back">↩ بازگشت به صفحه اصلی</a>
-            </div>
+            <button class="btn btn-submit" onclick="submitAllEdits()">✅ ثبت نهایی درخواست ویرایش</button>
+            <button class="btn btn-primary" onclick="location.reload()" style="margin-top:0.5rem; background:#ccc; color:#333;">انصراف</button>
         </div>
     </div>
     
@@ -263,13 +264,13 @@
             box.style.display = 'block';
         }
         
-        async function loadUserData() {
+        async function checkEligibility() {
             const cardCode = document.getElementById('cardCode').value.trim();
-            if (!cardCode) { showMessage('❌ لطفاً کد کارت خود را وارد کنید.', 'error'); return; }
+            if (!cardCode) { showMessage('❌ لطفاً کد کارت را وارد کنید', 'error'); return; }
             
-            const btn = document.getElementById('loadBtn');
+            const btn = event.target;
             btn.disabled = true;
-            btn.textContent = '⏳ در حال بارگذاری...';
+            btn.textContent = '⏳ در حال بررسی...';
             
             try {
                 const response = await fetch('/api/get-users?t=' + new Date().getTime());
@@ -280,47 +281,39 @@
                 if (user.lastEditRequest) throw new Error('❌ شما قبلاً درخواست ویرایش داده‌اید و امکان ویرایش مجدد ندارید.');
                 
                 currentUser = user;
-                displayUserData(currentUser);
-                document.getElementById('editSection').style.display = 'block';
-                showMessage('✅ اطلاعات بارگذاری شد. اکنون می‌توانید تغییرات را اعمال کنید.', 'success');
+                document.getElementById('step1').style.display = 'none';
+                document.getElementById('step2').style.display = 'block';
+                
+                // پر کردن فرم با اطلاعات فعلی
+                document.getElementById('emailInput').value = user.communicationEmail || '';
+                const container = document.getElementById('valuesContainer');
+                container.innerHTML = '';
+                (user.values || []).forEach((val, i) => {
+                    container.innerHTML += `
+                        <div class="value-item">
+                            <span class="value-label">ارزش ${i+1}:</span>
+                            <input type="text" id="v-${i}" class="value-input" value="${val}" />
+                        </div>`;
+                });
                 
             } catch (error) {
                 showMessage(error.message, 'error');
             }
             
             btn.disabled = false;
-            btn.textContent = '🔍 بارگذاری اطلاعات';
+            btn.textContent = 'بررسی امکان ویرایش';
         }
         
-        function displayUserData(user) {
-            document.getElementById('emailInput').value = user.communicationEmail || '';
-            const container = document.getElementById('valuesContainer');
-            container.innerHTML = '';
-            
-            const values = user.values || [];
-            for (let i = 0; i < 7; i++) {
-                const div = document.createElement('div');
-                div.className = 'value-item';
-                div.innerHTML = `
-                    <span class="value-label">ارزش ${i+1}:</span>
-                    <input type="text" id="value-${i}" class="value-input" value="${values[i] || ''}" />
-                    <button class="btn btn-success" onclick="requestEdit('value_${i}')">💾 ثبت تغییر</button>
-                `;
-                container.appendChild(div);
-            }
-        }
-        
-        async function requestEdit(field) {
+        async function submitAllEdits() {
             if (!currentUser) return;
             const cardCode = document.getElementById('cardCode').value.trim();
-            
-            let newValue;
-            if (field === 'email') {
-                newValue = document.getElementById('emailInput').value.trim();
-            } else {
-                const index = parseInt(field.split('_')[1]);
-                newValue = document.getElementById(`value-${index}`).value.trim();
-            }
+            const email = document.getElementById('emailInput').value.trim();
+            const values = [];
+            for(let i=0; i<7; i++) values.push(document.getElementById(`v-${i}`).value.trim());
+
+            const btn = document.querySelector('.btn-submit');
+            btn.disabled = true;
+            btn.textContent = '⏳ در حال ارسال...';
 
             try {
                 const response = await fetch('/api/update-user', {
@@ -328,8 +321,9 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         cardCode,
-                        field,
-                        newValue,
+                        communicationEmail: email,
+                        values: values,
+                        priorities: currentUser.priorities || [1,2,3,4,5,6,7],
                         lastEditRequest: new Date().toISOString()
                     })
                 });
@@ -337,11 +331,13 @@
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.error);
                 
-                showMessage('✅ درخواست ویرایش با موفقیت ثبت شد و در انتظار تأیید ادمین است.', 'success');
-                document.getElementById('editSection').style.display = 'none'; // قفل کردن فرم بعد از ارسال
+                showMessage('✅ درخواست ویرایش شما با موفقیت ثبت شد و در انتظار تأیید ادمین است.', 'success');
+                setTimeout(() => window.location.href = 'index.html', 3000);
                 
             } catch (error) {
                 showMessage('❌ ' + error.message, 'error');
+                btn.disabled = false;
+                btn.textContent = '✅ ثبت نهایی درخواست ویرایش';
             }
         }
     </script>
