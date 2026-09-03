@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <title>پاکسازی رکوردهای معیوب | سپهر خردمندی</title>
+    <style>
+        body { font-family: 'Vazir', sans-serif; background: #fdf6e3; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: #fff; padding: 3rem; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); text-align: center; max-width: 500px; }
+        h1 { color: #8a6d1f; margin-bottom: 1rem; }
+        p { color: #6a5a3a; line-height: 1.8; margin-bottom: 2rem; }
+        button { background: linear-gradient(135deg, #d4af37, #f9e79f); color: #2a1a0a; border: none; padding: 1rem 3rem; border-radius: 50px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { transform: scale(1.05); box-shadow: 0 10px 20px rgba(212,175,55,0.3); }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
+        #log { margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 15px; text-align: right; font-size: 0.9rem; white-space: pre-wrap; display: none; }
+        .success { color: #27ae60; font-weight: bold; }
+        .error { color: #c0392b; font-weight: bold; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>🧹 ابزار جراحی دیتابیس</h1>
+    <p>این ابزار دو رکورد معیوب (CIM-3179... و CIM-7939...) را که باعث قفل شدن پنل ادمین شده‌اند، به صورت ایمن از فایل‌های فعال و ایندکس حذف می‌کند.</p>
+    <button id="cleanBtn" onclick="runCleanup()">پاکسازی دو رکورد معیوب</button>
+    <div id="log"></div>
+</div>
+
+<script>
+    // این اسکریپت از توکن محیطی Vercel استفاده می‌کند و نیازی به ورود دستی توکن ندارد
+    async function runCleanup() {
+        const btn = document.getElementById('cleanBtn');
+        const log = document.getElementById('log');
+        btn.disabled = true;
+        btn.textContent = '⏳ در حال ارتباط با سرور...';
+        log.style.display = 'block';
+        log.textContent = '';
+
+        try {
+            // فراخوانی تابع پاکسازی که در سمت سرور تعریف خواهیم کرد
+            const response = await fetch('/api/cleanup-users', { method: 'POST' });
+            const result = await response.json();
+
+            if (response.ok) {
+                log.innerHTML += `<span class="success">✅ ${result.message}</span>\n`;
+                log.innerHTML += 'اکنون می‌توانید پنل ادمین را رفرش کنید.';
+                btn.textContent = '✅ پاکسازی انجام شد';
+            } else {
+                throw new Error(result.error || 'خطای ناشناخته');
+            }
+        } catch (error) {
+            log.innerHTML += `<span class="error">❌ خطا: ${error.message}</span>`;
+            btn.disabled = false;
+            btn.textContent = 'تلاش مجدد';
+        }
+    }
+</script>
+</body>
+</html>
