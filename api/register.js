@@ -37,25 +37,28 @@ module.exports = async function handler(req, res) {
 
     const part1 = Math.floor(1000 + Math.random() * 9000);
     const part2 = Math.floor(1000 + Math.random() * 9000);
-    const part3 = Math.floor(10000 + Math.random() * 90000);
+    
+    // ✅ اصلاح منطق کد: اگر کاربر کد اختیاری وارد کند، آن بخش نهایی کد می‌شود
+    // در غیر این صورت یک کد تصادفی ۵ رقمی تولید می‌شود
+    const part3 = optionalCode && optionalCode.trim().length > 0 ? optionalCode.trim() : Math.floor(10000 + Math.random() * 90000).toString();
+    
+    // ✅ کد کارت یکتا و نهایی (بدون فاصله برای نام‌گذاری فایل)
     const cardCode = `CIM-${part1}-${part2}-${part3}`;
 
-    const processedOptionalCode = optionalCode ? String(optionalCode).trim() : '';
-    const displayCode = processedOptionalCode 
-      ? `CIM - ${part1} - ${part2} - ${processedOptionalCode}` 
-      : `CIM - ${part1} - ${part2}`;
+    // ✅ کد نمایشی برای کاربر (با فاصله برای زیبایی)
+    const displayCode = `CIM - ${part1} - ${part2} - ${part3}`;
 
     const userData = {
-      cardCode,
+      cardCode, // کلید اصلی جستجو
       displayCode,
-      optionalCode: processedOptionalCode,
+      optionalCode: part3, // ذخیره بخش اختیاری
       values,
       priorities: priorities && Array.isArray(priorities) ? priorities.map(Number) : [1, 2, 3, 4, 5, 6, 7],
       communicationEmail: communicationEmail || null,
       registrationDate: new Date().toISOString(),
       status: 'pending',
       rank: 0,
-      country: detectedCountry // ✅ نام کامل کشور در فایل کاربر
+      country: detectedCountry
     };
 
     const userPath = `data/active/${cardCode}.json`;
@@ -93,10 +96,10 @@ module.exports = async function handler(req, res) {
     indexData.push({
       cardCode,
       displayCode,
-      optionalCode: processedOptionalCode,
+      optionalCode: part3,
       status: 'pending',
       rank: 0,
-      country: detectedCountry, // ✅ نام کامل کشور در ایندکس اصلی
+      country: detectedCountry,
       registrationDate: userData.registrationDate
     });
 
@@ -124,9 +127,8 @@ module.exports = async function handler(req, res) {
 
     return res.status(200).json({
       success: true,
-      cardCode,
+      cardCode, // ارسال کد یکپارچه به فرانت‌اند
       displayCode,
-      optionalCode: processedOptionalCode,
       country: detectedCountry,
       rank: 0,
       message: 'ثبت‌نام با موفقیت انجام شد و در انتظار تأیید ادمین است.'
