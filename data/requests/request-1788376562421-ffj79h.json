@@ -4,7 +4,8 @@
   "senderCode": "CIM-3501-3915-69366",
   "type": "connection",
   "description": "",
-  "status": "pending",
+  "status": "approved",
   "createdAt": "2026-09-02T19:16:02.421Z",
-  "updatedAt": "2026-09-02T19:16:02.423Z"
+  "updatedAt": "2026-09-02T19:16:02.423Z",
+  "approvedAt": "2026-09-03T08:53:39.626Z"
 }
