@@ -13,7 +13,7 @@
             justify-content: center;
             align-items: center;
             padding: 2rem 1rem;
-            background-image: url('assets/pisa.jpg');
+            background-image: url('assets/azadi.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -90,6 +90,7 @@
             background: rgba(255, 255, 255, 0.03);
         }
         
+        /* Cultural Values Box Styles */
         .value-item {
             background: rgba(255, 255, 255, 0.01);
             border-radius: 12px;
@@ -122,6 +123,7 @@
             border-color: rgba(255, 255, 255, 0.02);
         }
 
+        /* Priority Section Styles */
         .priority-section {
             margin-top: 2rem;
             padding-top: 1.5rem;
@@ -257,7 +259,7 @@
         
         @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
 
-        /* --- استایل ماژول‌های الحاقی --- */
+        /* --- Added Module Styles (Pioneer & Welcome Back) --- */
         .pioneer-module {
             margin-top: 1.5rem;
             padding: 1rem;
@@ -296,9 +298,9 @@
         }
         .btn-upload:hover { transform: translateY(-2px); opacity: 0.9; }
 
-        /* ماژول خوش‌آمدگویی پس از دریافت کارت */
+        /* Welcome Back Module for users who already have a card */
         .welcome-back-module {
-            display: none; /* پیش‌فرض مخفی */
+            display: none; /* Hidden by default */
             margin-bottom: 2rem;
             padding: 1.5rem;
             background: rgba(40, 116, 166, 0.1);
@@ -317,29 +319,56 @@
     <button class="theme-toggle" id="themeToggle">🌙</button>
 
     <div class="container">
-        <!-- ماژول خوش‌آمدگویی برای کسانی که کارت دارند -->
+        <!-- Welcome Back Module (Shown if user has a card code) -->
         <div id="welcomeBackModule" class="welcome-back-module">
             <div class="welcome-text">✨ خوش آمدید! کارت هویت شما فعال است.</div>
-            <p class="pioneer-text">حالا نوبت شماست که دستاورد فرهنگی خود را با جهان به اشتراک بگذارید.</p>
-            <a href="upload-achievement-fa.html" class="btn btn-upload">🚀 آپلود دستاورد فرهنگی</a>
+            <p class="pioneer-text">اکنون نوبت شماست که دستاورد فرهنگی خود را با جهان به اشتراک بگذارید.</p>
+            <a href="upload-achievement-fa.html" class="btn btn-upload">🚀 آپلود دستاورد</a>
         </div>
 
-        <h1> ثبت‌نام و دریافت شناسنامه</h1>
+        <h1>📝 ثبت‌نام و دریافت کارت</h1>
         <div class="subtitle">کارت جهانی هویت هوشمند فرهنگی</div>
 
         <form id="registerForm">
-            <!-- ۷ ارزش فرهنگی -->
-            <div class="value-item"><label class="value-title">۱. ارزش‌های بومی (مقاومت فرهنگی هوشمند)</label><input type="text" id="v1" placeholder="مثلاً: حفظ میراث..." required /></div>
-            <div class="value-item"><label class="value-title">۲. دانش فردی (همراهان روشنایی)</label><input type="text" id="v2" placeholder="مثلاً: تجربه زیسته..." required /></div>
-            <div class="value-item"><label class="value-title">۳. همکاری جمعی (نکسوس کارآفرین)</label><input type="text" id="v3" placeholder="مثلاً: هم‌افزایی شبکه‌ای..." required /></div>
-            <div class="value-item"><label class="value-title">۴. تنوع فرهنگی (وحدت در کثرت)</label><input type="text" id="v4" placeholder="مثلاً: احترام به تفاوت‌ها..." required /></div>
-            <div class="value-item"><label class="value-title">۵. صلح پایدار جهانی (صلح هوشمند)</label><input type="text" id="v5" placeholder="مثلاً: دیپلماسی داده‌محور..." required /></div>
-            <div class="value-item"><label class="value-title">۶. محو خشونت (عشق‌ورزی سیستمی)</label><input type="text" id="v6" placeholder="مثلاً: کاهش تعصب..." required /></div>
-            <div class="value-item"><label class="value-title">۷. اتحاد فرهنگی (کهکشان خرد)</label><input type="text" id="v7" placeholder="مثلاً: پل‌های ارتباطی..." required /></div>
+            <!-- 7 Cultural Values -->
+            <div class="value-item">
+                <label class="value-title">۱. ارزش‌های بومی (مقاومت فرهنگی هوشمند)</label>
+                <input type="text" id="v1" placeholder="مثلاً: حفظ میراث، هویت محلی..." required />
+            </div>
 
-            <!-- اولویت‌بندی -->
+            <div class="value-item">
+                <label class="value-title">۲. دانش فردی (همراهان روشنایی)</label>
+                <input type="text" id="v2" placeholder="مثلاً: تجربه زیسته، خرد ضمنی..." required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">۳. همکاری جمعی (گره کارآفرین)</label>
+                <input type="text" id="v3" placeholder="مثلاً: هم‌افزایی شبکه‌ای، اعتماد توزیع‌شده..." required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">۴. تنوع فرهنگی (وحدت در کثرت)</label>
+                <input type="text" id="v4" placeholder="مثلاً: احترام به تفاوت‌ها، گفت‌وگو..." required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">۵. صلح پایدار جهانی (صلح هوشمند)</label>
+                <input type="text" id="v5" placeholder="مثلاً: دیپلماسی داده‌محور، آرامش فعال..." required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">۶. محو خشونت (عشق سیستمی)</label>
+                <input type="text" id="v6" placeholder="مثلاً: کاهش تعصب، ترویج مدارا..." required />
+            </div>
+
+            <div class="value-item">
+                <label class="value-title">۷. اتحاد فرهنگی (کهکشان خرد)</label>
+                <input type="text" id="v7" placeholder="مثلاً: پل‌های ارتباطی میان فرهنگ‌ها، تکامل مشترک..." required />
+            </div>
+
+            <!-- Priority Section -->
             <div class="priority-section">
-                <div class="priority-title">🎯 اولویت‌بندی ارزش‌های شما</div>
+                <div class="priority-title">🎯 اولویت‌بندی ارزش‌ها (۱ = مهم‌ترین)</div>
                 <div class="priority-grid">
                     <div class="priority-item"><label>ارزش ۱</label><select id="p1"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select></div>
                     <div class="priority-item"><label>ارزش ۲</label><select id="p2"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option><option value="4">۴</option><option value="5">۵</option><option value="6">۶</option><option value="7">۷</option></select></div>
@@ -352,29 +381,31 @@
             </div>
 
             <div class="form-group" style="margin-top: 2rem;">
-                <label>کد اختیاری (۵ کاراکتر دلخواه)</label>
-                <input type="text" id="optionalCode" maxlength="5" placeholder="مثلاً: الف-ب-ج-د-ه" />
+                <label>کد اختیاری (۵ کاراکتر دلخواه برای شخصی‌سازی)</label>
+                <input type="text" id="optionalCode" maxlength="5" placeholder="مثلاً: ۵۵۵۵۵" />
+                <small style="opacity:0.5; font-size:0.7rem;">اختیاری - می‌توانید خالی بگذارید</small>
             </div>
 
+            <!-- Optional Email for Networking -->
             <div class="form-group">
-                <label>ایمیل ارتباطی (اختیاری)</label>
-                <input type="email" id="communicationEmail" placeholder="example@email.com" />
+                <label>ایمیل برای شبکه‌سازی فرهنگی (اختیاری)</label>
+                <input type="email" id="communicationEmail" placeholder="اگر مایل به ارتباط با هم‌فکران هستید..." />
             </div>
 
             <div class="btn-group">
-                <button type="submit" class="btn btn-primary" id="submitBtn">🎯 دریافت شناسنامه</button>
+                <button type="submit" class="btn btn-primary" id="submitBtn">🎯 دریافت کارت هویت</button>
                 <a href="index.html" class="btn btn-secondary">↩ بازگشت</a>
             </div>
 
-            <!-- ماژول هدایت برای ۲۰۰ نفر اول (در حین ثبت‌نام) -->
+            <!-- Pioneer Module (Visible during registration) -->
             <div class="pioneer-module">
-                <p class="pioneer-text">✨ <strong>عضو پیشرو:</strong> آیا مایلید دستاورد فرهنگی خود را برای نمایش در گالری اصلی سایت آپلود کنید؟</p>
+                <p class="pioneer-text">✨ <strong>عضو پیشرو:</strong> آیا مایلید دستاورد فرهنگی خود را در گالری جهانی بارگذاری کنید؟</p>
                 <a href="upload-achievement-fa.html" class="btn-upload">🚀 بله، آپلود دستاورد</a>
             </div>
         </form>
 
         <div class="success-message" id="successMessage">
-            ✅ اطلاعات شما با موفقیت ثبت شد. در حال انتقال به کارت...
+            ✅ اطلاعات شما ذخیره شد. در حال انتقال به کارت شما...
         </div>
 
         <div class="note">
@@ -408,7 +439,7 @@
             e.preventDefault();
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
-            submitBtn.textContent = ' در حال ثبت...';
+            submitBtn.textContent = '⏳ در حال ثبت‌نام...';
 
             try {
                 const values = [];
@@ -446,13 +477,12 @@
             } catch (error) {
                 alert('❌ ' + error.message);
                 submitBtn.disabled = false;
-                submitBtn.textContent = '🎯 دریافت شناسنامه';
+                submitBtn.textContent = '🎯 دریافت کارت هویت';
             }
         });
 
-        // --- منطق نمایش ماژول خوش‌آمدگویی پس از دریافت کارت ---
+        // --- Logic to show Welcome Back Module if user has a card ---
         (function() {
-            // چک می‌کنیم آیا کاربر کدی در حافظه مرورگر دارد (یعنی قبلاً کارت گرفته)
             const userCode = localStorage.getItem('userCardCode') || sessionStorage.getItem('userCardCode');
             if (userCode) {
                 document.getElementById('welcomeBackModule').style.display = 'block';
