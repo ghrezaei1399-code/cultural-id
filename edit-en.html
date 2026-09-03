@@ -138,15 +138,12 @@
         body.dark .btn-primary { background: linear-gradient(135deg, #8a6d1f, #d4af37); color: #fff; }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(212,175,55,0.35); }
         .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-        .btn-submit {
-            background: #2874a6;
-            color: #fff;
-            width: 100%;
-            margin-top: 1rem;
-            padding: 1rem;
-            font-size: 1rem;
+        .btn-success {
+            background: rgba(39,174,96,0.15);
+            color: #1e7a1e;
+            border: 1px solid rgba(39,174,96,0.2);
         }
-        body.dark .btn-submit { background: #5dade2; }
+        body.dark .btn-success { color: #82e0aa; background: rgba(39,174,96,0.05); }
         
         .message-box {
             display: none;
@@ -224,24 +221,31 @@
         
         <!-- Warning Box -->
         <div id="globalWarning" class="warning-box">
-            ⚠️ Warning: You have only <strong>one opportunity</strong> to request an edit. Please apply all changes and then click the final submit button.
+            ⚠️ Warning: You have only <strong>one opportunity</strong> to request an edit.
         </div>
 
         <div id="messageBox" class="message-box"></div>
         
-        <div class="form-group">
-            <label>🔑 Cultural Identity Card Code</label>
-            <input type="text" id="cardCode" class="code-input" placeholder="e.g., CIM-1234-5678-ABCDE" />
+        <!-- Step 1: Code Entry -->
+        <div id="step1">
+            <div class="form-group">
+                <label>🔑 Cultural Identity Card Code</label>
+                <input type="text" id="cardCode" class="code-input" placeholder="e.g., CIM-1234-5678-ABCDE" />
+            </div>
+            <button class="btn btn-primary" onclick="checkEligibility()" style="width:100%">Check Eligibility</button>
+            <div class="back-row">
+                <a href="index-en.html" class="btn-back">↩ Back to Home</a>
+            </div>
         </div>
-        
-        <button class="btn btn-primary" id="loadBtn" onclick="loadUserData()" style="width:100%;">🔍 Load Information</button>
-        
-        <div id="editSection" style="display:none; margin-top: 2rem;">
+
+        <!-- Step 2: Edit Form -->
+        <div id="step2" style="display:none; margin-top: 2rem;">
             <div class="form-group">
                 <label>📧 Communication Email</label>
                 <div class="value-item">
                     <span class="value-label">Email:</span>
                     <input type="email" id="emailInput" class="value-input" placeholder="Enter your email" />
+                    <button class="btn btn-success" onclick="requestEdit('communicationEmail')">💾 Save Email</button>
                 </div>
             </div>
             
@@ -249,9 +253,6 @@
                 <label>📋 Cultural Values (7 Values)</label>
                 <div id="valuesContainer"></div>
             </div>
-            
-            <!-- Final Submit Button -->
-            <button class="btn btn-submit" onclick="submitAllEdits()">✅ Submit Edit Request</button>
             
             <div class="back-row">
                 <a href="index-en.html" class="btn-back">↩ Back to Home</a>
@@ -269,102 +270,68 @@
             box.style.display = 'block';
         }
         
-        async function loadUserData() {
+        async function checkEligibility() {
             const cardCode = document.getElementById('cardCode').value.trim();
             if (!cardCode) { showMessage('❌ Please enter your card code.', 'error'); return; }
             
-            const btn = document.getElementById('loadBtn');
-            btn.disabled = true;
-            btn.textContent = '⏳ Loading...';
-            
+            // Show warning immediately
+            document.getElementById('globalWarning').style.display = 'block';
+
             try {
                 const response = await fetch('/api/get-users?t=' + new Date().getTime());
                 const data = await response.json();
                 const user = data.users.find(u => u.cardCode === cardCode);
                 
                 if (!user) throw new Error('User with this code not found.');
-                
-                // Check edit limitation
-                if (user.lastEditRequest) {
-                    document.getElementById('globalWarning').style.display = 'block';
-                    document.getElementById('globalWarning').innerHTML = '❌ You have already requested an edit and cannot do so again.';
-                    document.getElementById('globalWarning').style.borderColor = '#c0392b';
-                    document.getElementById('globalWarning').style.color = '#c0392b';
-                    throw new Error('Edit is not allowed.');
-                }
-                
-                // If allowed, show standard warning
-                document.getElementById('globalWarning').style.display = 'block';
+                if (user.lastEditRequest) throw new Error('❌ You have already requested an edit.');
                 
                 currentUser = user;
-                displayUserData(currentUser);
-                document.getElementById('editSection').style.display = 'block';
-                showMessage('✅ Information loaded. You can now apply changes.', 'success');
+                document.getElementById('step1').style.display = 'none';
+                document.getElementById('step2').style.display = 'block';
+                
+                document.getElementById('emailInput').value = user.communicationEmail || '';
+                const container = document.getElementById('valuesContainer');
+                container.innerHTML = '';
+                (user.values || []).forEach((val, i) => {
+                    container.innerHTML += `
+                        <div class="value-item">
+                            <span class="value-label">Value ${i+1}:</span>
+                            <input type="text" id="v-${i}" class="value-input" value="${val}" />
+                            <button class="btn btn-success" onclick="requestEdit('value_${i}')">💾 Save</button>
+                        </div>`;
+                });
                 
             } catch (error) {
                 showMessage(error.message, 'error');
             }
-            
-            btn.disabled = false;
-            btn.textContent = '🔍 Load Information';
         }
         
-        function displayUserData(user) {
-            document.getElementById('emailInput').value = user.communicationEmail || '';
-            const container = document.getElementById('valuesContainer');
-            container.innerHTML = '';
-            
-            const values = user.values || [];
-            for (let i = 0; i < 7; i++) {
-                const div = document.createElement('div');
-                div.className = 'value-item';
-                div.innerHTML = `
-                    <span class="value-label">Value ${i+1}:</span>
-                    <input type="text" id="value-${i}" class="value-input" value="${values[i] || ''}" />
-                `;
-                container.appendChild(div);
-            }
-        }
-        
-        async function submitAllEdits() {
+        async function requestEdit(field) {
             if (!currentUser) return;
             const cardCode = document.getElementById('cardCode').value.trim();
+            let newValue;
             
-            // Collect all data
-            const email = document.getElementById('emailInput').value.trim();
-            const values = [];
-            for(let i=0; i<7; i++) {
-                values.push(document.getElementById(`value-${i}`).value.trim());
+            if (field === 'communicationEmail') {
+                newValue = document.getElementById('emailInput').value.trim();
+            } else {
+                const index = parseInt(field.split('_')[1]);
+                newValue = document.getElementById(`v-${index}`).value.trim();
             }
-
-            const btn = event.target;
-            btn.disabled = true;
-            btn.textContent = '⏳ Sending...';
 
             try {
                 const response = await fetch('/api/update-user', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        cardCode,
-                        communicationEmail: email,
-                        values: values,
-                        priorities: currentUser.priorities || [1,2,3,4,5,6,7],
-                        lastEditRequest: new Date().toISOString()
-                    })
+                    body: JSON.stringify({ cardCode, field, newValue })
                 });
                 
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.error);
                 
-                showMessage('✅ Edit request successfully registered and pending admin approval.', 'success');
-                document.getElementById('editSection').style.display = 'none';
-                document.getElementById('globalWarning').style.display = 'none';
+                showMessage('✅ Change saved successfully.', 'success');
                 
             } catch (error) {
                 showMessage('❌ ' + error.message, 'error');
-                btn.disabled = false;
-                btn.textContent = '✅ Submit Edit Request';
             }
         }
     </script>
