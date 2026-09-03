@@ -421,13 +421,15 @@
             document.getElementById('themeToggle').textContent = '☀️';
         }
 
-        // ===== بارگذاری =====
+        // ===== بارگذاری (اصلاح شده برای استفاده از API ترکیبی) =====
         async function loadDeleteRequests() {
             try {
-                const response = await fetch('/api/get-connection-requests?t=' + new Date().getTime());
+                // تغییر آدرس به API get-users که حالا درخواست‌ها را هم برمی‌گرداند
+                const response = await fetch('/api/get-users?t=' + new Date().getTime());
                 if (!response.ok) throw new Error('خطا در دریافت اطلاعات');
                 
                 const data = await response.json();
+                // فیلتر کردن فقط درخواست‌های نوع delete از بخش requests
                 allDeleteRequests = (data.requests || []).filter(r => r.type === 'delete');
 
                 updateStats();
