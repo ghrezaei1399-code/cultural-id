@@ -22,30 +22,10 @@
   ],
   "communicationEmail": "ghrezaei1399@gmail.com",
   "registrationDate": "2026-09-03T19:48:30.065Z",
-  "status": "pending_edit",
+  "status": "pending",
   "rank": 0,
   "country": "Iran",
-  "statusUpdatedAt": "2026-09-03T19:49:09.601Z",
-  "pendingChanges": {
-    "communicationEmail": "ghrezaei1399@gmail.com",
-    "values": [
-      "دو",
-      "فوتبال",
-      "وایبال",
-      "بسکتبال",
-      "پینگ پونگ",
-      "تنیس",
-      "شنا"
-    ],
-    "priorities": [
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7
-    ]
-  },
+  "statusUpdatedAt": "2026-09-03T20:35:00.628Z",
+  "pendingChanges": {},
   "lastEditRequest": "2026-09-03T19:51:32.658Z"
 }
