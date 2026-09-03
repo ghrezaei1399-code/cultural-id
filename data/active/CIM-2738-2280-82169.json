@@ -1,0 +1,28 @@
+{
+  "cardCode": "CIM-2738-2280-82169",
+  "displayCode": "CIM - 2738 - 2280 - 12345",
+  "optionalCode": "12345",
+  "values": [
+    "ماشین",
+    "موتور",
+    "دوچرخه",
+    "گاری",
+    "کالسکه",
+    "درشکه",
+    "قطار"
+  ],
+  "priorities": [
+    7,
+    6,
+    5,
+    4,
+    3,
+    2,
+    1
+  ],
+  "communicationEmail": "ghrezaei1399@gmail.com",
+  "registrationDate": "2026-09-03T10:24:41.079Z",
+  "status": "pending",
+  "rank": 0,
+  "country": "Iran"
+}
