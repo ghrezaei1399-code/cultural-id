@@ -21,10 +21,10 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'Invalid JSON in request body' });
     }
 
-    const { cardCode, field, newValue, lastEditRequest } = parsedBody;
+    const { cardCode, communicationEmail, values, priorities, lastEditRequest } = parsedBody;
 
-    if (!cardCode || !field) {
-      return res.status(400).json({ error: 'کد کارت و فیلد تغییر الزامی است' });
+    if (!cardCode) {
+      return res.status(400).json({ error: 'کد کارت الزامی است' });
     }
 
     const owner = 'ghrezaei1399-code';
@@ -51,13 +51,20 @@ module.exports = async function handler(req, res) {
       return res.status(403).json({ error: '❌ شما قبلاً درخواست ویرایش داده‌اید و امکان ویرایش مجدد ندارید.' });
     }
 
-    // ✅ ایجاد یا بروزرسانی آبجکت pendingChanges
-    if (!userData.pendingChanges) {
-      userData.pendingChanges = {};
+    // ✅ ایجاد آبجکت pendingChanges برای ذخیره تمام تغییرات به صورت یکجا
+    userData.pendingChanges = {};
+    
+    if (communicationEmail) {
+      userData.pendingChanges.communicationEmail = communicationEmail;
     }
-
-    // ✅ ذخیره تغییر جدید در pendingChanges به صورت کلید-مقدار
-    userData.pendingChanges[field] = newValue;
+    
+    if (values) {
+      userData.pendingChanges.values = values;
+    }
+    
+    if (priorities) {
+      userData.pendingChanges.priorities = priorities;
+    }
 
     // ✅ ثبت زمان درخواست و تغییر وضعیت
     userData.lastEditRequest = lastEditRequest || new Date().toISOString();
@@ -72,7 +79,7 @@ module.exports = async function handler(req, res) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        message: `Edit request for ${cardCode} (Field: ${field})`,
+        message: `Bulk edit request for ${cardCode}`,
         content: newContent,
         sha: userDataRaw.sha,
         branch: 'main'
