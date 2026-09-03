@@ -4,7 +4,8 @@
   "senderCode": "CIM-1578-3080-98798",
   "type": "delete",
   "description": "مشغله ی کاری",
-  "status": "pending",
+  "status": "approved",
   "createdAt": "2026-09-03T21:58:55.199Z",
-  "updatedAt": "2026-09-03T21:58:55.201Z"
+  "updatedAt": "2026-09-03T21:58:55.201Z",
+  "approvedAt": "2026-09-03T22:57:52.302Z"
 }
