@@ -3,7 +3,7 @@
   "displayCode": "CIM - 2686 - 1812 - 91919",
   "optionalCode": "91919",
   "values": [
-    "po",
+    "popo",
     "poo",
     "pooo",
     "poooo",
@@ -22,10 +22,10 @@
   ],
   "communicationEmail": "ghrezaei1399@gmail.com",
   "registrationDate": "2026-09-03T20:54:14.954Z",
-  "status": "pending_edit",
+  "status": "approved",
   "rank": 0,
   "country": "Iran",
-  "statusUpdatedAt": "2026-09-03T20:54:57.296Z",
+  "statusUpdatedAt": "2026-09-03T21:02:49.759Z",
   "achievements": [
     {
       "title": "ert",
@@ -38,8 +38,7 @@
       "section": "identity-card"
     }
   ],
-  "pendingChanges": {
-    "value_0": "popo"
-  },
-  "lastEditRequest": "2026-09-03T20:58:41.391Z"
+  "pendingChanges": {},
+  "lastEditRequest": "2026-09-03T20:58:41.391Z",
+  "editLocked": true
 }
