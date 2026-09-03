@@ -9,7 +9,7 @@
     "پیام",
     "اختلال",
     "رسانه",
-    "هوش مصنوعی"
+    "ارتباطات هوشمند"
   ],
   "priorities": [
     7,
@@ -22,30 +22,11 @@
   ],
   "communicationEmail": "ghrezaei1399@gmail.com",
   "registrationDate": "2026-09-03T09:44:25.518Z",
-  "status": "pending_edit",
+  "status": "approved",
   "rank": 0,
   "country": "Iran",
-  "statusUpdatedAt": "2026-09-03T15:35:21.273Z",
-  "pendingChanges": {
-    "communicationEmail": "ghrezaei1399@gmail.com",
-    "values": [
-      "ارتباطات",
-      "فرستنده",
-      "گیرنده",
-      "پیام",
-      "اختلال",
-      "رسانه",
-      "ارتباطات هوشمند"
-    ],
-    "priorities": [
-      7,
-      6,
-      5,
-      4,
-      3,
-      2,
-      1
-    ]
-  },
-  "lastEditRequest": "2026-09-03T18:02:25.008Z"
+  "statusUpdatedAt": "2026-09-03T19:44:00.315Z",
+  "pendingChanges": {},
+  "lastEditRequest": "2026-09-03T18:02:25.008Z",
+  "editLocked": true
 }
