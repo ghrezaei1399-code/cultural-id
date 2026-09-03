@@ -9,7 +9,7 @@
     "تنوع",
     "صلح",
     "خشونت",
-    "اتحاد"
+    "همبستگی"
   ],
   "priorities": [
     1,
@@ -22,10 +22,10 @@
   ],
   "communicationEmail": "ghrezaei1399@gmail.com",
   "registrationDate": "2026-09-03T20:38:23.875Z",
-  "status": "pending_edit",
+  "status": "approved",
   "rank": 0,
   "country": "Iran",
-  "statusUpdatedAt": "2026-09-03T20:39:07.587Z",
+  "statusUpdatedAt": "2026-09-03T20:45:09.187Z",
   "achievements": [
     {
       "title": "کتاب مقالات جنگ رمضان",
@@ -38,8 +38,7 @@
       "section": "identity-card"
     }
   ],
-  "pendingChanges": {
-    "value_6": "همبستگی"
-  },
-  "lastEditRequest": "2026-09-03T20:42:23.284Z"
+  "pendingChanges": {},
+  "lastEditRequest": "2026-09-03T20:42:23.284Z",
+  "editLocked": true
 }
