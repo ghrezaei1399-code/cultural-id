@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Register | Global Smart Cultural ID</title>
+    <title>Register & Services | Global Smart Cultural ID</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -196,6 +196,18 @@
         body.dark .btn-primary:hover { background: rgba(255, 255, 255, 0.04); }
         .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
         
+        .btn-danger {
+            background: rgba(200, 50, 50, 0.02);
+            color: #8a1a1a;
+            border: 1px solid rgba(200, 50, 50, 0.02);
+        }
+        body.dark .btn-danger {
+            background: rgba(200, 50, 50, 0.02);
+            color: #f08080;
+            border-color: rgba(200, 50, 50, 0.02);
+        }
+        .btn-danger:hover { background: rgba(200, 50, 50, 0.04); transform: scale(1.02); }
+        
         .btn-secondary {
             background: rgba(60, 30, 10, 0.01);
             color: #3a2a1a;
@@ -312,6 +324,19 @@
         .welcome-text { font-size: 1rem; color: #2874a6; margin-bottom: 1rem; font-weight: 700; }
         body.dark .welcome-text { color: #85c1e9; }
 
+        /* Delete Request Module */
+        .delete-module {
+            margin-top: 3rem;
+            padding: 1.5rem;
+            background: rgba(200, 50, 50, 0.03);
+            border: 1px solid rgba(200, 50, 50, 0.1);
+            border-radius: 20px;
+            text-align: center;
+        }
+        body.dark .delete-module { background: rgba(200, 50, 50, 0.02); }
+        .delete-title { font-size: 1.1rem; color: #8a1a1a; margin-bottom: 1rem; font-weight: 800; }
+        body.dark .delete-title { color: #f08080; }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -404,6 +429,20 @@
             </div>
         </form>
 
+        <!-- Delete Request Module (New Addition) -->
+        <div class="delete-module">
+            <div class="delete-title">⚠️ Membership Cancellation Request</div>
+            <div class="form-group">
+                <label>Your Cultural Identity Card Code</label>
+                <input type="text" id="deleteCardCode" placeholder="Enter your card code..." />
+            </div>
+            <div class="form-group">
+                <label>Reason for Cancellation (Optional)</label>
+                <textarea id="deleteReason" placeholder="Please state your reason..."></textarea>
+            </div>
+            <button class="btn btn-danger" onclick="submitDeleteRequest()">🚪 Submit Deletion Request</button>
+        </div>
+
         <div class="success-message" id="successMessage">
             ✅ Your information has been saved. Redirecting to your card...
         </div>
@@ -434,7 +473,7 @@
             });
         })();
 
-        // Form Submission Logic
+        // Form Submission Logic (Registration)
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const submitBtn = document.getElementById('submitBtn');
@@ -471,7 +510,6 @@
                 submitBtn.textContent = '✅ Registered';
                 
                 setTimeout(() => {
-                    // استفاده از cardCode یکپارچه برای انتقال به صفحه کارت
                     window.location.href = `card-en.html?code=${result.cardCode}`;
                 }, 1500);
 
@@ -481,6 +519,49 @@
                 submitBtn.textContent = '🎯 Get Your ID';
             }
         });
+
+        // Delete Request Logic
+        async function submitDeleteRequest() {
+            const cardCode = document.getElementById('deleteCardCode').value.trim();
+            const reason = document.getElementById('deleteReason').value.trim();
+            
+            if (!cardCode) {
+                alert('❌ Please enter your card code.');
+                return;
+            }
+
+            if (!confirm('Are you sure you want to request account deletion?')) return;
+
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '⏳ Sending...';
+
+            try {
+                const response = await fetch('/api/submit-request', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        cardCode: cardCode,
+                        type: 'delete',
+                        description: reason
+                    })
+                });
+
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error);
+
+                alert('✅ Your cancellation request has been successfully submitted to the admin.');
+                document.getElementById('deleteCardCode').value = '';
+                document.getElementById('deleteReason').value = '';
+                btn.textContent = '✅ Sent';
+                setTimeout(() => { btn.disabled = false; btn.textContent = '🚪 Submit Deletion Request'; }, 3000);
+
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+                btn.disabled = false;
+                btn.textContent = '🚪 Submit Deletion Request';
+            }
+        }
 
         // --- Logic to show Welcome Back Module if user has a card ---
         (function() {
