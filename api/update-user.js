@@ -1,4 +1,3 @@
-// api/update-user.js
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -22,10 +21,10 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'Invalid JSON in request body' });
     }
 
-    const { cardCode, communicationEmail, values, priorities, updateIndex } = parsedBody;
+    const { cardCode, field, newValue, lastEditRequest } = parsedBody;
 
-    if (!cardCode) {
-      return res.status(400).json({ error: 'کد کارت الزامی است' });
+    if (!cardCode || !field) {
+      return res.status(400).json({ error: 'کد کارت و فیلد تغییر الزامی است' });
     }
 
     const owner = 'ghrezaei1399-code';
@@ -47,38 +46,21 @@ module.exports = async function handler(req, res) {
     const userDataRaw = await userRes.json();
     const userData = JSON.parse(Buffer.from(userDataRaw.content, 'base64').toString('utf8'));
 
-    // ============================================================
-    // ===== اصلاح: ذخیره تغییرات به صورت آبجکت با مقدار جدید =====
-    // ============================================================
+    // ✅ بررسی محدودیت یک‌بار ویرایش
+    if (userData.lastEditRequest) {
+      return res.status(403).json({ error: '❌ شما قبلاً درخواست ویرایش داده‌اید و امکان ویرایش مجدد ندارید.' });
+    }
+
+    // ✅ ایجاد یا بروزرسانی آبجکت pendingChanges
     if (!userData.pendingChanges) {
       userData.pendingChanges = {};
     }
 
-    // ۱. تغییر ایمیل - ذخیره مقدار جدید
-    if (communicationEmail !== undefined) {
-      // ذخیره مقدار جدید در pendingChanges
-      userData.pendingChanges.communicationEmail = communicationEmail;
-    }
+    // ✅ ذخیره تغییر جدید در pendingChanges به صورت کلید-مقدار
+    userData.pendingChanges[field] = newValue;
 
-    // ۲. تغییر ارزش‌ها - ذخیره مقدار جدید
-    if (values && priorities) {
-      if (updateIndex !== undefined) {
-        // تغییر تکی - ذخیره مقدار جدید
-        const newValue = values[updateIndex];
-        const newPriority = priorities[updateIndex];
-        
-        userData.pendingChanges[`value_${updateIndex}`] = newValue;
-        userData.pendingChanges[`priority_${updateIndex}`] = newPriority;
-        
-      } else {
-        // تغییر کامل
-        userData.pendingChanges.values = values;
-        userData.pendingChanges.priorities = priorities;
-      }
-    }
-
-    // ثبت زمان درخواست
-    userData.lastEditRequest = new Date().toISOString();
+    // ✅ ثبت زمان درخواست و تغییر وضعیت
+    userData.lastEditRequest = lastEditRequest || new Date().toISOString();
     userData.status = 'pending_edit';
 
     const newContent = Buffer.from(JSON.stringify(userData, null, 2), 'utf8').toString('base64');
@@ -90,7 +72,7 @@ module.exports = async function handler(req, res) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        message: `Edit request for ${cardCode}`,
+        message: `Edit request for ${cardCode} (Field: ${field})`,
         content: newContent,
         sha: userDataRaw.sha,
         branch: 'main'
