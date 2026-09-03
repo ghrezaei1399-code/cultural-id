@@ -36,6 +36,18 @@
         }
         body.dark .page-subtitle { color: #c8b890; }
         
+        .warning-box {
+            background: rgba(255, 140, 0, 0.1);
+            border: 2px solid #ff8c00;
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: #b85a00;
+            font-weight: 700;
+        }
+        body.dark .warning-box { background: rgba(255, 140, 0, 0.05); color: #f9e79f; }
+        
         .form-group { margin-bottom: 1.5rem; }
         .form-group label {
             display: block;
@@ -125,14 +137,6 @@
         body.dark .btn-primary { background: linear-gradient(135deg, #8a6d1f, #d4af37); color: #fff; }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(212,175,55,0.35); }
         .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-        .btn-secondary {
-            background: rgba(255,255,255,0.5);
-            color: #4a3a2a;
-            border: 1px solid rgba(212,175,55,0.3);
-        }
-        body.dark .btn-secondary { background: rgba(0,0,0,0.2); color: #f0e8d0; }
-        .btn-secondary:hover { background: rgba(255,255,255,0.8); transform: translateY(-2px); }
-        body.dark .btn-secondary:hover { background: rgba(255,255,255,0.05); }
         .btn-success {
             background: rgba(39,174,96,0.15);
             color: #1e7a1e;
@@ -140,14 +144,6 @@
         }
         body.dark .btn-success { color: #82e0aa; background: rgba(39,174,96,0.05); }
         .btn-success:hover { background: rgba(39,174,96,0.25); }
-        
-        .btn-group {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-            flex-wrap: wrap;
-        }
-        .btn-group .btn { flex: 1; min-width: 140px; }
         
         .message-box {
             display: none;
@@ -170,21 +166,6 @@
             color: #5a0a0a;
         }
         body.dark .message-box.error { color: #b08080; }
-        .message-box.info {
-            display: block;
-            background: rgba(50,150,200,0.05);
-            border: 1px solid rgba(50,150,200,0.05);
-            color: #0a4a6a;
-        }
-        
-        .note {
-            font-size: 0.7rem;
-            color: #6a5a3a;
-            margin-top: 1.5rem;
-            text-align: center;
-            opacity: 0.6;
-        }
-        body.dark .note { color: #a8a8b8; }
         
         .back-row { display: flex; justify-content: center; margin-top: 2rem; }
         .btn-back {
@@ -230,8 +211,6 @@
             .container { padding: 1rem; }
             .value-item { flex-direction: column; align-items: stretch; }
             .value-item .value-label { min-width: auto; }
-            .btn-group { flex-direction: column; }
-            .btn-group .btn { width: 100%; }
         }
     </style>
 </head>
@@ -250,12 +229,16 @@
         <button class="btn btn-primary" id="loadBtn" onclick="loadUserData()" style="width:100%;">🔍 بارگذاری اطلاعات</button>
         
         <div id="editSection" style="display:none; margin-top: 2rem;">
+            <div class="warning-box">
+                ⚠️ توجه: شما فقط <strong>یک بار</strong> امکان درخواست ویرایش اطلاعات را دارید. پس از ارسال، تغییرات شما باید توسط ادمین تأیید شود.
+            </div>
+
             <div class="form-group">
                 <label>📧 ایمیل ارتباطی</label>
                 <div class="value-item">
                     <span class="value-label">ایمیل:</span>
                     <input type="email" id="emailInput" class="value-input" placeholder="ایمیل خود را وارد کنید" />
-                    <button class="btn btn-success" onclick="saveField('email')">💾 ذخیره ایمیل</button>
+                    <button class="btn btn-success" onclick="requestEdit('email')">💾 ثبت درخواست تغییر ایمیل</button>
                 </div>
             </div>
             
@@ -264,17 +247,9 @@
                 <div id="valuesContainer"></div>
             </div>
             
-            <div class="btn-group">
-                <button class="btn btn-secondary" onclick="window.location.href='index.html'">↩ بازگشت</button>
+            <div class="back-row">
+                <a href="index.html" class="btn-back">↩ بازگشت به صفحه اصلی</a>
             </div>
-        </div>
-        
-        <div class="back-row">
-            <a href="index.html" class="btn-back">↩ بازگشت به صفحه اصلی</a>
-        </div>
-        
-        <div class="note">
-            🔒 هر تغییر به‌صورت جداگانه ذخیره می‌شود و پس از تأیید ادمین اعمال خواهد شد.
         </div>
     </div>
     
@@ -288,50 +263,29 @@
             box.style.display = 'block';
         }
         
-        function hideMessage() {
-            const box = document.getElementById('messageBox');
-            box.style.display = 'none';
-            box.className = 'message-box';
-        }
-        
         async function loadUserData() {
             const cardCode = document.getElementById('cardCode').value.trim();
-            const errorMsg = document.getElementById('messageBox');
-            
-            if (!cardCode) {
-                showMessage('❌ لطفاً کد کارت خود را وارد کنید.', 'error');
-                return;
-            }
+            if (!cardCode) { showMessage('❌ لطفاً کد کارت خود را وارد کنید.', 'error'); return; }
             
             const btn = document.getElementById('loadBtn');
             btn.disabled = true;
             btn.textContent = '⏳ در حال بارگذاری...';
-            hideMessage();
             
             try {
-                // ===== استفاده از API صحیح =====
                 const response = await fetch('/api/get-users?t=' + new Date().getTime());
                 const data = await response.json();
-                
-                if (!response.ok) {
-                    throw new Error(data.error || 'خطا در دریافت اطلاعات');
-                }
-                
-                // پیدا کردن کاربر مورد نظر
                 const user = data.users.find(u => u.cardCode === cardCode);
                 
-                if (!user) {
-                    throw new Error('کاربری با این کد یافت نشد.');
-                }
+                if (!user) throw new Error('کاربری با این کد یافت نشد.');
+                if (user.lastEditRequest) throw new Error('❌ شما قبلاً درخواست ویرایش داده‌اید و امکان ویرایش مجدد ندارید.');
                 
                 currentUser = user;
                 displayUserData(currentUser);
                 document.getElementById('editSection').style.display = 'block';
-                showMessage('✅ اطلاعات کاربر بارگذاری شد.', 'success');
+                showMessage('✅ اطلاعات بارگذاری شد. اکنون می‌توانید تغییرات را اعمال کنید.', 'success');
                 
             } catch (error) {
-                console.error('Error:', error);
-                showMessage('❌ ' + error.message, 'error');
+                showMessage(error.message, 'error');
             }
             
             btn.disabled = false;
@@ -339,128 +293,56 @@
         }
         
         function displayUserData(user) {
-            // ایمیل
             document.getElementById('emailInput').value = user.communicationEmail || '';
-            
-            // ارزش‌ها
             const container = document.getElementById('valuesContainer');
             container.innerHTML = '';
             
             const values = user.values || [];
-            const priorities = user.priorities || [];
-            
             for (let i = 0; i < 7; i++) {
-                const val = values[i] || '';
-                const priority = priorities[i] || 0;
-                
                 const div = document.createElement('div');
                 div.className = 'value-item';
                 div.innerHTML = `
                     <span class="value-label">ارزش ${i+1}:</span>
-                    <input type="text" id="value-${i}" class="value-input" value="${val}" placeholder="ارزش ${i+1}" />
-                    <span class="value-label">اولویت (۱-۷):</span>
-                    <input type="number" id="priority-${i}" class="value-input" value="${priority}" min="1" max="7" placeholder="اولویت" style="max-width:80px;" />
-                    <button class="btn btn-success" onclick="saveValue(${i})">💾 ذخیره</button>
+                    <input type="text" id="value-${i}" class="value-input" value="${values[i] || ''}" />
+                    <button class="btn btn-success" onclick="requestEdit('value_${i}')">💾 ثبت تغییر</button>
                 `;
                 container.appendChild(div);
             }
         }
         
-        async function saveField(field) {
+        async function requestEdit(field) {
+            if (!currentUser) return;
             const cardCode = document.getElementById('cardCode').value.trim();
-            if (!cardCode || !currentUser) {
-                showMessage('❌ لطفاً ابتدا اطلاعات کاربر را بارگذاری کنید.', 'error');
-                return;
+            
+            let newValue;
+            if (field === 'email') {
+                newValue = document.getElementById('emailInput').value.trim();
+            } else {
+                const index = parseInt(field.split('_')[1]);
+                newValue = document.getElementById(`value-${index}`).value.trim();
             }
-            
-            hideMessage();
-            const btn = event.target;
-            btn.disabled = true;
-            btn.textContent = '⏳ در حال ذخیره...';
-            
+
             try {
-                let updateData = { cardCode };
-                
-                if (field === 'email') {
-                    const email = document.getElementById('emailInput').value.trim();
-                    updateData.communicationEmail = email;
-                }
-                
-                const response = await fetch('/api/update-user', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(updateData)
-                });
-                
-                const result = await response.json();
-                if (!response.ok) {
-                    throw new Error(result.error || 'خطا در ذخیره تغییرات');
-                }
-                
-                showMessage('✅ تغییرات با موفقیت ذخیره شد. منتظر تأیید ادمین باشید.', 'success');
-                
-                // به‌روزرسانی currentUser
-                if (field === 'email') {
-                    currentUser.communicationEmail = document.getElementById('emailInput').value.trim();
-                }
-                
-            } catch (error) {
-                showMessage('❌ ' + error.message, 'error');
-            }
-            
-            btn.disabled = false;
-            btn.textContent = '💾 ذخیره';
-        }
-        
-        async function saveValue(index) {
-            const cardCode = document.getElementById('cardCode').value.trim();
-            if (!cardCode || !currentUser) {
-                showMessage('❌ لطفاً ابتدا اطلاعات کاربر را بارگذاری کنید.', 'error');
-                return;
-            }
-            
-            hideMessage();
-            const btn = event.target;
-            btn.disabled = true;
-            btn.textContent = '⏳ در حال ذخیره...';
-            
-            try {
-                const value = document.getElementById(`value-${index}`).value.trim();
-                const priority = parseInt(document.getElementById(`priority-${index}`).value) || 0;
-                
-                const values = [...(currentUser.values || [])];
-                const priorities = [...(currentUser.priorities || [])];
-                
-                values[index] = value;
-                priorities[index] = priority;
-                
                 const response = await fetch('/api/update-user', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         cardCode,
-                        values,
-                        priorities,
-                        updateIndex: index
+                        field,
+                        newValue,
+                        lastEditRequest: new Date().toISOString()
                     })
                 });
                 
                 const result = await response.json();
-                if (!response.ok) {
-                    throw new Error(result.error || 'خطا در ذخیره تغییرات');
-                }
+                if (!response.ok) throw new Error(result.error);
                 
-                currentUser.values = values;
-                currentUser.priorities = priorities;
-                
-                showMessage(`✅ ارزش ${index+1} با موفقیت ذخیره شد. منتظر تأیید ادمین باشید.`, 'success');
+                showMessage('✅ درخواست ویرایش با موفقیت ثبت شد و در انتظار تأیید ادمین است.', 'success');
+                document.getElementById('editSection').style.display = 'none'; // قفل کردن فرم بعد از ارسال
                 
             } catch (error) {
                 showMessage('❌ ' + error.message, 'error');
             }
-            
-            btn.disabled = false;
-            btn.textContent = '💾 ذخیره';
         }
     </script>
 </body>
