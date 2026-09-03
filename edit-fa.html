@@ -36,7 +36,6 @@
         }
         body.dark .page-subtitle { color: #c8b890; }
         
-        /* باکس هشدار ثابت در بالای صفحه */
         .warning-box {
             background: rgba(255, 140, 0, 0.1);
             border: 2px solid #ff8c00;
@@ -46,7 +45,7 @@
             text-align: center;
             color: #b85a00;
             font-weight: 700;
-            display: none; /* توسط JS کنترل می‌شود */
+            display: none;
         }
         body.dark .warning-box { background: rgba(255, 140, 0, 0.05); color: #f9e79f; }
         
@@ -139,6 +138,15 @@
         body.dark .btn-primary { background: linear-gradient(135deg, #8a6d1f, #d4af37); color: #fff; }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(212,175,55,0.35); }
         .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .btn-submit {
+            background: #2874a6;
+            color: #fff;
+            width: 100%;
+            margin-top: 1rem;
+            padding: 1rem;
+            font-size: 1rem;
+        }
+        body.dark .btn-submit { background: #5dade2; }
         
         .message-box {
             display: none;
@@ -243,7 +251,7 @@
             </div>
             
             <!-- دکمه ثبت نهایی که همه چیز را یکجا می‌فرستد -->
-            <button class="btn btn-primary" onclick="submitAllEdits()" style="width:100%; margin-top:1rem; background:#2874a6; color:#fff;">✅ ثبت نهایی درخواست ویرایش</button>
+            <button class="btn btn-submit" onclick="submitAllEdits()">✅ ثبت نهایی درخواست ویرایش</button>
             
             <div class="back-row">
                 <a href="index.html" class="btn-back">↩ بازگشت به صفحه اصلی</a>
