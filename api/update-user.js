@@ -21,7 +21,8 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'Invalid JSON in request body' });
     }
 
-    const { cardCode, communicationEmail, values, priorities, lastEditRequest } = parsedBody;
+    // تشخیص نوع درخواست: تکی یا کلی
+    const { cardCode, field, newValue, communicationEmail, values, priorities, lastEditRequest } = parsedBody;
 
     if (!cardCode) {
       return res.status(400).json({ error: 'کد کارت الزامی است' });
@@ -51,19 +52,26 @@ module.exports = async function handler(req, res) {
       return res.status(403).json({ error: '❌ شما قبلاً درخواست ویرایش داده‌اید و امکان ویرایش مجدد ندارید.' });
     }
 
-    // ✅ ایجاد آبجکت pendingChanges برای ذخیره تمام تغییرات به صورت یکجا
-    userData.pendingChanges = {};
-    
-    if (communicationEmail) {
-      userData.pendingChanges.communicationEmail = communicationEmail;
+    // ✅ ایجاد آبجکت pendingChanges اگر وجود ندارد
+    if (!userData.pendingChanges) {
+      userData.pendingChanges = {};
     }
     
-    if (values) {
-      userData.pendingChanges.values = values;
-    }
-    
-    if (priorities) {
-      userData.pendingChanges.priorities = priorities;
+    // منطق تشخیص: اگر فیلد تکی باشد، آن را ذخیره کن؛ در غیر این صورت داده‌های کلی
+    if (field && newValue !== undefined) {
+      // حالت تکی (برای دکمه‌های ذخیره کنار هر باکس)
+      userData.pendingChanges[field] = newValue;
+    } else {
+      // حالت کلی (برای ارسال یکجا)
+      if (communicationEmail) {
+        userData.pendingChanges.communicationEmail = communicationEmail;
+      }
+      if (values) {
+        userData.pendingChanges.values = values;
+      }
+      if (priorities) {
+        userData.pendingChanges.priorities = priorities;
+      }
     }
 
     // ✅ ثبت زمان درخواست و تغییر وضعیت
@@ -79,7 +87,7 @@ module.exports = async function handler(req, res) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        message: `Bulk edit request for ${cardCode}`,
+        message: `Edit request for ${cardCode}`,
         content: newContent,
         sha: userDataRaw.sha,
         branch: 'main'
