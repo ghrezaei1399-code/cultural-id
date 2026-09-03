@@ -3,86 +3,94 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const token = process.env.GH_TOKEN;
+  const token = process.env.OBSERVER_TOKEN || process.env.GH_TOKEN;
   if (!token) {
-    return res.status(500).json({ error: 'GH_TOKEN is not configured' });
+    return res.status(500).json({ error: 'Token is not configured' });
   }
-
-  const owner = 'ghrezaei1399-code';
-  const repo = 'cultural-id';
-  const path = 'data/active';
 
   try {
-    const listResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json'
-      }
+    const owner = 'ghrezaei1399-code';
+    const repo = 'cultural-id';
+
+    // ===== بخش ۱: دریافت اطلاعات کاربران (بدون هیچ تغییری برای حفظ ۱۱۰ رکورد) =====
+    const usersPath = 'data/index.json';
+    const usersRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${usersPath}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
     });
 
-    if (!listResponse.ok) throw new Error(`GitHub API Error: ${listResponse.status}`);
+    let users = [];
+    let stats = { total: 0, golden: 0, silver: 0, bronze: 0 };
+    let countries = [];
 
-    const files = await listResponse.json();
-    const jsonFiles = files.filter(f => f.name.endsWith('.json'));
+    if (usersRes.ok) {
+      const usersDataRaw = await usersRes.json();
+      const usersData = JSON.parse(Buffer.from(usersDataRaw.content, 'base64').toString('utf8'));
+      users = usersData.users || [];
+      
+      // محاسبه آمار دقیق
+      stats.total = users.length;
+      stats.golden = users.filter(u => u.badge === 'golden').length;
+      stats.silver = users.filter(u => u.badge === 'silver').length;
+      stats.bronze = users.filter(u => u.badge === 'bronze').length;
 
-    const rawUsers = [];
-
-    for (const file of jsonFiles) {
-      try {
-        // ⭐ خواندن مستقیم از Contents API برای دور زدن کش و حفظ حروف فارسی
-        const fileRes = await fetch(file.url, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/vnd.github.v3+json'
-          }
-        });
-        const fileData = await fileRes.json();
-        const jsonString = Buffer.from(fileData.content, 'base64').toString('utf8');
-        const userData = JSON.parse(jsonString);
-        rawUsers.push(userData);
-      } catch (e) {
-        console.error('Error parsing file:', file.name, e);
-      }
+      // محاسبه آمار کشورها
+      const countryMap = {};
+      users.forEach(u => {
+        if (u.country) {
+          if (!countryMap[u.country]) countryMap[u.country] = { country: u.country, count: 0, users: [] };
+          countryMap[u.country].count++;
+          countryMap[u.country].users.push({ cardCode: u.cardCode, rank: u.rank, badge: u.badge });
+        }
+      });
+      countries = Object.values(countryMap).sort((a, b) => b.count - a.count);
     }
 
-    rawUsers.sort((a, b) => new Date(a.registrationDate || 0) - new Date(b.registrationDate || 0));
+    // ===== بخش ۲: دریافت لیست درخواست‌های حذف و ارتباط (بخش جدید و مستقل) =====
+    let requests = [];
+    const requestsPath = 'data/requests';
+    
+    try {
+      const listRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${requestsPath}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
 
-    const activeUsers = rawUsers.filter(user => user.status !== 'rejected');
-
-    const users = activeUsers.map((user, index) => {
-      const rank = index + 1;
-      let badge = 'bronze';
-      if (rank <= 200) badge = 'golden';
-      else if (rank <= 1000) badge = 'silver';
-      return { ...user, rank: rank, badge: badge };
-    });
-
-    const stats = {
-      total: users.length,
-      golden: users.filter(u => u.badge === 'golden').length,
-      silver: users.filter(u => u.badge === 'silver').length,
-      bronze: users.filter(u => u.badge === 'bronze').length,
-      approved: users.filter(u => u.status === 'approved').length,
-      rejected: rawUsers.filter(u => u.status === 'rejected').length,
-      pending: users.filter(u => u.status === 'pending' || u.status === 'pending_edit' || !u.status).length
-    };
-
-    const countryStats = {};
-    users.forEach(user => {
-      const country = user.country || 'Unknown';
-      if (!countryStats[country]) {
-        countryStats[country] = { country: country, countryCode: user.countryCode || 'XX', count: 0, users: [] };
+      if (listRes.ok) {
+        const files = await listRes.json();
+        // فیلتر کردن فایل‌های JSON
+        const jsonFiles = files.filter(f => f.type === 'file' && f.name.endsWith('.json'));
+        
+        // خواندن محتوای فایل‌ها (برای سرعت، ۵۰ تای آخر را می‌خوانیم)
+        const recentFiles = jsonFiles.slice(-50); 
+        
+        for (const file of recentFiles) {
+          try {
+            const contentRes = await fetch(file.url, {
+              headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (contentRes.ok) {
+              const fileData = await contentRes.json();
+              const content = JSON.parse(Buffer.from(fileData.content, 'base64').toString('utf8'));
+              requests.push(content);
+            }
+          } catch (e) { 
+            console.error(`Error reading request file ${file.name}:`, e); 
+          }
+        }
       }
-      countryStats[country].count++;
-      countryStats[country].users.push({ cardCode: user.cardCode, badge: user.badge, rank: user.rank });
+    } catch (e) {
+      console.error('Error accessing requests folder:', e);
+    }
+
+    // ===== ارسال نهایی: ترکیب داده‌های کاربران و درخواست‌ها =====
+    return res.status(200).json({
+      users,       // داده‌های اصلی کاربران (کاملاً دست‌نخورده)
+      stats,       // آمار کاربران
+      countries,   // آمار کشورها
+      requests     // داده‌های جدید درخواست‌ها
     });
-
-    const countries = Object.values(countryStats).sort((a, b) => b.count - a.count);
-
-    return res.status(200).json({ users, stats, countries });
 
   } catch (error) {
-    console.error('API Error:', error);
+    console.error('Get Users Error:', error);
     return res.status(500).json({ error: error.message });
   }
-}
+};
