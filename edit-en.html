@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Edit Info | Global Smart Cultural ID</title>
+    <title>Edit Profile | Global Smart Cultural ID</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -35,6 +35,18 @@
             padding-bottom: 1rem;
         }
         body.dark .page-subtitle { color: #c8b890; }
+        
+        .warning-box {
+            background: rgba(255, 140, 0, 0.1);
+            border: 2px solid #ff8c00;
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: #b85a00;
+            font-weight: 700;
+        }
+        body.dark .warning-box { background: rgba(255, 140, 0, 0.05); color: #f9e79f; }
         
         .form-group { margin-bottom: 1.5rem; }
         .form-group label {
@@ -125,14 +137,6 @@
         body.dark .btn-primary { background: linear-gradient(135deg, #8a6d1f, #d4af37); color: #fff; }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(212,175,55,0.35); }
         .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-        .btn-secondary {
-            background: rgba(255,255,255,0.5);
-            color: #4a3a2a;
-            border: 1px solid rgba(212,175,55,0.3);
-        }
-        body.dark .btn-secondary { background: rgba(0,0,0,0.2); color: #f0e8d0; }
-        .btn-secondary:hover { background: rgba(255,255,255,0.8); transform: translateY(-2px); }
-        body.dark .btn-secondary:hover { background: rgba(255,255,255,0.05); }
         .btn-success {
             background: rgba(39,174,96,0.15);
             color: #1e7a1e;
@@ -140,14 +144,6 @@
         }
         body.dark .btn-success { color: #82e0aa; background: rgba(39,174,96,0.05); }
         .btn-success:hover { background: rgba(39,174,96,0.25); }
-        
-        .btn-group {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-            flex-wrap: wrap;
-        }
-        .btn-group .btn { flex: 1; min-width: 140px; }
         
         .message-box {
             display: none;
@@ -162,27 +158,14 @@
             border: 1px solid rgba(50,200,50,0.05);
             color: #0a5a0a;
         }
+        body.dark .message-box.success { color: #80b080; }
         .message-box.error {
             display: block;
             background: rgba(200,50,50,0.05);
             border: 1px solid rgba(200,50,50,0.05);
             color: #5a0a0a;
         }
-        .message-box.info {
-            display: block;
-            background: rgba(50,150,200,0.05);
-            border: 1px solid rgba(50,150,200,0.05);
-            color: #0a4a6a;
-        }
-        
-        .note {
-            font-size: 0.7rem;
-            color: #6a5a3a;
-            margin-top: 1.5rem;
-            text-align: center;
-            opacity: 0.6;
-        }
-        body.dark .note { color: #a8a8b8; }
+        body.dark .message-box.error { color: #b08080; }
         
         .back-row { display: flex; justify-content: center; margin-top: 2rem; }
         .btn-back {
@@ -228,51 +211,45 @@
             .container { padding: 1rem; }
             .value-item { flex-direction: column; align-items: stretch; }
             .value-item .value-label { min-width: auto; }
-            .btn-group { flex-direction: column; }
-            .btn-group .btn { width: 100%; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1 class="page-title">✏️ Edit Information</h1>
-        <div class="page-subtitle">Edit cultural values and contact information</div>
+        <div class="page-subtitle">Edit cultural values and communication details</div>
         
         <div id="messageBox" class="message-box"></div>
         
         <div class="form-group">
             <label>🔑 Cultural Identity Card Code</label>
-            <input type="text" id="cardCode" class="code-input" placeholder="e.g. CIM-1234-5678-ABCDE" />
+            <input type="text" id="cardCode" class="code-input" placeholder="e.g., CIM-1234-5678-ABCDE" />
         </div>
         
-        <button class="btn btn-primary" id="loadBtn" onclick="loadUserData()" style="width:100%;">🔍 Load Data</button>
+        <button class="btn btn-primary" id="loadBtn" onclick="loadUserData()" style="width:100%;">🔍 Load Information</button>
         
         <div id="editSection" style="display:none; margin-top: 2rem;">
+            <div class="warning-box">
+                ⚠️ Warning: You have only <strong>one opportunity</strong> to request an edit. After submission, your changes must be approved by the admin.
+            </div>
+
             <div class="form-group">
                 <label>📧 Communication Email</label>
                 <div class="value-item">
                     <span class="value-label">Email:</span>
                     <input type="email" id="emailInput" class="value-input" placeholder="Enter your email" />
-                    <button class="btn btn-success" onclick="saveField('email')">💾 Save Email</button>
+                    <button class="btn btn-success" onclick="requestEdit('email')">💾 Request Email Change</button>
                 </div>
             </div>
             
             <div class="form-group">
-                <label>📋 Cultural Values (7 values)</label>
+                <label>📋 Cultural Values (7 Values)</label>
                 <div id="valuesContainer"></div>
             </div>
             
-            <div class="btn-group">
-                <button class="btn btn-secondary" onclick="window.location.href='index-en.html'">↩ Back</button>
+            <div class="back-row">
+                <a href="index-en.html" class="btn-back">↩ Back to Home</a>
             </div>
-        </div>
-        
-        <div class="back-row">
-            <a href="index-en.html" class="btn-back">↩ Back to Home</a>
-        </div>
-        
-        <div class="note">
-            🔒 Each change is saved separately and will be applied after admin approval.
         </div>
     </div>
     
@@ -286,161 +263,86 @@
             box.style.display = 'block';
         }
         
-        function hideMessage() {
-            const box = document.getElementById('messageBox');
-            box.style.display = 'none';
-            box.className = 'message-box';
-        }
-        
         async function loadUserData() {
             const cardCode = document.getElementById('cardCode').value.trim();
-            if (!cardCode) {
-                showMessage('Please enter your card code.', 'error');
-                return;
-            }
+            if (!cardCode) { showMessage('❌ Please enter your card code.', 'error'); return; }
             
             const btn = document.getElementById('loadBtn');
             btn.disabled = true;
             btn.textContent = '⏳ Loading...';
-            hideMessage();
             
             try {
-                const response = await fetch('/api/get-user?cardCode=' + encodeURIComponent(cardCode));
-                const result = await response.json();
+                const response = await fetch('/api/get-users?t=' + new Date().getTime());
+                const data = await response.json();
+                const user = data.users.find(u => u.cardCode === cardCode);
                 
-                if (!response.ok) {
-                    throw new Error(result.error || 'Error loading data');
-                }
+                if (!user) throw new Error('User with this code not found.');
+                if (user.lastEditRequest) throw new Error('❌ You have already requested an edit and cannot do so again.');
                 
-                currentUser = result.user;
+                currentUser = user;
                 displayUserData(currentUser);
                 document.getElementById('editSection').style.display = 'block';
-                showMessage('✅ User data loaded.', 'success');
+                showMessage('✅ Information loaded. You can now apply changes.', 'success');
                 
             } catch (error) {
-                showMessage('❌ ' + error.message, 'error');
+                showMessage(error.message, 'error');
             }
             
             btn.disabled = false;
-            btn.textContent = '🔍 Load Data';
+            btn.textContent = '🔍 Load Information';
         }
         
         function displayUserData(user) {
             document.getElementById('emailInput').value = user.communicationEmail || '';
-            
             const container = document.getElementById('valuesContainer');
             container.innerHTML = '';
             
             const values = user.values || [];
-            const priorities = user.priorities || [];
-            
             for (let i = 0; i < 7; i++) {
-                const val = values[i] || '';
-                const priority = priorities[i] || 0;
-                
                 const div = document.createElement('div');
                 div.className = 'value-item';
                 div.innerHTML = `
                     <span class="value-label">Value ${i+1}:</span>
-                    <input type="text" id="value-${i}" class="value-input" value="${val}" placeholder="Value ${i+1}" />
-                    <span class="value-label">Priority (1-7):</span>
-                    <input type="number" id="priority-${i}" class="value-input" value="${priority}" min="1" max="7" placeholder="Priority" style="max-width:80px;" />
-                    <button class="btn btn-success" onclick="saveValue(${i})">💾 Save</button>
+                    <input type="text" id="value-${i}" class="value-input" value="${values[i] || ''}" />
+                    <button class="btn btn-success" onclick="requestEdit('value_${i}')">💾 Request Change</button>
                 `;
                 container.appendChild(div);
             }
         }
         
-        async function saveField(field) {
+        async function requestEdit(field) {
+            if (!currentUser) return;
             const cardCode = document.getElementById('cardCode').value.trim();
-            if (!cardCode || !currentUser) {
-                showMessage('Please load user data first.', 'error');
-                return;
+            
+            let newValue;
+            if (field === 'email') {
+                newValue = document.getElementById('emailInput').value.trim();
+            } else {
+                const index = parseInt(field.split('_')[1]);
+                newValue = document.getElementById(`value-${index}`).value.trim();
             }
-            
-            hideMessage();
-            const btn = event.target;
-            btn.disabled = true;
-            btn.textContent = '⏳ Saving...';
-            
+
             try {
-                let updateData = { cardCode };
-                
-                if (field === 'email') {
-                    const email = document.getElementById('emailInput').value.trim();
-                    updateData.communicationEmail = email;
-                }
-                
-                const response = await fetch('/api/update-user', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(updateData)
-                });
-                
-                const result = await response.json();
-                if (!response.ok) {
-                    throw new Error(result.error || 'Error saving changes');
-                }
-                
-                showMessage('✅ Changes saved. Waiting for admin approval.', 'success');
-                
-            } catch (error) {
-                showMessage('❌ ' + error.message, 'error');
-            }
-            
-            btn.disabled = false;
-            btn.textContent = '💾 Save';
-        }
-        
-        async function saveValue(index) {
-            const cardCode = document.getElementById('cardCode').value.trim();
-            if (!cardCode || !currentUser) {
-                showMessage('Please load user data first.', 'error');
-                return;
-            }
-            
-            hideMessage();
-            const btn = event.target;
-            btn.disabled = true;
-            btn.textContent = '⏳ Saving...';
-            
-            try {
-                const value = document.getElementById(`value-${index}`).value.trim();
-                const priority = parseInt(document.getElementById(`priority-${index}`).value) || 0;
-                
-                const values = [...(currentUser.values || [])];
-                const priorities = [...(currentUser.priorities || [])];
-                
-                values[index] = value;
-                priorities[index] = priority;
-                
                 const response = await fetch('/api/update-user', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         cardCode,
-                        values,
-                        priorities,
-                        updateIndex: index
+                        field,
+                        newValue,
+                        lastEditRequest: new Date().toISOString()
                     })
                 });
                 
                 const result = await response.json();
-                if (!response.ok) {
-                    throw new Error(result.error || 'Error saving changes');
-                }
+                if (!response.ok) throw new Error(result.error);
                 
-                currentUser.values = values;
-                currentUser.priorities = priorities;
-                
-                showMessage(`✅ Value ${index+1} saved. Waiting for admin approval.`, 'success');
+                showMessage('✅ Edit request successfully registered and pending admin approval.', 'success');
+                document.getElementById('editSection').style.display = 'none'; // Lock form after submission
                 
             } catch (error) {
                 showMessage('❌ ' + error.message, 'error');
             }
-            
-            btn.disabled = false;
-            btn.textContent = '💾 Save';
         }
     </script>
 </body>
