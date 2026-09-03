@@ -1,0 +1,28 @@
+{
+  "cardCode": "CIM-7698-2043-99966",
+  "displayCode": "CIM - 7698 - 2043 - 99966",
+  "optionalCode": "99966",
+  "values": [
+    "سگ",
+    "گربه",
+    "موش",
+    "خر",
+    "پلنگ",
+    "شیر",
+    "اسب"
+  ],
+  "priorities": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "communicationEmail": "ghrezaei1399@gmail.com",
+  "registrationDate": "2026-09-03T19:48:30.065Z",
+  "status": "pending",
+  "rank": 0,
+  "country": "Iran"
+}
