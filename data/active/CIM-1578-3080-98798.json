@@ -25,5 +25,17 @@
   "status": "approved",
   "rank": 0,
   "country": "Iran",
-  "statusUpdatedAt": "2026-09-03T10:54:57.317Z"
+  "statusUpdatedAt": "2026-09-03T10:54:57.317Z",
+  "achievements": [
+    {
+      "title": "پوستر کتاب معماری سامانه های هوشمند",
+      "description": "هوشمند سازی",
+      "category": "science",
+      "fileUrl": "https://raw.githubusercontent.com/ghrezaei1399-code/cultural-id/main/uploads/1788433035149-sgc4yj.jpg",
+      "fileName": "1788433035149-sgc4yj.jpg",
+      "status": "pending",
+      "uploadDate": "2026-09-03T10:57:16.765Z",
+      "section": "identity-card"
+    }
+  ]
 }
