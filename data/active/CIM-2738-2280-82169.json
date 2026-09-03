@@ -22,8 +22,30 @@
   ],
   "communicationEmail": "ghrezaei1399@gmail.com",
   "registrationDate": "2026-09-03T10:24:41.079Z",
-  "status": "approved",
+  "status": "pending_edit",
   "rank": 0,
   "country": "Iran",
-  "statusUpdatedAt": "2026-09-03T15:35:10.687Z"
+  "statusUpdatedAt": "2026-09-03T15:35:10.687Z",
+  "pendingChanges": {
+    "communicationEmail": "ghrezaei1399@gmail.com",
+    "values": [
+      "ماشین",
+      "موتور",
+      "دوچرخه",
+      "گاری",
+      "کالسکه",
+      "درشکه",
+      "هواپیما"
+    ],
+    "priorities": [
+      7,
+      6,
+      5,
+      4,
+      3,
+      2,
+      1
+    ]
+  },
+  "lastEditRequest": "2026-09-03T17:46:49.696Z"
 }
