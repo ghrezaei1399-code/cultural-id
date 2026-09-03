@@ -25,7 +25,7 @@ module.exports = async function handler(req, res) {
     const { cardCode, field, newValue, communicationEmail, values, priorities, lastEditRequest } = parsedBody;
 
     if (!cardCode) {
-      return res.status(400).json({ error: 'کد کارت الزامی است' });
+      return res.status(400).json({ error: 'Card code is required' });
     }
 
     const owner = 'ghrezaei1399-code';
@@ -39,9 +39,9 @@ module.exports = async function handler(req, res) {
 
     if (!userRes.ok) {
       if (userRes.status === 404) {
-        return res.status(404).json({ error: 'کاربر یافت نشد' });
+        return res.status(404).json({ error: 'User not found' });
       }
-      return res.status(userRes.status).json({ error: 'خطا در دریافت اطلاعات کاربر' });
+      return res.status(userRes.status).json({ error: 'Error fetching user data' });
     }
 
     const userDataRaw = await userRes.json();
@@ -49,7 +49,7 @@ module.exports = async function handler(req, res) {
 
     // ✅ بررسی محدودیت یک‌بار ویرایش
     if (userData.lastEditRequest) {
-      return res.status(403).json({ error: '❌ شما قبلاً درخواست ویرایش داده‌اید و امکان ویرایش مجدد ندارید.' });
+      return res.status(403).json({ error: '❌ You have already requested an edit.' });
     }
 
     // ✅ ایجاد آبجکت pendingChanges اگر وجود ندارد
@@ -96,7 +96,7 @@ module.exports = async function handler(req, res) {
 
     return res.status(200).json({
       success: true,
-      message: 'تغییرات با موفقیت ثبت شد و منتظر تأیید ادمین است.',
+      message: 'Changes saved successfully.',
       pendingChanges: userData.pendingChanges
     });
 
