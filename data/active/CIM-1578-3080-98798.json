@@ -1,0 +1,28 @@
+{
+  "cardCode": "CIM-1578-3080-98798",
+  "displayCode": "CIM - 1578 - 3080 - 98798",
+  "optionalCode": "98798",
+  "values": [
+    "میخ",
+    "پیچ",
+    "واشر",
+    "دریل",
+    "آچار",
+    "انبردست",
+    "چکش"
+  ],
+  "priorities": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "communicationEmail": "ghrezaei1399@gmail.com",
+  "registrationDate": "2026-09-03T10:43:50.066Z",
+  "status": "pending",
+  "rank": 0,
+  "country": "Iran"
+}
