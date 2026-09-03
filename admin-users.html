@@ -693,7 +693,7 @@
             document.getElementById('modalTitle').textContent = t('modalTitle') + user.cardCode;
             
             const changed = user.pendingChanges || [];
-            const hl = (field) => changed.includes(field) ? 'highlight-change' : '';
+            const hl = (field) => (Array.isArray(changed) ? changed : Object.keys(changed || {})).includes(field) ? 'highlight-change' : '';
 
             const body = document.getElementById('modalBody');
             body.innerHTML = `
