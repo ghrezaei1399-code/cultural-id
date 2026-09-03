@@ -36,6 +36,7 @@
         }
         body.dark .page-subtitle { color: #c8b890; }
         
+        /* باکس هشدار ثابت در بالای صفحه */
         .warning-box {
             background: rgba(255, 140, 0, 0.1);
             border: 2px solid #ff8c00;
@@ -45,7 +46,7 @@
             text-align: center;
             color: #b85a00;
             font-weight: 700;
-            display: none;
+            display: none; /* توسط JS کنترل می‌شود */
         }
         body.dark .warning-box { background: rgba(255, 140, 0, 0.05); color: #f9e79f; }
         
@@ -138,15 +139,6 @@
         body.dark .btn-primary { background: linear-gradient(135deg, #8a6d1f, #d4af37); color: #fff; }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(212,175,55,0.35); }
         .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-        .btn-submit {
-            background: #2874a6;
-            color: #fff;
-            width: 100%;
-            margin-top: 1rem;
-            padding: 1rem;
-            font-size: 1rem;
-        }
-        body.dark .btn-submit { background: #5dade2; }
         
         .message-box {
             display: none;
@@ -222,35 +214,40 @@
         <h1 class="page-title">✏️ ویرایش اطلاعات</h1>
         <div class="page-subtitle">ویرایش ارزش‌های فرهنگی و اطلاعات ارتباطی</div>
         
-        <div id="messageBox" class="message-box"></div>
-        
-        <!-- مرحله ۱: ورود کد -->
-        <div id="step1">
-            <div class="form-group">
-                <label>🔑 کد کارت هویت فرهنگی</label>
-                <input type="text" id="cardCode" class="code-input" placeholder="مثلاً: CIM-1234-5678-ABCDE" />
-            </div>
-            <button class="btn btn-primary" onclick="checkEligibility()" style="width:100%">بررسی امکان ویرایش</button>
+        <!-- هشدار ثابت که همیشه هست اما محتوایش با JS پر می‌شود -->
+        <div id="globalWarning" class="warning-box">
+            ⚠️ توجه: شما فقط <strong>یک بار</strong> امکان ارسال درخواست ویرایش دارید. لطفاً تمام تغییرات خود را اعمال کرده و سپس دکمه ثبت نهایی را بزنید.
         </div>
 
-        <!-- مرحله ۲: فرم ویرایش کامل -->
-        <div id="step2" style="display:none; margin-top: 2rem;">
-            <div class="warning-box" style="display:block;">
-                ⚠️ توجه: شما فقط <strong>یک بار</strong> امکان ارسال درخواست ویرایش دارید. لطفاً تمام تغییرات خود را اعمال کرده و سپس دکمه ثبت نهایی را بزنید.
-            </div>
-
+        <div id="messageBox" class="message-box"></div>
+        
+        <div class="form-group">
+            <label>🔑 کد کارت هویت فرهنگی</label>
+            <input type="text" id="cardCode" class="code-input" placeholder="مثلاً: CIM-1234-5678-ABCDE" />
+        </div>
+        
+        <button class="btn btn-primary" id="loadBtn" onclick="loadUserData()" style="width:100%;">🔍 بارگذاری اطلاعات</button>
+        
+        <div id="editSection" style="display:none; margin-top: 2rem;">
             <div class="form-group">
-                <label>📧 ایمیل ارتباطی جدید</label>
-                <input type="email" id="emailInput" class="value-input" placeholder="ایمیل جدید خود را وارد کنید" />
+                <label>📧 ایمیل ارتباطی</label>
+                <div class="value-item">
+                    <span class="value-label">ایمیل:</span>
+                    <input type="email" id="emailInput" class="value-input" placeholder="ایمیل خود را وارد کنید" />
+                </div>
             </div>
             
             <div class="form-group">
-                <label>📋 ارزش‌های فرهنگی جدید (۷ ارزش)</label>
+                <label>📋 ارزش‌های فرهنگی (۷ ارزش)</label>
                 <div id="valuesContainer"></div>
             </div>
             
-            <button class="btn btn-submit" onclick="submitAllEdits()">✅ ثبت نهایی درخواست ویرایش</button>
-            <button class="btn btn-primary" onclick="location.reload()" style="margin-top:0.5rem; background:#ccc; color:#333;">انصراف</button>
+            <!-- دکمه ثبت نهایی که همه چیز را یکجا می‌فرستد -->
+            <button class="btn btn-primary" onclick="submitAllEdits()" style="width:100%; margin-top:1rem; background:#2874a6; color:#fff;">✅ ثبت نهایی درخواست ویرایش</button>
+            
+            <div class="back-row">
+                <a href="index.html" class="btn-back">↩ بازگشت به صفحه اصلی</a>
+            </div>
         </div>
     </div>
     
@@ -264,13 +261,13 @@
             box.style.display = 'block';
         }
         
-        async function checkEligibility() {
+        async function loadUserData() {
             const cardCode = document.getElementById('cardCode').value.trim();
-            if (!cardCode) { showMessage('❌ لطفاً کد کارت را وارد کنید', 'error'); return; }
+            if (!cardCode) { showMessage('❌ لطفاً کد کارت خود را وارد کنید.', 'error'); return; }
             
-            const btn = event.target;
+            const btn = document.getElementById('loadBtn');
             btn.disabled = true;
-            btn.textContent = '⏳ در حال بررسی...';
+            btn.textContent = '⏳ در حال بارگذاری...';
             
             try {
                 const response = await fetch('/api/get-users?t=' + new Date().getTime());
@@ -278,40 +275,61 @@
                 const user = data.users.find(u => u.cardCode === cardCode);
                 
                 if (!user) throw new Error('کاربری با این کد یافت نشد.');
-                if (user.lastEditRequest) throw new Error('❌ شما قبلاً درخواست ویرایش داده‌اید و امکان ویرایش مجدد ندارید.');
+                
+                // بررسی محدودیت ویرایش
+                if (user.lastEditRequest) {
+                    document.getElementById('globalWarning').style.display = 'block';
+                    document.getElementById('globalWarning').innerHTML = '❌ شما قبلاً درخواست ویرایش داده‌اید و امکان ویرایش مجدد ندارید.';
+                    document.getElementById('globalWarning').style.borderColor = '#c0392b';
+                    document.getElementById('globalWarning').style.color = '#c0392b';
+                    throw new Error('امکان ویرایش وجود ندارد.');
+                }
+                
+                // اگر مجاز بود، هشدار استاندارد را نشان بده
+                document.getElementById('globalWarning').style.display = 'block';
                 
                 currentUser = user;
-                document.getElementById('step1').style.display = 'none';
-                document.getElementById('step2').style.display = 'block';
-                
-                // پر کردن فرم با اطلاعات فعلی
-                document.getElementById('emailInput').value = user.communicationEmail || '';
-                const container = document.getElementById('valuesContainer');
-                container.innerHTML = '';
-                (user.values || []).forEach((val, i) => {
-                    container.innerHTML += `
-                        <div class="value-item">
-                            <span class="value-label">ارزش ${i+1}:</span>
-                            <input type="text" id="v-${i}" class="value-input" value="${val}" />
-                        </div>`;
-                });
+                displayUserData(currentUser);
+                document.getElementById('editSection').style.display = 'block';
+                showMessage('✅ اطلاعات بارگذاری شد. اکنون می‌توانید تغییرات را اعمال کنید.', 'success');
                 
             } catch (error) {
                 showMessage(error.message, 'error');
             }
             
             btn.disabled = false;
-            btn.textContent = 'بررسی امکان ویرایش';
+            btn.textContent = '🔍 بارگذاری اطلاعات';
+        }
+        
+        function displayUserData(user) {
+            document.getElementById('emailInput').value = user.communicationEmail || '';
+            const container = document.getElementById('valuesContainer');
+            container.innerHTML = '';
+            
+            const values = user.values || [];
+            for (let i = 0; i < 7; i++) {
+                const div = document.createElement('div');
+                div.className = 'value-item';
+                div.innerHTML = `
+                    <span class="value-label">ارزش ${i+1}:</span>
+                    <input type="text" id="value-${i}" class="value-input" value="${values[i] || ''}" />
+                `;
+                container.appendChild(div);
+            }
         }
         
         async function submitAllEdits() {
             if (!currentUser) return;
             const cardCode = document.getElementById('cardCode').value.trim();
+            
+            // جمع‌آوری تمام داده‌ها
             const email = document.getElementById('emailInput').value.trim();
             const values = [];
-            for(let i=0; i<7; i++) values.push(document.getElementById(`v-${i}`).value.trim());
+            for(let i=0; i<7; i++) {
+                values.push(document.getElementById(`value-${i}`).value.trim());
+            }
 
-            const btn = document.querySelector('.btn-submit');
+            const btn = event.target;
             btn.disabled = true;
             btn.textContent = '⏳ در حال ارسال...';
 
@@ -331,8 +349,9 @@
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.error);
                 
-                showMessage('✅ درخواست ویرایش شما با موفقیت ثبت شد و در انتظار تأیید ادمین است.', 'success');
-                setTimeout(() => window.location.href = 'index.html', 3000);
+                showMessage('✅ درخواست ویرایش با موفقیت ثبت شد و در انتظار تأیید ادمین است.', 'success');
+                document.getElementById('editSection').style.display = 'none';
+                document.getElementById('globalWarning').style.display = 'none';
                 
             } catch (error) {
                 showMessage('❌ ' + error.message, 'error');
