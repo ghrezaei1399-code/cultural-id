@@ -13,7 +13,7 @@
             justify-content: center;
             align-items: center;
             padding: 2rem 1rem;
-            background-image: url('assets/pisa.jpg'); /* پس‌زمینه اصلی حفظ شده */
+            background-image: url('assets/pisa.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -24,7 +24,7 @@
             max-width: 700px;
             width: 100%;
             background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(12px); /* افکت شیشه‌ای کامل */
+            backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-radius: 48px;
             padding: 2.5rem 2rem;
@@ -148,6 +148,7 @@
             border-color: rgba(255, 255, 255, 0.02);
         }
         .btn-primary:hover { background: rgba(60, 30, 10, 0.04); transform: scale(1.02); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
         
         .btn-secondary {
             background: rgba(60, 30, 10, 0.01);
@@ -225,12 +226,12 @@
             <div class="subtitle">برای دسترسی به گالری دستاوردها، کد عضویت خود را وارد کنید</div>
             
             <div class="code-check-box">
-                <input type="text" id="memberCode" class="code-input" placeholder="کد عضویت (مثلاً: A1B2C)" />
-                <button onclick="verifyCode()" class="btn btn-primary" style="width:100%">بررسی و ورود</button>
-                <div id="errorMsg" class="error-msg">❌ کد نامعتبر است یا شما جزو ۲۰۰ نفر اول نیستید.</div>
+                <input type="text" id="memberCode" class="code-input" placeholder="کد کارت (مثلاً: CIM-XXXX-XXXX-XXXX)" />
+                <button onclick="verifyCode()" class="btn btn-primary" id="verifyBtn" style="width:100%">بررسی و ورود</button>
+                <div id="errorMsg" class="error-msg"></div>
             </div>
             <div class="note">
-                این بخش فقط برای ۲۰۰ سفیر اول فعال است.
+                این بخش فقط برای ۲۰۰ سفیر اول (نشان طلایی) فعال است.
             </div>
         </div>
 
@@ -283,7 +284,7 @@
         </div>
     </div>
 <script>
-    // Theme Logic (اگر در فایل اصلی دارید، این بخش را نگه دارید)
+    // Theme Logic
     const toggle = document.getElementById('themeToggle');
     const body = document.body;
     if (localStorage.getItem('theme') === 'dark') {
@@ -310,21 +311,57 @@
         });
     }
 
-    // Verification Logic
-    function verifyCode() {
-        const code = document.getElementById('memberCode').value.trim();
+    // Verification Logic (اصلاح شده برای بررسی واقعی با API)
+    async function verifyCode() {
+        const codeInput = document.getElementById('memberCode').value.trim();
         const errorMsg = document.getElementById('errorMsg');
+        const verifyBtn = document.getElementById('verifyBtn');
         
-        if (code.length > 3) {
+        if (!codeInput) {
+            errorMsg.textContent = '❌ لطفاً کد کارت خود را وارد کنید.';
+            errorMsg.style.display = 'block';
+            return;
+        }
+
+        verifyBtn.disabled = true;
+        verifyBtn.textContent = '⏳ در حال بررسی...';
+        errorMsg.style.display = 'none';
+
+        try {
+            // دریافت لیست کاربران از API
+            const response = await fetch('/api/get-users?t=' + new Date().getTime());
+            if (!response.ok) throw new Error('خطا در ارتباط با سرور');
+            
+            const data = await response.json();
+            const user = data.users.find(u => u.cardCode === codeInput);
+
+            if (!user) {
+                throw new Error('❌ کد کارت یافت نشد.');
+            }
+
+            if (user.status !== 'approved') {
+                throw new Error('❌ حساب کاربری شما هنوز توسط ادمین تأیید نشده است.');
+            }
+
+            if (user.rank > 200) {
+                throw new Error(`❌ متأسفانه این بخش فقط برای ۲۰۰ نفر اول (رتبه ${user.rank}) فعال است.`);
+            }
+
+            // اگر همه چیز درست بود
             document.getElementById('codeCheckSection').classList.add('hidden');
             document.getElementById('uploadSection').classList.remove('hidden');
-            localStorage.setItem('verifiedCode', code);
-        } else {
-            if(errorMsg) errorMsg.style.display = 'block';
+            localStorage.setItem('verifiedCode', codeInput);
+
+        } catch (error) {
+            errorMsg.textContent = error.message;
+            errorMsg.style.display = 'block';
+        } finally {
+            verifyBtn.disabled = false;
+            verifyBtn.textContent = 'بررسی و ورود';
         }
     }
 
-    // Upload Logic (اصلاح شده برای ارسال لینک به جای Base64)
+    // Upload Logic
     const uploadForm = document.getElementById('uploadForm');
     if(uploadForm) {
         uploadForm.addEventListener('submit', async function(e) {
@@ -365,13 +402,13 @@
                 btn.textContent = '⏳ در حال ثبت اطلاعات...';
                 const cardCode = localStorage.getItem('verifiedCode') || document.getElementById('memberCode').value;
 
-                // ۲. اطلاعات نهایی را به API اصلی بفرست (فقط لینک ارسال می‌شود)
+                // ۲. اطلاعات نهایی را به API اصلی بفرست
                 const achievementData = {
                     title: document.getElementById('title').value,
                     description: document.getElementById('description').value,
                     category: document.getElementById('category').value,
                     fileName: fileName,
-                    fileUrl: fileUrl, // ⭐ نکته کلیدی: ارسال لینک
+                    fileUrl: fileUrl,
                     section: 'identity-card' 
                 };
 
@@ -392,7 +429,7 @@
 
                 if(statusBox) {
                     statusBox.className = 'status-msg success';
-                    statusBox.textContent = '✅ دستاورد شما با موفقیت ثبت شد.';
+                    statusBox.textContent = '✅ دستاورد شما با موفقیت ثبت شد و پس از تایید ادمین نمایش داده می‌شود.';
                     statusBox.style.display = 'block';
                 }
                 btn.textContent = '✅ ارسال شد';
