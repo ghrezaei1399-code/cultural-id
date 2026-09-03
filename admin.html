@@ -551,7 +551,6 @@
             <div class="modal-actions" id="modalActions"></div>
         </div>
     </div>
-
     <script>
         let allUsers = [];
         let allCountries = [];
@@ -848,7 +847,7 @@
         }
 
         // ================================================================
-        // ===== تابع viewUser - اصلاح شده نهایی =====
+        // ===== تابع viewUser - اصلاح شده نهایی برای نمایش تغییرات تکی =====
         // ================================================================
         function viewUser(cardCode) {
             try {
@@ -867,7 +866,6 @@
                 document.getElementById('modalTitle').textContent = tr('modalTitle') + user.cardCode;
                 
                 // ===== پردازش pendingChanges: هم آرایه و هم آبجکت =====
-                            // ===== پردازش pendingChanges: هم آرایه و هم آبجکت =====
                 let pending = {};
                 let changedKeys = [];
                 
@@ -880,13 +878,13 @@
                             pending[key] = 'تغییر درخواستی';
                         });
                     } else if (typeof user.pendingChanges === 'object' && user.pendingChanges !== null) {
-                        // حالت جدید: آبجکت
+                        // حالت جدید: آبجکت (ذخیره تکی)
                         pending = user.pendingChanges;
                         changedKeys = Object.keys(pending);
                     }
                 }
 
-                // ===== تابع کمکی برای بررسی تغییر - بدون استفاده از includes روی آبجکت =====
+                // ===== تابع کمکی برای بررسی تغییر =====
                 function isFieldChanged(field) {
                     return changedKeys.indexOf(field) !== -1;
                 }
@@ -1044,5 +1042,5 @@
         loadData();
         setInterval(loadData, 30000);
     </script>
-</body>
+    </body>
 </html>
