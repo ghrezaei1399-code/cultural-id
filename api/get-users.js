@@ -12,28 +12,24 @@ module.exports = async function handler(req, res) {
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
 
-    // ===== بخش ۱: دریافت و پردازش index.json =====
+    // ===== بخش ۱: دریافت index.json =====
     const usersPath = 'data/index.json';
     const usersRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${usersPath}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
 
-    let users = [];
-    
+    let baseUsers = [];
     if (usersRes.ok) {
       const usersDataRaw = await usersRes.json();
       const parsedContent = JSON.parse(Buffer.from(usersDataRaw.content, 'base64').toString('utf8'));
-      
-      if (Array.isArray(parsedContent)) {
-        users = parsedContent;
-      } else {
-        users = parsedContent.users || [];
-      }
+      baseUsers = Array.isArray(parsedContent) ? parsedContent : (parsedContent.users || []);
     }
 
-    // ===== بخش ۲: غنی‌سازی داده‌ها از پوشه data/active =====
-    const enrichedUsers = [];
-    for (const user of users) {
+    // ===== بخش ۲: غنی‌سازی و فیلتر کردن کاربران =====
+    const activeUsers = [];
+    const allUsersForAdmin = []; // شامل همه برای مدیریت ادمین
+
+    for (const user of baseUsers) {
       let userProfile = { ...user };
       try {
         const fileName = `${user.cardCode}.json`;
@@ -46,44 +42,45 @@ module.exports = async function handler(req, res) {
           const fullProfile = JSON.parse(Buffer.from(profileData.content, 'base64').toString('utf8'));
           userProfile = { ...userProfile, ...fullProfile };
         }
-      } catch (e) {
-        // اگر فایل تکی وجود نداشت، ادامه می‌دهیم
+      } catch (e) { /* ignore */ }
+
+      // اضافه کردن به لیست کل برای ادمین (برای نمایش همه وضعیت‌ها)
+      allUsersForAdmin.push(userProfile);
+
+      // فقط کاربران active وارد محاسبات آماری و گالری می‌شوند
+      if (userProfile.status === 'active') {
+        activeUsers.push(userProfile);
       }
-      enrichedUsers.push(userProfile);
     }
 
-    // مرتب‌سازی بر اساس rank برای تعیین دقیق نشان‌ها
-    enrichedUsers.sort((a, b) => a.rank - b.rank);
+    // مرتب‌سازی کاربران فعال بر اساس رتبه برای تعیین نشان
+    activeUsers.sort((a, b) => a.rank - b.rank);
 
-    // ===== بخش ۳: اعمال قوانین نشان‌ها و آمار =====
-    let stats = { total: enrichedUsers.length, golden: 0, silver: 0, bronze: 0 };
+    // ===== بخش ۳: محاسبه آمار و تعیین نشان‌ها =====
+    let stats = { total: activeUsers.length, golden: 0, silver: 0, bronze: 0 };
     const galleryAllowedIds = new Set();
 
-    enrichedUsers.forEach((u, index) => {
-      const rank = index + 1; // رتبه واقعی بر اساس ترتیب لیست
-      
+    activeUsers.forEach((u, index) => {
+      const rank = index + 1;
       if (rank <= 200) {
         u.badge = 'golden';
         stats.golden++;
-        galleryAllowedIds.add(u.cardCode); // فقط ۲۰۰ نفر اول مجاز به نمایش در گالری
+        galleryAllowedIds.add(u.cardCode);
       } else if (rank <= 1000) {
         u.badge = 'silver';
         stats.silver++;
       } else if (rank <= 10000) {
         u.badge = 'bronze';
         stats.bronze++;
-      } else {
-        u.badge = 'member'; // یا هر عنوان دیگری برای ranks بالاتر
       }
     });
 
-    // محاسبه آمار کشورها
+    // محاسبه آمار کشورها (فقط برای کاربران فعال)
     const countryMap = {};
-    enrichedUsers.forEach(u => {
+    activeUsers.forEach(u => {
       if (u.country) {
         if (!countryMap[u.country]) countryMap[u.country] = { country: u.country, count: 0, users: [] };
         countryMap[u.country].count++;
-        countryMap[u.country].users.push({ cardCode: u.cardCode, rank: u.rank, badge: u.badge });
       }
     });
     const countries = Object.values(countryMap).sort((a, b) => b.count - a.count);
@@ -108,14 +105,18 @@ module.exports = async function handler(req, res) {
       }
     } catch (e) { console.error('Requests error:', e); }
 
+    // ===== بخش ۵: آماده‌سازی داده برای ادمین (مرتب‌سازی معکوس برای نمایش جدیدترین‌ها) =====
+    // مرتب‌سازی بر اساس تاریخ ثبت نام (جدیدترین اول)
+    allUsersForAdmin.sort((a, b) => new Date(b.registrationDate) - new Date(a.registrationDate));
+
     // ===== ارسال نهایی =====
     return res.status(200).json({
-      users: enrichedUsers,
-      stats, // آمار اصلاح شده با قوانین جدید
+      users: allUsersForAdmin, // لیست کامل برای ادمین (با آخرین وضعیت‌ها)
+      activeUsers: activeUsers, // لیست فقط فعال‌ها برای گالری و کارت‌ها
+      stats, // آمار دقیق فقط بر اساس فعال‌ها
       countries,
       requests,
-      achievements: enrichedUsers.flatMap(u => {
-        // فقط دستاوردهای تایید شده‌ی ۲۰۰ نفر اول را برمی‌گرداند
+      achievements: activeUsers.flatMap(u => {
         if (galleryAllowedIds.has(u.cardCode) && u.achievements) {
           return u.achievements.filter(a => a.status === 'approved');
         }
