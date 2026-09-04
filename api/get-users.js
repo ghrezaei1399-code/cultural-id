@@ -12,7 +12,7 @@ module.exports = async function handler(req, res) {
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
 
-    // ===== بخش ۱: دریافت اطلاعات کاربران (بدون هیچ تغییری) =====
+    // ===== بخش ۱: دریافت اطلاعات کاربران =====
     const usersPath = 'data/index.json';
     const usersRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${usersPath}`, {
       headers: { 'Authorization': `Bearer ${token}` }
@@ -21,11 +21,11 @@ module.exports = async function handler(req, res) {
     let users = [];
     let stats = { total: 0, golden: 0, silver: 0, bronze: 0 };
     let countries = [];
-    let originalData = {}; // متغیر کمکی برای ذخیره کل محتوای فایل اصلی
+    let originalData = {};
 
     if (usersRes.ok) {
       const usersDataRaw = await usersRes.json();
-      originalData = JSON.parse(Buffer.from(usersDataRaw.content, 'base64').toString('utf8')); // ذخیره کل فایل
+      originalData = JSON.parse(Buffer.from(usersDataRaw.content, 'base64').toString('utf8'));
       
       users = originalData.users || [];
       
@@ -47,7 +47,7 @@ module.exports = async function handler(req, res) {
       countries = Object.values(countryMap).sort((a, b) => b.count - a.count);
     }
 
-    // ===== بخش ۲: دریافت لیست درخواست‌های حذف و ارتباط (بدون هیچ تغییری) =====
+    // ===== بخش ۲: دریافت لیست درخواست‌های حذف و ارتباط =====
     let requests = [];
     const requestsPath = 'data/requests';
     
@@ -80,14 +80,13 @@ module.exports = async function handler(req, res) {
       console.error('Error accessing requests folder:', e);
     }
 
-    // ===== ارسال نهایی: ترکیب داده‌های اصلی + درخواست‌ها =====
-    // نکته اصلاح شده: استفاده از ...originalData برای بازگرداندن achievements و سایر کلیدها
+    // ===== ارسال نهایی =====
     return res.status(200).json({
-      ...originalData, // این خط باعث می‌شود achievements و هر چیز دیگری در index.json باشد برگردد
-      users,           // لیست کاربران پردازش شده
-      stats,           // آمار محاسبه شده
-      countries,       // آمار کشورها
-      requests         // درخواست‌های جدید
+      ...originalData,
+      users,
+      stats,
+      countries,
+      requests
     });
 
   } catch (error) {
