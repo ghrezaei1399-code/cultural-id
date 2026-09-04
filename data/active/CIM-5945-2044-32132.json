@@ -22,12 +22,10 @@
   ],
   "communicationEmail": "ghrezaei1399@gmail.com",
   "registrationDate": "2026-09-03T21:10:58.677Z",
-  "status": "pending_edit",
+  "status": "pending",
   "rank": 0,
   "country": "Iran",
-  "statusUpdatedAt": "2026-09-03T21:11:34.354Z",
-  "pendingChanges": {
-    "value_0": "مولانای رومی"
-  },
+  "statusUpdatedAt": "2026-09-04T10:28:36.381Z",
+  "pendingChanges": {},
   "lastEditRequest": "2026-09-03T21:13:55.776Z"
 }
