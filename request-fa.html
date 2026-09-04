@@ -183,6 +183,17 @@
             background: rgba(200, 50, 50, 0.01);
             border-color: rgba(200, 50, 50, 0.01);
         }
+        .message-box.info {
+            display: block;
+            background: rgba(50, 150, 200, 0.05);
+            border: 1px solid rgba(50, 150, 200, 0.05);
+            color: #0a4a6a;
+        }
+        body.dark .message-box.info {
+            color: #80b0c0;
+            background: rgba(50, 150, 200, 0.01);
+            border-color: rgba(50, 150, 200, 0.01);
+        }
         .theme-toggle {
             position: fixed;
             top: 1rem;
@@ -203,6 +214,103 @@
         }
         .theme-toggle:hover { transform: scale(1.1); }
         @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
+
+        /* ===== استایل نتیجه هم‌فکران ===== */
+        .connections-result {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(39, 174, 96, 0.05);
+            border: 2px solid rgba(39, 174, 96, 0.2);
+            border-radius: 16px;
+            animation: fadeIn 0.5s ease;
+        }
+        body.dark .connections-result {
+            background: rgba(39, 174, 96, 0.02);
+            border-color: rgba(39, 174, 96, 0.1);
+        }
+        .connections-result .title {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #1e7a1e;
+            margin-bottom: 0.5rem;
+        }
+        body.dark .connections-result .title { color: #82e0aa; }
+        .connections-result .tracking-code {
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #2874a6;
+            padding: 0.3rem;
+            background: rgba(40,116,166,0.05);
+            border-radius: 6px;
+            text-align: center;
+            margin-bottom: 0.8rem;
+        }
+        body.dark .connections-result .tracking-code { color: #85c1e9; }
+        .connections-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            margin-top: 0.5rem;
+        }
+        .connection-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.3rem 0.8rem;
+            background: rgba(255,255,255,0.5);
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #2874a6;
+        }
+        body.dark .connection-item { background: rgba(0,0,0,0.1); color: #85c1e9; }
+        .connections-result .no-match {
+            color: #888;
+            text-align: center;
+            padding: 0.5rem;
+        }
+        .connections-result .match-count {
+            font-size: 0.85rem;
+            color: #6a5a3a;
+            text-align: center;
+            margin-top: 0.3rem;
+        }
+        body.dark .connections-result .match-count { color: #c8b890; }
+
+        .email-required-box {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(212, 175, 55, 0.08);
+            border: 2px solid #d4af37;
+            border-radius: 16px;
+            text-align: center;
+        }
+        body.dark .email-required-box { background: rgba(212, 175, 55, 0.03); }
+        .email-required-box .icon { font-size: 2rem; display: block; margin-bottom: 0.3rem; }
+        .email-required-box h3 { color: #8a6d1f; margin-bottom: 0.3rem; }
+        body.dark .email-required-box h3 { color: #f9e79f; }
+        .email-required-box p { color: #4a3a2a; font-size: 0.9rem; line-height: 1.8; }
+        body.dark .email-required-box p { color: #d0c0b0; }
+        .email-required-box .btn-edit {
+            display: inline-block;
+            margin-top: 0.8rem;
+            padding: 0.5rem 1.5rem;
+            background: rgba(212,175,55,0.15);
+            color: #8a6d1f;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+        body.dark .email-required-box .btn-edit { color: #f9e79f; background: rgba(212,175,55,0.1); }
+        .email-required-box .btn-edit:hover { background: rgba(212,175,55,0.25); }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
@@ -214,6 +322,14 @@
 
         <div id="messageBox" class="message-box"></div>
 
+        <!-- ===== باکس نیاز به ایمیل ===== -->
+        <div id="emailRequiredBox" class="email-required-box">
+            <span class="icon">📧</span>
+            <h3>برای استفاده از این بخش، ابتدا ایمیل خود را ثبت کنید</h3>
+            <p>ارتباط با هم‌فکران نیاز به ثبت آدرس ایمیل دارد. لطفاً ابتدا ایمیل خود را در صفحه ویرایش اطلاعات ثبت کنید.</p>
+            <a href="edit-fa.html" class="btn-edit">✏️ رفتن به ویرایش اطلاعات</a>
+        </div>
+
         <form id="requestForm">
             <input type="hidden" id="requestType" value="connection" />
 
@@ -224,7 +340,7 @@
 
             <div class="form-group">
                 <label>توضیحات درخواست</label>
-                <textarea id="description" placeholder="توضیح دهید که چه نوع ارتباطی یا چه دلیلی برای انصراف دارید..."></textarea>
+                <textarea id="description" placeholder="توضیح دهید که چه نوع ارتباطی مد نظر دارید..."></textarea>
             </div>
 
             <div class="btn-group">
@@ -233,8 +349,16 @@
             </div>
         </form>
 
+        <!-- ===== نتیجه هم‌فکران ===== -->
+        <div id="connectionsResult" class="connections-result">
+            <div class="title" id="resultTitle">✅ هم‌فکران شما</div>
+            <div class="tracking-code" id="resultTracking">کد پیگیری: ---</div>
+            <div id="connectionsList" class="connections-list"></div>
+            <div class="match-count" id="resultMatchCount"></div>
+        </div>
+
         <div class="note">
-            🔒 درخواست شما به ادمین ارسال می‌شود و پس از بررسی، نتیجه به شما اعلام خواهد شد.
+            🔒 سیستم به‌صورت خودکار هم‌فکران شما را پیدا می‌کند و نتیجه را نمایش می‌دهد.
         </div>
     </div>
 
@@ -274,7 +398,6 @@
             const descInput = document.getElementById('description');
 
             if (type === 'delete') {
-                // حالت انصراف از عضویت
                 titleEl.textContent = '⚠️ درخواست انصراف از عضویت';
                 subtitleEl.textContent = 'حذف اطلاعات فرهنگی شما از شبکه هم‌فرهنگان';
                 requestTypeInput.value = 'delete';
@@ -282,8 +405,8 @@
                 descInput.placeholder = 'لطفاً دلیل انصراف خود را بنویسید (اختیاری)...';
                 submitBtn.textContent = '🚪 ثبت درخواست انصراف';
                 submitBtn.className = 'btn btn-danger';
+                document.getElementById('connectionsResult').style.display = 'none';
             } else {
-                // حالت پیش‌فرض: ارتباط با هم‌فکران
                 titleEl.textContent = '🤝 درخواست ارتباط با هم‌فکران';
                 subtitleEl.textContent = 'ارتباط با دیگران بر اساس ارزش‌های فرهنگی مشترک';
                 requestTypeInput.value = 'connection';
@@ -294,7 +417,6 @@
             }
         }
 
-        // ===== اجرای تشخیص نوع درخواست هنگام بارگذاری =====
         document.addEventListener('DOMContentLoaded', detectRequestType);
 
         // ===== Show Message =====
@@ -311,6 +433,30 @@
             box.className = 'message-box';
         }
 
+        // ===== نمایش نتیجه هم‌فکران =====
+        function showConnections(result) {
+            const container = document.getElementById('connectionsResult');
+            const titleEl = document.getElementById('resultTitle');
+            const trackingEl = document.getElementById('resultTracking');
+            const listEl = document.getElementById('connectionsList');
+            const matchCountEl = document.getElementById('resultMatchCount');
+
+            container.style.display = 'block';
+            trackingEl.textContent = `🔗 کد پیگیری: ${result.trackingCode || '---'}`;
+
+            if (result.connections && result.connections.length > 0) {
+                titleEl.textContent = '✅ هم‌فکران شما پیدا شدند';
+                listEl.innerHTML = result.connections.map(email => 
+                    `<div class="connection-item">📧 ${email}</div>`
+                ).join('');
+                matchCountEl.textContent = `${result.connections.length} هم‌فکر با ارزش‌های مشترک شما پیدا شد.`;
+            } else {
+                titleEl.textContent = 'ℹ️ هیچ هم‌فکری پیدا نشد';
+                listEl.innerHTML = `<div class="no-match">هیچ هم‌فکری با ارزش‌های مشترک شما پیدا نشد. لطفاً بعداً مجدداً تلاش کنید.</div>`;
+                matchCountEl.textContent = '';
+            }
+        }
+
         // ===== Form Submission =====
         let isSubmitting = false;
         document.getElementById('requestForm').addEventListener('submit', async function(e) {
@@ -321,7 +467,7 @@
 
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
-            submitBtn.textContent = '⏳ در حال ارسال...';
+            submitBtn.textContent = '⏳ در حال بررسی...';
 
             try {
                 const cardCode = document.getElementById('cardCode').value.trim();
@@ -332,6 +478,7 @@
                     throw new Error('لطفاً کد کارت خود را وارد کنید.');
                 }
 
+                // ===== ارسال به API جدید =====
                 const response = await fetch('/api/submit-request', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -345,20 +492,32 @@
                 const result = await response.json();
 
                 if (!response.ok) {
+                    // ===== بررسی خطای نیاز به ایمیل =====
+                    if (result.emailRequired && result.redirect) {
+                        document.getElementById('emailRequiredBox').style.display = 'block';
+                        showMessage('⚠️ برای استفاده از بخش ارتباط با هم‌فکران، ابتدا ایمیل خود را ثبت کنید.', 'info');
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = '📨 ارسال درخواست';
+                        isSubmitting = false;
+                        return;
+                    }
                     throw new Error(result.error || 'خطا در ارسال درخواست');
                 }
 
-                // ===== نمایش کد پیگیری =====
-                const trackingCode = result.trackingCode || '---';
-                const successMsg = requestType === 'delete' 
-                    ? `✅ درخواست انصراف شما با موفقیت ثبت شد. کد پیگیری: ${trackingCode}` 
-                    : `✅ درخواست ارتباط شما با موفقیت ارسال شد. کد پیگیری: ${trackingCode}`;
-                    
-                showMessage(successMsg, 'success');
+                // ===== نمایش نتیجه =====
+                if (requestType === 'connection') {
+                    showConnections(result);
+                    showMessage('✅ درخواست شما با موفقیت پردازش شد.', 'success');
+                } else if (requestType === 'delete') {
+                    showMessage(`✅ درخواست انصراف شما با موفقیت ثبت شد. کد پیگیری: ${result.trackingCode || '---'}`, 'success');
+                }
+
                 submitBtn.textContent = '✅ ارسال شد';
 
                 setTimeout(() => {
-                    window.location.href = 'index.html';
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '📨 ارسال درخواست';
+                    isSubmitting = false;
                 }, 3000);
 
             } catch (error) {
