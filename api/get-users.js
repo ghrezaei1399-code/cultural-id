@@ -12,7 +12,7 @@ module.exports = async function handler(req, res) {
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
 
-    // ===== بخش ۱: دریافت اطلاعات کاربران (بدون هیچ تغییری برای حفظ ۱۱۰ رکورد) =====
+    // ===== بخش ۱: دریافت اطلاعات کاربران (حفظ ساختار اصلی برای جلوگیری از خرابی ادمین) =====
     const usersPath = 'data/index.json';
     const usersRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${usersPath}`, {
       headers: { 'Authorization': `Bearer ${token}` }
@@ -21,19 +21,21 @@ module.exports = async function handler(req, res) {
     let users = [];
     let stats = { total: 0, golden: 0, silver: 0, bronze: 0 };
     let countries = [];
+    let achievements = []; // برای گالری صفحه اصلی
 
     if (usersRes.ok) {
       const usersDataRaw = await usersRes.json();
       const usersData = JSON.parse(Buffer.from(usersDataRaw.content, 'base64').toString('utf8'));
       users = usersData.users || [];
       
-      // محاسبه آمار دقیق
+      // اگر دستاوردها در همین فایل باشند، آن‌ها را جدا می‌کنیم
+      if (usersData.achievements) achievements = usersData.achievements;
+
       stats.total = users.length;
       stats.golden = users.filter(u => u.badge === 'golden').length;
       stats.silver = users.filter(u => u.badge === 'silver').length;
       stats.bronze = users.filter(u => u.badge === 'bronze').length;
 
-      // محاسبه آمار کشورها
       const countryMap = {};
       users.forEach(u => {
         if (u.country) {
@@ -45,7 +47,7 @@ module.exports = async function handler(req, res) {
       countries = Object.values(countryMap).sort((a, b) => b.count - a.count);
     }
 
-    // ===== بخش ۲: دریافت لیست درخواست‌های حذف و ارتباط (بخش جدید و مستقل) =====
+    // ===== بخش ۲: دریافت لیست درخواست‌ها (بدون تداخل با بخش بالا) =====
     let requests = [];
     const requestsPath = 'data/requests';
     
@@ -56,37 +58,28 @@ module.exports = async function handler(req, res) {
 
       if (listRes.ok) {
         const files = await listRes.json();
-        // فیلتر کردن فایل‌های JSON
         const jsonFiles = files.filter(f => f.type === 'file' && f.name.endsWith('.json'));
         
-        // خواندن محتوای فایل‌ها (برای سرعت، ۵۰ تای آخر را می‌خوانیم)
-        const recentFiles = jsonFiles.slice(-50); 
-        
-        for (const file of recentFiles) {
+        for (const file of jsonFiles.slice(-50)) {
           try {
-            const contentRes = await fetch(file.url, {
-              headers: { 'Authorization': `Bearer ${token}` }
-            });
+            const contentRes = await fetch(file.url, { headers: { 'Authorization': `Bearer ${token}` } });
             if (contentRes.ok) {
               const fileData = await contentRes.json();
               const content = JSON.parse(Buffer.from(fileData.content, 'base64').toString('utf8'));
               requests.push(content);
             }
-          } catch (e) { 
-            console.error(`Error reading request file ${file.name}:`, e); 
-          }
+          } catch (e) { console.error(e); }
         }
       }
-    } catch (e) {
-      console.error('Error accessing requests folder:', e);
-    }
+    } catch (e) { console.error(e); }
 
-    // ===== ارسال نهایی: ترکیب داده‌های کاربران و درخواست‌ها =====
+    // ===== ارسال نهایی: ترکیب همه چیز در یک ساختار استاندارد =====
     return res.status(200).json({
-      users,       // داده‌های اصلی کاربران (کاملاً دست‌نخورده)
-      stats,       // آمار کاربران
-      countries,   // آمار کشورها
-      requests     // داده‌های جدید درخواست‌ها
+      users,
+      stats,
+      countries,
+      achievements, // بازگرداندن دستاوردها برای گالری
+      requests      // اضافه کردن درخواست‌ها برای ادمین حذف
     });
 
   } catch (error) {
