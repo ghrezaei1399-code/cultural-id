@@ -1,3 +1,4 @@
+// api/update-user.js
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -21,49 +22,64 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'Invalid JSON in request body' });
     }
 
-    // تشخیص نوع درخواست: تکی یا کلی
-    const { cardCode, field, newValue, communicationEmail, values, priorities, lastEditRequest } = parsedBody;
+    const { cardCode, field, newValue, communicationEmail, values, priorities } = parsedBody;
 
     if (!cardCode) {
-      return res.status(400).json({ error: 'Card code is required' });
+      return res.status(400).json({ error: 'کد کارت الزامی است' });
     }
 
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
     const userPath = `data/active/${cardCode}.json`;
 
-    // دریافت اطلاعات کاربر
+    // ===== ۱. دریافت اطلاعات کاربر =====
     const userRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
 
     if (!userRes.ok) {
       if (userRes.status === 404) {
-        return res.status(404).json({ error: 'User not found' });
+        return res.status(404).json({ error: 'کاربر یافت نشد' });
       }
-      return res.status(userRes.status).json({ error: 'Error fetching user data' });
+      return res.status(userRes.status).json({ error: 'خطا در دریافت اطلاعات کاربر' });
     }
 
     const userDataRaw = await userRes.json();
     const userData = JSON.parse(Buffer.from(userDataRaw.content, 'base64').toString('utf8'));
 
-    // ✅ بررسی محدودیت یک‌بار ویرایش
-    if (userData.lastEditRequest) {
-      return res.status(403).json({ error: '❌ You have already requested an edit.' });
+    // ===== ۲. بررسی محدودیت ویرایش =====
+    if (userData.editLocked === true) {
+      return res.status(403).json({ 
+        error: '⚠️ شما قبلاً درخواست ویرایش داده‌اید که تأیید شده است. امکان ویرایش مجدد وجود ندارد.' 
+      });
     }
 
-    // ✅ ایجاد آبجکت pendingChanges اگر وجود ندارد
+    if (userData.lastEditRequest) {
+      return res.status(403).json({ 
+        error: '⚠️ شما قبلاً درخواست ویرایش داده‌اید که هنوز بررسی نشده است. لطفاً صبر کنید.' 
+      });
+    }
+
+    // ===== ۳. ذخیره نسخه پشتیبان (previousValues) =====
+    userData.previousValues = {
+      values: userData.values || [],
+      priorities: userData.priorities || [],
+      optionalCode: userData.optionalCode || '',
+      communicationEmail: userData.communicationEmail || ''
+    };
+
+    // ===== ۴. ایجاد pendingChanges به صورت آبجکت =====
     if (!userData.pendingChanges) {
       userData.pendingChanges = {};
     }
-    
-    // منطق تشخیص: اگر فیلد تکی باشد، آن را ذخیره کن؛ در غیر این صورت داده‌های کلی
+
+    // ===== ۵. ذخیره تغییرات =====
     if (field && newValue !== undefined) {
-      // حالت تکی (برای دکمه‌های ذخیره کنار هر باکس)
+      // حالت تکی (ویرایش یک فیلد)
       userData.pendingChanges[field] = newValue;
     } else {
-      // حالت کلی (برای ارسال یکجا)
-      if (communicationEmail) {
+      // حالت کلی (ویرایش چند فیلد همزمان)
+      if (communicationEmail !== undefined) {
         userData.pendingChanges.communicationEmail = communicationEmail;
       }
       if (values) {
@@ -74,10 +90,13 @@ module.exports = async function handler(req, res) {
       }
     }
 
-    // ✅ ثبت زمان درخواست و تغییر وضعیت
-    userData.lastEditRequest = lastEditRequest || new Date().toISOString();
+    // ===== ۶. تولید کد پیگیری =====
+    const trackingCode = `EDIT-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+    userData.lastEditRequest = new Date().toISOString();
     userData.status = 'pending_edit';
+    userData.editTrackingCode = trackingCode;
 
+    // ===== ۷. ذخیره در گیت‌هاب =====
     const newContent = Buffer.from(JSON.stringify(userData, null, 2), 'utf8').toString('base64');
 
     await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
@@ -94,10 +113,24 @@ module.exports = async function handler(req, res) {
       })
     });
 
+    // ===== ۸. بازگشت نتیجه =====
+    const fieldLabels = {
+      'communicationEmail': 'ایمیل ارتباطی',
+      'values': 'ارزش‌های فرهنگی',
+      'priorities': 'اولویت‌ها'
+    };
+
+    const changedFields = Object.keys(userData.pendingChanges).map(key => 
+      fieldLabels[key] || key
+    ).join('، ');
+
     return res.status(200).json({
       success: true,
-      message: 'Changes saved successfully.',
-      pendingChanges: userData.pendingChanges
+      message: '✅ درخواست ویرایش با موفقیت ثبت شد.',
+      trackingCode: trackingCode,
+      changedFields: changedFields,
+      pendingChanges: userData.pendingChanges,
+      status: 'pending_edit'
     });
 
   } catch (error) {
