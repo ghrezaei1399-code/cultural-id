@@ -45,7 +45,7 @@
             text-align: center;
             color: #b85a00;
             font-weight: 700;
-            display: none; /* توسط JS کنترل می‌شود */
+            display: none;
         }
         body.dark .warning-box { background: rgba(255, 140, 0, 0.05); color: #f9e79f; }
         
@@ -207,6 +207,53 @@
             box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
         }
         
+        /* ===== جدید: باکس تأیید و نتیجه ===== */
+        .result-box {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 16px;
+            animation: fadeIn 0.5s ease;
+        }
+        .result-box.success {
+            display: block;
+            background: rgba(39,174,96,0.08);
+            border: 2px solid rgba(39,174,96,0.3);
+        }
+        body.dark .result-box.success { background: rgba(39,174,96,0.03); border-color: rgba(39,174,96,0.15); }
+        .result-box .icon { font-size: 2rem; display: block; text-align: center; margin-bottom: 0.3rem; }
+        .result-box .title {
+            font-weight: 800;
+            font-size: 1.1rem;
+            text-align: center;
+            color: #1e7a1e;
+        }
+        body.dark .result-box .title { color: #82e0aa; }
+        .result-box .message {
+            text-align: center;
+            color: #4a3a2a;
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+            line-height: 1.8;
+        }
+        body.dark .result-box .message { color: #d0c0b0; }
+        .result-box .tracking {
+            text-align: center;
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #2874a6;
+            padding: 0.3rem;
+            background: rgba(40,116,166,0.05);
+            border-radius: 6px;
+            margin-top: 0.5rem;
+        }
+        body.dark .result-box .tracking { color: #85c1e9; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         @media (max-width: 768px) {
             .container { padding: 1rem; }
             .value-item { flex-direction: column; align-items: stretch; }
@@ -219,14 +266,13 @@
         <h1 class="page-title">✏️ ویرایش اطلاعات</h1>
         <div class="page-subtitle">ویرایش ارزش‌های فرهنگی و اطلاعات ارتباطی</div>
         
-        <!-- هشدار ثابت -->
         <div id="globalWarning" class="warning-box">
             ⚠️ توجه: شما فقط <strong>یک بار</strong> امکان ارسال درخواست ویرایش دارید.
         </div>
 
         <div id="messageBox" class="message-box"></div>
         
-        <!-- مرحله ۱: ورود کد -->
+        <!-- ===== مرحله ۱: ورود کد ===== -->
         <div id="step1">
             <div class="form-group">
                 <label>🔑 کد کارت هویت فرهنگی</label>
@@ -238,7 +284,7 @@
             </div>
         </div>
 
-        <!-- مرحله ۲: فرم ویرایش -->
+        <!-- ===== مرحله ۲: فرم ویرایش ===== -->
         <div id="step2" style="display:none; margin-top: 2rem;">
             <div class="form-group">
                 <label>📧 ایمیل ارتباطی</label>
@@ -258,10 +304,20 @@
                 <a href="index.html" class="btn-back">↩ بازگشت به صفحه اصلی</a>
             </div>
         </div>
+
+        <!-- ===== نتیجه ویرایش ===== -->
+        <div id="resultBox" class="result-box">
+            <span class="icon" id="resultIcon">✅</span>
+            <div class="title" id="resultTitle">درخواست ویرایش ثبت شد</div>
+            <div class="message" id="resultMessage">تغییرات شما با موفقیت ثبت شد و در انتظار تأیید ادمین است.</div>
+            <div class="tracking" id="resultTracking"></div>
+        </div>
     </div>
     
     <script>
         let currentUser = null;
+        let editField = null;
+        let editValue = null;
         
         function showMessage(text, type) {
             const box = document.getElementById('messageBox');
@@ -270,12 +326,29 @@
             box.style.display = 'block';
         }
         
+        function hideMessage() {
+            const box = document.getElementById('messageBox');
+            box.style.display = 'none';
+            box.className = 'message-box';
+        }
+        
+        function showResult(title, message, trackingCode) {
+            const box = document.getElementById('resultBox');
+            document.getElementById('resultTitle').textContent = title;
+            document.getElementById('resultMessage').textContent = message;
+            document.getElementById('resultTracking').textContent = trackingCode ? `🔗 کد پیگیری: ${trackingCode}` : '';
+            box.className = 'result-box success';
+            box.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
         async function checkEligibility() {
             const cardCode = document.getElementById('cardCode').value.trim();
             if (!cardCode) { showMessage('❌ لطفاً کد کارت را وارد کنید', 'error'); return; }
             
-            // نمایش هشدار در همان لحظه ورود
             document.getElementById('globalWarning').style.display = 'block';
+            hideMessage();
+            document.getElementById('resultBox').style.display = 'none';
 
             try {
                 const response = await fetch('/api/get-users?t=' + new Date().getTime());
@@ -306,8 +379,10 @@
             }
         }
         
+        // ===== درخواست ویرایش (اصلاح شده) =====
         async function requestEdit(field) {
             if (!currentUser) return;
+            
             const cardCode = document.getElementById('cardCode').value.trim();
             let newValue;
             
@@ -317,21 +392,67 @@
                 const index = parseInt(field.split('_')[1]);
                 newValue = document.getElementById(`v-${index}`).value.trim();
             }
+            
+            if (!newValue) {
+                showMessage('❌ لطفاً مقدار جدید را وارد کنید.', 'error');
+                return;
+            }
+
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '⏳ در حال ارسال...';
+            hideMessage();
 
             try {
+                // ===== ارسال به API جدید با ساختار صحیح =====
                 const response = await fetch('/api/update-user', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ cardCode, field, newValue })
+                    body: JSON.stringify({
+                        cardCode: cardCode,
+                        field: field,
+                        newValue: newValue
+                    })
                 });
                 
                 const result = await response.json();
-                if (!response.ok) throw new Error(result.error);
+                if (!response.ok) throw new Error(result.error || 'خطا در ثبت تغییرات');
                 
-                showMessage('✅ تغییر با موفقیت ثبت شد و در انتظار تأیید ادمین است.', 'success');
+                // ===== نمایش نتیجه =====
+                const fieldLabels = {
+                    'communicationEmail': 'ایمیل ارتباطی',
+                    'value_0': 'ارزش ۱',
+                    'value_1': 'ارزش ۲',
+                    'value_2': 'ارزش ۳',
+                    'value_3': 'ارزش ۴',
+                    'value_4': 'ارزش ۵',
+                    'value_5': 'ارزش ۶',
+                    'value_6': 'ارزش ۷'
+                };
+                
+                showResult(
+                    '✅ درخواست ویرایش ثبت شد',
+                    `تغییر "${fieldLabels[field] || field}" با موفقیت ثبت شد و در انتظار تأیید ادمین است.`,
+                    result.trackingCode || '---'
+                );
+                
+                // ===== غیرفعال کردن دکمه =====
+                btn.textContent = '✅ ارسال شد';
+                btn.disabled = true;
+                
+                // ===== قفل کردن فرم =====
+                document.querySelectorAll('#step2 .btn-success').forEach(b => b.disabled = true);
+                document.querySelectorAll('#step2 .value-input').forEach(i => i.disabled = true);
+                document.getElementById('emailInput').disabled = true;
+                
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 4000);
                 
             } catch (error) {
                 showMessage('❌ ' + error.message, 'error');
+                btn.disabled = false;
+                btn.textContent = '💾 ذخیره';
             }
         }
     </script>
