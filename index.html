@@ -583,8 +583,7 @@
     </div>
     <div class="cta-note">بدون اطلاعات شخصی • کاملاً ناشناس • ۲ دقیقه</div>
 
-    <!-- ===== GALLERY: Achievements ===== -->
-<!-- ===== GALLERY: Achievements ===== -->
+   <!-- ===== GALLERY: Achievements ===== -->
 <div class="golden-gallery-box">
     <div class="gallery-header">
         <div class="gallery-title">🏆 گالری دستاوردهای ۲۰۰ عضو اول</div>
@@ -626,8 +625,6 @@
 </div>
 
 <script>
-// ===== ACHIEVEMENTS =====
-
 // ===== ACHIEVEMENTS =====
 let allApproved = [];
 
@@ -728,6 +725,53 @@ function openModal(index) {
           'ارسال‌کننده: ' + (item.owner || 'ناشناس') + '\n' +
           'رتبه: ' + (item.ownerRank || '---'));
 }
+ // ===== ATLAS =====
+let allAtlasItems = [];
+
+async function loadAtlas() {
+    const container = document.getElementById('atlasListContainer');
+    if (!container) {
+        console.warn('⚠️ atlasListContainer پیدا نشد');
+        return;
+    }
+    try {
+        const res = await fetch('/api/get-connection-requests?type=observations');
+        if (!res.ok) throw new Error('خطا در دریافت اطلاعات');
+        const data = await res.json();
+        allAtlasItems = (data.observations || []).filter(obs => obs.score === 5 && obs.status === 'approved');
+        renderAtlas(allAtlasItems);
+    } catch (e) {
+        console.error(e);
+        container.innerHTML = '<p style="text-align:center; color:red;">خطا در دریافت اطلاعات اطلس.</p>';
+    }
+}
+
+function renderAtlas(items) {
+    const container = document.getElementById('atlasListContainer');
+    if (!container) return;
+    if (items.length === 0) {
+        container.innerHTML = '<p style="text-align:center; padding:1rem; color:#888;">هنوز راه‌حلی با امتیاز ۵ ثبت نشده است.</p>';
+        return;
+    }
+    container.innerHTML = items.map((item, index) => `
+        <div class="achievement-item" onclick="openAtlasModal(${index})">
+            <div class="item-info">
+                <h4>${item.observation ? item.observation.substring(0, 60) + '...' : 'مشاهده'}</h4>
+                <span class="item-meta">⭐ امتیاز ${item.score}</span>
+            </div>
+            <span style="font-size:1.2rem; color:#6a3d9a;">🏛️</span>
+        </div>
+    `).join('');
+}
+
+function openAtlasModal(index) {
+    const item = allAtlasItems[index];
+    if (!item) return;
+    alert('🏛️ مشاهده از اطلس ظهور\n\n' +
+          'متن: ' + (item.observation || '---') + '\n' +
+          '⭐ امتیاز: ' + (item.score || 5) + '\n' +
+          'وضعیت: ' + (item.status === 'approved' ? '✅ تایید شده' : '⏳ در انتظار'));
+}   
 // ===== MODALS =====
 function openModal(index) {
     const item = allApproved[index];
