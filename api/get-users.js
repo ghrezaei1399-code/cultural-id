@@ -12,37 +12,30 @@ module.exports = async function handler(req, res) {
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
 
-    // ===== بخش ۱: دریافت و پردازش هوشمند index.json =====
+    // ===== بخش ۱: دریافت و پردازش index.json =====
     const usersPath = 'data/index.json';
     const usersRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${usersPath}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
 
     let users = [];
-    let originalData = {};
-
+    
     if (usersRes.ok) {
       const usersDataRaw = await usersRes.json();
       const parsedContent = JSON.parse(Buffer.from(usersDataRaw.content, 'base64').toString('utf8'));
       
-      // تشخیص ساختار: آیا فایل یک آرایه است یا یک آبجکت با کلید users؟
       if (Array.isArray(parsedContent)) {
         users = parsedContent;
-        originalData = { users: parsedContent }; // نرمال‌سازی برای سازگاری با فرانت‌اند
       } else {
         users = parsedContent.users || [];
-        originalData = parsedContent;
       }
     }
 
-    // ===== بخش ۲: غنی‌سازی داده‌ها از پوشه data/active (برای یافتن دستاوردها) =====
-    // این بخش حیاتی است چون index.json شما فعلاً achievements ندارد
+    // ===== بخش ۲: غنی‌سازی داده‌ها از پوشه data/active =====
     const enrichedUsers = [];
     for (const user of users) {
       let userProfile = { ...user };
       try {
-        // تلاش برای خواندن پروفایل کامل از پوشه active بر اساس cardCode
-        // نام فایل معمولاً cardCode.json است
         const fileName = `${user.cardCode}.json`;
         const profileRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/active/${fileName}`, {
           headers: { 'Authorization': `Bearer ${token}` }
@@ -51,22 +44,38 @@ module.exports = async function handler(req, res) {
         if (profileRes.ok) {
           const profileData = await profileRes.json();
           const fullProfile = JSON.parse(Buffer.from(profileData.content, 'base64').toString('utf8'));
-          // ادغام دستاوردها و سایر اطلاعات از فایل تکی
           userProfile = { ...userProfile, ...fullProfile };
         }
       } catch (e) {
-        // اگر فایل تکی وجود نداشت، همان اطلاعات index.json استفاده می‌شود
+        // اگر فایل تکی وجود نداشت، ادامه می‌دهیم
       }
       enrichedUsers.push(userProfile);
     }
 
-    // محاسبه آمار
-    const stats = {
-      total: enrichedUsers.length,
-      golden: enrichedUsers.filter(u => u.badge === 'golden').length,
-      silver: enrichedUsers.filter(u => u.badge === 'silver').length,
-      bronze: enrichedUsers.filter(u => u.badge === 'bronze').length
-    };
+    // مرتب‌سازی بر اساس rank برای تعیین دقیق نشان‌ها
+    enrichedUsers.sort((a, b) => a.rank - b.rank);
+
+    // ===== بخش ۳: اعمال قوانین نشان‌ها و آمار =====
+    let stats = { total: enrichedUsers.length, golden: 0, silver: 0, bronze: 0 };
+    const galleryAllowedIds = new Set();
+
+    enrichedUsers.forEach((u, index) => {
+      const rank = index + 1; // رتبه واقعی بر اساس ترتیب لیست
+      
+      if (rank <= 200) {
+        u.badge = 'golden';
+        stats.golden++;
+        galleryAllowedIds.add(u.cardCode); // فقط ۲۰۰ نفر اول مجاز به نمایش در گالری
+      } else if (rank <= 1000) {
+        u.badge = 'silver';
+        stats.silver++;
+      } else if (rank <= 10000) {
+        u.badge = 'bronze';
+        stats.bronze++;
+      } else {
+        u.badge = 'member'; // یا هر عنوان دیگری برای ranks بالاتر
+      }
+    });
 
     // محاسبه آمار کشورها
     const countryMap = {};
@@ -79,7 +88,7 @@ module.exports = async function handler(req, res) {
     });
     const countries = Object.values(countryMap).sort((a, b) => b.count - a.count);
 
-    // ===== بخش ۳: دریافت درخواست‌ها =====
+    // ===== بخش ۴: دریافت درخواست‌ها =====
     let requests = [];
     const requestsPath = 'data/requests';
     try {
@@ -101,11 +110,17 @@ module.exports = async function handler(req, res) {
 
     // ===== ارسال نهایی =====
     return res.status(200).json({
-      users: enrichedUsers, // ارسال کاربران غنی‌شده با دستاوردها
-      stats,
+      users: enrichedUsers,
+      stats, // آمار اصلاح شده با قوانین جدید
       countries,
       requests,
-      achievements: enrichedUsers.flatMap(u => u.achievements || []) // استخراج همه دستاوردها در یک آرایه مسطح
+      achievements: enrichedUsers.flatMap(u => {
+        // فقط دستاوردهای تایید شده‌ی ۲۰۰ نفر اول را برمی‌گرداند
+        if (galleryAllowedIds.has(u.cardCode) && u.achievements) {
+          return u.achievements.filter(a => a.status === 'approved');
+        }
+        return [];
+      })
     });
 
   } catch (error) {
