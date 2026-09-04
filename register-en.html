@@ -90,7 +90,6 @@
             background: rgba(255, 255, 255, 0.03);
         }
         
-        /* Cultural Values Box Styles */
         .value-item {
             background: rgba(255, 255, 255, 0.01);
             border-radius: 12px;
@@ -123,7 +122,6 @@
             border-color: rgba(255, 255, 255, 0.02);
         }
 
-        /* Priority Section Styles */
         .priority-section {
             margin-top: 2rem;
             padding-top: 1.5rem;
@@ -271,7 +269,6 @@
         
         @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
 
-        /* --- Added Module Styles (Pioneer & Welcome Back) --- */
         .pioneer-module {
             margin-top: 1.5rem;
             padding: 1rem;
@@ -310,9 +307,8 @@
         }
         .btn-upload:hover { transform: translateY(-2px); opacity: 0.9; }
 
-        /* Welcome Back Module for users who already have a card */
         .welcome-back-module {
-            display: none; /* Hidden by default */
+            display: none;
             margin-bottom: 2rem;
             padding: 1.5rem;
             background: rgba(40, 116, 166, 0.1);
@@ -324,7 +320,6 @@
         .welcome-text { font-size: 1rem; color: #2874a6; margin-bottom: 1rem; font-weight: 700; }
         body.dark .welcome-text { color: #85c1e9; }
 
-        /* Delete Request Module */
         .delete-module {
             margin-top: 3rem;
             padding: 1.5rem;
@@ -429,7 +424,7 @@
             </div>
         </form>
 
-        <!-- Delete Request Module (New Addition) -->
+        <!-- ===== Delete Module (Updated - connected to new API) ===== -->
         <div class="delete-module">
             <div class="delete-title">⚠️ Membership Cancellation Request</div>
             <div class="form-group">
@@ -440,6 +435,7 @@
                 <label>Reason for Cancellation (Optional)</label>
                 <textarea id="deleteReason" placeholder="Please state your reason..."></textarea>
             </div>
+            <!-- ===== Updated button connected to new API ===== -->
             <button class="btn btn-danger" onclick="submitDeleteRequest()">🚪 Submit Deletion Request</button>
         </div>
 
@@ -520,7 +516,7 @@
             }
         });
 
-        // Delete Request Logic
+        // ===== Delete Request (Updated - connected to new API) =====
         async function submitDeleteRequest() {
             const cardCode = document.getElementById('deleteCardCode').value.trim();
             const reason = document.getElementById('deleteReason').value.trim();
@@ -530,31 +526,35 @@
                 return;
             }
 
-            if (!confirm('Are you sure you want to request account deletion?')) return;
+            if (!confirm('⚠️ Are you sure you want to request account deletion? This action cannot be undone!')) return;
 
             const btn = event.target;
             btn.disabled = true;
             btn.textContent = '⏳ Sending...';
 
             try {
-                const response = await fetch('/api/submit-request', {
+                // ===== Updated: Sending to new delete-user API =====
+                const response = await fetch('/api/delete-user', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         cardCode: cardCode,
-                        type: 'delete',
-                        description: reason
+                        reason: reason
                     })
                 });
 
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.error);
 
-                alert('✅ Your cancellation request has been successfully submitted to the admin.');
+                alert('✅ Your account has been successfully deleted.');
                 document.getElementById('deleteCardCode').value = '';
                 document.getElementById('deleteReason').value = '';
                 btn.textContent = '✅ Sent';
-                setTimeout(() => { btn.disabled = false; btn.textContent = '🚪 Submit Deletion Request'; }, 3000);
+                setTimeout(() => { 
+                    btn.disabled = false; 
+                    btn.textContent = '🚪 Submit Deletion Request'; 
+                    window.location.href = 'index-en.html';
+                }, 3000);
 
             } catch (error) {
                 alert('❌ Error: ' + error.message);
