@@ -50,7 +50,6 @@
         }
         body.dark .subtitle { color: #d0c0b0; border-bottom-color: rgba(255, 255, 255, 0.02); }
         
-        /* استایل‌های فرم */
         .form-group { margin-bottom: 1.5rem; }
         .form-group label {
             display: block;
@@ -87,7 +86,6 @@
             background: rgba(255, 255, 255, 0.03);
         }
         
-        /* باکس ورود کد */
         .code-check-box {
             background: rgba(255, 255, 255, 0.05);
             padding: 2rem;
@@ -109,7 +107,6 @@
             color: #1a0a0a;
         }
         
-        /* ناحیه آپلود فایل */
         .upload-zone {
             border: 2px dashed rgba(212, 175, 55, 0.3);
             border-radius: 16px;
@@ -191,7 +188,6 @@
         .error-msg { color: #a00; margin-top: 1rem; font-size: 0.9rem; display: none; text-align: center; }
         .file-name { font-size: 0.85rem; color: #2874a6; margin-top: 0.5rem; display: block; font-weight: bold; }
         
-        /* استایل پیام وضعیت و راهنما */
         .status-msg {
             padding: 1rem;
             border-radius: 12px;
@@ -311,7 +307,7 @@
         });
     }
 
-    // Verification Logic (اصلاح شده برای بررسی واقعی با API)
+    // Verification Logic
     async function verifyCode() {
         const codeInput = document.getElementById('memberCode').value.trim();
         const errorMsg = document.getElementById('errorMsg');
@@ -328,7 +324,6 @@
         errorMsg.style.display = 'none';
 
         try {
-            // دریافت لیست کاربران از API
             const response = await fetch('/api/get-users?t=' + new Date().getTime());
             if (!response.ok) throw new Error('خطا در ارتباط با سرور');
             
@@ -347,7 +342,6 @@
                 throw new Error(`❌ متأسفانه این بخش فقط برای ۲۰۰ نفر اول (رتبه ${user.rank}) فعال است.`);
             }
 
-            // اگر همه چیز درست بود
             document.getElementById('codeCheckSection').classList.add('hidden');
             document.getElementById('uploadSection').classList.remove('hidden');
             localStorage.setItem('verifiedCode', codeInput);
@@ -361,7 +355,7 @@
         }
     }
 
-    // Upload Logic
+    // ===== Upload Logic (اصلاح شده - بدون نیاز به upload-file) =====
     const uploadForm = document.getElementById('uploadForm');
     if(uploadForm) {
         uploadForm.addEventListener('submit', async function(e) {
@@ -371,45 +365,34 @@
             const file = fileInput.files[0];
             
             btn.disabled = true;
-            btn.textContent = '⏳ در حال آپلود فایل...';
+            btn.textContent = '⏳ در حال پردازش...';
             if(statusBox) statusBox.style.display = 'none';
 
             try {
-                let fileUrl = '';
+                // ===== ۱. خواندن فایل به صورت base64 (اگر وجود داشته باشد) =====
+                let fileData = '';
                 let fileName = '';
 
-                // ۱. اگر فایلی انتخاب شده باشد، ابتدا آن را در پوشه uploads ذخیره کن
                 if (file) {
-                    const fileData = await new Promise((resolve) => {
+                    fileData = await new Promise((resolve) => {
                         const reader = new FileReader();
                         reader.onload = () => resolve(reader.result);
                         reader.readAsDataURL(file);
                     });
-
-                    const uploadRes = await fetch('/api/upload-file', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ fileData, fileName: file.name })
-                    });
-
-                    const uploadResult = await uploadRes.json();
-                    if (!uploadRes.ok) throw new Error(uploadResult.error || 'خطا در آپلود فایل');
-                    
-                    fileUrl = uploadResult.url;
-                    fileName = uploadResult.fileName;
+                    fileName = file.name;
                 }
 
+                // ===== ۲. ارسال مستقیم به upload-achievement (بدون نیاز به upload-file) =====
                 btn.textContent = '⏳ در حال ثبت اطلاعات...';
                 const cardCode = localStorage.getItem('verifiedCode') || document.getElementById('memberCode').value;
 
-                // ۲. اطلاعات نهایی را به API اصلی بفرست
                 const achievementData = {
                     title: document.getElementById('title').value,
                     description: document.getElementById('description').value,
                     category: document.getElementById('category').value,
-                    fileName: fileName,
-                    fileUrl: fileUrl,
-                    section: 'identity-card' 
+                    fileData: fileData,    // ارسال base64 مستقیم
+                    fileName: fileName,    // ارسال نام فایل
+                    section: 'identity-card'
                 };
 
                 const response = await fetch('/api/upload-achievement', {
