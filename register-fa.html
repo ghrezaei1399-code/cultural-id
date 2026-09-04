@@ -90,7 +90,6 @@
             background: rgba(255, 255, 255, 0.03);
         }
         
-        /* Cultural Values Box Styles */
         .value-item {
             background: rgba(255, 255, 255, 0.01);
             border-radius: 12px;
@@ -123,7 +122,6 @@
             border-color: rgba(255, 255, 255, 0.02);
         }
 
-        /* Priority Section Styles */
         .priority-section {
             margin-top: 2rem;
             padding-top: 1.5rem;
@@ -271,7 +269,6 @@
         
         @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
 
-        /* --- Added Module Styles (Pioneer & Welcome Back) --- */
         .pioneer-module {
             margin-top: 1.5rem;
             padding: 1rem;
@@ -310,9 +307,8 @@
         }
         .btn-upload:hover { transform: translateY(-2px); opacity: 0.9; }
 
-        /* Welcome Back Module for users who already have a card */
         .welcome-back-module {
-            display: none; /* Hidden by default */
+            display: none;
             margin-bottom: 2rem;
             padding: 1.5rem;
             background: rgba(40, 116, 166, 0.1);
@@ -324,7 +320,6 @@
         .welcome-text { font-size: 1rem; color: #2874a6; margin-bottom: 1rem; font-weight: 700; }
         body.dark .welcome-text { color: #85c1e9; }
 
-        /* Delete Request Module */
         .delete-module {
             margin-top: 3rem;
             padding: 1.5rem;
@@ -372,8 +367,8 @@
             </div>
 
             <div class="value-item">
-                <label class="value-title">۴. تنوع فرهنگی (وحدت در کثرت)</label>
-                <input type="text" id="v4" placeholder="مثلاً: احترام به تفاوت‌ها، گفت‌وگو..." required />
+                <label class="value-title">۴. تنوع فرهنگی (وححدت در کثرت)</label>
+                <input type="text" id="v4" placeholder="مثلاً: احترام به تفاوت‌ها، گفتگو..." required />
             </div>
 
             <div class="value-item">
@@ -382,7 +377,7 @@
             </div>
 
             <div class="value-item">
-                <label class="value-title">۶. محو خشونت (عشق سیستمی)</label>
+                <label class="value-title">۶. محو خشونت (عشق سیستمیک)</label>
                 <input type="text" id="v6" placeholder="مثلاً: کاهش تعصب، ترویج مدارا..." required />
             </div>
 
@@ -406,7 +401,7 @@
             </div>
 
             <div class="form-group" style="margin-top: 2rem;">
-                <label>کد اختیاری (۵ کاراکتر دلخواه برای شخصی‌سازی)</label>
+                <label>کد اختیاری (۵ کاراکتر دلخواه)</label>
                 <input type="text" id="optionalCode" maxlength="5" placeholder="مثلاً: ۵۵۵۵۵" />
                 <small style="opacity:0.5; font-size:0.7rem;">اختیاری - می‌توانید خالی بگذارید</small>
             </div>
@@ -429,7 +424,7 @@
             </div>
         </form>
 
-        <!-- Delete Request Module (New Addition) -->
+        <!-- ===== بخش حذف حساب کاربری (اصلاح شده) ===== -->
         <div class="delete-module">
             <div class="delete-title">⚠️ درخواست انصراف از عضویت</div>
             <div class="form-group">
@@ -440,6 +435,7 @@
                 <label>دلیل انصراف (اختیاری)</label>
                 <textarea id="deleteReason" placeholder="لطفاً دلیل خود را بنویسید..."></textarea>
             </div>
+            <!-- ===== دکمه حذف به API جدید متصل شد ===== -->
             <button class="btn btn-danger" onclick="submitDeleteRequest()">🚪 ثبت درخواست حذف حساب</button>
         </div>
 
@@ -520,7 +516,7 @@
             }
         });
 
-        // Delete Request Logic
+        // ===== درخواست حذف (اصلاح شده - متصل به API جدید) =====
         async function submitDeleteRequest() {
             const cardCode = document.getElementById('deleteCardCode').value.trim();
             const reason = document.getElementById('deleteReason').value.trim();
@@ -530,31 +526,35 @@
                 return;
             }
 
-            if (!confirm('آیا از درخواست حذف حساب کاربری خود اطمینان دارید؟')) return;
+            if (!confirm('⚠️ آیا از درخواست حذف حساب کاربری خود اطمینان دارید؟ این عمل قابل بازگشت نیست!')) return;
 
             const btn = event.target;
             btn.disabled = true;
             btn.textContent = '⏳ در حال ارسال...';
 
             try {
-                const response = await fetch('/api/submit-request', {
+                // ===== تغییر: ارسال به API جدید delete-user =====
+                const response = await fetch('/api/delete-user', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         cardCode: cardCode,
-                        type: 'delete',
-                        description: reason
+                        reason: reason
                     })
                 });
 
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.error);
 
-                alert('✅ درخواست انصراف شما با موفقیت ثبت شد و به ادمین ارسال گردید.');
+                alert('✅ حساب کاربری شما با موفقیت حذف شد.');
                 document.getElementById('deleteCardCode').value = '';
                 document.getElementById('deleteReason').value = '';
                 btn.textContent = '✅ ارسال شد';
-                setTimeout(() => { btn.disabled = false; btn.textContent = '🚪 ثبت درخواست حذف حساب'; }, 3000);
+                setTimeout(() => { 
+                    btn.disabled = false; 
+                    btn.textContent = '🚪 ثبت درخواست حذف حساب'; 
+                    window.location.href = 'index.html';
+                }, 3000);
 
             } catch (error) {
                 alert('❌ خطا: ' + error.message);
