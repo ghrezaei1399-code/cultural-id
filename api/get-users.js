@@ -47,7 +47,6 @@ module.exports = async function handler(req, res) {
 
       allUsers.push(userProfile);
       
-      // ===== کاربران فعال (approved یا active) =====
       if (userProfile.status === 'active' || userProfile.status === 'approved') {
         activeUsers.push(userProfile);
       }
@@ -56,7 +55,6 @@ module.exports = async function handler(req, res) {
     // ===== ۳. مرتب‌سازی =====
     allUsers.sort((a, b) => new Date(b.registrationDate) - new Date(a.registrationDate));
     
-    // مرتب‌سازی فعال‌ها برای تعیین نشان
     activeUsers.sort((a, b) => {
       const dateA = new Date(a.registrationDate || 0);
       const dateB = new Date(b.registrationDate || 0);
@@ -125,17 +123,23 @@ module.exports = async function handler(req, res) {
       }
     } catch (e) { /* ignore */ }
 
-    // ===== ۷. دریافت دستاوردهای تاییدشده =====
+    // ================================================================
+    // ===== ۷. دریافت دستاوردهای تاییدشده (همه کاربران) =====
+    // ================================================================
     const achievements = [];
-    activeUsers.forEach(u => {
-      if (galleryAllowedIds.has(u.cardCode) && u.achievements && Array.isArray(u.achievements)) {
+    // ===== حذف شرط galleryAllowedIds - همه کاربران =====
+    allUsers.forEach(u => {
+      if (u.achievements && Array.isArray(u.achievements)) {
         u.achievements.forEach(ach => {
           if (ach.status === 'approved') {
+            // بررسی اینکه آیا کاربر جزو ۲۰۰ نفر اول است یا نه
+            const isGolden = galleryAllowedIds.has(u.cardCode);
             achievements.push({
               ...ach,
               owner: u.cardCode,
-              ownerRank: u.rank,
-              ownerBadge: u.badge
+              ownerRank: u.rank || 0,
+              ownerBadge: isGolden ? 'golden' : (u.badge || 'bronze'),
+              isGolden: isGolden
             });
           }
         });
@@ -159,7 +163,6 @@ module.exports = async function handler(req, res) {
           if (labels.includes('approved')) status = 'approved';
           else if (labels.includes('rejected')) status = 'rejected';
           
-          // استخراج کد کارت از body
           let cardCode = 'ناشناس';
           const bodyLines = issue.body?.split('\n') || [];
           for (const line of bodyLines) {
