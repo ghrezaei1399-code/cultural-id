@@ -45,7 +45,7 @@ module.exports = async function handler(req, res) {
       } catch (e) { /* ignore */ }
 
       allUsersForAdmin.push(userProfile);
-      if (userProfile.status === 'active') {
+      if (userProfile.status === 'active' || userProfile.status === 'approved') {
         activeUsers.push(userProfile);
       }
     }
