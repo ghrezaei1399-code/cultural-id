@@ -1,3 +1,4 @@
+// api/get-users.js
 module.exports = async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -12,7 +13,7 @@ module.exports = async function handler(req, res) {
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
 
-    // ===== دریافت index.json =====
+    // ===== ۱. دریافت index.json =====
     const usersPath = 'data/index.json';
     const usersRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${usersPath}`, {
       headers: { 'Authorization': `Bearer ${token}` }
@@ -25,8 +26,8 @@ module.exports = async function handler(req, res) {
       baseUsers = Array.isArray(parsedContent) ? parsedContent : (parsedContent.users || []);
     }
 
-    // ===== غنی‌سازی داده‌ها از data/active =====
-    const allUsersForAdmin = [];
+    // ===== ۲. غنی‌سازی داده‌ها از data/active =====
+    const allUsers = [];
     const activeUsers = [];
 
     for (const user of baseUsers) {
@@ -44,24 +45,31 @@ module.exports = async function handler(req, res) {
         }
       } catch (e) { /* ignore */ }
 
-      allUsersForAdmin.push(userProfile);
+      allUsers.push(userProfile);
+      
+      // ===== کاربران فعال (approved یا active) =====
       if (userProfile.status === 'active' || userProfile.status === 'approved') {
         activeUsers.push(userProfile);
       }
     }
 
-    // مرتب‌سازی برای ادمین: جدیدترین‌ها اول
-    allUsersForAdmin.sort((a, b) => new Date(b.registrationDate) - new Date(a.registrationDate));
+    // ===== ۳. مرتب‌سازی =====
+    allUsers.sort((a, b) => new Date(b.registrationDate) - new Date(a.registrationDate));
     
-    // مرتب‌سازی فعال‌ها برای تعیین نشان: قدیمی‌ترین‌ها اول (بر اساس rank)
-    activeUsers.sort((a, b) => a.rank - b.rank);
+    // مرتب‌سازی فعال‌ها برای تعیین نشان
+    activeUsers.sort((a, b) => {
+      const dateA = new Date(a.registrationDate || 0);
+      const dateB = new Date(b.registrationDate || 0);
+      return dateA - dateB;
+    });
 
-    // ===== محاسبه آمار و نشان‌ها =====
+    // ===== ۴. محاسبه آمار و نشان‌ها =====
     let stats = { total: activeUsers.length, golden: 0, silver: 0, bronze: 0 };
     const galleryAllowedIds = new Set();
 
     activeUsers.forEach((u, index) => {
       const rank = index + 1;
+      u.rank = rank;
       if (rank <= 200) {
         u.badge = 'golden';
         stats.golden++;
@@ -72,20 +80,29 @@ module.exports = async function handler(req, res) {
       } else if (rank <= 10000) {
         u.badge = 'bronze';
         stats.bronze++;
+      } else {
+        u.badge = 'bronze';
+        stats.bronze++;
       }
     });
 
-    // آمار کشورها
+    // ===== ۵. آمار کشورها =====
     const countryMap = {};
     activeUsers.forEach(u => {
-      if (u.country && u.country !== 'Unknown') {
-        if (!countryMap[u.country]) countryMap[u.country] = { country: u.country, count: 0 };
-        countryMap[u.country].count++;
+      const country = u.country || 'Unknown';
+      if (!countryMap[country]) {
+        countryMap[country] = { country: country, count: 0, users: [] };
       }
+      countryMap[country].count++;
+      countryMap[country].users.push({
+        cardCode: u.cardCode,
+        rank: u.rank,
+        badge: u.badge
+      });
     });
     const countries = Object.values(countryMap).sort((a, b) => b.count - a.count);
 
-    // ===== دریافت درخواست‌ها =====
+    // ===== ۶. دریافت درخواست‌ها =====
     let requests = [];
     const requestsPath = 'data/requests';
     try {
@@ -95,28 +112,93 @@ module.exports = async function handler(req, res) {
       if (listRes.ok) {
         const files = await listRes.json();
         const jsonFiles = files.filter(f => f.type === 'file' && f.name.endsWith('.json'));
-        for (const file of jsonFiles.slice(-50)) {
-          const contentRes = await fetch(file.url, { headers: { 'Authorization': `Bearer ${token}` } });
-          if (contentRes.ok) {
-            const fileData = await contentRes.json();
-            requests.push(JSON.parse(Buffer.from(fileData.content, 'base64').toString('utf8')));
-          }
+        for (const file of jsonFiles.slice(-100)) {
+          try {
+            const contentRes = await fetch(file.url, { headers: { 'Authorization': `Bearer ${token}` } });
+            if (contentRes.ok) {
+              const fileData = await contentRes.json();
+              const requestData = JSON.parse(Buffer.from(fileData.content, 'base64').toString('utf8'));
+              requests.push(requestData);
+            }
+          } catch (e) { /* ignore */ }
         }
       }
-    } catch (e) { console.error('Requests error:', e); }
+    } catch (e) { /* ignore */ }
 
-    return res.status(200).json({
-      users: allUsersForAdmin,
-      activeUsers: activeUsers,
-      stats,
-      countries,
-      requests,
-      achievements: activeUsers.flatMap(u => {
-        if (galleryAllowedIds.has(u.cardCode) && u.achievements) {
-          return u.achievements.filter(a => a.status === 'approved');
+    // ===== ۷. دریافت دستاوردهای تاییدشده =====
+    const achievements = [];
+    activeUsers.forEach(u => {
+      if (galleryAllowedIds.has(u.cardCode) && u.achievements && Array.isArray(u.achievements)) {
+        u.achievements.forEach(ach => {
+          if (ach.status === 'approved') {
+            achievements.push({
+              ...ach,
+              owner: u.cardCode,
+              ownerRank: u.rank,
+              ownerBadge: u.badge
+            });
+          }
+        });
+      }
+    });
+
+    // ===== ۸. دریافت مشاهدات =====
+    let observations = [];
+    try {
+      const obsRes = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}/issues?labels=observation&state=all&per_page=100`,
+        {
+          headers: { 'Authorization': `Bearer ${token}` }
         }
-        return [];
-      })
+      );
+      if (obsRes.ok) {
+        const issues = await obsRes.json();
+        observations = issues.map(issue => {
+          const labels = issue.labels.map(l => l.name);
+          let status = 'pending';
+          if (labels.includes('approved')) status = 'approved';
+          else if (labels.includes('rejected')) status = 'rejected';
+          
+          // استخراج کد کارت از body
+          let cardCode = 'ناشناس';
+          const bodyLines = issue.body?.split('\n') || [];
+          for (const line of bodyLines) {
+            if (line.includes('**کد کارت:**')) {
+              cardCode = line.replace('**کد کارت:**', '').trim();
+              break;
+            }
+          }
+          
+          return {
+            number: issue.number,
+            cardCode: cardCode,
+            status: status,
+            title: issue.title,
+            body: issue.body,
+            createdAt: issue.created_at,
+            url: issue.html_url
+          };
+        });
+      }
+    } catch (e) { /* ignore */ }
+
+    // ===== ۹. بازگشت پاسخ =====
+    return res.status(200).json({
+      users: allUsers,
+      activeUsers: activeUsers,
+      stats: {
+        total: stats.total,
+        golden: stats.golden,
+        silver: stats.silver,
+        bronze: stats.bronze,
+        pending: allUsers.filter(u => u.status === 'pending' || u.status === 'pending_edit').length,
+        approved: allUsers.filter(u => u.status === 'approved' || u.status === 'active').length,
+        rejected: allUsers.filter(u => u.status === 'rejected').length
+      },
+      countries: countries,
+      requests: requests,
+      achievements: achievements,
+      observations: observations
     });
 
   } catch (error) {
