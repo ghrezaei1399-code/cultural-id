@@ -568,7 +568,7 @@
 
         // ===== رندر =====
         function renderFilteredUsers() {
-            // ===== فیلتر: فقط کاربران در انتظار (pending و pending_edit) =====
+            // ===== فقط کاربران در انتظار (pending و pending_edit) =====
             let filtered = allUsers.filter(u => 
                 u.status === 'pending' || u.status === 'pending_edit'
             );
@@ -637,7 +637,17 @@
                     statusText = t('statusEdit');
                 }
 
-                const valuesText = user.values ? user.values.slice(0, 2).join('، ') + (user.values.length > 2 ? '...' : '') : '---';
+                // ===== نمایش ارزش‌ها (هم آرایه و هم رشته) =====
+                let valuesText = '---';
+                if (user.values) {
+                    if (Array.isArray(user.values)) {
+                        valuesText = user.values.slice(0, 2).join('، ') + (user.values.length > 2 ? '...' : '');
+                    } else if (typeof user.values === 'string') {
+                        const parts = user.values.split(/[،,;؛\n]+/).map(v => v.trim()).filter(v => v.length > 0);
+                        valuesText = parts.slice(0, 2).join('، ') + (parts.length > 2 ? '...' : '');
+                    }
+                }
+
                 const date = user.registrationDate ? new Date(user.registrationDate).toLocaleDateString('fa-IR') : '---';
                 const timeSince = user.lastEditRequest ? getTimeSince(user.lastEditRequest) : '';
 
@@ -720,7 +730,7 @@
                 ${user.lastEditRequest ? `<div class="info-row"><div class="info-label">تاریخ آخرین درخواست ویرایش:</div><div class="info-value">${new Date(user.lastEditRequest).toLocaleString('fa-IR')}</div></div>` : ''}
                 <div class="info-row"><div class="info-label">نشان:</div><div class="info-value"><span class="badge badge-${user.badge}">${user.badge === 'golden' ? t('badgeGolden') : user.badge === 'silver' ? t('badgeSilver') : t('badgeBronze')}</span></div></div>
                 <div class="info-row"><div class="info-label">وضعیت:</div><div class="info-value"><span class="badge ${status === 'pending_edit' ? 'badge-edit' : 'badge-' + status}">${statusText}</span></div></div>
-                <div class="info-row ${hl('values')}"><div class="info-label">ارزش‌های فرهنگی:</div><div class="info-value">${user.values ? user.values.join('، ') : '---'}</div></div>
+                <div class="info-row ${hl('values')}"><div class="info-label">ارزش‌های فرهنگی:</div><div class="info-value">${user.values ? (Array.isArray(user.values) ? user.values.join('، ') : user.values) : '---'}</div></div>
                 <div class="info-row ${hl('communicationEmail')}"><div class="info-label">ایمیل ارتباطی:</div><div class="info-value">${user.communicationEmail || t('noEmail')}</div></div>
                 <div class="info-row"><div class="info-label">اجازه ارتباط:</div><div class="info-value">${user.allowConnection ? t('allowYes') : t('allowNo')}</div></div>
                 ${user.culturalInfo ? `<div class="info-row"><div class="info-label">اطلاعات فرهنگی:</div><div class="info-value">${user.culturalInfo}</div></div>` : ''}
