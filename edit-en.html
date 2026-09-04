@@ -45,7 +45,7 @@
             text-align: center;
             color: #b85a00;
             font-weight: 700;
-            display: none; /* Controlled by JS */
+            display: none;
         }
         body.dark .warning-box { background: rgba(255, 140, 0, 0.05); color: #f9e79f; }
         
@@ -207,6 +207,52 @@
             box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
         }
         
+        .result-box {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 16px;
+            animation: fadeIn 0.5s ease;
+        }
+        .result-box.success {
+            display: block;
+            background: rgba(39,174,96,0.08);
+            border: 2px solid rgba(39,174,96,0.3);
+        }
+        body.dark .result-box.success { background: rgba(39,174,96,0.03); border-color: rgba(39,174,96,0.15); }
+        .result-box .icon { font-size: 2rem; display: block; text-align: center; margin-bottom: 0.3rem; }
+        .result-box .title {
+            font-weight: 800;
+            font-size: 1.1rem;
+            text-align: center;
+            color: #1e7a1e;
+        }
+        body.dark .result-box .title { color: #82e0aa; }
+        .result-box .message {
+            text-align: center;
+            color: #4a3a2a;
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+            line-height: 1.8;
+        }
+        body.dark .result-box .message { color: #d0c0b0; }
+        .result-box .tracking {
+            text-align: center;
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #2874a6;
+            padding: 0.3rem;
+            background: rgba(40,116,166,0.05);
+            border-radius: 6px;
+            margin-top: 0.5rem;
+        }
+        body.dark .result-box .tracking { color: #85c1e9; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         @media (max-width: 768px) {
             .container { padding: 1rem; }
             .value-item { flex-direction: column; align-items: stretch; }
@@ -219,14 +265,13 @@
         <h1 class="page-title">✏️ Edit Information</h1>
         <div class="page-subtitle">Edit cultural values and communication details</div>
         
-        <!-- Warning Box -->
         <div id="globalWarning" class="warning-box">
             ⚠️ Warning: You have only <strong>one opportunity</strong> to request an edit.
         </div>
 
         <div id="messageBox" class="message-box"></div>
         
-        <!-- Step 1: Code Entry -->
+        <!-- ===== Step 1: Code Entry ===== -->
         <div id="step1">
             <div class="form-group">
                 <label>🔑 Cultural Identity Card Code</label>
@@ -238,7 +283,7 @@
             </div>
         </div>
 
-        <!-- Step 2: Edit Form -->
+        <!-- ===== Step 2: Edit Form ===== -->
         <div id="step2" style="display:none; margin-top: 2rem;">
             <div class="form-group">
                 <label>📧 Communication Email</label>
@@ -258,6 +303,14 @@
                 <a href="index-en.html" class="btn-back">↩ Back to Home</a>
             </div>
         </div>
+
+        <!-- ===== Result Box ===== -->
+        <div id="resultBox" class="result-box">
+            <span class="icon" id="resultIcon">✅</span>
+            <div class="title" id="resultTitle">Edit Request Submitted</div>
+            <div class="message" id="resultMessage">Your changes have been successfully saved and are pending admin approval.</div>
+            <div class="tracking" id="resultTracking"></div>
+        </div>
     </div>
     
     <script>
@@ -270,12 +323,29 @@
             box.style.display = 'block';
         }
         
+        function hideMessage() {
+            const box = document.getElementById('messageBox');
+            box.style.display = 'none';
+            box.className = 'message-box';
+        }
+        
+        function showResult(title, message, trackingCode) {
+            const box = document.getElementById('resultBox');
+            document.getElementById('resultTitle').textContent = title;
+            document.getElementById('resultMessage').textContent = message;
+            document.getElementById('resultTracking').textContent = trackingCode ? `🔗 Tracking Code: ${trackingCode}` : '';
+            box.className = 'result-box success';
+            box.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
         async function checkEligibility() {
             const cardCode = document.getElementById('cardCode').value.trim();
             if (!cardCode) { showMessage('❌ Please enter your card code.', 'error'); return; }
             
-            // Show warning immediately upon checking
             document.getElementById('globalWarning').style.display = 'block';
+            hideMessage();
+            document.getElementById('resultBox').style.display = 'none';
 
             try {
                 const response = await fetch('/api/get-users?t=' + new Date().getTime());
@@ -306,8 +376,10 @@
             }
         }
         
+        // ===== Edit Request (Updated) =====
         async function requestEdit(field) {
             if (!currentUser) return;
+            
             const cardCode = document.getElementById('cardCode').value.trim();
             let newValue;
             
@@ -317,21 +389,63 @@
                 const index = parseInt(field.split('_')[1]);
                 newValue = document.getElementById(`v-${index}`).value.trim();
             }
+            
+            if (!newValue) {
+                showMessage('❌ Please enter a new value.', 'error');
+                return;
+            }
+
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '⏳ Sending...';
+            hideMessage();
 
             try {
                 const response = await fetch('/api/update-user', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ cardCode, field, newValue })
+                    body: JSON.stringify({
+                        cardCode: cardCode,
+                        field: field,
+                        newValue: newValue
+                    })
                 });
                 
                 const result = await response.json();
-                if (!response.ok) throw new Error(result.error);
+                if (!response.ok) throw new Error(result.error || 'Error saving changes');
                 
-                showMessage('✅ Change saved successfully.', 'success');
+                const fieldLabels = {
+                    'communicationEmail': 'Communication Email',
+                    'value_0': 'Value 1',
+                    'value_1': 'Value 2',
+                    'value_2': 'Value 3',
+                    'value_3': 'Value 4',
+                    'value_4': 'Value 5',
+                    'value_5': 'Value 6',
+                    'value_6': 'Value 7'
+                };
+                
+                showResult(
+                    '✅ Edit Request Submitted',
+                    `Change to "${fieldLabels[field] || field}" has been saved and is pending admin approval.`,
+                    result.trackingCode || '---'
+                );
+                
+                btn.textContent = '✅ Sent';
+                btn.disabled = true;
+                
+                document.querySelectorAll('#step2 .btn-success').forEach(b => b.disabled = true);
+                document.querySelectorAll('#step2 .value-input').forEach(i => i.disabled = true);
+                document.getElementById('emailInput').disabled = true;
+                
+                setTimeout(() => {
+                    window.location.href = 'index-en.html';
+                }, 4000);
                 
             } catch (error) {
                 showMessage('❌ ' + error.message, 'error');
+                btn.disabled = false;
+                btn.textContent = '💾 Save';
             }
         }
     </script>
