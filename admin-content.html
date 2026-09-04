@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>مدیریت محتوای فرهنگی | داشبورد ادمین</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            padding: 1.5rem 1rem;
+            background: linear-gradient(135deg, #fdf6e3 0%, #e8f4f8 50%, #f5e6d3 100%);
+            color: #2a1a0a;
+        }
+        body.dark {
+            background: linear-gradient(135deg, #3a2f20 0%, #2a2418 50%, #4a3a28 100%);
+            color: #f0e8d0;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+        .back-link {
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            background: rgba(255,255,255,0.05);
+            color: #0a0a1a;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: 0.3s;
+        }
+        body.dark .back-link { color: #f0e8d0; }
+        .back-link:hover { background: rgba(255,255,255,0.08); }
+
+        .page-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #0a0a1a;
+            text-align: center;
+            margin-bottom: 0.2rem;
+        }
+        body.dark .page-title { color: #f0e8e0; }
+        .page-subtitle {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #2a2a3a;
+            opacity: 0.7;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 1rem;
+        }
+        body.dark .page-subtitle { color: #c8b890; }
+
+        /* ===== آمار ===== */
+        .stats-mini {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+        .stat-mini {
+            background: rgba(255,255,255,0.04);
+            border-radius: 14px;
+            padding: 0.8rem;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        body.dark .stat-mini { background: rgba(0,0,0,0.1); }
+        .stat-mini .number { font-size: 1.3rem; font-weight: 800; color: #0a0a1a; display: block; }
+        body.dark .stat-mini .number { color: #f0e8e0; }
+        .stat-mini .label { font-size: 0.65rem; color: #6a6a7a; }
+        body.dark .stat-mini .label { color: #a8a8b8; }
+
+        /* ===== دکمه‌های فیلتر ===== */
+        .filter-bar {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.2rem;
+            justify-content: center;
+        }
+        .filter-btn {
+            padding: 0.4rem 1.2rem;
+            border-radius: 30px;
+            border: 1px solid rgba(212,175,55,0.15);
+            background: rgba(255,255,255,0.03);
+            color: #0a0a1a;
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        body.dark .filter-btn { color: #f0e8d0; }
+        .filter-btn:hover { background: rgba(212,175,55,0.05); }
+        .filter-btn.active {
+            background: rgba(212,175,55,0.12);
+            border-color: #d4af37;
+        }
+        body.dark .filter-btn.active { background: rgba(212,175,55,0.08); }
+
+        /* ===== لیست محتوا ===== */
+        .content-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 800px;
+            overflow-y: auto;
+            padding-left: 0.3rem;
+            padding-right: 0.3rem;
+        }
+        .content-list::-webkit-scrollbar { width: 6px; }
+        .content-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 10px; }
+        .content-list::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.3); border-radius: 10px; }
+
+        .content-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 1.2rem;
+            border: 1px solid rgba(255,255,255,0.06);
+            transition: 0.3s;
+        }
+        body.dark .content-card { background: rgba(0,0,0,0.15); }
+        .content-card:hover { background: rgba(255,255,255,0.08); }
+        body.dark .content-card:hover { background: rgba(255,255,255,0.02); }
+        .content-card .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .content-card .card-code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #8a6d1f;
+        }
+        body.dark .content-card .card-code { color: #f9e79f; }
+        .content-card .card-meta { font-size: 0.7rem; color: #888; }
+        .content-card .card-body {
+            padding: 0.8rem;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            border-right: 3px solid rgba(212,175,55,0.3);
+        }
+        body.dark .content-card .card-body { background: rgba(0,0,0,0.1); }
+        .content-card .card-body p { font-size: 0.85rem; color: #4a4a5a; line-height: 1.6; }
+        body.dark .content-card .card-body p { color: #b0b0c0; }
+        .content-card .card-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.8rem;
+        }
+
+        /* ===== برچسب‌ها ===== */
+        .badge {
+            display: inline-block;
+            padding: 0.15rem 0.6rem;
+            border-radius: 30px;
+            font-size: 0.65rem;
+            font-weight: 700;
+        }
+        .badge-approved { background: rgba(50,200,50,0.15); color: #0a6a0a; }
+        .badge-rejected { background: rgba(200,50,50,0.15); color: #6a1a1a; }
+        .badge-pending { background: rgba(255,200,50,0.15); color: #8a7a0a; }
+        .badge-score-5 { background: rgba(212,175,55,0.25); color: #8a6d1f; border: 1px solid #d4af37; }
+
+        /* ===== دکمه‌ها ===== */
+        .btn-small {
+            padding: 0.25rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            margin: 0.1rem;
+        }
+        .btn-approve { background: rgba(50,200,50,0.15); color: #0a6a0a; }
+        body.dark .btn-approve { color: #82e0aa; }
+        .btn-approve:hover { background: rgba(50,200,50,0.25); }
+        .btn-reject { background: rgba(200,50,50,0.15); color: #6a1a1a; }
+        body.dark .btn-reject { color: #f1948a; }
+        .btn-reject:hover { background: rgba(200,50,50,0.25); }
+        .btn-view { background: rgba(50,150,200,0.15); color: #0a4a6a; }
+        body.dark .btn-view { color: #85c1e9; }
+        .btn-view:hover { background: rgba(50,150,200,0.25); }
+        .btn-golden { background: rgba(212,175,55,0.2); color: #8a6d1f; }
+        body.dark .btn-golden { color: #f9e79f; }
+        .btn-golden:hover { background: rgba(212,175,55,0.3); }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #888;
+        }
+
+        .scroll-hint {
+            text-align: center;
+            padding: 0.8rem;
+            color: #888;
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(212,175,55,0.1);
+            margin-top: 0.5rem;
+            font-weight: 700;
+        }
+
+        .btn-back-bottom {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 0.8rem 1.5rem;
+            background: rgba(212,175,55,0.2);
+            color: #8a6d1f;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+
+        /* ===== دسته‌بندی ===== */
+        .category-tag {
+            display: inline-block;
+            padding: 0.1rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            background: rgba(40,116,166,0.1);
+            color: #2874a6;
+            border: 1px solid rgba(40,116,166,0.15);
+        }
+        body.dark .category-tag { color: #85c1e9; background: rgba(40,116,166,0.05); }
+
+        @media (max-width: 768px) {
+            .container { padding: 1.2rem; }
+            .top-bar { flex-direction: column; align-items: stretch; }
+            .content-card .card-header { flex-direction: column; align-items: stretch; }
+            .content-card .card-actions { flex-direction: column; }
+            .content-card .card-actions .btn-small { width: 100%; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-bar">
+            <a href="admin.html" class="back-link">↩ بازگشت به داشبورد</a>
+        </div>
+
+        <h1 class="page-title">📋 مدیریت محتوای فرهنگی</h1>
+        <div class="page-subtitle">مدیریت دستاوردهای فرهنگی و اطلس ظهور</div>
+
+        <!-- ===== آمار ===== -->
+        <div class="stats-mini">
+            <div class="stat-mini"><span class="number" id="totalAchievements">۰</span><div class="label">کل دستاوردها</div></div>
+            <div class="stat-mini"><span class="number" id="pendingAchievements">۰</span><div class="label">⏳ در انتظار</div></div>
+            <div class="stat-mini"><span class="number" id="approvedAchievements">۰</span><div class="label">✅ تایید شده</div></div>
+            <div class="stat-mini"><span class="number" id="atlasCount">۰</span><div class="label">🏛️ اطلس ظهور</div></div>
+        </div>
+
+        <!-- ===== فیلتر ===== -->
+        <div class="filter-bar">
+            <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">📋 همه</button>
+            <button class="filter-btn" data-filter="pending" onclick="setFilter('pending')">⏳ در انتظار</button>
+            <button class="filter-btn" data-filter="approved" onclick="setFilter('approved')">✅ تایید شده</button>
+            <button class="filter-btn" data-filter="atlas" onclick="setFilter('atlas')">🏛️ اطلس ظهور</button>
+        </div>
+
+        <!-- ===== لیست ===== -->
+        <div id="contentList" class="content-list">
+            <div class="empty-state">در حال بارگذاری...</div>
+        </div>
+
+        <div style="text-align:center; margin-top:2rem;">
+            <a href="admin.html" class="btn-back-bottom">↩ بازگشت به پنل ادمین</a>
+        </div>
+    </div>
+
+    <script>
+        let allAchievements = [];
+        let allAtlasItems = [];
+        let currentFilter = 'all';
+
+        // ===== بارگذاری داده‌ها =====
+        async function loadData() {
+            try {
+                // ۱. دریافت دستاوردها از کاربران
+                const usersRes = await fetch('/api/get-users?t=' + new Date().getTime());
+                const usersData = await usersRes.json();
+                if (!usersRes.ok) throw new Error(usersData.error || 'خطا در دریافت کاربران');
+                
+                allAchievements = [];
+                if (usersData.users) {
+                    usersData.users.forEach(user => {
+                        if (user.achievements && Array.isArray(user.achievements)) {
+                            user.achievements.forEach(ach => {
+                                allAchievements.push({
+                                    ...ach,
+                                    owner: user.cardCode,
+                                    ownerEmail: user.communicationEmail || '',
+                                    ownerRank: user.rank || 0
+                                });
+                            });
+                        }
+                    });
+                }
+
+                // ۲. دریافت اطلس ظهور (مشاهدات با امتیاز ۵)
+                const atlasRes = await fetch('/api/get-connection-requests?type=observations');
+                const atlasData = await atlasRes.json();
+                if (!atlasRes.ok) throw new Error(atlasData.error || 'خطا در دریافت اطلس');
+                allAtlasItems = (atlasData.observations || [])
+                    .filter(obs => obs.score === 5 && obs.status === 'approved');
+
+                updateStats();
+                renderContent();
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('contentList').innerHTML =
+                    `<div class="empty-state" style="color:red;">خطا: ${error.message}</div>`;
+            }
+        }
+
+        // ===== آمار =====
+        function updateStats() {
+            const total = allAchievements.length;
+            const pending = allAchievements.filter(a => a.status === 'pending').length;
+            const approved = allAchievements.filter(a => a.status === 'approved').length;
+            const atlas = allAtlasItems.length;
+
+            document.getElementById('totalAchievements').textContent = total;
+            document.getElementById('pendingAchievements').textContent = pending;
+            document.getElementById('approvedAchievements').textContent = approved;
+            document.getElementById('atlasCount').textContent = atlas;
+        }
+
+        // ===== فیلتر =====
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === filter);
+            });
+            renderContent();
+        }
+
+        // ===== رندر =====
+        function renderContent() {
+            const container = document.getElementById('contentList');
+
+            let items = [];
+
+            // ===== فیلتر اطلس ظهور =====
+            if (currentFilter === 'atlas') {
+                if (allAtlasItems.length === 0) {
+                    container.innerHTML = `<div class="empty-state">هیچ موردی در اطلس ظهور وجود ندارد</div>`;
+                    return;
+                }
+                items = allAtlasItems.map(obs => ({
+                    type: 'atlas',
+                    id: obs.number,
+                    title: obs.observation ? obs.observation.substring(0, 80) + '...' : 'مشاهده',
+                    description: obs.observation || '',
+                    owner: obs.cardCode || 'ناشناس',
+                    score: obs.score || 5,
+                    status: 'approved',
+                    date: obs.createdAt,
+                    category: 'atlas',
+                    module: obs.module,
+                    analysis: obs.analysis || {}
+                }));
+                renderItems(items, container);
+                return;
+            }
+
+            // ===== فیلتر دستاوردها =====
+            let filtered = allAchievements;
+            if (currentFilter === 'pending') {
+                filtered = filtered.filter(a => a.status === 'pending');
+            } else if (currentFilter === 'approved') {
+                filtered = filtered.filter(a => a.status === 'approved');
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="empty-state">هیچ دستاوردی با این وضعیت وجود ندارد</div>`;
+                return;
+            }
+
+            items = filtered.map(ach => ({
+                type: 'achievement',
+                id: ach.id || ach.fileName || 'unknown',
+                title: ach.title || 'بدون عنوان',
+                description: ach.description || '',
+                owner: ach.owner || 'ناشناس',
+                ownerEmail: ach.ownerEmail || '',
+                status: ach.status || 'pending',
+                date: ach.createdAt || ach.uploadDate,
+                category: ach.category || 'other',
+                fileUrl: ach.fileUrl || ach.fileData || '',
+                score: ach.score || 0
+            }));
+
+            renderItems(items, container);
+        }
+
+        function renderItems(items, container) {
+            if (items.length === 0) {
+                container.innerHTML = `<div class="empty-state">هیچ موردی یافت نشد</div>`;
+                return;
+            }
+
+            container.innerHTML = items.map(item => {
+                const statusMap = {
+                    approved: `<span class="badge badge-approved">✅ تایید شده</span>`,
+                    rejected: `<span class="badge badge-rejected">❌ رد شده</span>`,
+                    pending: `<span class="badge badge-pending">⏳ در انتظار</span>`
+                };
+                const isAtlas = item.type === 'atlas';
+                const isPending = item.status === 'pending';
+
+                // ===== دسته‌بندی =====
+                const categoryLabels = {
+                    'science': '📄 مقاله علمی',
+                    'art': '🎨 آثار هنری',
+                    'media': '🎬 رسانه',
+                    'atlas': '🏛️ اطلس ظهور',
+                    'other': '📌 سایر'
+                };
+                const catLabel = categoryLabels[item.category] || '📌 سایر';
+
+                // ===== دکمه‌ها =====
+                let actionsHtml = '';
+                if (isAtlas) {
+                    actionsHtml = `
+                        <button class="btn-small btn-view" onclick="viewAtlasItem(${item.id})">👁️ مشاهده</button>
+                    `;
+                } else if (isPending) {
+                    actionsHtml = `
+                        <button class="btn-small btn-approve" onclick="approveAchievement('${item.id}')">✅ تایید</button>
+                        <button class="btn-small btn-reject" onclick="rejectAchievement('${item.id}')">❌ رد</button>
+                        <button class="btn-small btn-view" onclick="viewAchievement('${item.id}')">👁️ مشاهده</button>
+                    `;
+                } else {
+                    actionsHtml = `
+                        <button class="btn-small btn-view" onclick="viewAchievement('${item.id}')">👁️ مشاهده</button>
+                        ${item.fileUrl ? `<button class="btn-small btn-golden" onclick="window.open('${item.fileUrl}', '_blank')">📂 دانلود فایل</button>` : ''}
+                    `;
+                }
+
+                const date = item.date ? new Date(item.date).toLocaleString('fa-IR') : '---';
+
+                return `
+                    <div class="content-card">
+                        <div class="card-header">
+                            <div>
+                                <span class="card-code">${isAtlas ? '🏛️ #' + item.id : '📄 ' + (item.owner || 'ناشناس')}</span>
+                                ${statusMap[item.status] || ''}
+                                ${item.score >= 5 ? `<span class="badge badge-score-5">⭐ امتیاز ${item.score}</span>` : ''}
+                                <span class="category-tag">${catLabel}</span>
+                            </div>
+                            <div class="card-meta">${date}</div>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>${item.title}</strong></p>
+                            ${item.description ? `<p style="margin-top:0.3rem;font-size:0.8rem;color:#888;">${item.description.substring(0, 150)}${item.description.length > 150 ? '...' : ''}</p>` : ''}
+                            ${isAtlas && item.module ? `<p style="margin-top:0.3rem;font-size:0.7rem;color:#888;">📌 ماژول: ${item.module}</p>` : ''}
+                        </div>
+                        <div class="card-actions">
+                            ${actionsHtml}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            if (items.length > 5) {
+                container.innerHTML += `<div class="scroll-hint">⬇️ ${items.length} مورد وجود دارد (اسکرول کنید)</div>`;
+            }
+        }
+
+        // ===== مشاهده دستاورد =====
+        function viewAchievement(id) {
+            const item = allAchievements.find(a => a.id === id || a.fileName === id);
+            if (!item) {
+                alert('دستاورد یافت نشد');
+                return;
+            }
+            alert(
+                '📄 عنوان: ' + (item.title || 'بدون عنوان') + '\n' +
+                '📝 توضیحات: ' + (item.description || 'بدون توضیحات') + '\n' +
+                '👤 ارسال‌کننده: ' + (item.owner || 'ناشناس') + '\n' +
+                '📧 ایمیل: ' + (item.ownerEmail || 'ثبت نشده') + '\n' +
+                '📂 دسته‌بندی: ' + (item.category || 'سایر') + '\n' +
+                '📅 تاریخ: ' + (item.date ? new Date(item.date).toLocaleString('fa-IR') : '---') + '\n' +
+                '📎 لینک فایل: ' + (item.fileUrl || 'فایلی موجود نیست')
+            );
+        }
+
+        // ===== مشاهده اطلس =====
+        function viewAtlasItem(id) {
+            const item = allAtlasItems.find(o => o.number === parseInt(id));
+            if (!item) {
+                alert('موردی در اطلس ظهور یافت نشد');
+                return;
+            }
+            alert(
+                '🏛️ اطلس ظهور #' + item.number + '\n' +
+                '📝 مشاهده: ' + (item.observation || '---') + '\n' +
+                '👤 ارسال‌کننده: ' + (item.cardCode || 'ناشناس') + '\n' +
+                '⭐ امتیاز: ' + (item.score || 5) + '\n' +
+                '📌 ماژول: ' + (item.module || '---') + '\n' +
+                '📅 تاریخ: ' + new Date(item.createdAt).toLocaleString('fa-IR')
+            );
+        }
+
+        // ===== تایید/رد دستاورد =====
+        async function approveAchievement(id) {
+            if (!confirm('آیا از تایید این دستاورد اطمینان دارید؟')) return;
+            try {
+                const response = await fetch('/api/update-achievement-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, status: 'approved' })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'خطا در تایید');
+                alert('✅ دستاورد با موفقیت تایید شد.');
+                loadData();
+            } catch (error) {
+                alert('خطا: ' + error.message);
+            }
+        }
+
+        async function rejectAchievement(id) {
+            if (!confirm('آیا از رد این دستاورد اطمینان دارید؟')) return;
+            try {
+                const response = await fetch('/api/update-achievement-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, status: 'rejected' })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'خطا در رد');
+                alert('❌ دستاورد با موفقیت رد شد.');
+                loadData();
+            } catch (error) {
+                alert('خطا: ' + error.message);
+            }
+        }
+
+        // ===== شروع =====
+        loadData();
+        setInterval(loadData, 30000);
+    </script>
+</body>
+</html>
