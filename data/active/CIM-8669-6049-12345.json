@@ -25,5 +25,17 @@
   "status": "approved",
   "rank": 0,
   "country": "Iran",
-  "statusUpdatedAt": "2026-09-04T10:13:03.781Z"
+  "statusUpdatedAt": "2026-09-04T10:13:03.781Z",
+  "achievements": [
+    {
+      "title": "پوستر کتاب نظریه های پیوند",
+      "description": "پیوند انسان و هوش مصنوعی",
+      "category": "science",
+      "fileUrl": "https://raw.githubusercontent.com/ghrezaei1399-code/cultural-id/main/uploads/1788517039872-9jrh7i.jpg",
+      "fileName": "1788517039872-9jrh7i.jpg",
+      "status": "pending",
+      "uploadDate": "2026-09-04T10:17:21.318Z",
+      "section": "identity-card"
+    }
+  ]
 }
