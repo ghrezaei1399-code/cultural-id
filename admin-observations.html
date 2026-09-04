@@ -56,6 +56,7 @@
         }
         body.dark .page-subtitle { color: #c8b890; }
         
+        /* ===== آمار ===== */
         .stats-mini {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -75,6 +76,7 @@
         .stat-mini .label { font-size: 0.65rem; color: #6a6a7a; }
         body.dark .stat-mini .label { color: #a8a8b8; }
         
+        /* ===== فیلتر ===== */
         .filter-bar {
             display: flex;
             gap: 0.5rem;
@@ -101,6 +103,7 @@
         }
         body.dark .filter-btn.active { background: rgba(212,175,55,0.08); }
         
+        /* ===== لیست ===== */
         .observations-list {
             display: flex;
             flex-direction: column;
@@ -110,18 +113,11 @@
             padding-left: 0.3rem;
             padding-right: 0.3rem;
         }
-        .observations-list::-webkit-scrollbar {
-            width: 6px;
-        }
-        .observations-list::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.02);
-            border-radius: 10px;
-        }
-        .observations-list::-webkit-scrollbar-thumb {
-            background: rgba(212,175,55,0.3);
-            border-radius: 10px;
-        }
+        .observations-list::-webkit-scrollbar { width: 6px; }
+        .observations-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 10px; }
+        .observations-list::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.3); border-radius: 10px; }
         
+        /* ===== کارت مشاهده ===== */
         .obs-card {
             background: rgba(255,255,255,0.05);
             border-radius: 16px;
@@ -160,22 +156,7 @@
         .obs-body p { font-size: 0.9rem; color: #4a4a5a; line-height: 1.6; }
         body.dark .obs-body p { color: #b0b0c0; }
         
-        .obs-module {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            padding: 0.2rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            border: 1px solid rgba(212,175,55,0.2);
-            background: rgba(255,255,255,0.1);
-            color: #4a3a2a;
-            margin-top: 0.8rem;
-        }
-        body.dark .obs-module { color: #d0c0b0; }
-        .obs-module .icon { font-size: 0.8rem; margin-left: 0.2rem; }
-        
+        /* ===== برچسب‌ها ===== */
         .badge {
             display: inline-block;
             padding: 0.15rem 0.6rem;
@@ -187,7 +168,10 @@
         .badge-rejected { background: rgba(200,50,50,0.15); color: #6a1a1a; }
         .badge-pending { background: rgba(255,200,50,0.15); color: #8a7a0a; }
         .badge-score-5 { background: rgba(212,175,55,0.25); color: #8a6d1f; border: 1px solid #d4af37; }
+        .badge-cluster { background: rgba(40,116,166,0.15); color: #2874a6; }
+        body.dark .badge-cluster { color: #85c1e9; background: rgba(40,116,166,0.05); }
         
+        /* ===== دکمه‌ها ===== */
         .btn-small {
             padding: 0.25rem 0.8rem;
             border-radius: 20px;
@@ -211,41 +195,18 @@
         }
         body.dark .btn-module { color: #85c1e9; }
         .btn-module:hover { background: rgba(40,116,166,0.2); }
-        
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: #888;
-        }
-        
-        .obs-actions {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-top: 1rem;
-        }
-        
-        .scroll-hint {
-            text-align: center;
-            padding: 0.8rem;
-            color: #888;
-            font-size: 0.85rem;
-            border-top: 1px solid rgba(212,175,55,0.1);
-            margin-top: 0.5rem;
-            font-weight: 700;
-        }
-        
-        .btn-back-bottom {
-            display: inline-block;
-            margin-top: 2rem;
-            padding: 0.8rem 1.5rem;
-            background: rgba(212,175,55,0.2);
+        .btn-cluster {
+            background: rgba(212,175,55,0.15);
             color: #8a6d1f;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 700;
-            transition: 0.3s;
+            border: 1px solid rgba(212,175,55,0.2);
         }
+        body.dark .btn-cluster { color: #f9e79f; background: rgba(212,175,55,0.05); }
+        .btn-cluster:hover { background: rgba(212,175,55,0.25); }
+        
+        .empty-state { text-align: center; padding: 3rem; color: #888; }
+        .obs-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
+        .scroll-hint { text-align: center; padding: 0.8rem; color: #888; font-size: 0.85rem; border-top: 1px solid rgba(212,175,55,0.1); margin-top: 0.5rem; font-weight: 700; }
+        .btn-back-bottom { display: inline-block; margin-top: 2rem; padding: 0.8rem 1.5rem; background: rgba(212,175,55,0.2); color: #8a6d1f; border-radius: 30px; text-decoration: none; font-weight: 700; transition: 0.3s; }
         
         /* ===== باکس تحلیل ۵ سطحی ===== */
         .analysis-box {
@@ -268,9 +229,7 @@
             gap: 0.5rem;
         }
         body.dark .analysis-box .title { color: #f9e79f; }
-        .analysis-box .matrix-item {
-            margin-bottom: 0.8rem;
-        }
+        .analysis-box .matrix-item { margin-bottom: 0.8rem; }
         .analysis-box .matrix-item label {
             display: block;
             font-weight: 700;
@@ -298,10 +257,7 @@
             color: #f0e8d0;
             border-color: rgba(212,175,55,0.1);
         }
-        .analysis-box .matrix-item textarea:focus {
-            border-color: #d4af37;
-            box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
-        }
+        .analysis-box .matrix-item textarea:focus { border-color: #d4af37; box-shadow: 0 0 0 4px rgba(212,175,55,0.08); }
         
         .score-section {
             margin-top: 1rem;
@@ -310,11 +266,7 @@
             gap: 1rem;
             flex-wrap: wrap;
         }
-        .score-section label {
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: #2a1a0a;
-        }
+        .score-section label { font-weight: 700; font-size: 0.85rem; color: #2a1a0a; }
         body.dark .score-section label { color: #e8d8c8; }
         .score-section select {
             padding: 0.3rem 0.8rem;
@@ -325,16 +277,8 @@
             color: #1a0a0a;
             outline: none;
         }
-        body.dark .score-section select {
-            background: rgba(0,0,0,0.1);
-            color: #f0e8d0;
-            border-color: rgba(212,175,55,0.1);
-        }
-        .score-section .score-hint {
-            font-size: 0.7rem;
-            color: #888;
-            font-style: italic;
-        }
+        body.dark .score-section select { background: rgba(0,0,0,0.1); color: #f0e8d0; border-color: rgba(212,175,55,0.1); }
+        .score-section .score-hint { font-size: 0.7rem; color: #888; font-style: italic; }
         body.dark .score-section .score-hint { color: #a8a8b8; }
         
         /* ===== وضعیت‌های مختلف ===== */
@@ -342,6 +286,48 @@
         .obs-card.approved { border-color: #27ae60; border-width: 2px; }
         .obs-card.rejected { border-color: #e74c3c; border-width: 2px; }
         .obs-card.score5 { border-color: #d4af37; border-width: 2px; box-shadow: 0 0 20px rgba(212,175,55,0.15); }
+        
+        /* ===== خوشه‌بندی ===== */
+        .cluster-tag {
+            display: inline-block;
+            padding: 0.1rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            background: rgba(40,116,166,0.1);
+            color: #2874a6;
+            border: 1px solid rgba(40,116,166,0.15);
+            margin-left: 0.3rem;
+        }
+        body.dark .cluster-tag { color: #85c1e9; background: rgba(40,116,166,0.05); }
+        
+        .guide-box {
+            margin-top: 0.8rem;
+            padding: 0.8rem;
+            background: rgba(212,175,55,0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(212,175,55,0.15);
+            display: none;
+        }
+        body.dark .guide-box { background: rgba(212,175,55,0.02); }
+        .guide-box.active { display: block; }
+        .guide-box .guide-title {
+            font-weight: 800;
+            font-size: 0.8rem;
+            color: #8a6d1f;
+            margin-bottom: 0.3rem;
+        }
+        body.dark .guide-box .guide-title { color: #f9e79f; }
+        .guide-box .guide-item {
+            padding: 0.3rem 0.5rem;
+            border-right: 2px solid #d4af37;
+            margin-bottom: 0.3rem;
+            font-size: 0.8rem;
+            color: #4a3a2a;
+            background: rgba(255,255,255,0.3);
+            border-radius: 4px;
+        }
+        body.dark .guide-box .guide-item { color: #d0c0b0; background: rgba(0,0,0,0.05); }
         
         @media (max-width: 768px) {
             .container { padding: 1.2rem; }
@@ -362,6 +348,7 @@
         <h1 class="page-title">👁️ مدیریت مشاهدات</h1>
         <div class="page-subtitle">بررسی، تحلیل و امتیازدهی مشاهدات خام بر اساس چارچوب سپهر خردمندی</div>
         
+        <!-- ===== آمار ===== -->
         <div class="stats-mini">
             <div class="stat-mini"><span class="number" id="totalObs">۰</span><div class="label">کل مشاهدات</div></div>
             <div class="stat-mini"><span class="number" id="pendingObs">۰</span><div class="label">⏳ در انتظار</div></div>
@@ -369,6 +356,7 @@
             <div class="stat-mini"><span class="number" id="score5Obs">۰</span><div class="label">⭐ امتیاز ۵</div></div>
         </div>
         
+        <!-- ===== فیلتر ===== -->
         <div class="filter-bar">
             <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">📋 همه</button>
             <button class="filter-btn" data-filter="pending" onclick="setFilter('pending')">⏳ در انتظار</button>
@@ -377,6 +365,7 @@
             <button class="filter-btn" data-filter="rejected" onclick="setFilter('rejected')">❌ رد شده</button>
         </div>
         
+        <!-- ===== لیست ===== -->
         <div id="observationsList" class="observations-list">
             <div class="empty-state">در حال بارگذاری...</div>
         </div>
@@ -389,6 +378,27 @@
     <script>
         let allObservations = [];
         let currentFilter = 'all';
+        
+        // ===== خوشه‌بندی بر اساس سند سپهر خردمندی =====
+        const clusters = [
+            { name: 'انسان', keywords: ['فقر', 'آموزش', 'سلامت', 'سلامت روان', 'اعتیاد', 'جوانان', 'خانواده', 'بیماری', 'محرومیت', 'بی‌سوادی'] },
+            { name: 'دانش و فناوری', keywords: ['هوش مصنوعی', 'فناوری', 'دانش', 'نوآوری', 'تحقیق', 'علم', 'شکاف دانشی', 'نابرابری علمی', 'انحصار دانش'] },
+            { name: 'حکمرانی و تمدن', keywords: ['فساد', 'جنگ', 'سیاست', 'حکمرانی', 'نهاد', 'قانون', 'مهاجرت نخبگان', 'بحران اعتماد', 'نابرابری'] },
+            { name: 'بقا و آینده', keywords: ['آب', 'انرژی', 'اقلیم', 'محیط زیست', 'غذا', 'کشاورزی', 'امنیت غذایی', 'پایداری'] }
+        ];
+        
+        function detectCluster(text) {
+            if (!text) return 'سایر';
+            const lowerText = text.toLowerCase();
+            for (const cluster of clusters) {
+                for (const keyword of cluster.keywords) {
+                    if (lowerText.includes(keyword)) {
+                        return cluster.name;
+                    }
+                }
+            }
+            return 'سایر';
+        }
         
         async function loadObservations() {
             try {
@@ -455,6 +465,8 @@
             }
             
             container.innerHTML = filtered.map(obs => {
+                const cluster = detectCluster(obs.observation || '');
+                
                 const statusMap = {
                     approved: `<span class="badge badge-approved">✅ تایید شده</span>`,
                     rejected: `<span class="badge badge-rejected">❌ رد شده</span>`,
@@ -464,6 +476,9 @@
                 const scoreBadge = obs.score === 5 ? 
                     `<span class="badge badge-score-5">⭐ امتیاز ۵</span>` : 
                     (obs.score ? `<span class="badge" style="background:rgba(200,200,200,0.15);color:#888;">امتیاز ${obs.score}</span>` : '');
+                
+                const clusterBadge = cluster !== 'سایر' ? 
+                    `<span class="badge badge-cluster">📂 ${cluster}</span>` : '';
                 
                 const isPending = obs.status === 'pending';
                 const isApproved = obs.status === 'approved' && obs.score !== 5;
@@ -480,6 +495,7 @@
                     : '';
                 
                 const analysis = obs.analysis || {};
+                const guide = analysis.guide || {};
                 
                 let actionButtons = '';
                 if (isPending) {
@@ -488,19 +504,15 @@
                             <button class="btn-small btn-approve" onclick="approveObservation('${obs.number}')">✅ تایید</button>
                             <button class="btn-small btn-reject" onclick="rejectObservation('${obs.number}')">❌ رد</button>
                             <button class="btn-small btn-module" onclick="toggleAnalysis('${obs.number}')">📊 تحلیل ۵ سطحی</button>
+                            <button class="btn-small btn-cluster" onclick="detectAndShowCluster('${obs.number}')">📂 تشخیص خوشه</button>
                         </div>
                     `;
-                } else if (isApproved) {
+                } else if (isApproved || isScore5) {
                     actionButtons = `
                         <div class="obs-actions">
                             <button class="btn-small btn-module" onclick="toggleAnalysis('${obs.number}')">📊 ویرایش تحلیل</button>
-                        </div>
-                    `;
-                } else if (isScore5) {
-                    actionButtons = `
-                        <div class="obs-actions">
-                            <button class="btn-small btn-module" onclick="toggleAnalysis('${obs.number}')">📊 ویرایش تحلیل</button>
-                            <button class="btn-small btn-approve" onclick="submitToGallery('${obs.number}')" style="background:rgba(212,175,55,0.2);color:#8a6d1f;">⭐ ارسال به گالری</button>
+                            ${isScore5 ? `<button class="btn-small btn-approve" onclick="submitToGallery('${obs.number}')" style="background:rgba(212,175,55,0.2);color:#8a6d1f;">⭐ ارسال به گالری</button>` : ''}
+                            <button class="btn-small btn-cluster" onclick="generateGuide('${obs.number}')">📋 تولید بسته راهنما</button>
                         </div>
                     `;
                 }
@@ -543,6 +555,15 @@
                     </div>
                 `;
                 
+                const guideBox = `
+                    <div class="guide-box" id="guide-${obs.number}">
+                        <div class="guide-title">📋 بسته راهنمای اقدام عملی</div>
+                        <div class="guide-item"><strong>📍 سطح فردی:</strong> ${guide.individual || 'توصیه‌ای ثبت نشده است.'}</div>
+                        <div class="guide-item"><strong>🌐 سطح شبکه‌ای:</strong> ${guide.network || 'توصیه‌ای ثبت نشده است.'}</div>
+                        <div class="guide-item"><strong>🏛️ سطح سیاستی:</strong> ${guide.policy || 'توصیه‌ای ثبت نشده است.'}</div>
+                    </div>
+                `;
+                
                 return `
                     <div class="${cardClass}" id="card-${obs.number}">
                         <div class="obs-header">
@@ -550,6 +571,7 @@
                                 <span class="obs-code">#${obs.number} - ${obs.cardCode || 'ناشناس'}</span>
                                 ${statusMap[obs.status] || ''}
                                 ${scoreBadge}
+                                ${clusterBadge}
                             </div>
                             <div class="obs-meta">${new Date(obs.createdAt).toLocaleString('fa-IR')}</div>
                         </div>
@@ -559,6 +581,7 @@
                         ${moduleHtml}
                         ${actionButtons}
                         ${analysisBox}
+                        ${guideBox}
                     </div>
                 `;
             }).join('');
@@ -578,48 +601,93 @@
             }
         }
         
+        function detectAndShowCluster(issueNumber) {
+            const obs = allObservations.find(o => o.number === parseInt(issueNumber));
+            if (!obs) return;
+            const cluster = detectCluster(obs.observation || '');
+            alert(`📂 خوشه تشخیص‌داده‌شده: ${cluster}\n\nبر اساس کلمات کلیدی موجود در مشاهده.`);
+        }
+        
+        function generateGuide(issueNumber) {
+            const obs = allObservations.find(o => o.number === parseInt(issueNumber));
+            if (!obs) return;
+            
+            const text = obs.observation || '';
+            const cluster = detectCluster(text);
+            
+            const guides = {
+                'انسان': {
+                    individual: 'روزانه یک ظهور مرتبط با این موضوع را در دفترچه مشاهده خود یادداشت کنید و از قضاوت بپرهیزید.',
+                    network: 'این مشاهده را با ۳ نفر از هم‌فرهنگان دارای کارت به اشتراک بگذارید و بازخورد خام آنها را بگیرید.',
+                    policy: 'یک یادداشت کوتاه درباره گسست میان سپهر آموزش و سلامت در این پدیده تهیه کنید.'
+                },
+                'دانش و فناوری': {
+                    individual: 'ظرفیت‌های مغفول دانشی در این پدیده را فهرست کنید بدون اینکه راه‌حل فناورانه پیشنهاد دهید.',
+                    network: 'در شبکه مجتمع هم‌اندیشی، پرونده مشابهی جستجو کنید و الگوی تکرارشونده آن را گزارش دهید.',
+                    policy: 'خلأ نهادی در دسترسی به دانش مربوط به این ظهور را مستند کنید.'
+                },
+                'حکمرانی و تمدن': {
+                    individual: 'ناهم‌ترازی میان ظرفیت موجود و تجلی واقعی را در این پدیده توصیف کنید.',
+                    network: 'با اعضای خوشه حکمرانی در شبکه هم‌فرهنگان، ماتریس موانع این ظهور را تکمیل کنید.',
+                    policy: 'یک پیشنهاد سیاستی مبتنی بر کرامت انسانی برای رفع گسست سپهری این پدیده بنویسید.'
+                },
+                'بقا و آینده': {
+                    individual: 'ظرفیت‌های پنهان بقا در این بحران را شناسایی و ثبت کنید.',
+                    network: 'این ظهور را به عنوان یک ابرسپهر احتمالی در پنل نام‌آوران مطرح کنید.',
+                    policy: 'یادداشتی درباره ناهم‌ترازی میان منابع طبیعی و حکمرانی آب/انرژی تهیه نمایید.'
+                },
+                'سایر': {
+                    individual: 'این مشاهده را بدون قضاوت بازنویسی کنید و سعی کنید یک ظهور جدید در آن پیدا کنید.',
+                    network: 'این مشاهده را با یک هم‌فرهنگ به اشتراک بگذارید و از او بخواهید یک مشاهده مشابه ثبت کند.',
+                    policy: 'به این فکر کنید که اگر این پدیده در سطح کلان رخ دهد، چه گسست‌هایی ایجاد می‌کند؟'
+                }
+            };
+            
+            const guide = guides[cluster] || guides['سایر'];
+            
+            const guideBox = document.getElementById(`guide-${issueNumber}`);
+            if (guideBox) {
+                guideBox.innerHTML = `
+                    <div class="guide-title">📋 بسته راهنمای اقدام عملی</div>
+                    <div class="guide-item"><strong>📍 سطح فردی:</strong> ${guide.individual}</div>
+                    <div class="guide-item"><strong>🌐 سطح شبکه‌ای:</strong> ${guide.network}</div>
+                    <div class="guide-item"><strong>🏛️ سطح سیاستی:</strong> ${guide.policy}</div>
+                `;
+                guideBox.classList.add('active');
+                guideBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            
+            alert(`📋 بسته راهنما برای خوشه "${cluster}" تولید شد.`);
+        }
+        
         async function approveObservation(issueNumber) {
             if (!confirm('آیا از تایید این مشاهده اطمینان دارید؟')) return;
-            
             try {
                 const response = await fetch('/api/approve-connection', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        issueNumber, 
-                        action: 'approve_all', 
-                        type: 'observation' 
-                    })
+                    body: JSON.stringify({ issueNumber, action: 'approve_all', type: 'observation' })
                 });
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.error || 'خطا در تایید');
                 alert(result.message);
                 loadObservations();
-            } catch (error) {
-                alert('خطا: ' + error.message);
-            }
+            } catch (error) { alert('خطا: ' + error.message); }
         }
         
         async function rejectObservation(issueNumber) {
             if (!confirm('آیا از رد این مشاهده اطمینان دارید؟')) return;
-            
             try {
                 const response = await fetch('/api/approve-connection', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        issueNumber, 
-                        action: 'reject_all', 
-                        type: 'observation' 
-                    })
+                    body: JSON.stringify({ issueNumber, action: 'reject_all', type: 'observation' })
                 });
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.error || 'خطا در رد');
                 alert(result.message);
                 loadObservations();
-            } catch (error) {
-                alert('خطا: ' + error.message);
-            }
+            } catch (error) { alert('خطا: ' + error.message); }
         }
         
         async function saveAnalysis(issueNumber) {
@@ -649,31 +717,22 @@
                 if (!response.ok) throw new Error(result.error || 'خطا در ذخیره تحلیل');
                 alert('✅ تحلیل با موفقیت ذخیره شد.');
                 loadObservations();
-            } catch (error) {
-                alert('خطا: ' + error.message);
-            }
+            } catch (error) { alert('خطا: ' + error.message); }
         }
         
         async function submitToGallery(issueNumber) {
             await saveAnalysis(issueNumber);
-            
             try {
                 const response = await fetch('/api/approve-connection', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        issueNumber, 
-                        action: 'submit_gallery',
-                        type: 'observation'
-                    })
+                    body: JSON.stringify({ issueNumber, action: 'submit_gallery', type: 'observation' })
                 });
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.error || 'خطا در ارسال به گالری');
                 alert('⭐ مشاهده با امتیاز ۵ به گالری اطلس ظهور ارسال شد.');
                 loadObservations();
-            } catch (error) {
-                alert('خطا: ' + error.message);
-            }
+            } catch (error) { alert('خطا: ' + error.message); }
         }
         
         loadObservations();
