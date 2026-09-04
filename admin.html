@@ -462,31 +462,23 @@
         <h1 class="page-title" id="pageTitle">🛡️ داشبورد ادمین</h1>
         <div class="page-subtitle" id="pageSubtitle">مدیریت کارت‌های جهانی هویت هوشمند فرهنگی • کاملاً ناشناس</div>
 
+        <!-- ===== منوی مدیریت ===== -->
         <div class="modules-grid">
-            <a href="admin-users.html" class="module-card">
-                <span class="icon">👥</span>
-                <span class="label" id="modUsers">مدیریت کاربران</span>
-                <span class="desc" id="modUsersDesc">مشاهده و تأیید کاربران</span>
-                <span class="badge-module pending" id="badgeUsers">0</span>
+            <!-- ===== مدیریت محتوای فرهنگی (جایگزین مدیریت کاربران) ===== -->
+            <a href="admin-content.html" class="module-card">
+                <span class="icon">📋</span>
+                <span class="label" id="modContent">مدیریت محتوای فرهنگی</span>
+                <span class="desc" id="modContentDesc">مدیریت دستاوردها و اطلس ظهور</span>
+                <span class="badge-module pending" id="badgeContent">0</span>
             </a>
+            <!-- ===== مدیریت دستاوردها ===== -->
             <a href="admin-achievements.html" class="module-card">
                 <span class="icon">🏆</span>
                 <span class="label" id="modAchievements">مدیریت دستاوردها</span>
                 <span class="desc" id="modAchievementsDesc">بررسی دستاوردهای ارسالی</span>
                 <span class="badge-module pending" id="badgeAchievements">0</span>
             </a>
-            <a href="admin-requests.html" class="module-card">
-                <span class="icon">🤝</span>
-                <span class="label" id="modRequests">درخواست‌های ارتباط</span>
-                <span class="desc" id="modRequestsDesc">مدیریت درخواست‌های هم‌فکران</span>
-                <span class="badge-module pending" id="badgeRequests">0</span>
-            </a>
-            <a href="admin-delete.html" class="module-card">
-                <span class="icon">🚪</span>
-                <span class="label" id="modDelete">درخواست‌های حذف</span>
-                <span class="desc" id="modDeleteDesc">مدیریت انصراف از عضویت</span>
-                <span class="badge-module" id="badgeDelete">0</span>
-            </a>
+            <!-- ===== مدیریت مشاهدات ===== -->
             <a href="admin-observations.html" class="module-card">
                 <span class="icon">👁️</span>
                 <span class="label" id="modObservations">مدیریت مشاهدات</span>
@@ -553,7 +545,7 @@
     </div>
     <script>
         let allUsers = [];
-        let activeUsersList = []; // لیست جداگانه برای محاسبات آماری
+        let activeUsersList = [];
         let allCountries = [];
         let currentLang = 'fa';
 
@@ -561,17 +553,13 @@
             fa: {
                 pageTitle: '🛡️ داشبورد ادمین',
                 pageSubtitle: 'مدیریت کارت‌های جهانی هویت هوشمند فرهنگی • کاملاً ناشناس',
-                modUsers: 'مدیریت کاربران',
-                modUsersDesc: 'مشاهده و تأیید کاربران',
+                modContent: '📋 مدیریت محتوای فرهنگی',
+                modContentDesc: 'مدیریت دستاوردها و اطلس ظهور',
                 modAchievements: 'مدیریت دستاوردها',
                 modAchievementsDesc: 'بررسی دستاوردهای ارسالی',
-                modRequests: 'درخواست‌های ارتباط',
-                modRequestsDesc: 'مدیریت درخواست‌های هم‌فکران',
-                modDelete: 'درخواست‌های حذف',
-                modDeleteDesc: 'مدیریت انصراف از عضویت',
                 modObservations: 'مدیریت مشاهدات',
                 modObservationsDesc: 'بررسی مشاهدات خام کاربران',
-                labelTotal: 'کل اعضای فعال',
+                labelTotal: 'کل کاربران',
                 labelGolden: '🌟 طلایی',
                 labelSilver: '🥈 نقره‌ای',
                 labelBronze: '🥉 برنزی',
@@ -607,17 +595,13 @@
             en: {
                 pageTitle: '🛡️ Admin Dashboard',
                 pageSubtitle: 'Global Smart Cultural Identity Card Management • Completely Anonymous',
-                modUsers: 'User Management',
-                modUsersDesc: 'View and approve users',
+                modContent: '📋 Content Management',
+                modContentDesc: 'Manage achievements & Atlas of Emergence',
                 modAchievements: 'Achievement Management',
                 modAchievementsDesc: 'Review submitted achievements',
-                modRequests: 'Connection Requests',
-                modRequestsDesc: 'Manage connection requests',
-                modDelete: 'Delete Requests',
-                modDeleteDesc: 'Manage withdrawal requests',
                 modObservations: 'Observations Management',
                 modObservationsDesc: 'Review raw user observations',
-                labelTotal: 'Active Members',
+                labelTotal: 'Total Users',
                 labelGolden: '🌟 Golden',
                 labelSilver: '🥈 Silver',
                 labelBronze: '🥉 Bronze',
@@ -663,14 +647,10 @@
             
             document.getElementById('pageTitle').textContent = tr('pageTitle');
             document.getElementById('pageSubtitle').textContent = tr('pageSubtitle');
-            document.getElementById('modUsers').textContent = tr('modUsers');
-            document.getElementById('modUsersDesc').textContent = tr('modUsersDesc');
+            document.getElementById('modContent').textContent = tr('modContent');
+            document.getElementById('modContentDesc').textContent = tr('modContentDesc');
             document.getElementById('modAchievements').textContent = tr('modAchievements');
             document.getElementById('modAchievementsDesc').textContent = tr('modAchievementsDesc');
-            document.getElementById('modRequests').textContent = tr('modRequests');
-            document.getElementById('modRequestsDesc').textContent = tr('modRequestsDesc');
-            document.getElementById('modDelete').textContent = tr('modDelete');
-            document.getElementById('modDeleteDesc').textContent = tr('modDeleteDesc');
             document.getElementById('modObservations').textContent = tr('modObservations');
             document.getElementById('modObservationsDesc').textContent = tr('modObservationsDesc');
             document.getElementById('labelTotal').textContent = tr('labelTotal');
@@ -704,13 +684,10 @@
                 if (!response.ok) throw new Error('خطا در دریافت اطلاعات');
                 
                 const data = await response.json();
-                
-                // تفکیک داده‌ها بر اساس ساختار جدید API
-                allUsers = data.users || []; // همه کاربران برای مدیریت
-                activeUsersList = data.activeUsers || []; // فقط فعال‌ها برای آمار
+                allUsers = data.users || [];
+                activeUsersList = data.users ? data.users.filter(u => u.status === 'approved' || u.status === 'active') : [];
                 allCountries = data.countries || [];
 
-                // تنظیم آمارها از آبجکت stats
                 document.getElementById('totalUsers').textContent = (data.stats?.total || 0).toLocaleString('fa-IR');
                 document.getElementById('goldenUsers').textContent = (data.stats?.golden || 0).toLocaleString('fa-IR');
                 document.getElementById('silverUsers').textContent = (data.stats?.silver || 0).toLocaleString('fa-IR');
@@ -734,8 +711,8 @@
 
         function updateBadges() {
             const pendingUsers = allUsers.filter(u => u.status === 'pending' || u.status === 'pending_edit').length;
-            document.getElementById('badgeUsers').textContent = pendingUsers;
-            document.getElementById('badgeUsers').className = 'badge-module' + (pendingUsers > 0 ? ' pending' : '');
+            document.getElementById('badgeContent').textContent = pendingUsers;
+            document.getElementById('badgeContent').className = 'badge-module' + (pendingUsers > 0 ? ' pending' : '');
 
             let pendingAchievements = 0;
             allUsers.forEach(u => {
@@ -745,13 +722,6 @@
             });
             document.getElementById('badgeAchievements').textContent = pendingAchievements;
             document.getElementById('badgeAchievements').className = 'badge-module' + (pendingAchievements > 0 ? ' pending' : '');
-
-            const pendingRequests = allUsers.filter(u => u.status === 'pending' || u.status === 'pending_edit').length;
-            document.getElementById('badgeRequests').textContent = pendingRequests;
-            document.getElementById('badgeRequests').className = 'badge-module' + (pendingRequests > 0 ? ' pending' : '');
-
-            document.getElementById('badgeDelete').textContent = '0';
-            document.getElementById('badgeDelete').className = 'badge-module';
 
             fetch('/api/get-connection-requests?type=observations')
                 .then(res => res.json())
@@ -791,10 +761,10 @@
         function getStatsData() {
             return {
                 date: new Date().toISOString(),
-                total: activeUsersList.length,
-                golden: activeUsersList.filter(u => u.badge === 'golden').length,
-                silver: activeUsersList.filter(u => u.badge === 'silver').length,
-                bronze: activeUsersList.filter(u => u.badge === 'bronze').length,
+                total: allUsers.filter(u => u.status !== 'rejected').length,
+                golden: allUsers.filter(u => u.badge === 'golden').length,
+                silver: allUsers.filter(u => u.badge === 'silver').length,
+                bronze: allUsers.filter(u => u.badge === 'bronze').length,
                 pending: allUsers.filter(u => u.status === 'pending' || u.status === 'pending_edit').length,
                 approved: allUsers.filter(u => u.status === 'approved' || u.status === 'active').length,
                 rejected: allUsers.filter(u => u.status === 'rejected').length,
@@ -851,9 +821,6 @@
             }
         }
 
-        // ================================================================
-        // ===== تابع viewUser - بدون تغییر در منطق اصلی =====
-        // ================================================================
         function viewUser(cardCode) {
             try {
                 const user = allUsers.find(u => u.cardCode === cardCode);
@@ -986,7 +953,6 @@
                 alert('خطا در نمایش اطلاعات کاربر: ' + error.message);
             }
         }
-        // ================================================================
 
         function closeModal() {
             document.getElementById('userModal').classList.remove('active');
