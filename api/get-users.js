@@ -12,7 +12,7 @@ module.exports = async function handler(req, res) {
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
 
-    // ===== بخش ۱: دریافت index.json =====
+    // ===== دریافت index.json =====
     const usersPath = 'data/index.json';
     const usersRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${usersPath}`, {
       headers: { 'Authorization': `Bearer ${token}` }
@@ -25,9 +25,9 @@ module.exports = async function handler(req, res) {
       baseUsers = Array.isArray(parsedContent) ? parsedContent : (parsedContent.users || []);
     }
 
-    // ===== بخش ۲: غنی‌سازی و فیلتر کردن کاربران =====
+    // ===== غنی‌سازی داده‌ها از data/active =====
+    const allUsersForAdmin = [];
     const activeUsers = [];
-    const allUsersForAdmin = []; // شامل همه برای مدیریت ادمین
 
     for (const user of baseUsers) {
       let userProfile = { ...user };
@@ -44,19 +44,19 @@ module.exports = async function handler(req, res) {
         }
       } catch (e) { /* ignore */ }
 
-      // اضافه کردن به لیست کل برای ادمین (برای نمایش همه وضعیت‌ها)
       allUsersForAdmin.push(userProfile);
-
-      // فقط کاربران active وارد محاسبات آماری و گالری می‌شوند
       if (userProfile.status === 'active') {
         activeUsers.push(userProfile);
       }
     }
 
-    // مرتب‌سازی کاربران فعال بر اساس رتبه برای تعیین نشان
+    // مرتب‌سازی برای ادمین: جدیدترین‌ها اول
+    allUsersForAdmin.sort((a, b) => new Date(b.registrationDate) - new Date(a.registrationDate));
+    
+    // مرتب‌سازی فعال‌ها برای تعیین نشان: قدیمی‌ترین‌ها اول (بر اساس rank)
     activeUsers.sort((a, b) => a.rank - b.rank);
 
-    // ===== بخش ۳: محاسبه آمار و تعیین نشان‌ها =====
+    // ===== محاسبه آمار و نشان‌ها =====
     let stats = { total: activeUsers.length, golden: 0, silver: 0, bronze: 0 };
     const galleryAllowedIds = new Set();
 
@@ -75,17 +75,17 @@ module.exports = async function handler(req, res) {
       }
     });
 
-    // محاسبه آمار کشورها (فقط برای کاربران فعال)
+    // آمار کشورها
     const countryMap = {};
     activeUsers.forEach(u => {
-      if (u.country) {
-        if (!countryMap[u.country]) countryMap[u.country] = { country: u.country, count: 0, users: [] };
+      if (u.country && u.country !== 'Unknown') {
+        if (!countryMap[u.country]) countryMap[u.country] = { country: u.country, count: 0 };
         countryMap[u.country].count++;
       }
     });
     const countries = Object.values(countryMap).sort((a, b) => b.count - a.count);
 
-    // ===== بخش ۴: دریافت درخواست‌ها =====
+    // ===== دریافت درخواست‌ها =====
     let requests = [];
     const requestsPath = 'data/requests';
     try {
@@ -105,15 +105,10 @@ module.exports = async function handler(req, res) {
       }
     } catch (e) { console.error('Requests error:', e); }
 
-    // ===== بخش ۵: آماده‌سازی داده برای ادمین (مرتب‌سازی معکوس برای نمایش جدیدترین‌ها) =====
-    // مرتب‌سازی بر اساس تاریخ ثبت نام (جدیدترین اول)
-    allUsersForAdmin.sort((a, b) => new Date(b.registrationDate) - new Date(a.registrationDate));
-
-    // ===== ارسال نهایی =====
     return res.status(200).json({
-      users: allUsersForAdmin, // لیست کامل برای ادمین (با آخرین وضعیت‌ها)
-      activeUsers: activeUsers, // لیست فقط فعال‌ها برای گالری و کارت‌ها
-      stats, // آمار دقیق فقط بر اساس فعال‌ها
+      users: allUsersForAdmin,
+      activeUsers: activeUsers,
+      stats,
       countries,
       requests,
       achievements: activeUsers.flatMap(u => {
