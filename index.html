@@ -481,9 +481,10 @@ async function loadAchievements() {
         const data = await res.json();
         allApproved = [];
         
-        if (data.users) {
+        // بررسی ساختار داده‌ها برای اطمینان از یافتن دستاوردها
+        if (data.users && Array.isArray(data.users)) {
             data.users.forEach(user => {
-                if (user.achievements) {
+                if (user.achievements && Array.isArray(user.achievements)) {
                     user.achievements.forEach(ach => {
                         if (ach.status === 'approved') {
                             allApproved.push({ ...ach, owner: user.cardCode });
