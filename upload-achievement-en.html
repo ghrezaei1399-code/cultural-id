@@ -50,7 +50,6 @@
         }
         body.dark .subtitle { color: #d0c0b0; border-bottom-color: rgba(255, 255, 255, 0.02); }
         
-        /* Form Styles */
         .form-group { margin-bottom: 1.5rem; }
         .form-group label {
             display: block;
@@ -87,7 +86,6 @@
             background: rgba(255, 255, 255, 0.03);
         }
         
-        /* Code Check Box */
         .code-check-box {
             background: rgba(255, 255, 255, 0.05);
             padding: 2rem;
@@ -110,7 +108,6 @@
             direction: ltr;
         }
         
-        /* Upload Zone */
         .upload-zone {
             border: 2px dashed rgba(212, 175, 55, 0.3);
             border-radius: 16px;
@@ -192,7 +189,6 @@
         .error-msg { color: #a00; margin-top: 1rem; font-size: 0.9rem; display: none; text-align: center; }
         .file-name { font-size: 0.85rem; color: #2874a6; margin-top: 0.5rem; display: block; font-weight: bold; }
         
-        /* Status Messages */
         .status-msg {
             padding: 1rem;
             border-radius: 12px;
@@ -312,7 +308,7 @@
         });
     }
 
-    // Verification Logic (Updated to check with API)
+    // Verification Logic
     async function verifyCode() {
         const codeInput = document.getElementById('memberCode').value.trim();
         const errorMsg = document.getElementById('errorMsg');
@@ -329,7 +325,6 @@
         errorMsg.style.display = 'none';
 
         try {
-            // Fetch users from API
             const response = await fetch('/api/get-users?t=' + new Date().getTime());
             if (!response.ok) throw new Error('Server connection error');
             
@@ -362,7 +357,7 @@
         }
     }
 
-    // Upload Logic
+    // ===== Upload Logic (Updated - No upload-file dependency) =====
     const uploadForm = document.getElementById('uploadForm');
     if(uploadForm) {
         uploadForm.addEventListener('submit', async function(e) {
@@ -372,45 +367,34 @@
             const file = fileInput.files[0];
             
             btn.disabled = true;
-            btn.textContent = '⏳ Uploading file...';
+            btn.textContent = '⏳ Processing...';
             if(statusBox) statusBox.style.display = 'none';
 
             try {
-                let fileUrl = '';
+                // ===== 1. Read file as base64 (if exists) =====
+                let fileData = '';
                 let fileName = '';
 
-                // 1. If a file is selected, upload it to the uploads folder first
                 if (file) {
-                    const fileData = await new Promise((resolve) => {
+                    fileData = await new Promise((resolve) => {
                         const reader = new FileReader();
                         reader.onload = () => resolve(reader.result);
                         reader.readAsDataURL(file);
                     });
-
-                    const uploadRes = await fetch('/api/upload-file', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ fileData, fileName: file.name })
-                    });
-
-                    const uploadResult = await uploadRes.json();
-                    if (!uploadRes.ok) throw new Error(uploadResult.error || 'File upload error');
-                    
-                    fileUrl = uploadResult.url;
-                    fileName = uploadResult.fileName;
+                    fileName = file.name;
                 }
 
+                // ===== 2. Send directly to upload-achievement (no need for upload-file) =====
                 btn.textContent = '⏳ Registering info...';
                 const cardCode = localStorage.getItem('verifiedCode') || document.getElementById('memberCode').value;
 
-                // 2. Send final info to main API
                 const achievementData = {
                     title: document.getElementById('title').value,
                     description: document.getElementById('description').value,
                     category: document.getElementById('category').value,
-                    fileName: fileName,
-                    fileUrl: fileUrl,
-                    section: 'identity-card' 
+                    fileData: fileData,    // Send base64 directly
+                    fileName: fileName,    // Send file name
+                    section: 'identity-card'
                 };
 
                 const response = await fetch('/api/upload-achievement', {
