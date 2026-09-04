@@ -1,0 +1,28 @@
+{
+  "cardCode": "CIM-8669-6049-12345",
+  "displayCode": "CIM - 8669 - 6049 - 12345",
+  "optionalCode": "12345",
+  "values": [
+    "رسول",
+    "امام",
+    "پیامبر",
+    "نبی",
+    "امت",
+    "ملت",
+    "میهن"
+  ],
+  "priorities": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "communicationEmail": "ghrezaei1399@gmail.com",
+  "registrationDate": "2026-09-04T10:03:47.747Z",
+  "status": "pending",
+  "rank": 0,
+  "country": "Iran"
+}
