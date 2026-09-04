@@ -696,37 +696,51 @@
             document.body.classList.add('dark');
             document.getElementById('themeToggle').textContent = '☀️';
         }
+async function loadData() {
+    try {
+        const response = await fetch('/api/get-users?t=' + new Date().getTime());
+        if (!response.ok) throw new Error('خطا در دریافت اطلاعات');
+        
+        const data = await response.json();
+        allUsers = data.users || [];
+        allCountries = data.countries || [];
 
-        async function loadData() {
-            try {
-                const response = await fetch('/api/get-users?t=' + new Date().getTime());
-                if (!response.ok) throw new Error('خطا در دریافت اطلاعات');
-                
-                const data = await response.json();
-                allUsers = data.users || [];
-                allCountries = data.countries || [];
+        // ===== محاسبه آمارها از کاربران =====
+        const activeUsers = allUsers.filter(u => u.status !== 'rejected');
+        const total = activeUsers.length;
+        
+        const approvedUsers = allUsers.filter(u => u.status === 'approved').sort((a, b) => 
+            new Date(a.registrationDate || 0) - new Date(b.registrationDate || 0)
+        );
+        
+        let golden = 0, silver = 0, bronze = 0;
+        approvedUsers.forEach((u, index) => {
+            const rank = index + 1;
+            if (rank <= 200) golden++;
+            else if (rank <= 1000) silver++;
+            else bronze++;
+        });
 
-                document.getElementById('totalUsers').textContent = (data.stats?.total || 0).toLocaleString('fa-IR');
-                document.getElementById('goldenUsers').textContent = (data.stats?.golden || 0).toLocaleString('fa-IR');
-                document.getElementById('silverUsers').textContent = (data.stats?.silver || 0).toLocaleString('fa-IR');
-                document.getElementById('bronzeUsers').textContent = (data.stats?.bronze || 0).toLocaleString('fa-IR');
+        document.getElementById('totalUsers').textContent = total.toLocaleString('fa-IR');
+        document.getElementById('goldenUsers').textContent = golden.toLocaleString('fa-IR');
+        document.getElementById('silverUsers').textContent = silver.toLocaleString('fa-IR');
+        document.getElementById('bronzeUsers').textContent = bronze.toLocaleString('fa-IR');
 
-                const dropdown = document.getElementById('countryDropdown');
-                dropdown.innerHTML = '<option value="">-- ' + tr('selectCountryText') + ' --</option>';
-                allCountries.forEach(c => {
-                    const opt = document.createElement('option');
-                    opt.value = c.country;
-                    opt.textContent = `${c.country} (${(c.count || 0).toLocaleString('fa-IR')} نفر)`;
-                    dropdown.appendChild(opt);
-                });
+        const dropdown = document.getElementById('countryDropdown');
+        dropdown.innerHTML = '<option value="">-- ' + tr('selectCountryText') + ' --</option>';
+        allCountries.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c.country;
+            opt.textContent = `${c.country} (${(c.count || 0).toLocaleString('fa-IR')} نفر)`;
+            dropdown.appendChild(opt);
+        });
 
-                updateBadges();
+        updateBadges();
 
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        }
-
+    } catch (error) {
+        console.error('Error:', error);
+    }
+} 
         function updateBadges() {
             const pendingUsers = allUsers.filter(u => u.status === 'pending' || u.status === 'pending_edit').length;
             document.getElementById('badgeUsers').textContent = pendingUsers;
