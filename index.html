@@ -584,21 +584,21 @@
     <div class="cta-note">بدون اطلاعات شخصی • کاملاً ناشناس • ۲ دقیقه</div>
 
     <!-- ===== GALLERY: Achievements ===== -->
-    <div class="golden-gallery-box">
-        <div class="gallery-header">
-            <div class="gallery-title">🏆 گالری دستاوردهای ۲۰۰ عضو اول</div>
-            <select id="categoryFilter" class="filter-select" onchange="filterAchievements()">
-                <option value="all">همه دستاوردها</option>
-                <option value="science">مقالات علمی</option>
-                <option value="art">آثار هنری</option>
-                <option value="media">رسانه</option>
-            </select>
-        </div>
-        <div id="achievementsListContainer" class="achievements-list">
-            <p style="text-align:center; padding:1rem;">در حال بارگذاری...</p>
-        </div>
+<!-- ===== GALLERY: Achievements ===== -->
+<div class="golden-gallery-box">
+    <div class="gallery-header">
+        <div class="gallery-title">🏆 گالری دستاوردهای ۲۰۰ عضو اول</div>
+        <select id="categoryFilter" class="filter-select" onchange="filterAchievements()">
+            <option value="all">همه دستاوردها</option>
+            <option value="science">مقالات علمی</option>
+            <option value="art">آثار هنری و پوستر</option>
+            <option value="media">ویدئو و رسانه</option>
+        </select>
     </div>
-
+    <div id="achievementsListContainer" class="achievements-list">
+        <p style="text-align:center;">در حال بارگذاری لیست...</p>
+    </div>
+</div>  
     <!-- ===== GALLERY: Atlas of Emergence ===== -->
     <div class="atlas-gallery-box">
         <div class="gallery-header">
@@ -627,30 +627,70 @@
 
 <script>
 // ===== ACHIEVEMENTS =====
+
+// ===== ACHIEVEMENTS =====
 let allApproved = [];
 
 async function loadAchievements() {
     const container = document.getElementById('achievementsListContainer');
     try {
+        container.innerHTML = '<p style="text-align:center;">⏳ در حال دریافت اطلاعات...</p>';
+        
         const res = await fetch('/api/get-users?t=' + new Date().getTime());
-        if (!res.ok) throw new Error('خطا در ارتباط با سرور');
-        const data = await res.json();
-        allApproved = [];
-        if (data.users) {
-            data.users.forEach(user => {
-                if (user.achievements) {
-                    user.achievements.forEach(ach => {
-                        if (ach.status === 'approved') {
-                            allApproved.push({ ...ach, owner: user.cardCode });
-                        }
-                    });
-                }
-            });
+        if (!res.ok) {
+            throw new Error('خطا در ارتباط با سرور (وضعیت: ' + res.status + ')');
         }
+        
+        const data = await res.json();
+        console.log('📊 پاسخ کامل از سرور:', data);
+        
+        allApproved = [];
+        
+        // ===== بررسی ساختار داده‌ها =====
+        if (!data.users) {
+            container.innerHTML = '<p style="text-align:center; color:red;">❌ ساختار داده‌ها اشتباه است (users پیدا نشد)</p>';
+            console.error('❌ users پیدا نشد در پاسخ:', data);
+            return;
+        }
+        
+        let totalAchievements = 0;
+        let approvedAchievements = 0;
+        
+        data.users.forEach(user => {
+            if (user.achievements && Array.isArray(user.achievements)) {
+                totalAchievements += user.achievements.length;
+                user.achievements.forEach(ach => {
+                    if (ach.status === 'approved') {
+                        approvedAchievements++;
+                        allApproved.push({
+                            ...ach,
+                            owner: user.cardCode,
+                            ownerRank: user.rank || 0,
+                            ownerBadge: user.badge || 'bronze'
+                        });
+                    }
+                });
+            }
+        });
+        
+        console.log('📊 کل دستاوردها:', totalAchievements);
+        console.log('✅ دستاوردهای تاییدشده:', approvedAchievements);
+        console.log('📋 لیست دستاوردهای تاییدشده:', allApproved);
+        
+        if (allApproved.length === 0) {
+            if (totalAchievements === 0) {
+                container.innerHTML = '<p style="text-align:center; padding:1rem;">📭 هنوز دستاوردی آپلود نشده است.</p>';
+            } else {
+                container.innerHTML = `<p style="text-align:center; padding:1rem;">⏳ ${totalAchievements} دستاورد آپلود شده، اما هیچ کدام هنوز تایید نشده است.</p>`;
+            }
+            return;
+        }
+        
         renderAchievements(allApproved);
+        
     } catch (e) {
-        console.error(e);
-        container.innerHTML = '<p style="text-align:center; color:red;">خطا در دریافت اطلاعات.</p>';
+        console.error('❌ خطا در loadAchievements:', e);
+        container.innerHTML = `<p style="text-align:center; color:red;">❌ خطا: ${e.message}</p>`;
     }
 }
 
@@ -658,15 +698,18 @@ function renderAchievements(items) {
     const container = document.getElementById('achievementsListContainer');
     const filter = document.getElementById('categoryFilter').value;
     let filtered = filter === 'all' ? items : items.filter(item => item.category === filter);
+    
     if (filtered.length === 0) {
         container.innerHTML = '<p style="text-align:center; padding:1rem;">هنوز دستاوردی تایید نشده است.</p>';
         return;
     }
+    
     container.innerHTML = filtered.map((item, index) => `
         <div class="achievement-item" onclick="openModal(${index})">
             <div class="item-info">
                 <h4>${item.title || 'بدون عنوان'}</h4>
                 <span class="item-meta">${item.category === 'science' ? '📄 مقاله' : item.category === 'art' ? '🎨 هنری' : '🎬 رسانه'}</span>
+                ${item.ownerBadge === 'golden' ? '<span style="font-size:0.6rem;color:#d4af37;">⭐ طلایی</span>' : ''}
             </div>
             <span style="font-size:1.2rem; color:#d4af37;">👁️</span>
         </div>
@@ -677,40 +720,14 @@ function filterAchievements() {
     renderAchievements(allApproved);
 }
 
-// ===== ATLAS =====
-let allAtlasItems = [];
-
-async function loadAtlas() {
-    const container = document.getElementById('atlasListContainer');
-    try {
-        const res = await fetch('/api/get-connection-requests?type=observations');
-        if (!res.ok) throw new Error('خطا در دریافت اطلاعات');
-        const data = await res.json();
-        allAtlasItems = (data.observations || []).filter(obs => obs.score === 5 && obs.status === 'approved');
-        renderAtlas(allAtlasItems);
-    } catch (e) {
-        console.error(e);
-        container.innerHTML = '<p style="text-align:center; color:red;">خطا در دریافت اطلاعات اطلس.</p>';
-    }
+function openModal(index) {
+    const item = allApproved[index];
+    if (!item) return;
+    alert('عنوان: ' + (item.title || 'بدون عنوان') + '\n' +
+          'توضیحات: ' + (item.description || 'بدون توضیحات') + '\n' +
+          'ارسال‌کننده: ' + (item.owner || 'ناشناس') + '\n' +
+          'رتبه: ' + (item.ownerRank || '---'));
 }
-
-function renderAtlas(items) {
-    const container = document.getElementById('atlasListContainer');
-    if (items.length === 0) {
-        container.innerHTML = '<p style="text-align:center; padding:1rem; color:#888;">هنوز راه‌حلی با امتیاز ۵ ثبت نشده است.</p>';
-        return;
-    }
-    container.innerHTML = items.map((item, index) => `
-        <div class="achievement-item" onclick="openAtlasModal(${index})">
-            <div class="item-info">
-                <h4>${item.observation ? item.observation.substring(0, 60) + '...' : 'مشاهده'}</h4>
-                <span class="item-meta">⭐ امتیاز ${item.score}</span>
-            </div>
-            <span style="font-size:1.2rem; color:#6a3d9a;">🏛️</span>
-        </div>
-    `).join('');
-}
-
 // ===== MODALS =====
 function openModal(index) {
     const item = allApproved[index];
