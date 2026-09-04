@@ -1,3 +1,4 @@
+// api/register.js
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -56,7 +57,7 @@ module.exports = async function handler(req, res) {
       priorities: priorities && Array.isArray(priorities) ? priorities.map(Number) : [1, 2, 3, 4, 5, 6, 7],
       communicationEmail: communicationEmail || null,
       registrationDate: new Date().toISOString(),
-      status: 'pending',
+      status: 'approved', // ===== تغییر از 'pending' به 'approved' =====
       rank: 0,
       country: detectedCountry
     };
@@ -97,7 +98,7 @@ module.exports = async function handler(req, res) {
       cardCode,
       displayCode,
       optionalCode: part3,
-      status: 'pending',
+      status: 'approved', // ===== تغییر از 'pending' به 'approved' =====
       rank: 0,
       country: detectedCountry,
       registrationDate: userData.registrationDate
@@ -127,11 +128,11 @@ module.exports = async function handler(req, res) {
 
     return res.status(200).json({
       success: true,
-      cardCode, // ارسال کد یکپارچه به فرانت‌اند
+      cardCode,
       displayCode,
       country: detectedCountry,
       rank: 0,
-      message: 'ثبت‌نام با موفقیت انجام شد و در انتظار تأیید ادمین است.'
+      message: 'ثبت‌نام با موفقیت انجام شد و کارت شما فعال است.'
     });
 
   } catch (error) {
