@@ -24,5 +24,17 @@
   "registrationDate": "2026-09-04T21:39:10.219Z",
   "status": "approved",
   "rank": 0,
-  "country": "Iran"
+  "country": "Iran",
+  "achievements": [
+    {
+      "title": "مقاله ی ارتباطات هوشمند",
+      "description": "استفاده از امواج رادیویی برای ارتباطات ججهانی",
+      "category": "science",
+      "fileUrl": "https://raw.githubusercontent.com/ghrezaei1399-code/cultural-id/main/uploads/1788559964511-krley.png",
+      "fileName": "1788559964511-krley.png",
+      "status": "pending",
+      "uploadDate": "2026-09-04T22:12:45.728Z",
+      "section": "identity-card"
+    }
+  ]
 }
