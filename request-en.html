@@ -223,4 +223,309 @@
             background: rgba(39, 174, 96, 0.05);
             border: 2px solid rgba(39, 174, 96, 0.2);
             border-radius: 16px;
-            animation:
+            animation: fadeIn 0.5s ease;
+        }
+        body.dark .connections-result {
+            background: rgba(39, 174, 96, 0.02);
+            border-color: rgba(39, 174, 96, 0.1);
+        }
+        .connections-result .title {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #1e7a1e;
+            margin-bottom: 0.5rem;
+        }
+        body.dark .connections-result .title { color: #82e0aa; }
+        .connections-result .tracking-code {
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #2874a6;
+            padding: 0.3rem;
+            background: rgba(40,116,166,0.05);
+            border-radius: 6px;
+            text-align: center;
+            margin-bottom: 0.8rem;
+        }
+        body.dark .connections-result .tracking-code { color: #85c1e9; }
+        .connections-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            margin-top: 0.5rem;
+        }
+        .connection-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.3rem 0.8rem;
+            background: rgba(255,255,255,0.5);
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #2874a6;
+        }
+        body.dark .connection-item { background: rgba(0,0,0,0.1); color: #85c1e9; }
+        .connections-result .no-match {
+            color: #888;
+            text-align: center;
+            padding: 0.5rem;
+        }
+        .connections-result .match-count {
+            font-size: 0.85rem;
+            color: #6a5a3a;
+            text-align: center;
+            margin-top: 0.3rem;
+        }
+        body.dark .connections-result .match-count { color: #c8b890; }
+
+        .email-required-box {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(212, 175, 55, 0.08);
+            border: 2px solid #d4af37;
+            border-radius: 16px;
+            text-align: center;
+        }
+        body.dark .email-required-box { background: rgba(212, 175, 55, 0.03); }
+        .email-required-box .icon { font-size: 2rem; display: block; margin-bottom: 0.3rem; }
+        .email-required-box h3 { color: #8a6d1f; margin-bottom: 0.3rem; }
+        body.dark .email-required-box h3 { color: #f9e79f; }
+        .email-required-box p { color: #4a3a2a; font-size: 0.9rem; line-height: 1.8; }
+        body.dark .email-required-box p { color: #d0c0b0; }
+        .email-required-box .btn-edit {
+            display: inline-block;
+            margin-top: 0.8rem;
+            padding: 0.5rem 1.5rem;
+            background: rgba(212,175,55,0.15);
+            color: #8a6d1f;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+        body.dark .email-required-box .btn-edit { color: #f9e79f; background: rgba(212,175,55,0.1); }
+        .email-required-box .btn-edit:hover { background: rgba(212,175,55,0.25); }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" id="themeToggle"></button>
+
+    <div class="container">
+        <h1 id="pageTitle">🤝 Request Connection</h1>
+        <div class="subtitle" id="pageSubtitle">Connect with others based on shared cultural values</div>
+
+        <div id="messageBox" class="message-box"></div>
+
+        <!-- ===== Email Required Box ===== -->
+        <div id="emailRequiredBox" class="email-required-box">
+            <span class="icon">📧</span>
+            <h3>Please register your email first</h3>
+            <p>Connecting with like-minded people requires a registered email address. Please add your email in the edit page first.</p>
+            <a href="edit-en.html" class="btn-edit">✏️ Go to Edit Info</a>
+        </div>
+
+        <form id="requestForm">
+            <input type="hidden" id="requestType" value="connection" />
+
+            <div class="form-group">
+                <label id="codeLabel">Your Card Code</label>
+                <input type="text" id="cardCode" placeholder="e.g. CIM-1234-5678-A" required />
+            </div>
+
+            <div class="form-group">
+                <label>Request Details</label>
+                <textarea id="description" placeholder="Explain what kind of connection you are looking for..."></textarea>
+            </div>
+
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary" id="submitBtn">📨 Submit Request</button>
+                <a href="index-en.html" class="btn btn-secondary">↩ Back</a>
+            </div>
+        </form>
+
+        <!-- ===== Connection Result ===== -->
+        <div id="connectionsResult" class="connections-result">
+            <div class="title" id="resultTitle">✅ Your Like-minded Peers</div>
+            <div class="tracking-code" id="resultTracking">Tracking Code: ---</div>
+            <div id="connectionsList" class="connections-list"></div>
+            <div class="match-count" id="resultMatchCount"></div>
+        </div>
+
+        <div class="note">
+            🔒 The system automatically finds like-minded people and displays the results.
+        </div>
+    </div>
+
+    <script>
+        // ===== Theme =====
+        (function() {
+            const toggle = document.getElementById('themeToggle');
+            const body = document.body;
+            if (localStorage.getItem('theme') === 'dark') {
+                body.classList.add('dark');
+                toggle.textContent = '☀️';
+            } else {
+                toggle.textContent = '🌙';
+            }
+            toggle.addEventListener('click', function() {
+                body.classList.toggle('dark');
+                if (body.classList.contains('dark')) {
+                    toggle.textContent = '☀️';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    toggle.textContent = '🌙';
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+        })();
+
+        // ===== Detect request type from URL =====
+        function detectRequestType() {
+            const params = new URLSearchParams(window.location.search);
+            const type = params.get('type');
+            
+            const titleEl = document.getElementById('pageTitle');
+            const subtitleEl = document.getElementById('pageSubtitle');
+            const requestTypeInput = document.getElementById('requestType');
+            const submitBtn = document.getElementById('submitBtn');
+            const codeLabel = document.getElementById('codeLabel');
+            const descInput = document.getElementById('description');
+
+            if (type === 'delete') {
+                titleEl.textContent = '⚠️ Membership Cancellation Request';
+                subtitleEl.textContent = 'Remove your cultural data from the network';
+                requestTypeInput.value = 'delete';
+                codeLabel.textContent = 'Your Cultural Identity Card Code';
+                descInput.placeholder = 'Please state your reason for cancellation (optional)...';
+                submitBtn.textContent = '🚪 Submit Cancellation';
+                submitBtn.className = 'btn btn-danger';
+                document.getElementById('connectionsResult').style.display = 'none';
+            } else {
+                titleEl.textContent = '🤝 Request Connection';
+                subtitleEl.textContent = 'Connect with others based on shared cultural values';
+                requestTypeInput.value = 'connection';
+                codeLabel.textContent = 'Your Card Code';
+                descInput.placeholder = 'Explain what kind of connection you are looking for...';
+                submitBtn.textContent = '📨 Submit Request';
+                submitBtn.className = 'btn btn-primary';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', detectRequestType);
+
+        // ===== Show Message =====
+        function showMessage(text, type) {
+            const box = document.getElementById('messageBox');
+            box.textContent = text;
+            box.className = 'message-box ' + type;
+            box.style.display = 'block';
+        }
+
+        function hideMessage() {
+            const box = document.getElementById('messageBox');
+            box.style.display = 'none';
+            box.className = 'message-box';
+        }
+
+        // ===== Display Connections Result =====
+        function showConnections(result) {
+            const container = document.getElementById('connectionsResult');
+            const titleEl = document.getElementById('resultTitle');
+            const trackingEl = document.getElementById('resultTracking');
+            const listEl = document.getElementById('connectionsList');
+            const matchCountEl = document.getElementById('resultMatchCount');
+
+            container.style.display = 'block';
+            trackingEl.textContent = `🔗 Tracking Code: ${result.trackingCode || '---'}`;
+
+            if (result.connections && result.connections.length > 0) {
+                titleEl.textContent = '✅ Your Like-minded Peers Found';
+                listEl.innerHTML = result.connections.map(email => 
+                    `<div class="connection-item">📧 ${email}</div>`
+                ).join('');
+                matchCountEl.textContent = `${result.connections.length} like-minded people found with shared cultural values.`;
+            } else {
+                titleEl.textContent = 'ℹ️ No Like-minded People Found';
+                listEl.innerHTML = `<div class="no-match">No like-minded people found with shared cultural values. Please try again later.</div>`;
+                matchCountEl.textContent = '';
+            }
+        }
+
+        // ===== Form Submission =====
+        let isSubmitting = false;
+        document.getElementById('requestForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            if (isSubmitting) return;
+            isSubmitting = true;
+            hideMessage();
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Processing...';
+
+            try {
+                const cardCode = document.getElementById('cardCode').value.trim();
+                const requestType = document.getElementById('requestType').value;
+                const description = document.getElementById('description').value.trim();
+
+                if (!cardCode) {
+                    throw new Error('Please enter your card code.');
+                }
+
+                const response = await fetch('/api/submit-request', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        cardCode: cardCode,
+                        type: requestType,
+                        description: description
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    if (result.emailRequired && result.redirect) {
+                        document.getElementById('emailRequiredBox').style.display = 'block';
+                        showMessage('⚠️ To use the connection feature, please register your email first.', 'info');
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = '📨 Submit Request';
+                        isSubmitting = false;
+                        return;
+                    }
+                    throw new Error(result.error || 'Error submitting request');
+                }
+
+                if (requestType === 'connection') {
+                    showConnections(result);
+                    showMessage('✅ Your request has been processed successfully.', 'success');
+                } else if (requestType === 'delete') {
+                    showMessage(`✅ Your cancellation request has been submitted. Tracking Code: ${result.trackingCode || '---'}`, 'success');
+                }
+
+                submitBtn.textContent = '✅ Sent';
+
+                setTimeout(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '📨 Submit Request';
+                    isSubmitting = false;
+                }, 3000);
+
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage(`❌ Error: ${error.message}`, 'error');
+                isSubmitting = false;
+                submitBtn.disabled = false;
+                const requestType = document.getElementById('requestType').value;
+                submitBtn.textContent = requestType === 'delete' ? '🚪 Submit Cancellation' : '📨 Submit Request';
+            }
+        });
+    </script>
+</body>
+</html>
