@@ -568,7 +568,11 @@
 
         // ===== رندر =====
         function renderFilteredUsers() {
-            let filtered = allUsers;
+            // ===== فیلتر: فقط کاربران در انتظار (pending و pending_edit) =====
+            let filtered = allUsers.filter(u => 
+                u.status === 'pending' || u.status === 'pending_edit'
+            );
+
             if (searchQuery) {
                 filtered = filtered.filter(u => 
                     (u.cardCode && u.cardCode.toLowerCase().includes(searchQuery)) ||
@@ -577,18 +581,21 @@
                 );
             }
 
+            // ===== مرتب‌سازی: جدیدترین (آخرین ثبت‌نام) اول =====
             const sortedUsers = [...filtered].sort((a, b) => {
-                const statusOrder = { 'pending_edit': 0, 'pending': 1, 'approved': 2, 'rejected': 3 };
-                return (statusOrder[a.status] || 4) - (statusOrder[b.status] || 4);
+                const dateA = new Date(a.registrationDate || 0);
+                const dateB = new Date(b.registrationDate || 0);
+                return dateB - dateA;
             });
 
-            const totalPages = Math.ceil(sortedUsers.length / pageSize);
+            const totalUsers = sortedUsers.length;
+            const totalPages = Math.ceil(totalUsers / pageSize);
             if (currentPage > totalPages) currentPage = totalPages || 1;
             
             const start = (currentPage - 1) * pageSize;
             const paginated = sortedUsers.slice(start, start + pageSize);
 
-            renderTable(paginated, sortedUsers.length, totalPages);
+            renderTable(paginated, totalUsers, totalPages);
         }
 
         function renderTable(users, totalCount, totalPages) {
@@ -601,12 +608,20 @@
             }
 
             tbody.innerHTML = users.map(user => {
-                // ===== ترجمه نشان (Badge) =====
-                let badgeText = user.badge === 'golden' ? t('badgeGolden') : 
-                               user.badge === 'silver' ? t('badgeSilver') : t('badgeBronze');
-                const badgeClass = `badge-${user.badge}`;
+                // ===== محاسبه نشان بر اساس رتبه =====
+                let badgeText = t('badgeBronze');
+                let badgeClass = 'badge-bronze';
+                if (user.rank !== undefined && user.rank !== null) {
+                    if (user.rank <= 200) {
+                        badgeText = t('badgeGolden');
+                        badgeClass = 'badge-golden';
+                    } else if (user.rank <= 1000) {
+                        badgeText = t('badgeSilver');
+                        badgeClass = 'badge-silver';
+                    }
+                }
                 
-                // ===== ترجمه وضعیت (Status) =====
+                // ===== وضعیت =====
                 const status = user.status || 'pending';
                 let statusClass = 'badge-pending';
                 let statusText = t('statusPending');
