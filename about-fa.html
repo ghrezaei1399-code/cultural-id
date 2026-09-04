@@ -78,7 +78,6 @@
         .academic-link:hover { color: #8a6d1f; border-color: #8a6d1f; }
         body.dark .academic-link { color: #85c1e9; border-bottom-color: #85c1e9; }
 
-        /* ===== بخش سپهر خردمندی ===== */
         .wisdom-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -172,7 +171,6 @@
         .example-box .ex-desc { font-size: 0.85rem; color: #4a3a2a; }
         body.dark .example-box .ex-desc { color: #d0c0b0; }
 
-        /* ===== بخش رادیوتلویزیون ===== */
         .radio-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -248,6 +246,17 @@
         }
         body.dark .coming-soon { color: #c8b890; }
 
+        /* ===== جدید: بخش‌های اضافه‌شده ===== */
+        .privacy-box {
+            background: rgba(212, 175, 55, 0.08);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            border-right: 3px solid #d4af37;
+        }
+        body.dark .privacy-box { background: rgba(212, 175, 55, 0.03); }
+        .privacy-box p { margin: 0; font-size: 0.9rem; }
+
         @media (max-width: 768px) {
             .container { padding: 1rem; }
             .radio-grid { grid-template-columns: 1fr; }
@@ -269,6 +278,7 @@
         <p>هدف ما ایجاد شبکه‌ای از مصلحان فرهنگی است که بدون وابستگی به نهادها، بر اساس خرد جمعی و ارزش‌های انسان‌محور با یکدیگر ارتباط برقرار کنند.</p>
     </div>
 
+    <!-- ===== بخش ۲: اصول بنیادین ===== -->
     <div class="section">
         <h2>اصول بنیادین</h2>
         <ul>
@@ -278,6 +288,21 @@
         </ul>
     </div>
 
+    <!-- ===== بخش ۳: ایمیل و حریم‌خصوصی (جدید) ===== -->
+    <div class="section" style="border-color: #d4af37; border-width: 2px;">
+        <h2 style="color: #8a6d1f; border-right-color: #d4af37;">🔒 ایمیل و حریم‌خصوصی</h2>
+        <p>ثبت ایمیل <strong>کاملاً داوطلبانه</strong> است و فقط برای این اهداف استفاده می‌شود:</p>
+        <ul>
+            <li>ارتباط با هم‌فرهنگانی که <strong>حداقل ۵ ارزش مشترک</strong> با شما دارند</li>
+            <li>دریافت لیست هم‌فکران و هم‌فرهنگان</li>
+            <li>پیگیری درخواست‌های ارتباط با کد پیگیری</li>
+        </ul>
+        <div class="privacy-box">
+            <p><strong>🔒 هیچ اطلاعات هویتی</strong> (نام، شماره، آدرس، موقعیت مکانی) دریافت یا نمایش داده نمی‌شود. گالری‌ها و دستاوردها <strong>کاملاً ناشناس</strong> هستند.</p>
+        </div>
+    </div>
+
+    <!-- ===== بخش ۴: پشتوانه نظری ===== -->
     <div class="section">
         <h2>پشتوانه‌ی نظری پروژه</h2>
         <p>این پلتفرم خروجی عملیاتی بیش از دو دهه پژوهش در حوزه‌ی «گذار تمدنی»، «هوش مصنوعی انسان‌محور» و «مهندسی فرهنگی نامرئی» است. معماری این سامانه بر پایه‌ی چارچوب‌های نظری ثبت‌شده‌ی بین‌المللی بنا شده است که هدفشان گذار از عصر اطلاعات به عصر خرد است.</p>
@@ -290,7 +315,34 @@
         </div>
     </div>
 
-    <!-- ===== بخش ۲: آشنایی با سپهر خردمندی ===== -->
+    <!-- ===== بخش ۵: چگونه هم‌فکران پیدا می‌شوند (جدید) ===== -->
+    <div class="section">
+        <h2>🤝 چگونه هم‌فکران پیدا می‌شوند؟</h2>
+        <p>سیستم به‌صورت خودکار:</p>
+        <ul>
+            <li>ارزش‌های فرهنگی شما را با ارزش‌های دیگران مقایسه می‌کند</li>
+            <li>کاربرانی که <strong>حداقل ۵ ارزش مشترک</strong> با شما دارند را پیدا می‌کند</li>
+            <li>فقط کاربرانی که <strong>ایمیل ثبت کرده‌اند</strong> در نتایج نمایش داده می‌شوند</li>
+            <li>لیست ایمیل‌های هم‌فکران را در اختیار شما قرار می‌دهد</li>
+        </ul>
+        <div class="privacy-box">
+            <p><strong>💡 نتیجه:</strong> شما می‌توانید با افرادی که واقعاً با شما اشتراک فرهنگی دارند، ارتباط برقرار کنید.</p>
+        </div>
+    </div>
+
+    <!-- ===== بخش ۶: گالری‌ها (جدید) ===== -->
+    <div class="section">
+        <h2>🏆 گالری‌ها</h2>
+        <ul>
+            <li><strong>گالری دستاوردها:</strong> ویژه ۲۰۰ نفر اول - نمایش دستاوردهای فرهنگی بدون نام و نشانی</li>
+            <li><strong>گالری اطلس ظهور:</strong> نمایش راه‌حل‌های فرهنگی برای مشکلات بومی</li>
+        </ul>
+        <div class="privacy-box">
+            <p>همه دستاوردها <strong>ناشناس</strong> هستند و هیچ اطلاعات هویتی همراه آنها نیست.</p>
+        </div>
+    </div>
+
+    <!-- ===== بخش ۷: سپهر خردمندی ===== -->
     <div id="wisdom" class="section" style="border-color: #8a6d1f; border-width: 2px;">
         <h2 style="color: #8a6d1f; border-right-color: #d4af37;">🧠 آشنایی با سپهر خردمندی</h2>
         
@@ -384,7 +436,7 @@
         </div>
     </div>
 
-    <!-- ===== بخش ۳: رادیوتلویزیون هوشمند ===== -->
+    <!-- ===== بخش ۸: رادیوتلویزیون هوشمند ===== -->
     <div id="radio-tv" class="section" style="border-color: #d4af37; border-width: 2px;">
         <h2 style="color: #8a6d1f; border-right-color: #d4af37;">📡 رادیوتلویزیون هوشمند فرهنگی</h2>
         <p style="text-align: center; font-size: 0.95rem; color: #6a5a3a;">شبکه‌های فرهنگی و محتوای گروهی</p>
