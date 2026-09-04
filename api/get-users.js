@@ -12,81 +12,100 @@ module.exports = async function handler(req, res) {
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
 
-    // ===== بخش ۱: دریافت اطلاعات کاربران =====
+    // ===== بخش ۱: دریافت و پردازش هوشمند index.json =====
     const usersPath = 'data/index.json';
     const usersRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${usersPath}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
 
     let users = [];
-    let stats = { total: 0, golden: 0, silver: 0, bronze: 0 };
-    let countries = [];
     let originalData = {};
 
     if (usersRes.ok) {
       const usersDataRaw = await usersRes.json();
-      originalData = JSON.parse(Buffer.from(usersDataRaw.content, 'base64').toString('utf8'));
+      const parsedContent = JSON.parse(Buffer.from(usersDataRaw.content, 'base64').toString('utf8'));
       
-      users = originalData.users || [];
-      
-      // محاسبه آمار دقیق
-      stats.total = users.length;
-      stats.golden = users.filter(u => u.badge === 'golden').length;
-      stats.silver = users.filter(u => u.badge === 'silver').length;
-      stats.bronze = users.filter(u => u.badge === 'bronze').length;
-
-      // محاسبه آمار کشورها
-      const countryMap = {};
-      users.forEach(u => {
-        if (u.country) {
-          if (!countryMap[u.country]) countryMap[u.country] = { country: u.country, count: 0, users: [] };
-          countryMap[u.country].count++;
-          countryMap[u.country].users.push({ cardCode: u.cardCode, rank: u.rank, badge: u.badge });
-        }
-      });
-      countries = Object.values(countryMap).sort((a, b) => b.count - a.count);
+      // تشخیص ساختار: آیا فایل یک آرایه است یا یک آبجکت با کلید users؟
+      if (Array.isArray(parsedContent)) {
+        users = parsedContent;
+        originalData = { users: parsedContent }; // نرمال‌سازی برای سازگاری با فرانت‌اند
+      } else {
+        users = parsedContent.users || [];
+        originalData = parsedContent;
+      }
     }
 
-    // ===== بخش ۲: دریافت لیست درخواست‌های حذف و ارتباط =====
+    // ===== بخش ۲: غنی‌سازی داده‌ها از پوشه data/active (برای یافتن دستاوردها) =====
+    // این بخش حیاتی است چون index.json شما فعلاً achievements ندارد
+    const enrichedUsers = [];
+    for (const user of users) {
+      let userProfile = { ...user };
+      try {
+        // تلاش برای خواندن پروفایل کامل از پوشه active بر اساس cardCode
+        // نام فایل معمولاً cardCode.json است
+        const fileName = `${user.cardCode}.json`;
+        const profileRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/active/${fileName}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (profileRes.ok) {
+          const profileData = await profileRes.json();
+          const fullProfile = JSON.parse(Buffer.from(profileData.content, 'base64').toString('utf8'));
+          // ادغام دستاوردها و سایر اطلاعات از فایل تکی
+          userProfile = { ...userProfile, ...fullProfile };
+        }
+      } catch (e) {
+        // اگر فایل تکی وجود نداشت، همان اطلاعات index.json استفاده می‌شود
+      }
+      enrichedUsers.push(userProfile);
+    }
+
+    // محاسبه آمار
+    const stats = {
+      total: enrichedUsers.length,
+      golden: enrichedUsers.filter(u => u.badge === 'golden').length,
+      silver: enrichedUsers.filter(u => u.badge === 'silver').length,
+      bronze: enrichedUsers.filter(u => u.badge === 'bronze').length
+    };
+
+    // محاسبه آمار کشورها
+    const countryMap = {};
+    enrichedUsers.forEach(u => {
+      if (u.country) {
+        if (!countryMap[u.country]) countryMap[u.country] = { country: u.country, count: 0, users: [] };
+        countryMap[u.country].count++;
+        countryMap[u.country].users.push({ cardCode: u.cardCode, rank: u.rank, badge: u.badge });
+      }
+    });
+    const countries = Object.values(countryMap).sort((a, b) => b.count - a.count);
+
+    // ===== بخش ۳: دریافت درخواست‌ها =====
     let requests = [];
     const requestsPath = 'data/requests';
-    
     try {
       const listRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${requestsPath}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-
       if (listRes.ok) {
         const files = await listRes.json();
         const jsonFiles = files.filter(f => f.type === 'file' && f.name.endsWith('.json'));
-        const recentFiles = jsonFiles.slice(-50); 
-        
-        for (const file of recentFiles) {
-          try {
-            const contentRes = await fetch(file.url, {
-              headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (contentRes.ok) {
-              const fileData = await contentRes.json();
-              const content = JSON.parse(Buffer.from(fileData.content, 'base64').toString('utf8'));
-              requests.push(content);
-            }
-          } catch (e) { 
-            console.error(`Error reading request file ${file.name}:`, e); 
+        for (const file of jsonFiles.slice(-50)) {
+          const contentRes = await fetch(file.url, { headers: { 'Authorization': `Bearer ${token}` } });
+          if (contentRes.ok) {
+            const fileData = await contentRes.json();
+            requests.push(JSON.parse(Buffer.from(fileData.content, 'base64').toString('utf8')));
           }
         }
       }
-    } catch (e) {
-      console.error('Error accessing requests folder:', e);
-    }
+    } catch (e) { console.error('Requests error:', e); }
 
     // ===== ارسال نهایی =====
     return res.status(200).json({
-      ...originalData,
-      users,
+      users: enrichedUsers, // ارسال کاربران غنی‌شده با دستاوردها
       stats,
       countries,
-      requests
+      requests,
+      achievements: enrichedUsers.flatMap(u => u.achievements || []) // استخراج همه دستاوردها در یک آرایه مسطح
     });
 
   } catch (error) {
