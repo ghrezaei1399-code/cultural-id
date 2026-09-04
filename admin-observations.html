@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>مدیریت مشاهدات | داشبورد ادمین</title>
+    <title>مدیریت مشاهدات | سپهر خردمندی</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -160,6 +160,22 @@
         .obs-body p { font-size: 0.9rem; color: #4a4a5a; line-height: 1.6; }
         body.dark .obs-body p { color: #b0b0c0; }
         
+        .obs-module {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            border: 1px solid rgba(212,175,55,0.2);
+            background: rgba(255,255,255,0.1);
+            color: #4a3a2a;
+            margin-top: 0.8rem;
+        }
+        body.dark .obs-module { color: #d0c0b0; }
+        .obs-module .icon { font-size: 0.8rem; margin-left: 0.2rem; }
+        
         .badge {
             display: inline-block;
             padding: 0.15rem 0.6rem;
@@ -171,7 +187,6 @@
         .badge-rejected { background: rgba(200,50,50,0.15); color: #6a1a1a; }
         .badge-pending { background: rgba(255,200,50,0.15); color: #8a7a0a; }
         .badge-score-5 { background: rgba(212,175,55,0.25); color: #8a6d1f; border: 1px solid #d4af37; }
-        .badge-edit { background: rgba(255, 140, 0, 0.25); color: #c65102; font-weight: 700; }
         
         .btn-small {
             padding: 0.25rem 0.8rem;
@@ -288,7 +303,6 @@
             box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
         }
         
-        /* ===== امتیازدهی ===== */
         .score-section {
             margin-top: 1rem;
             display: flex;
@@ -323,6 +337,12 @@
         }
         body.dark .score-section .score-hint { color: #a8a8b8; }
         
+        /* ===== وضعیت‌های مختلف ===== */
+        .obs-card.pending { border-color: #f39c12; border-width: 2px; }
+        .obs-card.approved { border-color: #27ae60; border-width: 2px; }
+        .obs-card.rejected { border-color: #e74c3c; border-width: 2px; }
+        .obs-card.score5 { border-color: #d4af37; border-width: 2px; box-shadow: 0 0 20px rgba(212,175,55,0.15); }
+        
         @media (max-width: 768px) {
             .container { padding: 1.2rem; }
             .top-bar { flex-direction: column; align-items: stretch; }
@@ -340,7 +360,7 @@
         </div>
         
         <h1 class="page-title">👁️ مدیریت مشاهدات</h1>
-        <div class="page-subtitle">بررسی، تحلیل و امتیازدهی مشاهدات خام</div>
+        <div class="page-subtitle">بررسی، تحلیل و امتیازدهی مشاهدات خام بر اساس چارچوب سپهر خردمندی</div>
         
         <div class="stats-mini">
             <div class="stat-mini"><span class="number" id="totalObs">۰</span><div class="label">کل مشاهدات</div></div>
@@ -369,7 +389,6 @@
     <script>
         let allObservations = [];
         let currentFilter = 'all';
-        let currentEditing = null;
         
         async function loadObservations() {
             try {
@@ -407,6 +426,15 @@
             renderObservations();
         }
         
+        function getModuleLabel(module) {
+            const labels = {
+                'collaboration': '🤝 همفکری با دیگران',
+                'related': '👁️ مشاهدات مرتبط دیگران',
+                'referral': '📤 ارجاع به ۵ همفرهنگ'
+            };
+            return labels[module] || module || 'بدون ماژول';
+        }
+        
         function renderObservations() {
             const container = document.getElementById('observationsList');
             
@@ -426,7 +454,7 @@
                 return;
             }
             
-            let html = filtered.map(obs => {
+            container.innerHTML = filtered.map(obs => {
                 const statusMap = {
                     approved: `<span class="badge badge-approved">✅ تایید شده</span>`,
                     rejected: `<span class="badge badge-rejected">❌ رد شده</span>`,
@@ -437,16 +465,21 @@
                     `<span class="badge badge-score-5">⭐ امتیاز ۵</span>` : 
                     (obs.score ? `<span class="badge" style="background:rgba(200,200,200,0.15);color:#888;">امتیاز ${obs.score}</span>` : '');
                 
+                const isPending = obs.status === 'pending';
+                const isApproved = obs.status === 'approved' && obs.score !== 5;
+                const isScore5 = obs.score === 5;
+                
+                let cardClass = 'obs-card';
+                if (isPending) cardClass += ' pending';
+                else if (isScore5) cardClass += ' score5';
+                else if (isApproved) cardClass += ' approved';
+                else if (obs.status === 'rejected') cardClass += ' rejected';
+                
                 const moduleHtml = obs.module 
-                    ? `<div class="obs-module"><span class="icon">📌</span> ${obs.module}</div>`
+                    ? `<div class="obs-module"><span class="icon">📌</span> ${getModuleLabel(obs.module)}</div>`
                     : '';
                 
-                const isPending = obs.status === 'pending';
-                const isApproved = obs.status === 'approved';
-                
-                // تحلیل ۵ سطحی
                 const analysis = obs.analysis || {};
-                const hasAnalysis = analysis.emergenceMatrix || analysis.layerMatrix || analysis.connectionMatrix || analysis.scaleMatrix || analysis.capacityMatrix;
                 
                 let actionButtons = '';
                 if (isPending) {
@@ -461,16 +494,20 @@
                     actionButtons = `
                         <div class="obs-actions">
                             <button class="btn-small btn-module" onclick="toggleAnalysis('${obs.number}')">📊 ویرایش تحلیل</button>
-                            ${obs.score !== 5 ? `<button class="btn-small btn-approve" onclick="submitToGallery('${obs.number}')" style="background:rgba(212,175,55,0.2);color:#8a6d1f;">⭐ ارسال به گالری</button>` : ''}
+                        </div>
+                    `;
+                } else if (isScore5) {
+                    actionButtons = `
+                        <div class="obs-actions">
+                            <button class="btn-small btn-module" onclick="toggleAnalysis('${obs.number}')">📊 ویرایش تحلیل</button>
+                            <button class="btn-small btn-approve" onclick="submitToGallery('${obs.number}')" style="background:rgba(212,175,55,0.2);color:#8a6d1f;">⭐ ارسال به گالری</button>
                         </div>
                     `;
                 }
                 
-                // باکس تحلیل (مخفی در ابتدا)
-                const analysisBoxId = `analysis-${obs.number}`;
                 const analysisBox = `
-                    <div class="analysis-box" id="${analysisBoxId}">
-                        <div class="title">📊 تحلیل ۵ سطحی</div>
+                    <div class="analysis-box" id="analysis-${obs.number}">
+                        <div class="title">📊 تحلیل ۵ سطحی بر اساس سپهر خردمندی</div>
                         <div class="matrix-item">
                             <label>۱. ماتریس ظهورها (چه چیزهایی ظهور کرده‌اند؟)</label>
                             <textarea id="emergence-${obs.number}" rows="2">${analysis.emergenceMatrix || ''}</textarea>
@@ -507,7 +544,7 @@
                 `;
                 
                 return `
-                    <div class="obs-card" id="card-${obs.number}">
+                    <div class="${cardClass}" id="card-${obs.number}">
                         <div class="obs-header">
                             <div>
                                 <span class="obs-code">#${obs.number} - ${obs.cardCode || 'ناشناس'}</span>
@@ -519,6 +556,7 @@
                         <div class="obs-body">
                             <p>${obs.observation || 'متن مشاهده موجود نیست'}</p>
                         </div>
+                        ${moduleHtml}
                         ${actionButtons}
                         ${analysisBox}
                     </div>
@@ -526,10 +564,8 @@
             }).join('');
             
             if (filtered.length > 5) {
-                html += `<div class="scroll-hint">⬇️ ${filtered.length} مشاهده وجود دارد (اسکرول کنید)</div>`;
+                container.innerHTML += `<div class="scroll-hint">⬇️ ${filtered.length} مشاهده وجود دارد (اسکرول کنید)</div>`;
             }
-            
-            container.innerHTML = html;
         }
         
         function toggleAnalysis(issueNumber) {
