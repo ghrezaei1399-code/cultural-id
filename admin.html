@@ -553,6 +553,7 @@
     </div>
     <script>
         let allUsers = [];
+        let activeUsersList = []; // لیست جداگانه برای محاسبات آماری
         let allCountries = [];
         let currentLang = 'fa';
 
@@ -570,7 +571,7 @@
                 modDeleteDesc: 'مدیریت انصراف از عضویت',
                 modObservations: 'مدیریت مشاهدات',
                 modObservationsDesc: 'بررسی مشاهدات خام کاربران',
-                labelTotal: 'کل کاربران',
+                labelTotal: 'کل اعضای فعال',
                 labelGolden: '🌟 طلایی',
                 labelSilver: '🥈 نقره‌ای',
                 labelBronze: '🥉 برنزی',
@@ -616,7 +617,7 @@
                 modDeleteDesc: 'Manage withdrawal requests',
                 modObservations: 'Observations Management',
                 modObservationsDesc: 'Review raw user observations',
-                labelTotal: 'Total Users',
+                labelTotal: 'Active Members',
                 labelGolden: '🌟 Golden',
                 labelSilver: '🥈 Silver',
                 labelBronze: '🥉 Bronze',
@@ -696,51 +697,41 @@
             document.body.classList.add('dark');
             document.getElementById('themeToggle').textContent = '☀️';
         }
-async function loadData() {
-    try {
-        const response = await fetch('/api/get-users?t=' + new Date().getTime());
-        if (!response.ok) throw new Error('خطا در دریافت اطلاعات');
-        
-        const data = await response.json();
-        allUsers = data.users || [];
-        allCountries = data.countries || [];
 
-        // ===== محاسبه آمارها از کاربران =====
-        const activeUsers = allUsers.filter(u => u.status !== 'rejected');
-        const total = activeUsers.length;
-        
-        const approvedUsers = allUsers.filter(u => u.status === 'approved').sort((a, b) => 
-            new Date(a.registrationDate || 0) - new Date(b.registrationDate || 0)
-        );
-        
-        let golden = 0, silver = 0, bronze = 0;
-        approvedUsers.forEach((u, index) => {
-            const rank = index + 1;
-            if (rank <= 200) golden++;
-            else if (rank <= 1000) silver++;
-            else bronze++;
-        });
+        async function loadData() {
+            try {
+                const response = await fetch('/api/get-users?t=' + new Date().getTime());
+                if (!response.ok) throw new Error('خطا در دریافت اطلاعات');
+                
+                const data = await response.json();
+                
+                // تفکیک داده‌ها بر اساس ساختار جدید API
+                allUsers = data.users || []; // همه کاربران برای مدیریت
+                activeUsersList = data.activeUsers || []; // فقط فعال‌ها برای آمار
+                allCountries = data.countries || [];
 
-        document.getElementById('totalUsers').textContent = total.toLocaleString('fa-IR');
-        document.getElementById('goldenUsers').textContent = golden.toLocaleString('fa-IR');
-        document.getElementById('silverUsers').textContent = silver.toLocaleString('fa-IR');
-        document.getElementById('bronzeUsers').textContent = bronze.toLocaleString('fa-IR');
+                // تنظیم آمارها از آبجکت stats
+                document.getElementById('totalUsers').textContent = (data.stats?.total || 0).toLocaleString('fa-IR');
+                document.getElementById('goldenUsers').textContent = (data.stats?.golden || 0).toLocaleString('fa-IR');
+                document.getElementById('silverUsers').textContent = (data.stats?.silver || 0).toLocaleString('fa-IR');
+                document.getElementById('bronzeUsers').textContent = (data.stats?.bronze || 0).toLocaleString('fa-IR');
 
-        const dropdown = document.getElementById('countryDropdown');
-        dropdown.innerHTML = '<option value="">-- ' + tr('selectCountryText') + ' --</option>';
-        allCountries.forEach(c => {
-            const opt = document.createElement('option');
-            opt.value = c.country;
-            opt.textContent = `${c.country} (${(c.count || 0).toLocaleString('fa-IR')} نفر)`;
-            dropdown.appendChild(opt);
-        });
+                const dropdown = document.getElementById('countryDropdown');
+                dropdown.innerHTML = '<option value="">-- ' + tr('selectCountryText') + ' --</option>';
+                allCountries.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c.country;
+                    opt.textContent = `${c.country} (${(c.count || 0).toLocaleString('fa-IR')} نفر)`;
+                    dropdown.appendChild(opt);
+                });
 
-        updateBadges();
+                updateBadges();
 
-    } catch (error) {
-        console.error('Error:', error);
-    }
-} 
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
         function updateBadges() {
             const pendingUsers = allUsers.filter(u => u.status === 'pending' || u.status === 'pending_edit').length;
             document.getElementById('badgeUsers').textContent = pendingUsers;
@@ -800,12 +791,12 @@ async function loadData() {
         function getStatsData() {
             return {
                 date: new Date().toISOString(),
-                total: allUsers.length,
-                golden: allUsers.filter(u => u.badge === 'golden').length,
-                silver: allUsers.filter(u => u.badge === 'silver').length,
-                bronze: allUsers.filter(u => u.badge === 'bronze').length,
+                total: activeUsersList.length,
+                golden: activeUsersList.filter(u => u.badge === 'golden').length,
+                silver: activeUsersList.filter(u => u.badge === 'silver').length,
+                bronze: activeUsersList.filter(u => u.badge === 'bronze').length,
                 pending: allUsers.filter(u => u.status === 'pending' || u.status === 'pending_edit').length,
-                approved: allUsers.filter(u => u.status === 'approved').length,
+                approved: allUsers.filter(u => u.status === 'approved' || u.status === 'active').length,
                 rejected: allUsers.filter(u => u.status === 'rejected').length,
                 countries: allCountries.map(c => ({ country: c.country, count: c.count }))
             };
@@ -861,7 +852,7 @@ async function loadData() {
         }
 
         // ================================================================
-        // ===== تابع viewUser - اصلاح شده نهایی برای نمایش تغییرات تکی =====
+        // ===== تابع viewUser - بدون تغییر در منطق اصلی =====
         // ================================================================
         function viewUser(cardCode) {
             try {
@@ -873,32 +864,25 @@ async function loadData() {
 
                 const status = user.status || 'pending';
                 let statusText = tr('statusPending');
-                if (status === 'approved') statusText = tr('statusApproved');
+                if (status === 'approved' || status === 'active') statusText = tr('statusApproved');
                 else if (status === 'rejected') statusText = tr('statusRejected');
                 else if (status === 'pending_edit') statusText = tr('statusEdit');
 
                 document.getElementById('modalTitle').textContent = tr('modalTitle') + user.cardCode;
                 
-                // ===== پردازش pendingChanges: هم آرایه و هم آبجکت =====
                 let pending = {};
                 let changedKeys = [];
                 
                 if (user.pendingChanges) {
                     if (Array.isArray(user.pendingChanges)) {
-                        // حالت قدیمی: آرایه
                         changedKeys = user.pendingChanges;
-                        pending = {};
-                        changedKeys.forEach(key => {
-                            pending[key] = 'تغییر درخواستی';
-                        });
+                        changedKeys.forEach(key => { pending[key] = 'تغییر درخواستی'; });
                     } else if (typeof user.pendingChanges === 'object' && user.pendingChanges !== null) {
-                        // حالت جدید: آبجکت (ذخیره تکی)
                         pending = user.pendingChanges;
                         changedKeys = Object.keys(pending);
                     }
                 }
 
-                // ===== تابع کمکی برای بررسی تغییر =====
                 function isFieldChanged(field) {
                     return changedKeys.indexOf(field) !== -1;
                 }
@@ -907,7 +891,6 @@ async function loadData() {
                     return isFieldChanged(field) ? 'highlight-change' : '';
                 }
 
-                // ===== تبدیل رشته ارزش‌ها به آرایه =====
                 let valuesArray = [];
                 if (typeof user.values === 'string' && user.values.trim()) {
                     valuesArray = user.values.split(/[،,;؛\n]+/).map(v => v.trim()).filter(v => v.length > 0);
@@ -915,7 +898,6 @@ async function loadData() {
                     valuesArray = user.values;
                 }
 
-                // ===== ساخت لیست شماره‌دار ارزش‌های فرهنگی با برچسب تغییر =====
                 let valuesHtml = '';
                 if (valuesArray.length > 0) {
                     valuesHtml = `<div class="values-list">`;
@@ -947,7 +929,6 @@ async function loadData() {
                     valuesHtml = '---';
                 }
 
-                // ===== نمایش ایمیل با برچسب تغییر =====
                 const emailChanged = isFieldChanged('communicationEmail');
                 const newEmail = emailChanged && pending.communicationEmail ? pending.communicationEmail : null;
                 let emailDisplay = user.communicationEmail || tr('noEmail');
@@ -960,7 +941,6 @@ async function loadData() {
                     emailBadge = `<span class="email-change-badge">✏️ ${tr('changeBadge')}</span>`;
                 }
 
-                // ===== ساخت بدنه مودال =====
                 const body = document.getElementById('modalBody');
                 body.innerHTML = `
                     <div class="info-row ${getHighlightClass('cardCode')}"><div class="info-label">کد کارت:</div><div class="info-value" style="font-family: monospace;">${user.cardCode}</div></div>
@@ -986,17 +966,16 @@ async function loadData() {
                     ${user.culturalInfo ? `<div class="info-row"><div class="info-label">اطلاعات فرهنگی:</div><div class="info-value">${user.culturalInfo}</div></div>` : ''}
                 `;
 
-                // ===== دکمه‌های اقدام =====
                 const actions = document.getElementById('modalActions');
                 if (status === 'pending_edit') {
                     actions.innerHTML = `
-                        <button class="btn-modal approve" onclick="approveUser('${user.cardCode}')">${tr('approveEditBtn')}</button>
-                        <button class="btn-modal reject" onclick="rejectEditUser('${user.cardCode}')">${tr('rejectEditBtn')}</button>
+                        <button class="btn-modal approve" onclick="updateStatus('${user.cardCode}', 'approved')">${tr('approveEditBtn')}</button>
+                        <button class="btn-modal reject" onclick="updateStatus('${user.cardCode}', 'pending')">${tr('rejectEditBtn')}</button>
                     `;
                 } else {
                     actions.innerHTML = `
-                        <button class="btn-modal approve" onclick="approveUser('${user.cardCode}')">${tr('approveBtn')}</button>
-                        <button class="btn-modal reject" onclick="rejectUser('${user.cardCode}')">${tr('rejectBtn')}</button>
+                        <button class="btn-modal approve" onclick="updateStatus('${user.cardCode}', 'approved')">${tr('approveBtn')}</button>
+                        <button class="btn-modal reject" onclick="updateStatus('${user.cardCode}', 'rejected')">${tr('rejectBtn')}</button>
                     `;
                 }
 
@@ -1024,7 +1003,7 @@ async function loadData() {
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.error || 'خطا در بروزرسانی وضعیت');
 
-                alert(newStatus === 'approved' ? '✅ کاربر با موفقیت تأیید شد.' : '❌ کاربر با موفقیت رد شد.');
+                alert(newStatus === 'approved' ? '✅ کاربر با موفقیت تأیید شد.' : '❌ وضعیت کاربر بروزرسانی شد.');
                 closeModal();
                 loadData();
 
@@ -1032,21 +1011,6 @@ async function loadData() {
                 console.error('Error updating status:', error);
                 alert('خطا: ' + error.message);
             }
-        }
-
-        async function approveUser(cardCode) {
-            if (!confirm(`آیا از تأیید نهایی کاربر با کد ${cardCode} اطمینان دارید؟`)) return;
-            await updateStatus(cardCode, 'approved');
-        }
-
-        async function rejectUser(cardCode) {
-            if (!confirm(`آیا از رد کردن کاربر با کد ${cardCode} اطمینان دارید؟ کاربر از لیست فعال حذف خواهد شد.`)) return;
-            await updateStatus(cardCode, 'rejected');
-        }
-
-        async function rejectEditUser(cardCode) {
-            if (!confirm(`آیا از رد درخواست ویرایش کاربر با کد ${cardCode} اطمینان دارید؟ اطلاعات قبلی کاربر حفظ می‌شود.`)) return;
-            await updateStatus(cardCode, 'pending');
         }
 
         document.getElementById('userModal').addEventListener('click', function(e) {
