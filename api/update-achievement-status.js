@@ -1,116 +1,65 @@
-// api/update-user-status.js
+// api/update-achievement-status.js
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-
+  
   const token = process.env.GH_TOKEN;
-  if (!token) return res.status(500).json({ error: 'GH_TOKEN is not configured' });
+  if (!token) return res.status(500).json({ error: 'Token is not configured' });
 
-  const { cardCode, status } = req.body;
-  if (!cardCode || !status) return res.status(400).json({ error: 'اطلاعات ناقص است' });
+  const { cardCode, fileName, status } = req.body;
+  
+  if (!cardCode || !fileName) {
+    return res.status(400).json({ error: 'اطلاعات ناقص است (کد کاربر و نام فایل الزامی است)' });
+  }
 
   const owner = 'ghrezaei1399-code';
   const repo = 'cultural-id';
-  const path = `data/active/${cardCode}.json`;
+  const userPath = `data/active/${cardCode}.json`;
 
   try {
-    const fileResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
-      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+    // ۱. دریافت فایل کاربر
+    const fileRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
     });
-    if (!fileResponse.ok) throw new Error('فایل یافت نشد');
+    
+    if (!fileRes.ok) return res.status(404).json({ error: 'فایل کاربر یافت نشد' });
+    
+    const fileData = await fileRes.json();
+    const userData = JSON.parse(Buffer.from(fileData.content, 'base64').toString('utf8'));
 
-    const fileData = await fileResponse.json();
-    const jsonString = Buffer.from(fileData.content, 'base64').toString('utf8');
-    const userData = JSON.parse(jsonString);
+    // ۲. پیدا کردن دستاورد بر اساس fileName
+    const achIndex = userData.achievements ? userData.achievements.findIndex(a => a.fileName === fileName) : -1;
 
-    // ============================================================
-    // ===== منطق تایید یا رد ویرایش =====
-    // ============================================================
-    if (userData.status === 'pending_edit') {
-      
-      if (status === 'approved') {
-        // ============================================================
-        // ===== تأیید ویرایش: اعمال تغییرات از pendingChanges =====
-        // ============================================================
-        const pending = userData.pendingChanges || {};
-        
-        // ۱. اعمال تغییرات کامل ارزش‌ها
-        if (pending.values) {
-          userData.values = pending.values;
-          userData.priorities = pending.priorities || userData.priorities;
-        }
-        
-        // ۲. اعمال تغییرات تکی ارزش‌ها
-        for (let i = 0; i < 7; i++) {
-          const key = `value_${i}`;
-          const priorityKey = `priority_${i}`;
-          if (pending[key] !== undefined) {
-            if (!userData.values) userData.values = [];
-            userData.values[i] = pending[key];
-          }
-          if (pending[priorityKey] !== undefined) {
-            if (!userData.priorities) userData.priorities = [];
-            userData.priorities[i] = pending[priorityKey];
-          }
-        }
-        
-        // ۳. اعمال تغییر ایمیل
-        if (pending.communicationEmail !== undefined) {
-          userData.communicationEmail = pending.communicationEmail;
-        }
-        
-        // ۴. پاک کردن pendingChanges و قفل کردن ویرایش
-        userData.pendingChanges = {};
-        userData.editLocked = true;
-        userData.previousValues = undefined;
-        userData.editTrackingCode = null;
-        
-      } else if (status === 'pending') {
-        // ============================================================
-        // ===== رد ویرایش: برگشت به حالت قبل =====
-        // ============================================================
-        if (userData.previousValues) {
-          userData.values = userData.previousValues.values;
-          userData.priorities = userData.previousValues.priorities;
-          userData.optionalCode = userData.previousValues.optionalCode;
-          userData.communicationEmail = userData.previousValues.communicationEmail;
-          
-          // بازسازی displayCode
-          const parts = userData.cardCode.split('-');
-          const opt = userData.previousValues.optionalCode?.trim() || '';
-          userData.displayCode = opt ? `CIM - ${parts[1]} - ${parts[2]} - ${opt}` : `CIM - ${parts[1]} - ${parts[2]}`;
-          
-          userData.previousValues = undefined;
-        }
-        // پاک کردن pendingChanges
-        userData.pendingChanges = {};
-        userData.editTrackingCode = null;
-      }
+    if (achIndex === -1) {
+      return res.status(404).json({ error: 'دستاورد با این نام فایل یافت نشد' });
     }
 
-    userData.status = status;
-    userData.statusUpdatedAt = new Date().toISOString();
-
-    const newJsonString = JSON.stringify(userData, null, 2);
-    const newContent = Buffer.from(newJsonString, 'utf8').toString('base64');
-
-    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+    // ۳. تغییر وضعیت
+    userData.achievements[achIndex].status = status;
+    
+    // ۴. ذخیره مجدد
+    const newContent = Buffer.from(JSON.stringify(userData, null, 2), 'utf8').toString('base64');
+    
+    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
       method: 'PUT',
-      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+      headers: { 
+        'Authorization': `Bearer ${token}`, 
+        'Content-Type': 'application/json' 
+      },
       body: JSON.stringify({ 
-        message: `Admin action: ${status} for ${cardCode}`, 
+        message: `Admin ${status} achievement: ${fileName}`, 
         content: newContent, 
         sha: fileData.sha, 
         branch: 'main' 
       })
     });
-
+    
     return res.status(200).json({ 
-      success: true,
-      message: status === 'approved' ? '✅ ویرایش با موفقیت تأیید شد.' : '❌ ویرایش رد شد و اطلاعات به حالت قبل برگردانده شد.'
+      success: true, 
+      message: `✅ دستاورد با موفقیت ${status === 'approved' ? 'تایید' : 'رد'} شد.` 
     });
 
   } catch (error) {
-    console.error('Update Status Error:', error);
+    console.error('Update Achievement Error:', error);
     return res.status(500).json({ error: error.message });
   }
 };
