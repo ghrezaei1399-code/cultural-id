@@ -140,22 +140,29 @@
         }
         body.dark .file-name { color: #85c1e9; background: rgba(133, 193, 233, 0.1); }
 
-        /* دکمه‌های متحرک */
-        .btn-group { display: flex; gap: 1.2rem; margin-top: 2.5rem; flex-wrap: wrap; }
+        /* دکمه‌های متحرک و ماژول‌های بازگشت */
+        .btn-group { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
+            gap: 1rem; 
+            margin-top: 2.5rem; 
+        }
         .btn {
-            flex: 1;
-            padding: 1.2rem 2rem;
+            padding: 1rem 1.5rem;
             border-radius: 60px;
             font-weight: 900;
-            font-size: 1.1rem;
+            font-size: 1rem;
             text-decoration: none;
             text-align: center;
             border: none;
             cursor: pointer;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            min-width: 150px;
             position: relative;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
         .btn-primary {
             background: linear-gradient(135deg, #d4af37, #f9e79f);
@@ -317,9 +324,11 @@
                     کاربران جهانی می‌توانند از ابزارهای رایگان مانند <a href="https://tinypng.com" target="_blank">TinyPNG</a> یا <a href="https://squoosh.app" target="_blank">Squoosh</a> استفاده کنند.
                 </div>
 
+                <!-- ماژول‌های بازگشت اصلاح شده -->
                 <div class="btn-group">
                     <button type="submit" class="btn btn-primary" id="submitBtn">📤 ارسال برای تایید</button>
-                    <a href="index.html" class="btn btn-secondary">↩ بازگشت</a>
+                    <a href="index.html" class="btn btn-secondary">🏠 بازگشت به خانه</a>
+                    <a href="register-fa.html" class="btn btn-secondary">📝 صفحه ثبت‌نام</a>
                 </div>
             </form>
         </div>
@@ -352,8 +361,7 @@
         });
     }
 
-    // Verification Logic
- 
+    // Verification Logic - UPDATED with Duplicate Check
     async function verifyCode() {
         const codeInput = document.getElementById('memberCode').value.trim();
         const errorMsg = document.getElementById('errorMsg');
@@ -376,13 +384,21 @@
             const data = await response.json();
             const user = data.users.find(u => u.cardCode === codeInput);
 
-            if (!user) throw new Error('❌ کد کارت یافت نشد.');
-            if (user.status !== 'approved') throw new Error('❌ حساب کاربری شما هنوز تأیید نشده است.');
-            if (user.rank > 200) throw new Error(`❌ این بخش فقط برای ۲۰۰ نفر اول (رتبه ${user.rank}) فعال است.`);
-            
-            // ===== بررسی جدید: آیا قبلاً دستاورد داشته؟ =====
+            if (!user) {
+                throw new Error('❌ کد کارت یافت نشد.');
+            }
+
+            if (user.status !== 'approved') {
+                throw new Error('❌ حساب کاربری شما هنوز توسط ادمین تأیید نشده است.');
+            }
+
+            if (user.rank > 200) {
+                throw new Error(`❌ متأسفانه این بخش فقط برای ۲۰۰ نفر اول (رتبه ${user.rank}) فعال است.`);
+            }
+
+            // ===== بررسی جدید: آیا کاربر قبلاً دستاورد آپلود کرده؟ =====
             if (user.achievements && user.achievements.length > 0) {
-                throw new Error('⚠️ شما قبلاً دستاورد خود را ثبت کرده‌اید. هر عضو فقط یک بار مجاز است.');
+                throw new Error('⚠️ شما قبلاً دستاورد فرهنگی خود را ثبت کرده‌اید. هر عضو تنها مجاز به ثبت یک دستاورد است.');
             }
 
             document.getElementById('codeCheckSection').classList.add('hidden');
@@ -397,6 +413,7 @@
             verifyBtn.textContent = 'بررسی و ورود';
         }
     }
+
     // ===== Upload Logic =====
     const uploadForm = document.getElementById('uploadForm');
     if(uploadForm) {
