@@ -7,191 +7,222 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', 'Vazir', sans-serif;
+            font-family: 'Segoe UI', 'Vazir', 'IRANSans', sans-serif;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 2rem 1rem;
-            background-image: url('assets/pisa.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: #1a0a0a;
+            /* Modern Animated Background */
+            background: linear-gradient(-45deg, #fdf6e3, #e8f4f8, #f5e6d3, #e0f7fa);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #2a1a0a;
         }
-        body.dark { color: #f0e8e0; }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        body.dark { 
+            background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #232526);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #f0e8e0; 
+        }
         .container {
             max-width: 500px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(0px);
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             border-radius: 48px;
-            padding: 2.5rem 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.02);
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1);
+            padding: 3rem 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s ease;
         }
+        body.dark .container { background: rgba(0, 0, 0, 0.45); border-color: rgba(255, 255, 255, 0.1); }
+        
         h1 {
             font-size: 1.8rem;
-            font-weight: 800;
-            color: #2a1a0a;
+            font-weight: 900;
+            color: #8a6d1f;
             text-align: center;
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
         }
-        body.dark h1 { color: #f9e79f; }
+        body.dark h1 { color: #ffd700; }
+        
         .subtitle {
             text-align: center;
-            font-size: 0.9rem;
-            color: #4a2a1a;
-            opacity: 0.8;
-            margin-bottom: 2rem;
-            border-bottom: 1px solid rgba(30, 10, 0, 0.05);
-            padding-bottom: 1rem;
+            font-size: 1rem;
+            color: #6a5a3a;
+            opacity: 0.9;
+            margin-bottom: 2.5rem;
+            border-bottom: 2px dashed rgba(138, 109, 31, 0.2);
+            padding-bottom: 1.5rem;
+            font-weight: 600;
         }
-        body.dark .subtitle { color: #d0c0b0; border-bottom-color: rgba(255, 255, 255, 0.02); }
-        
+        body.dark .subtitle { color: #c8b890; }
+
+        /* Beautiful Card Design */
         .real-card-sample {
             width: 100%; 
-            background: #0a0a0a; 
-            border: 2px solid #d4af37;
-            box-shadow: 0 0 25px rgba(212, 175, 55, 0.4), inset 0 0 15px rgba(212, 175, 55, 0.1);
-            border-radius: 18px; 
-            padding: 1.5rem 1rem; 
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+            border: 3px solid #d4af37;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3), inset 0 0 20px rgba(212, 175, 55, 0.1);
+            border-radius: 24px; 
+            padding: 2rem 1.5rem; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             text-align: center; 
-            gap: 1rem;
+            gap: 1.2rem;
             position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
         }
+        .real-card-sample:hover { transform: scale(1.02); }
         
         .rc-logo-container { 
-            width: 90px; height: 90px; 
+            width: 80px; height: 80px; 
             border-radius: 50%; 
             border: 3px solid #d4af37; 
             display: flex; align-items: center; justify-content: center;
-            margin-bottom: 0.3rem;
-            background: rgba(212, 175, 55, 0.05);
+            background: rgba(212, 175, 55, 0.1);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
         }
-        .rc-logo { width: 60px; height: 60px; object-fit: contain; }
+        .rc-logo { width: 50px; height: 50px; object-fit: contain; }
         
         .rc-title { 
             font-size: 1.1rem; 
             font-weight: 900; 
             color: #d4af37; 
-            letter-spacing: 0.5px;
-            text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
         }
         
         .rc-code-section {
             width: 100%;
-            background: rgba(212, 175, 55, 0.1);
+            background: rgba(212, 175, 55, 0.15);
             border: 1px solid #d4af37;
             border-radius: 12px;
-            padding: 0.8rem;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
         }
         .rc-code { 
             font-family: 'Courier New', monospace; 
-            font-size: 1.1rem; 
-            color: #f0f0f0; 
+            font-size: 1rem; 
+            color: #fff; 
             letter-spacing: 1px; 
             font-weight: bold; 
+            direction: ltr; 
+            flex: 1;
         }
         
+        /* Copy Button */
+        .copy-btn {
+            background: #d4af37;
+            color: #1a1a1a;
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 0.8rem;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 0.8rem;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .copy-btn:hover { background: #f9e79f; transform: scale(1.05); }
+        .copy-btn:active { transform: scale(0.95); }
+
         .rc-values { 
             display: flex; 
             flex-wrap: wrap; 
-            gap: 6px; 
+            gap: 8px; 
             justify-content: center; 
             width: 100%; 
         }
         .rc-tag { 
-            background: rgba(212, 175, 55, 0.15); 
-            border: 1px solid #d4af37; 
-            border-radius: 5px; 
-            padding: 4px 10px; 
-            font-size: 0.7rem; 
-            color: #d4af37; 
+            background: rgba(212, 175, 55, 0.2); 
+            border: 1px solid rgba(212, 175, 55, 0.5); 
+            border-radius: 20px; 
+            padding: 5px 12px; 
+            font-size: 0.75rem; 
+            color: #f9e79f; 
             white-space: nowrap; 
             font-weight: 600; 
+            transition: 0.3s;
         }
+        .rc-tag:hover { background: rgba(212, 175, 55, 0.4); transform: translateY(-2px); }
 
         .qr-section {
             margin-top: 0.5rem;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.3rem;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 12px;
         }
-        #qrcode {
-            background: white;
-            padding: 4px;
-            border-radius: 6px;
-        }
-        .qr-label {
-            font-size: 0.55rem;
-            color: #d4af37;
-            opacity: 0.8;
-            text-align: center;
-        }
+        #qrcode { background: white; padding: 5px; border-radius: 8px; }
+        .qr-label { font-size: 0.6rem; color: #d4af37; opacity: 0.9; }
 
-        .btn-group { display: flex; gap: 0.8rem; margin-top: 2rem; flex-wrap: wrap; }
+        /* Animated Buttons */
+        .btn-group { display: flex; gap: 1rem; margin-top: 2.5rem; flex-wrap: wrap; }
         .btn {
             flex: 1;
-            padding: 0.7rem 1rem;
+            padding: 1rem 1.5rem;
             border-radius: 60px;
-            font-weight: 700;
-            font-size: 0.85rem;
+            font-weight: 800;
+            font-size: 1rem;
             text-decoration: none;
             text-align: center;
             border: none;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             min-width: 120px;
+            position: relative;
+            overflow: hidden;
         }
         .btn-primary {
-            background: rgba(60, 30, 10, 0.02);
+            background: linear-gradient(135deg, #d4af37, #f9e79f);
             color: #2a1a0a;
-            border: 1px solid rgba(60, 30, 10, 0.02);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
         }
-        body.dark .btn-primary {
-            background: rgba(255, 255, 255, 0.02);
-            color: #f9e79f;
-            border-color: rgba(255, 255, 255, 0.02);
-        }
-        .btn-primary:hover { background: rgba(60, 30, 10, 0.04); transform: scale(1.02); }
-        body.dark .btn-primary:hover { background: rgba(255, 255, 255, 0.04); }
+        .btn-primary:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 15px 35px rgba(212, 175, 55, 0.4); }
         
         .note {
             text-align: center;
-            font-size: 0.75rem;
-            opacity: 0.5;
-            margin-top: 1.5rem;
-            color: #1a0a0a;
-            border-top: 1px solid rgba(30, 10, 0, 0.02);
-            padding-top: 1rem;
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin-top: 2.5rem;
+            color: #6a5a3a;
+            font-weight: 600;
         }
-        body.dark .note { color: #b0a090; border-top-color: rgba(255, 255, 255, 0.02); }
         
         .theme-toggle {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(30, 10, 0, 0.02);
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0.3rem 0.8rem;
-            border-radius: 40px;
-            transition: 0.3s;
-            color: #1a0a0a;
+            position: fixed; top: 1.5rem; right: 1.5rem;
+            background: rgba(255, 255, 255, 0.7);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            font-size: 1.6rem; cursor: pointer;
+            padding: 0.6rem 1.2rem; border-radius: 60px;
+            transition: 0.4s; color: #8a6d1f;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            z-index: 100;
         }
-        body.dark .theme-toggle {
-            color: #f9e79f;
-            background: rgba(0, 0, 0, 0.05);
-            border-color: rgba(255, 255, 255, 0.02);
-        }
-        .theme-toggle:hover { transform: scale(1.1); }
-        @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
+        .theme-toggle:hover { transform: rotate(30deg) scale(1.15); background: #fff; }
+        body.dark .theme-toggle { background: rgba(0,0,0,0.5); color: #ffd700; border-color: rgba(255,255,255,0.1); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -200,7 +231,7 @@
     <button class="theme-toggle" id="themeToggle">🌙</button>
 
     <div class="container">
-        <h1> Your Cultural ID</h1>
+        <h1>🪪 Your Cultural Identity</h1>
         <div class="subtitle">Global Smart Cultural Identity Card</div>
 
         <div class="real-card-sample" id="cardToSave">
@@ -211,15 +242,19 @@
             
             <div class="rc-code-section">
                 <div class="rc-code" id="cardCodeDisplay">CIM - .... - .... - ....</div>
+                <!-- Copy Code Button -->
+                <button class="copy-btn" onclick="copyCode()" title="Copy Code">
+                    📋 Copy
+                </button>
             </div>
             
             <div class="rc-values">
-                <span class="rc-tag">Native Values</span>
+                <span class="rc-tag">Indigenous Values</span>
                 <span class="rc-tag">Personal Knowledge</span>
-                <span class="rc-tag">Collective Coop</span>
+                <span class="rc-tag">Collective Cooperation</span>
                 <span class="rc-tag">Cultural Diversity</span>
                 <span class="rc-tag">Sustainable Peace</span>
-                <span class="rc-tag">Non-Violence</span>
+                <span class="rc-tag">Eliminating Violence</span>
                 <span class="rc-tag">Cultural Unity</span>
             </div>
 
@@ -230,17 +265,18 @@
         </div>
 
         <div class="btn-group">
-            <a href="#" id="backCardLink" class="btn btn-primary">↩️ Back of Card</a>
-            <a href="index-en.html" class="btn btn-primary">🏠 Back to Home</a>
+            <a href="#" id="backCardLink" class="btn btn-primary">↩️ Card Back</a>
+            <a href="index-en.html" class="btn btn-primary">Back to Home</a>
             <button class="btn btn-primary" id="saveBtn">💾 Save Card</button>
         </div>
 
         <div class="note">
-            🔒 Completely Anonymous • No Personal Info • Only Cultural Data
+            🔒 Completely Anonymous • No Personal Info • Cultural Data Only
         </div>
     </div>
 
     <script>
+        // Theme Toggle Logic
         (function() {
             const toggle = document.getElementById('themeToggle');
             const body = document.body;
@@ -260,6 +296,24 @@
             });
         })();
 
+        // Copy Code Function
+        function copyCode() {
+            const codeText = document.getElementById('cardCodeDisplay').textContent;
+            navigator.clipboard.writeText(codeText).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '✅ Copied!';
+                btn.style.background = '#2ed573';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = '#d4af37';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                alert('Your Code: ' + codeText);
+            });
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             const params = new URLSearchParams(window.location.search);
             const code = params.get('code');
@@ -269,6 +323,7 @@
                 return;
             }
 
+            // Set dynamic link for card back
             const backLink = document.getElementById('backCardLink');
             if (backLink) {
                 backLink.href = `card-back-en.html?code=${encodeURIComponent(code)}`;
