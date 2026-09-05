@@ -1,0 +1,28 @@
+{
+  "cardCode": "CIM-9492-2180-58585",
+  "displayCode": "CIM - 9492 - 2180 - 58585",
+  "optionalCode": "58585",
+  "values": [
+    "سیتت",
+    "ننامام",
+    "نماملام",
+    "للمن",
+    "لخل",
+    "هلخلخ",
+    "هالخخ"
+  ],
+  "priorities": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "communicationEmail": "ghrezaei1399@gmail.com",
+  "registrationDate": "2026-09-05T17:37:55.412Z",
+  "status": "approved",
+  "rank": 0,
+  "country": "Iran"
+}
