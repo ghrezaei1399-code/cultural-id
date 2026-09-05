@@ -353,6 +353,7 @@
     }
 
     // Verification Logic
+ 
     async function verifyCode() {
         const codeInput = document.getElementById('memberCode').value.trim();
         const errorMsg = document.getElementById('errorMsg');
@@ -375,16 +376,13 @@
             const data = await response.json();
             const user = data.users.find(u => u.cardCode === codeInput);
 
-            if (!user) {
-                throw new Error('❌ کد کارت یافت نشد.');
-            }
-
-            if (user.status !== 'approved') {
-                throw new Error('❌ حساب کاربری شما هنوز توسط ادمین تأیید نشده است.');
-            }
-
-            if (user.rank > 200) {
-                throw new Error(`❌ متأسفانه این بخش فقط برای ۲۰۰ نفر اول (رتبه ${user.rank}) فعال است.`);
+            if (!user) throw new Error('❌ کد کارت یافت نشد.');
+            if (user.status !== 'approved') throw new Error('❌ حساب کاربری شما هنوز تأیید نشده است.');
+            if (user.rank > 200) throw new Error(`❌ این بخش فقط برای ۲۰۰ نفر اول (رتبه ${user.rank}) فعال است.`);
+            
+            // ===== بررسی جدید: آیا قبلاً دستاورد داشته؟ =====
+            if (user.achievements && user.achievements.length > 0) {
+                throw new Error('⚠️ شما قبلاً دستاورد خود را ثبت کرده‌اید. هر عضو فقط یک بار مجاز است.');
             }
 
             document.getElementById('codeCheckSection').classList.add('hidden');
@@ -399,7 +397,6 @@
             verifyBtn.textContent = 'بررسی و ورود';
         }
     }
-
     // ===== Upload Logic =====
     const uploadForm = document.getElementById('uploadForm');
     if(uploadForm) {
