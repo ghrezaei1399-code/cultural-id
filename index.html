@@ -28,7 +28,7 @@
         /* ===== BANNER ===== */
         .global-call-banner {
             background: linear-gradient(135deg, #d4af37 0%, #f9e79f 50%, #d4af37 100%);
-            border-radius: 24px; padding: 1.2rem 1rem; margin-bottom: 1rem; text-align: center;
+            border-radius: 24px; padding: 1rem 0.8rem; margin-bottom: 1rem; text-align: center;
             box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3); border: 2px solid rgba(138, 109, 31, 0.3);
             animation: bannerGlow 3s ease-in-out infinite alternate;
         }
@@ -37,12 +37,12 @@
             100% { box-shadow: 0 6px 40px rgba(212, 175, 55, 0.6); }
         }
         body.dark .global-call-banner { background: linear-gradient(135deg, #8a6d1f 0%, #d4af37 50%, #8a6d1f 100%); }
-        .banner-slogan { font-size: 0.95rem; font-weight: 800; color: #2a1a0a; margin: 0.4rem 0; display: flex; align-items: center; justify-content: center; gap: 0.5rem; line-height: 1.4; }
-        .banner-icon { font-size: 1.3rem; }
+        .banner-slogan { font-size: 0.85rem; font-weight: 800; color: #2a1a0a; margin: 0.3rem 0; display: flex; align-items: center; justify-content: center; gap: 0.5rem; line-height: 1.4; }
+        .banner-icon { font-size: 1.2rem; }
 
-        /* ===== HEADER با لوگوهای بزرگ‌تر و افکت ===== */
+        /* ===== HEADER با لوگوهای ۱۵۰ پیکسل و نزدیک به نوشته ===== */
         .hero-header {
-            text-align: center; padding: 1.2rem 1rem;
+            text-align: center; padding: 1rem 1rem;
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(253, 246, 227, 0.8));
             border-radius: 24px; border: 2px solid rgba(212, 175, 55, 0.4);
             box-shadow: 0 8px 25px rgba(212, 175, 55, 0.15); margin-bottom: 1rem;
@@ -56,25 +56,25 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 2rem;
+            gap: 0.8rem;
             flex-wrap: wrap;
         }
         .logo-box {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.2rem;
+            gap: 0.1rem;
         }
         .logo-box img {
-            width: 110px;
-            height: 110px;
+            width: 150px;
+            height: 150px;
             object-fit: contain;
             filter: drop-shadow(0 4px 12px rgba(212, 175, 55, 0.3));
             transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             animation: logoFloat 4s ease-in-out infinite;
         }
         .logo-box img:hover {
-            transform: scale(1.1) rotate(-5deg);
+            transform: scale(1.08) rotate(-5deg);
             filter: drop-shadow(0 8px 25px rgba(212, 175, 55, 0.6));
         }
         @keyframes logoFloat {
@@ -84,9 +84,9 @@
         .logo-box img:nth-child(1) { animation-delay: 0s; }
         .logo-box img:nth-child(2) { animation-delay: 0.5s; }
         .logo-label {
-            font-size: 0.55rem;
+            font-size: 0.5rem;
             color: #8a6d1f;
-            opacity: 0.6;
+            opacity: 0.5;
             letter-spacing: 0.5px;
         }
         body.dark .logo-label { color: #f9e79f; }
@@ -94,15 +94,15 @@
         .site-title-wrap {
             text-align: center;
             flex: 1;
-            min-width: 200px;
+            min-width: 180px;
         }
         .site-title {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 900;
             background: linear-gradient(135deg, #8a6d1f, #d4af37, #8a6d1f);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            line-height: 1.3;
+            line-height: 1.2;
             animation: titleShimmer 4s ease-in-out infinite;
         }
         @keyframes titleShimmer {
@@ -115,9 +115,9 @@
             -webkit-text-fill-color: transparent;
         }
         .site-subtitle {
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             color: #6a5a3a;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
             margin-top: 0.1rem;
         }
         body.dark .site-subtitle { color: #c8b890; }
@@ -126,13 +126,13 @@
         .lang-bar {
             display: flex;
             justify-content: center;
-            gap: 0.5rem;
-            margin-top: 0.8rem;
-            padding: 0.4rem;
+            gap: 0.4rem;
+            margin-top: 0.6rem;
+            padding: 0.3rem;
             background: rgba(255, 255, 255, 0.6);
             border-radius: 40px;
             border: 1px solid rgba(212, 175, 55, 0.3);
-            max-width: 300px;
+            max-width: 260px;
             margin-left: auto;
             margin-right: auto;
         }
@@ -141,10 +141,10 @@
             border-color: rgba(212, 175, 55, 0.4);
         }
         .lang-bar a {
-            padding: 0.3rem 1.2rem;
+            padding: 0.2rem 1rem;
             border-radius: 30px;
             text-decoration: none;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 700;
             color: #6a5a3a;
             transition: all 0.3s ease;
@@ -160,7 +160,7 @@
         .slogan-scroller {
             overflow: hidden;
             background: linear-gradient(90deg, rgba(212, 175, 55, 0.15), rgba(255, 255, 255, 0.5), rgba(212, 175, 55, 0.15));
-            border-radius: 30px; padding: 0.5rem 0; margin-bottom: 1.2rem;
+            border-radius: 30px; padding: 0.4rem 0; margin-bottom: 1rem;
             border: 1px solid rgba(212, 175, 55, 0.3);
         }
         body.dark .slogan-scroller {
@@ -168,13 +168,13 @@
         }
         .slogan-track {
             display: flex;
-            gap: 2.5rem;
+            gap: 2rem;
             animation: scrollSlogan 25s linear infinite;
             white-space: nowrap;
             width: max-content;
         }
         .slogan-track span {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
             color: #8a6d1f;
             padding: 0 0.5rem;
@@ -182,18 +182,18 @@
         body.dark .slogan-track span { color: #f9e79f; }
         @keyframes scrollSlogan { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-        /* ===== سه کارت با زمینه‌های رنگی (کوچک‌تر) ===== */
+        /* ===== سه کارت با زمینه‌های رنگی (کوچکتر) ===== */
         .features-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 0.8rem;
-            margin-bottom: 1.5rem;
+            gap: 0.6rem;
+            margin-bottom: 1rem;
         }
         .feature-card {
-            border-radius: 16px;
-            padding: 1rem 0.8rem;
+            border-radius: 14px;
+            padding: 0.8rem 0.6rem;
             text-align: center;
-            border: 2px solid rgba(212, 175, 55, 0.2);
+            border: 2px solid rgba(212, 175, 55, 0.15);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             backdrop-filter: blur(10px);
             text-decoration: none;
@@ -209,90 +209,130 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
+            background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 60%);
             opacity: 0;
             transition: opacity 0.6s ease;
         }
         .feature-card:hover::before { opacity: 1; }
         .feature-card:hover {
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
         }
         .feature-card .icon {
-            font-size: 2rem;
+            font-size: 1.6rem;
             display: block;
-            margin-bottom: 0.2rem;
+            margin-bottom: 0.1rem;
             transition: transform 0.4s ease;
         }
         .feature-card:hover .icon { transform: scale(1.1) rotate(-5deg); }
         .feature-card h3 {
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             font-weight: 800;
             color: #2a1a0a;
-            margin-bottom: 0.2rem;
+            margin-bottom: 0.1rem;
         }
         body.dark .feature-card h3 { color: #f0e8d0; }
         .feature-card p {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #4a3a2a;
-            line-height: 1.5;
-            margin-bottom: 0.4rem;
+            line-height: 1.4;
+            margin-bottom: 0.3rem;
         }
         body.dark .feature-card p { color: #b0a8a0; }
         .feature-card .btn-feature {
             display: inline-block;
-            padding: 0.25rem 0.8rem;
+            padding: 0.2rem 0.6rem;
             border-radius: 20px;
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             font-weight: 700;
             background: rgba(212, 175, 55, 0.15);
             color: #8a6d1f;
             transition: 0.3s;
-            border: 1px solid rgba(212, 175, 55, 0.2);
+            border: 1px solid rgba(212, 175, 55, 0.15);
         }
         body.dark .feature-card .btn-feature {
             color: #f9e79f;
-            background: rgba(212, 175, 55, 0.1);
+            background: rgba(212, 175, 55, 0.08);
         }
-        .feature-card .btn-feature:hover { background: rgba(212, 175, 55, 0.3); }
+        .feature-card .btn-feature:hover { background: rgba(212, 175, 55, 0.25); }
 
-        /* زمینه‌های رنگی برای سه کارت */
         .feature-about { background: #dbeafe; }
-        body.dark .feature-about { background: rgba(30, 60, 100, 0.4); }
+        body.dark .feature-about { background: rgba(30, 60, 100, 0.35); }
         .feature-wisdom { background: #d1fae5; }
-        body.dark .feature-wisdom { background: rgba(30, 80, 50, 0.4); }
+        body.dark .feature-wisdom { background: rgba(30, 80, 50, 0.35); }
         .feature-radio { background: #fce7f3; }
-        body.dark .feature-radio { background: rgba(80, 40, 60, 0.4); }
+        body.dark .feature-radio { background: rgba(80, 40, 60, 0.35); }
 
-        /* ===== INFO BOXES ===== */
-        .box { border-radius: 22px; padding: 1.2rem 1.4rem; margin-bottom: 0.9rem; backdrop-filter: blur(10px); transition: all 0.3s ease; }
+        /* ===== سه باکس اطلاعاتی (کوچکتر و در یک خط) ===== */
+        .info-boxes {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.6rem;
+            margin-bottom: 1rem;
+        }
+        .box {
+            border-radius: 18px;
+            padding: 1rem 0.8rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            border: 2px solid rgba(212, 175, 55, 0.15);
+        }
         .box:hover { transform: translateY(-3px); }
-        .box-gold { background: linear-gradient(135deg, rgba(255, 248, 220, 0.85), rgba(253, 246, 227, 0.9)); border: 2px solid rgba(212, 175, 55, 0.5); }
+        .box-gold { background: linear-gradient(135deg, rgba(255, 248, 220, 0.85), rgba(253, 246, 227, 0.9)); }
         body.dark .box-gold { background: linear-gradient(135deg, rgba(74, 58, 40, 0.7), rgba(58, 47, 32, 0.8)); }
-        .box-blue { background: linear-gradient(135deg, rgba(220, 240, 255, 0.85), rgba(200, 230, 250, 0.9)); border: 2px solid rgba(100, 170, 220, 0.5); }
+        .box-blue { background: linear-gradient(135deg, rgba(220, 240, 255, 0.85), rgba(200, 230, 250, 0.9)); }
         body.dark .box-blue { background: linear-gradient(135deg, rgba(40, 60, 80, 0.7), rgba(50, 70, 90, 0.8)); }
-        .box-green { background: linear-gradient(135deg, rgba(220, 245, 220, 0.85), rgba(200, 235, 200, 0.9)); border: 2px solid rgba(100, 180, 100, 0.5); }
+        .box-green { background: linear-gradient(135deg, rgba(220, 245, 220, 0.85), rgba(200, 235, 200, 0.9)); }
         body.dark .box-green { background: linear-gradient(135deg, rgba(40, 70, 40, 0.7), rgba(50, 80, 50, 0.8)); }
-        .box-purple { background: linear-gradient(135deg, rgba(240, 225, 250, 0.85), rgba(230, 215, 245, 0.9)); border: 2px solid rgba(160, 120, 200, 0.5); }
-        body.dark .box-purple { background: linear-gradient(135deg, rgba(70, 50, 90, 0.7), rgba(80, 60, 100, 0.8)); }
-        .box-title { font-size: 1.15rem; font-weight: 800; margin-bottom: 0.6rem; padding-bottom: 0.4rem; border-bottom: 1px solid rgba(0, 0, 0, 0.1); display: flex; align-items: center; gap: 0.5rem; }
-        body.dark .box-title { border-bottom-color: rgba(255, 255, 255, 0.1); }
+        .box-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            margin-bottom: 0.3rem;
+            padding-bottom: 0.3rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        body.dark .box-title { border-bottom-color: rgba(255, 255, 255, 0.08); }
         .box-gold .box-title { color: #8a6d1f; } body.dark .box-gold .box-title { color: #f9e79f; }
         .box-blue .box-title { color: #2874a6; } body.dark .box-blue .box-title { color: #85c1e9; }
         .box-green .box-title { color: #1e7a1e; } body.dark .box-green .box-title { color: #82e0aa; }
-        .box-purple .box-title { color: #6a3d9a; } body.dark .box-purple .box-title { color: #d2b4de; }
-        .box p { font-size: 0.9rem; line-height: 1.8; color: #3a2a1a; margin-bottom: 0.5rem; }
-        body.dark .box p { color: #e8dcc0; }
-        .box p strong { color: #8a6d1f; font-weight: 700; } body.dark .box p strong { color: #f9e79f; }
-        .box ul { list-style: none; line-height: 2; }
-        .box ul li { font-size: 0.85rem; color: #3a2a1a; padding-right: 1.5rem; position: relative; }
-        body.dark .box ul li { color: #e8dcc0; }
-        .box-gold ul li::before { content: "✦"; color: #d4af37; position: absolute; right: 0; }
-        .box-blue ul li::before { content: "◆"; color: #5dade2; position: absolute; right: 0; font-size: 0.7rem; }
-        .box-green ul li::before { content: "✓"; color: #27ae60; position: absolute; right: 0; font-weight: 900; }
-        .principles { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem; margin-top: 0.8rem; }
-        .principles span { padding: 0.3rem 0.8rem; background: rgba(93, 173, 226, 0.15); border: 1px solid rgba(93, 173, 226, 0.4); border-radius: 20px; font-size: 0.7rem; font-weight: 700; color: #2874a6; }
-        body.dark .principles span { background: rgba(133, 193, 233, 0.15); border-color: rgba(133, 193, 233, 0.4); color: #85c1e9; }
+        .box ul {
+            list-style: none;
+            line-height: 1.6;
+        }
+        .box ul li {
+            font-size: 0.75rem;
+            color: #3a2a1a;
+            padding-right: 1.2rem;
+            position: relative;
+        }
+        body.dark .box ul li { color: #d0c8c0; }
+        .box-gold ul li::before { content: "✦"; color: #d4af37; position: absolute; right: 0; font-size: 0.6rem; }
+        .box-blue ul li::before { content: "◆"; color: #5dade2; position: absolute; right: 0; font-size: 0.6rem; }
+        .box-green ul li::before { content: "✓"; color: #27ae60; position: absolute; right: 0; font-size: 0.6rem; }
+        .principles {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.3rem;
+            margin-top: 0.4rem;
+        }
+        .principles span {
+            padding: 0.15rem 0.5rem;
+            border-radius: 16px;
+            font-size: 0.55rem;
+            font-weight: 700;
+            background: rgba(93, 173, 226, 0.12);
+            border: 1px solid rgba(93, 173, 226, 0.3);
+            color: #2874a6;
+        }
+        body.dark .principles span {
+            background: rgba(133, 193, 233, 0.08);
+            border-color: rgba(133, 193, 233, 0.2);
+            color: #85c1e9;
+        }
 
         /* ===== SAMPLE CARD ===== */
         .real-card-sample {
@@ -319,86 +359,112 @@
         }
         @keyframes hologramShine { 0% { opacity: 0.6; filter: hue-rotate(0deg); } 100% { opacity: 1; filter: hue-rotate(30deg); } }
 
-        /* ===== GOLDEN ROW (4 Modules - چیدمان جدید) ===== */
+        /* ===== GOLDEN ROW (5 ماژول کوچکتر در یک خط) ===== */
         .golden-row {
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-            margin: 1.5rem 0; padding: 1.2rem;
-            background: linear-gradient(135deg, rgba(255, 248, 220, 0.4), rgba(253, 246, 227, 0.6));
-            border-radius: 32px; border: 1px solid rgba(212, 175, 55, 0.3);
-            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.1); backdrop-filter: blur(15px);
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.6rem;
+            margin: 1.2rem 0;
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(255, 248, 220, 0.3), rgba(253, 246, 227, 0.5));
+            border-radius: 28px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.08);
+            backdrop-filter: blur(15px);
         }
         body.dark .golden-row {
-            background: linear-gradient(135deg, rgba(74, 58, 40, 0.4), rgba(58, 47, 32, 0.6));
-            border-color: rgba(212, 175, 55, 0.4);
+            background: linear-gradient(135deg, rgba(74, 58, 40, 0.3), rgba(58, 47, 32, 0.5));
+            border-color: rgba(212, 175, 55, 0.25);
         }
         .golden-btn {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 1rem 0.6rem; border-radius: 24px; text-decoration: none; text-align: center;
-            font-weight: 900; font-size: 0.95rem; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            min-height: 90px; position: relative; overflow: hidden;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.06); border: none;
-            gap: 0.2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0.7rem 0.4rem;
+            border-radius: 20px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 900;
+            font-size: 0.8rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            min-height: 75px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            border: none;
+            gap: 0.1rem;
         }
         .golden-btn::after {
-            content: ''; position: absolute; bottom: 0; right: 0; width: 100%; height: 3px;
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            height: 3px;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
-            transform: translateX(100%); transition: 0.6s;
+            transform: translateX(100%);
+            transition: 0.6s;
         }
         .golden-btn:hover::after { transform: translateX(-100%); }
-        .golden-btn:hover { transform: translateY(-5px) scale(1.03); box-shadow: 0 15px 35px rgba(0,0,0,0.12); }
-        .golden-btn .icon { font-size: 1.8rem; }
-        .golden-btn .label { font-size: 0.8rem; }
-        .golden-btn .desc { font-size: 0.6rem; opacity: 0.8; font-weight: 600; }
+        .golden-btn:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+        }
+        .golden-btn .icon { font-size: 1.5rem; }
+        .golden-btn .label { font-size: 0.7rem; }
+        .golden-btn .desc { font-size: 0.55rem; opacity: 0.7; font-weight: 600; }
 
         .btn-register { background: linear-gradient(135deg, #d4af37 0%, #f9e79f 50%, #d4af37 100%); color: #2a1a0a; background-size: 200% auto; }
         .btn-register:hover { background-position: left center; }
         .btn-connect { background: linear-gradient(135deg, #27ae60 0%, #82e0aa 50%, #27ae60 100%); color: #fff; background-size: 200% auto; }
         .btn-connect:hover { background-position: left center; }
-        .btn-gallery { background: linear-gradient(135deg, #8a6d1f 0%, #d4af37 50%, #8a6d1f 100%); color: #fff; background-size: 200% auto; }
-        .btn-gallery:hover { background-position: left center; }
+        .btn-achievement { background: linear-gradient(135deg, #8a6d1f 0%, #d4af37 50%, #8a6d1f 100%); color: #fff; background-size: 200% auto; }
+        .btn-achievement:hover { background-position: left center; }
         .btn-wisdom { background: linear-gradient(135deg, #2874a6 0%, #5dade2 50%, #2874a6 100%); color: #fff; background-size: 200% auto; }
         .btn-wisdom:hover { background-position: left center; }
         .btn-atlas { background: linear-gradient(135deg, #6a3d9a 0%, #d2b4de 50%, #6a3d9a 100%); color: #fff; background-size: 200% auto; }
         .btn-atlas:hover { background-position: left center; }
 
-        .cta-note { text-align: center; font-size: 0.75rem; color: #6a5a3a; margin-top: -0.5rem; margin-bottom: 1.5rem; font-weight: 600; }
+        .cta-note { text-align: center; font-size: 0.65rem; color: #6a5a3a; margin-top: -0.3rem; margin-bottom: 1rem; font-weight: 600; }
         body.dark .cta-note { color: #c8b890; }
 
         /* ===== GALLERY ===== */
         .golden-gallery-box {
             background: linear-gradient(135deg, #fffdf5 0%, #fff9e6 100%);
-            border: 3px double #d4af37; border-radius: 30px;
-            padding: 2rem; margin: 2rem 0;
-            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.15);
-            position: relative; overflow: hidden;
+            border: 3px double #d4af37;
+            border-radius: 30px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.1);
+            position: relative;
+            overflow: hidden;
         }
         body.dark .golden-gallery-box { background: linear-gradient(135deg, #3a2f20, #2a2418); border-color: #d4af37; }
         .gallery-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             flex-wrap: wrap;
-            gap: 1rem;
+            gap: 0.8rem;
         }
         .gallery-title {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             font-weight: 900;
             color: #8a6d1f;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
         }
         body.dark .gallery-title { color: #f9e79f; }
         .gallery-subtitle {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #888;
             font-weight: 600;
         }
         .filter-select {
-            padding: 0.5rem 1rem;
+            padding: 0.4rem 0.8rem;
             border-radius: 20px;
             border: 1px solid #d4af37;
             background: #fff;
@@ -406,22 +472,22 @@
             font-weight: 700;
             cursor: pointer;
             outline: none;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
         }
 
-        .achievements-list { display: flex; flex-direction: column; gap: 0.6rem; max-height: 350px; overflow-y: auto; padding-left: 0.3rem; }
+        .achievements-list { display: flex; flex-direction: column; gap: 0.5rem; max-height: 300px; overflow-y: auto; padding-left: 0.3rem; }
         .achievement-item {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0.8rem 1rem; background: rgba(255,255,255,0.6);
-            border-radius: 14px; border-right: 4px solid #d4af37;
+            padding: 0.6rem 0.8rem; background: rgba(255,255,255,0.6);
+            border-radius: 12px; border-right: 4px solid #d4af37;
             cursor: pointer; transition: all 0.3s ease;
         }
         body.dark .achievement-item { background: rgba(0,0,0,0.2); }
         .achievement-item:hover { background: #fff; transform: translateX(-4px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         body.dark .achievement-item:hover { background: rgba(255,255,255,0.05); }
-        .item-info h4 { font-size: 0.9rem; color: #2a1a0a; margin-bottom: 0.1rem; }
+        .item-info h4 { font-size: 0.85rem; color: #2a1a0a; margin-bottom: 0.1rem; }
         body.dark .item-info h4 { color: #f0e8d0; }
-        .item-meta { font-size: 0.7rem; color: #8a6d1f; font-weight: 600; }
+        .item-meta { font-size: 0.65rem; color: #8a6d1f; font-weight: 600; }
 
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -447,9 +513,9 @@
             background: linear-gradient(135deg, #f5e6f0 0%, #e8d5e8 50%, #dcc4dc 100%);
             border: 3px double #6a3d9a;
             border-radius: 30px;
-            padding: 2rem;
-            margin: 2rem 0;
-            box-shadow: 0 15px 40px rgba(106, 61, 154, 0.15);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 15px 40px rgba(106, 61, 154, 0.12);
         }
         body.dark .atlas-gallery-box {
             background: linear-gradient(135deg, #3a2a3a 0%, #2a1a2a 50%, #3a2a3a 100%);
@@ -461,23 +527,28 @@
 
         /* ===== Responsive ===== */
         @media (max-width: 992px) {
-            .golden-row { grid-template-columns: repeat(2, 1fr); }
+            .golden-row { grid-template-columns: repeat(3, 1fr); }
             .features-grid { grid-template-columns: repeat(2, 1fr); }
+            .info-boxes { grid-template-columns: repeat(2, 1fr); }
+            .logo-box img { width: 120px; height: 120px; }
         }
         @media (max-width: 768px) {
             body { padding: 1rem; }
-            .logo-box img { width: 70px; height: 70px; }
-            .site-title { font-size: 1.2rem; }
+            .logo-box img { width: 90px; height: 90px; }
+            .site-title { font-size: 1.1rem; }
             .features-grid { grid-template-columns: 1fr; }
-            .golden-row { grid-template-columns: 1fr 1fr; padding: 1rem; gap: 0.8rem; }
-            .golden-btn { min-height: 75px; font-size: 0.85rem; padding: 0.8rem 0.5rem; }
+            .info-boxes { grid-template-columns: 1fr; }
+            .golden-row { grid-template-columns: 2fr 1fr; padding: 0.8rem; gap: 0.5rem; }
+            .golden-btn { min-height: 65px; font-size: 0.7rem; padding: 0.5rem 0.3rem; }
             .real-card-sample { transform: none; max-width: 100%; }
             .gallery-header { flex-direction: column; text-align: center; }
         }
         @media (max-width: 480px) {
-            .golden-row { grid-template-columns: 1fr; }
+            .golden-row { grid-template-columns: 1fr 1fr; }
             .features-grid { grid-template-columns: 1fr; }
-            .logo-row { gap: 0.5rem; }
+            .info-boxes { grid-template-columns: 1fr; }
+            .logo-box img { width: 70px; height: 70px; }
+            .logo-row { gap: 0.3rem; }
         }
     </style>
     <link rel="manifest" href="/manifest.json">
@@ -514,11 +585,11 @@
         </div>
     </div>
 
-    <!-- ===== THREE FEATURE MODULES (کوچک‌تر و در یک خط) ===== -->
+    <!-- ===== THREE FEATURE MODULES (عنوان تغییر کرد) ===== -->
     <div class="features-grid">
         <a href="about-fa.html" class="feature-card feature-about">
             <span class="icon">📖</span>
-            <h3>درباره پروژه</h3>
+            <h3>درباره کارت هویت فرهنگی</h3>
             <p>اهداف و فلسفه‌ی غیرمتمرکز</p>
             <span class="btn-feature">بیشتر بدانید →</span>
         </a>
@@ -548,25 +619,44 @@
         </div>
     </div>
 
-    <!-- ===== INFO BOXES ===== -->
-    <div class="box box-gold">
-        <div class="box-title">مشخصات کارت</div>
-        <p>هویت دیجیتال <strong>غیرمتمرکز</strong> بر اساس ارزش‌های فرهنگی شما، نه نام و ملیت.</p>
-        <ul><li>ثبت ۷ ارزش فرهنگی به انتخاب شما</li><li>کد منحصربه‌فرد با بخش اختیاری</li><li>قابلیت ارتباط با دیگران (اختیاری)</li></ul>
-    </div>
-    <div class="box box-blue">
-        <div class="box-title">اهداف کارت</div>
-        <ul><li>شبکه‌ای از مصلحان فرهنگی بدون مرز</li><li>حفاظت از تنوع فرهنگی به عنوان سرمایه‌ی مشترک</li><li>ترویج صلح، محو خشونت و اتحاد فرهنگی</li></ul>
-        <div class="principles"><span>✧ غیرسیاسی</span><span> غیرحکومتی</span><span> غیرانتفاعی</span><span>✧ غیرمتمرکز</span></div>
-    </div>
-    <div class="box box-green">
-        <div class="box-title">مزایای داشتن کارت</div>
-        <ul><li>عضویت در جنبش جهانی حفظ تنوع فرهنگی</li><li>دسترسی به شبکه‌ای از افراد هم‌فرهنگ</li><li>ارتباط با دیگران از راه‌های دلخواه</li></ul>
+    <!-- ===== سه باکس اطلاعاتی (کوچکتر و در یک خط) ===== -->
+    <div class="info-boxes">
+        <div class="box box-gold">
+            <div class="box-title">📋 مشخصات کارت</div>
+            <ul>
+                <li>هویت دیجیتال غیرمتمرکز</li>
+                <li>ثبت ۷ ارزش فرهنگی</li>
+                <li>کد منحصربه‌فرد با بخش اختیاری</li>
+                <li>قابلیت ارتباط با دیگران</li>
+            </ul>
+        </div>
+        <div class="box box-blue">
+            <div class="box-title">🎯 اهداف کارت</div>
+            <ul>
+                <li>شبکه‌ای از مصلحان فرهنگی بدون مرز</li>
+                <li>حفاظت از تنوع فرهنگی</li>
+                <li>ترویج صلح، محو خشونت و اتحاد فرهنگی</li>
+            </ul>
+            <div class="principles">
+                <span>✧ غیرسیاسی</span>
+                <span>غیرحکومتی</span>
+                <span>غیرانتفاعی</span>
+                <span>✧ غیرمتمرکز</span>
+            </div>
+        </div>
+        <div class="box box-green">
+            <div class="box-title">✅ مزایای داشتن کارت</div>
+            <ul>
+                <li>عضویت در جنبش جهانی حفظ تنوع فرهنگی</li>
+                <li>دسترسی به شبکه‌ای از افراد هم‌فرهنگ</li>
+                <li>ارتباط با دیگران از راه‌های دلخواه</li>
+            </ul>
+        </div>
     </div>
 
     <!-- ===== SAMPLE CARD ===== -->
-    <div class="box box-purple">
-        <div class="box-title">نمونه کارت واقعی صادر شده</div>
+    <div class="box box-purple" style="border-radius: 18px; padding: 1.2rem; border: 2px solid rgba(160, 120, 200, 0.5);">
+        <div class="box-title" style="color: #6a3d9a; border-bottom-color: rgba(160, 120, 200, 0.2);">🪪 نمونه کارت واقعی صادر شده</div>
         <div class="real-card-sample">
             <div class="rc-logo-container"><img src="assets/logo-fa.png" alt="لوگو" class="rc-logo" onerror="this.style.display='none'"></div>
             <div class="rc-title">کارت جهانی هویت هوشمند فرهنگی</div>
@@ -574,10 +664,10 @@
             <div class="rc-values"><span class="rc-tag">ارزش‌های بومی</span><span class="rc-tag">دانش فردی</span><span class="rc-tag">همکاری جمعی</span><span class="rc-tag">تنوع فرهنگی</span></div>
             <div class="rc-hologram"><img src="assets/hologram.png" alt="Hologram" style="width:35px;height:35px;" onerror="this.style.display='none'"></div>
         </div>
-        <p style="text-align: center; margin-top: 1rem; font-size: 0.8rem; opacity: 0.8;">این دقیقاً همان کارت زیبایی است که پس از ثبت‌نام برای شما صادر می‌شود.</p>
+        <p style="text-align: center; margin-top: 0.8rem; font-size: 0.75rem; opacity: 0.7;">این دقیقاً همان کارت زیبایی است که پس از ثبت‌نام برای شما صادر می‌شود.</p>
     </div>
 
-    <!-- ===== GOLDEN ROW (چیدمان جدید) ===== -->
+    <!-- ===== GOLDEN ROW (5 ماژول کوچکتر در یک خط) ===== -->
     <div class="golden-row">
         <a href="register-fa.html" class="golden-btn btn-register">
             <span class="icon">🪪</span>
@@ -589,23 +679,28 @@
             <span class="label">ارتباط با هم‌فکران</span>
             <span class="desc">پیدا کردن هم‌فرهنگان</span>
         </a>
-        <a href="achievements-fa.html" class="golden-btn btn-gallery">
-            <span class="icon">🏆</span>
-            <span class="label">گالری دستاوردها</span>
-            <span class="desc">۲۰۰ عضو اول</span>
+        <a href="upload-achievement-fa.html" class="golden-btn btn-achievement">
+            <span class="icon">📤</span>
+            <span class="label">ثبت آثار نام‌آوران ظهور</span>
+            <span class="desc">آپلود دستاورد فرهنگی</span>
         </a>
         <a href="observer-fa.html" class="golden-btn btn-wisdom">
             <span class="icon">🧠</span>
             <span class="label">مجتمع هم‌اندیشی</span>
             <span class="desc">سپهر خردمندی</span>
         </a>
+        <a href="atlas-gallery.html" class="golden-btn btn-atlas">
+            <span class="icon">🏛️</span>
+            <span class="label">اطلس ظهور</span>
+            <span class="desc">راه‌حل‌های فرهنگی</span>
+        </a>
     </div>
     <div class="cta-note">بدون اطلاعات شخصی • کاملاً ناشناس • ۲ دقیقه</div>
 
-    <!-- ===== GALLERY: Achievements ===== -->
+    <!-- ===== GALLERY: دستاوردهای فرهنگی ۲۰۰ عضو اول ===== -->
     <div class="golden-gallery-box">
         <div class="gallery-header">
-            <div class="gallery-title">🏆 گالری دستاوردهای ۲۰۰ عضو اول</div>
+            <div class="gallery-title">🏆 گالری دستاوردهای فرهنگی ۲۰۰ عضو اول</div>
             <select id="categoryFilter" class="filter-select" onchange="filterAchievements()">
                 <option value="all">همه دستاوردها</option>
                 <option value="science">مقالات علمی</option>
@@ -618,11 +713,11 @@
         </div>
     </div>
 
-    <!-- ===== GALLERY: Atlas of Emergence (گالری نام‌آوران ظهور) ===== -->
+    <!-- ===== GALLERY: نام‌آوران ظهور (بدون عبارت ۲۰۰ عضو اول) ===== -->
     <div class="atlas-gallery-box">
         <div class="gallery-header">
             <div class="gallery-title">🏛️ گالری نام‌آوران ظهور</div>
-            <span class="gallery-subtitle">۲۰۰ عضو اول • راه‌حل‌های فرهنگی برای مشکلات بومی</span>
+            <span class="gallery-subtitle">راه‌حل‌های فرهنگی برای مشکلات بومی</span>
         </div>
         <div id="atlasListContainer" class="achievements-list">
             <p style="text-align:center; padding:1rem; color:#888;">هنوز راه‌حلی ثبت نشده است.</p>
