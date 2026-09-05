@@ -354,7 +354,7 @@
     }
 
     // Verification Logic
-    async function verifyCode() {
+        async function verifyCode() {
         const codeInput = document.getElementById('memberCode').value.trim();
         const errorMsg = document.getElementById('errorMsg');
         const verifyBtn = document.getElementById('verifyBtn');
@@ -376,19 +376,15 @@
             const data = await response.json();
             const user = data.users.find(u => u.cardCode === codeInput);
 
-            if (!user) {
-                throw new Error('❌ Card code not found.');
+            if (!user) throw new Error('❌ Card code not found.');
+            if (user.status !== 'approved') throw new Error('❌ Account not approved yet.');
+            if (user.rank > 200) throw new Error(`❌ Only for first 200 members (Rank ${user.rank}).`);
+            
+            // ===== NEW CHECK: Already uploaded? =====
+            if (user.achievements && user.achievements.length > 0) {
+                throw new Error('⚠️ You have already registered an achievement. Only one submission allowed.');
             }
 
-            if (user.status !== 'approved') {
-                throw new Error('❌ Your account has not been approved by the admin yet.');
-            }
-
-            if (user.rank > 200) {
-                throw new Error(`❌ Unfortunately, this section is only for the first 200 members (Rank ${user.rank}).`);
-            }
-
-            // If everything is correct
             document.getElementById('codeCheckSection').classList.add('hidden');
             document.getElementById('uploadSection').classList.remove('hidden');
             localStorage.setItem('verifiedCode', codeInput);
