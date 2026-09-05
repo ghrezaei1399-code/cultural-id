@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Upload Achievement | Global Smart Cultural ID</title>
+    <title>Upload Emergence Achievement | Global Smart Cultural ID</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', 'Vazir', 'IRANSans', sans-serif;
+            font-family: 'Segoe UI', 'Vazir', sans-serif;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 2rem 1rem;
-            /* Modern Animated Background */
+            /* Modern Animated Background - No Image */
             background: linear-gradient(-45deg, #e8f4f8, #fdf6e3, #f5e6d3, #e0f7fa);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
@@ -262,146 +262,153 @@
     <button class="theme-toggle" id="themeToggle">🌙</button>
 
     <div class="container">
-        <!-- Section 1: Code Verification -->
+        <!-- Section 1: Verification -->
         <div id="codeCheckSection">
-            <h1>🔐 Ambassador Authentication</h1>
-            <div class="subtitle">Enter your membership code to access the achievements gallery</div>
+            <h1>🔐 Ambassador Verification</h1>
+            <div class="subtitle">Enter your membership code to access the upload gallery</div>
             
             <div class="code-check-box">
-                <input type="text" id="memberCode" class="code-input" placeholder="Card Code (e.g., CIM-XXXX-XXXX-XXXX)" />
-                <button onclick="verifyCode()" class="btn btn-primary" id="verifyBtn" style="width:100%">Verify & Enter</button>
+                <input type="text" id="memberCode" class="code-input" placeholder="Membership Code (e.g., CIM-XXXX-XXXX)" />
+                <button onclick="verifyCode()" class="btn btn-primary" style="width:100%">Verify & Enter</button>
                 <div id="errorMsg" class="error-msg"></div>
+                
+                <!-- Back Buttons in Verification Section -->
+                <div class="btn-group" style="margin-top: 1.5rem;">
+                    <a href="index-en.html" class="btn btn-secondary">🏠 Back to Home</a>
+                    <a href="register-en.html" class="btn btn-secondary">📝 Registration Page</a>
+                </div>
             </div>
             <div class="note">
-                This section is only active for the first 200 ambassadors (Golden Badge).
+                This section is active only for the first 200 ambassadors (Golden Badge).
             </div>
         </div>
 
         <!-- Section 2: Upload Form -->
         <div id="uploadSection" class="hidden">
-            <h1>📤 Upload Cultural Achievement</h1>
-            <div class="subtitle">Global Smart Identity Gallery</div>
+            <h1>📤 Upload Emergence Achievement</h1>
+            <div class="subtitle">Gallery of First 200 Ambassadors</div>
 
             <div id="statusBox" class="status-msg"></div>
 
             <div class="upload-zone" id="dropZone">
-                <span class="icon">📂</span>
-                <p style="font-weight:800; font-size:1.1rem;">Drag your file here or click to upload</p>
+                <span class="icon">📁</span>
+                <p style="font-weight:800; font-size:1.1rem;">Drag & drop your file here or click to select</p>
                 <p class="small" style="font-size:0.8rem; opacity:0.6; margin-top:0.5rem;">Allowed formats: JPG, PNG, MP4 (No size limit)</p>
                 <input type="file" id="fileInput" class="hidden" accept="image/*,video/*,audio/*" />
-                <span id="fileName" class="file-name"></span>
+                <span class="file-name" id="fileName"></span>
             </div>
 
             <form id="uploadForm">
                 <div class="form-group">
-                    <label>Title of Work</label>
-                    <input type="text" id="title" placeholder="e.g., Sustainable Peace Article" required />
+                    <label>Title</label>
+                    <input type="text" id="title" placeholder="e.g. Peace Painting" required />
                 </div>
 
                 <div class="form-group">
-                    <label>Short Description (Media links can be placed here)</label>
-                    <textarea id="description" rows="4" placeholder="Describe your work..."></textarea>
+                    <label>Description (You can paste video/media links here)</label>
+                    <textarea id="description" rows="4" placeholder="Describe your achievement..."></textarea>
                 </div>
 
                 <div class="form-group">
                     <label>Category</label>
                     <select id="category">
-                        <option value="art">Artistic</option>
-                        <option value="science">Scientific & Research</option>
-                        <option value="cultural">Cultural & Social</option>
-                        <option value="media">Media & Video</option>
+                        <option value="art">Art</option>
+                        <option value="science">Science</option>
+                        <option value="cultural">Cultural</option>
+                        <option value="media">Media</option>
                     </select>
                 </div>
 
                 <div class="helper-text">
-                    💡 <strong>Compression Tip:</strong> Although there is no size limit, it is recommended to keep images under 1MB for faster speed. 
-                    Global users can use free tools like <a href="https://tinypng.com" target="_blank">TinyPNG</a> or <a href="https://squoosh.app" target="_blank">Squoosh</a>.
+                    💡 <strong>Compression Tip:</strong> Although there is no size limit, for faster loading we recommend keeping images under 1MB. 
+                    You can use free tools like <a href="https://tinypng.com" target="_blank">TinyPNG</a> or <a href="https://squoosh.app" target="_blank">Squoosh</a>.
                 </div>
 
+                <!-- Back Buttons in Upload Section -->
                 <div class="btn-group">
-                    <button type="submit" class="btn btn-primary" id="submitBtn">📤 Submit for Approval</button>
-                    <a href="index-en.html" class="btn btn-secondary">↩ Back</a>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">📤 Upload</button>
+                    <a href="index-en.html" class="btn btn-secondary">🏠 Back to Home</a>
+                    <a href="register-en.html" class="btn btn-secondary">📝 Registration Page</a>
                 </div>
             </form>
         </div>
     </div>
-<script>
-    // Theme Logic
-    const toggle = document.getElementById('themeToggle');
-    const body = document.body;
-    if (localStorage.getItem('theme') === 'dark') {
-        body.classList.add('dark'); 
-        if(toggle) toggle.textContent = '☀️';
-    }
-    if(toggle) {
-        toggle.addEventListener('click', () => {
-            body.classList.toggle('dark');
-            toggle.textContent = body.classList.contains('dark') ? '☀️' : '🌙';
-        });
-    }
 
-    // File Handling
-    const dropZone = document.getElementById('dropZone');
-    const fileInput = document.getElementById('fileInput');
-    if(dropZone && fileInput) {
-        dropZone.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', (e) => {
-            if(e.target.files[0]) {
-                const nameDisplay = document.getElementById('fileName');
-                if(nameDisplay) nameDisplay.textContent = e.target.files[0].name;
-            }
-        });
-    }
+    <script>
+        // Theme Logic
+        const toggle = document.getElementById('themeToggle');
+        const body = document.body;
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark'); 
+            if(toggle) toggle.textContent = '☀️';
+        }
+        if(toggle) {
+            toggle.addEventListener('click', () => {
+                body.classList.toggle('dark');
+                toggle.textContent = body.classList.contains('dark') ? '☀️' : '🌙';
+            });
+        }
 
-    // Verification Logic
+        // File Handling
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        if(dropZone && fileInput) {
+            dropZone.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', (e) => {
+                if(e.target.files[0]) {
+                    const nameDisplay = document.getElementById('fileName');
+                    if(nameDisplay) nameDisplay.textContent = "✅ " + e.target.files[0].name;
+                }
+            });
+        }
+
+        // Verification Logic - UPDATED with Duplicate Check
         async function verifyCode() {
-        const codeInput = document.getElementById('memberCode').value.trim();
-        const errorMsg = document.getElementById('errorMsg');
-        const verifyBtn = document.getElementById('verifyBtn');
-        
-        if (!codeInput) {
-            errorMsg.textContent = '❌ Please enter your card code.';
-            errorMsg.style.display = 'block';
-            return;
-        }
-
-        verifyBtn.disabled = true;
-        verifyBtn.textContent = '⏳ Checking...';
-        errorMsg.style.display = 'none';
-
-        try {
-            const response = await fetch('/api/get-users?t=' + new Date().getTime());
-            if (!response.ok) throw new Error('Server connection error');
+            const codeInput = document.getElementById('memberCode').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+            const verifyBtn = document.querySelector('#codeCheckSection .btn-primary');
             
-            const data = await response.json();
-            const user = data.users.find(u => u.cardCode === codeInput);
-
-            if (!user) throw new Error('❌ Card code not found.');
-            if (user.status !== 'approved') throw new Error('❌ Account not approved yet.');
-            if (user.rank > 200) throw new Error(`❌ Only for first 200 members (Rank ${user.rank}).`);
-            
-            // ===== NEW CHECK: Already uploaded? =====
-            if (user.achievements && user.achievements.length > 0) {
-                throw new Error('⚠️ You have already registered an achievement. Only one submission allowed.');
+            if (!codeInput) {
+                errorMsg.textContent = '❌ Please enter your membership code.';
+                errorMsg.style.display = 'block';
+                return;
             }
 
-            document.getElementById('codeCheckSection').classList.add('hidden');
-            document.getElementById('uploadSection').classList.remove('hidden');
-            localStorage.setItem('verifiedCode', codeInput);
+            verifyBtn.disabled = true;
+            verifyBtn.textContent = '⏳ Checking...';
+            errorMsg.style.display = 'none';
 
-        } catch (error) {
-            errorMsg.textContent = error.message;
-            errorMsg.style.display = 'block';
-        } finally {
-            verifyBtn.disabled = false;
-            verifyBtn.textContent = 'Verify & Enter';
+            try {
+                const response = await fetch('/api/get-users?t=' + new Date().getTime());
+                if (!response.ok) throw new Error('Server connection error');
+                
+                const data = await response.json();
+                const user = data.users.find(u => u.cardCode === codeInput);
+
+                if (!user) throw new Error('❌ Membership code not found.');
+                if (user.status !== 'approved') throw new Error('❌ Your account has not been approved yet.');
+                if (user.rank > 200) throw new Error(`❌ This section is only for the first 200 members (Rank ${user.rank}).`);
+                
+                // NEW CHECK: Has user already uploaded?
+                if (user.achievements && user.achievements.length > 0) {
+                    throw new Error('⚠️ You have already registered an achievement. Only one submission allowed per member.');
+                }
+
+                document.getElementById('codeCheckSection').classList.add('hidden');
+                document.getElementById('uploadSection').classList.remove('hidden');
+                localStorage.setItem('verifiedCode', codeInput);
+
+            } catch (error) {
+                errorMsg.textContent = error.message;
+                errorMsg.style.display = 'block';
+            } finally {
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = 'Verify & Enter';
+            }
         }
-    }
 
-    // ===== Upload Logic =====
-    const uploadForm = document.getElementById('uploadForm');
-    if(uploadForm) {
-        uploadForm.addEventListener('submit', async function(e) {
+        // Upload Logic
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
             const statusBox = document.getElementById('statusBox');
@@ -425,7 +432,9 @@
                 }
 
                 btn.textContent = '⏳ Registering info...';
-                const cardCode = localStorage.getItem('verifiedCode') || document.getElementById('memberCode').value;
+                const cardCode = localStorage.getItem('verifiedCode');
+                
+                if (!cardCode) throw new Error('Session expired. Please verify again.');
 
                 const achievementData = {
                     title: document.getElementById('title').value,
@@ -433,27 +442,21 @@
                     category: document.getElementById('category').value,
                     fileData: fileData,
                     fileName: fileName,
-                    section: 'identity-card'
+                    section: 'emergence'
                 };
 
                 const response = await fetch('/api/upload-achievement', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        cardCode: cardCode, 
-                        achievement: achievementData 
-                    })
+                    body: JSON.stringify({ cardCode, achievement: achievementData })
                 });
 
                 const result = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(result.error || 'Server communication error');
-                }
+                if (!response.ok) throw new Error(result.error || 'Upload failed');
 
                 if(statusBox) {
                     statusBox.className = 'status-msg success';
-                    statusBox.textContent = '✅ Your achievement has been successfully registered and will be displayed after admin approval.';
+                    statusBox.textContent = '✅ Achievement submitted successfully. It will appear after admin approval.';
                     statusBox.style.display = 'block';
                 }
                 btn.textContent = '✅ Sent';
@@ -469,10 +472,9 @@
                     statusBox.style.display = 'block';
                 }
                 btn.disabled = false;
-                btn.textContent = '📤 Resend';
+                btn.textContent = '📤 Upload';
             }
         });
-    }
-</script>
+    </script> 
 </body>
 </html>
