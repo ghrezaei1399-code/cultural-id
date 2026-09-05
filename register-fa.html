@@ -13,24 +13,27 @@
             justify-content: center;
             align-items: center;
             padding: 2rem 1rem;
-            background-image: url('assets/azadi.jpg');
-            background-size: cover;
-            background-position: center;
+            /* اصلاح پس‌زمینه */
+            background: linear-gradient(135deg, #fdf6e3 0%, #e8f4f8 50%, #f5e6d3 100%);
             background-attachment: fixed;
             color: #1a0a0a;
         }
-        body.dark { color: #f0e8e0; }
+        body.dark { 
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #f0e8e0; 
+        }
         .container {
             max-width: 700px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.7); /* افزایش شفافیت برای دیده شدن گرادینت */
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border-radius: 48px;
             padding: 2.5rem 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.02);
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.05);
         }
+        body.dark .container { background: rgba(0, 0, 0, 0.3); border-color: rgba(255, 255, 255, 0.1); }
         h1 {
             font-size: 1.8rem;
             font-weight: 800;
@@ -66,7 +69,7 @@
             padding: 0.8rem 1rem;
             border-radius: 16px;
             border: 1px solid rgba(30, 10, 0, 0.02);
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(255, 255, 255, 0.6);
             font-family: inherit;
             font-size: 0.95rem;
             color: #1a0a0a;
@@ -75,29 +78,29 @@
         }
         body.dark .form-group input,
         body.dark .form-group textarea {
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(0, 0, 0, 0.2);
             color: #e8d8c8;
             border-color: rgba(255, 255, 255, 0.02);
         }
         .form-group input:focus,
         .form-group textarea:focus {
             border-color: rgba(60, 30, 10, 0.05);
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.8);
         }
         body.dark .form-group input:focus,
         body.dark .form-group textarea:focus {
             border-color: rgba(255, 255, 255, 0.05);
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(0, 0, 0, 0.3);
         }
         
         .value-item {
-            background: rgba(255, 255, 255, 0.01);
+            background: rgba(255, 255, 255, 0.4);
             border-radius: 12px;
             padding: 1rem;
             margin-bottom: 1rem;
             border: 1px solid rgba(30, 10, 0, 0.02);
         }
-        body.dark .value-item { border-color: rgba(255, 255, 255, 0.02); }
+        body.dark .value-item { border-color: rgba(255, 255, 255, 0.02); background: rgba(0,0,0,0.2); }
         
         .value-item .value-title {
             font-weight: 700;
@@ -113,11 +116,11 @@
             padding: 0.8rem;
             border-radius: 8px;
             border: 1px solid rgba(30, 10, 0, 0.02);
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(255, 255, 255, 0.5);
             font-size: 0.9rem;
         }
         body.dark .value-item input {
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(0, 0, 0, 0.2);
             color: #e8d8c8;
             border-color: rgba(255, 255, 255, 0.02);
         }
@@ -142,12 +145,13 @@
             gap: 1rem;
         }
         .priority-item {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.5);
             padding: 0.8rem;
             border-radius: 12px;
             text-align: center;
             border: 1px solid rgba(212, 175, 55, 0.2);
         }
+        body.dark .priority-item { background: rgba(0,0,0,0.2); }
         .priority-item label {
             display: block;
             font-size: 0.8rem;
@@ -160,11 +164,11 @@
             padding: 0.4rem;
             border-radius: 8px;
             border: 1px solid rgba(212, 175, 55, 0.3);
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.6);
             color: #2a1a0a;
             font-weight: bold;
         }
-        body.dark .priority-item select { color: #f9e79f; }
+        body.dark .priority-item select { color: #f9e79f; background: rgba(0,0,0,0.3); }
 
         .btn-group { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
         .btn {
@@ -251,7 +255,7 @@
             position: fixed;
             top: 1rem;
             right: 1rem;
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(255, 255, 255, 0.5);
             border: 1px solid rgba(30, 10, 0, 0.02);
             font-size: 1.5rem;
             cursor: pointer;
@@ -262,7 +266,7 @@
         }
         body.dark .theme-toggle {
             color: #f9e79f;
-            background: rgba(0, 0, 0, 0.05);
+            background: rgba(0, 0, 0, 0.3);
             border-color: rgba(255, 255, 255, 0.02);
         }
         .theme-toggle:hover { transform: scale(1.1); }
@@ -272,13 +276,13 @@
         .pioneer-module {
             margin-top: 1.5rem;
             padding: 1rem;
-            background: rgba(255, 215, 0, 0.05);
+            background: rgba(255, 215, 0, 0.1);
             border: 1px dashed rgba(212, 172, 13, 0.3);
             border-radius: 20px;
             text-align: center;
             animation: fadeIn 0.5s ease;
         }
-        body.dark .pioneer-module { background: rgba(255, 215, 0, 0.02); }
+        body.dark .pioneer-module { background: rgba(255, 215, 0, 0.05); }
         
         .pioneer-text {
             font-size: 0.85rem;
