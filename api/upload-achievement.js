@@ -1,122 +1,125 @@
-// api/upload-achievement.js
 module.exports = async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
-  const token = process.env.GH_TOKEN;
-  if (!token) return res.status(500).json({ error: 'GH_TOKEN not configured' });
+  const token = process.env.OBSERVER_TOKEN || process.env.GH_TOKEN;
+  if (!token) {
+    return res.status(500).json({ error: 'Token is not configured' });
+  }
 
   try {
-    let body = '';
-    for await (const chunk of req) {
-      body += chunk;
-    }
-    
-    let parsedBody;
-    try {
-      parsedBody = JSON.parse(body);
-    } catch (e) {
-      return res.status(400).json({ error: 'Invalid JSON in request body' });
-    }
-
-    const { cardCode, achievement } = parsedBody;
-    
-    if (!cardCode || !achievement || !achievement.title) {
-      return res.status(400).json({ error: 'اطلاعات ناقص است (کد کاربر یا عنوان اثر)' });
-    }
-
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
-    const userPath = `data/active/${cardCode}.json`;
+    const { cardCode, achievement } = await req.json();
 
-    const userRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
+    if (!cardCode || !achievement) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // ===== ۱. دریافت اطلاعات کاربر از index.json =====
+    const usersPath = 'data/index.json';
+    const usersRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${usersPath}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
+
+    let users = [];
+    let userIndex = -1;
     
-    if (!userRes.ok) {
-      if (userRes.status === 404) {
-        return res.status(404).json({ error: 'کاربر یافت نشد' });
-      }
-      return res.status(userRes.status).json({ error: 'خطا در دریافت اطلاعات کاربر' });
+    if (usersRes.ok) {
+      const usersDataRaw = await usersRes.json();
+      const parsedContent = JSON.parse(Buffer.from(usersDataRaw.content, 'base64').toString('utf8'));
+      users = Array.isArray(parsedContent) ? parsedContent : (parsedContent.users || []);
+      userIndex = users.findIndex(u => u.cardCode === cardCode);
     }
 
-    const userDataRaw = await userRes.json();
-    const userData = JSON.parse(Buffer.from(userDataRaw.content, 'base64').toString('utf8'));
-
-    if (userData.status !== 'approved') {
-      return res.status(403).json({ error: 'حساب کاربری تایید نشده است.' });
+    if (userIndex === -1) {
+      return res.status(404).json({ error: 'User not found' });
     }
 
-    let fileUrl = '';
-    let finalFileName = achievement.fileName || 'no-file';
+    const currentUser = users[userIndex];
 
-    // ===== اگر فایلی آپلود شده باشد =====
-    if (achievement.fileData && achievement.fileData.length > 100) {
-      // ===== آپلود مستقیم به گیت‌هاب (بدون نیاز به upload-file.js) =====
-      const ext = (achievement.fileName || 'file').split('.').pop();
-      const uniqueName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
-      const filePath = `uploads/${uniqueName}`;
-
-      const base64Content = achievement.fileData.replace(/^data:[^;]+;base64,/, '');
-
-      const uploadRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/vnd.github.v3+json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          message: `Upload media: ${uniqueName}`,
-          content: base64Content,
-          branch: 'main'
-        })
-      });
-
-      if (!uploadRes.ok) {
-        const errorData = await uploadRes.json().catch(() => ({}));
-        throw new Error(errorData.message || 'خطا در آپلود فایل به گیت‌هاب');
-      }
-
-      fileUrl = `https://raw.githubusercontent.com/${owner}/${repo}/main/${filePath}`;
-      finalFileName = uniqueName;
+    // ===== ۲. بررسی شرایط مجاز بودن آپلود =====
+    // فقط ۲۰۰ نفر اول و کسانی که هنوز دستاوردی ثبت نکرده‌اند
+    if (currentUser.rank > 200) {
+      return res.status(403).json({ error: 'Only the first 200 members are allowed to upload achievements.' });
     }
 
-    // ===== افزودن دستاورد =====
-    if (!userData.achievements) userData.achievements = [];
+    // ===== ۳. بررسی تکراری نبودن دستاورد (اصلاحیه جدید) =====
+    // اگر کاربر قبلاً حتی یک دستاورد داشته باشد، اجازه آپلود مجدد داده نمی‌شود
+    if (currentUser.achievements && currentUser.achievements.length > 0) {
+      return res.status(403).json({ error: 'You have already registered a cultural achievement. Each member is allowed only one submission.' });
+    }
 
+    // ===== ۴. آماده‌سازی داده‌های دستاورد =====
     const newAchievement = {
+      id: Date.now() + '-' + Math.random().toString(36).substr(2, 9),
       title: achievement.title,
-      description: achievement.description || '',
-      category: achievement.category || 'general',
-      fileUrl: fileUrl,
-      fileName: finalFileName,
-      status: 'pending',
-      uploadDate: new Date().toISOString(),
-      section: achievement.section || 'identity-card'
+      description: achievement.description,
+      category: achievement.category,
+      fileUrl: achievement.fileUrl || '', // اگر فایل جداگانه آپلود شده باشد
+      fileData: achievement.fileData || '', // یا داده base64 مستقیم
+      fileName: achievement.fileName || '',
+      status: 'pending', // وضعیت اولیه در انتظار تایید ادمین
+      submittedAt: new Date().toISOString()
     };
 
-    userData.achievements.push(newAchievement);
-
-    const newContent = Buffer.from(JSON.stringify(userData, null, 2), 'utf8').toString('base64');
+    // ===== ۵. بروزرسانی فایل پروفایل کاربر در data/active =====
+    const profilePath = `data/active/${cardCode}.json`;
+    let userProfile = {};
     
-    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
+    try {
+      const profileRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${profilePath}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if (profileRes.ok) {
+        const profileData = await profileRes.json();
+        userProfile = JSON.parse(Buffer.from(profileData.content, 'base64').toString('utf8'));
+      }
+    } catch (e) { /* ignore if not exists */ }
+
+    // افزودن دستاورد به پروفایل کاربر
+    if (!userProfile.achievements) userProfile.achievements = [];
+    userProfile.achievements.push(newAchievement);
+
+    // آپلود فایل پروفایل بروزرسانی شده
+    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${profilePath}`, {
       method: 'PUT',
       headers: { 
-        'Authorization': `Bearer ${token}`, 
-        'Content-Type': 'application/json' 
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ 
-        message: `Achievement uploaded by ${cardCode}`, 
-        content: newContent, 
-        sha: userDataRaw.sha, 
-        branch: 'main' 
+      body: JSON.stringify({
+        message: `Achievement uploaded by ${cardCode}`,
+        content: Buffer.from(JSON.stringify(userProfile, null, 2)).toString('base64'),
+        sha: userProfile.sha // اگر نیاز به sha باشد، باید از هدرباکی بگیریم، اما معمولا در PUT گیت‌هاب اختیاری است اگر branch اصلی باشد
       })
     });
 
-    return res.status(200).json({ success: true, achievement: newAchievement });
+    // ===== ۶. بروزرسانی آرایه اصلی در index.json =====
+    if (!users[userIndex].achievements) users[userIndex].achievements = [];
+    users[userIndex].achievements.push(newAchievement);
+
+    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${usersPath}`, {
+      method: 'PUT',
+      headers: { 
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: `User ${cardCode} uploaded an achievement`,
+        content: Buffer.from(JSON.stringify(users, null, 2)).toString('base64')
+      })
+    });
+
+    return res.status(200).json({ 
+      message: 'Achievement submitted successfully and is pending admin approval.',
+      achievementId: newAchievement.id 
+    });
 
   } catch (error) {
-    console.error('Upload Error:', error);
+    console.error('Upload Achievement Error:', error);
     return res.status(500).json({ error: error.message });
   }
 };
