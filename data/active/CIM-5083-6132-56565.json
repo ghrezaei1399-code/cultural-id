@@ -24,5 +24,17 @@
   "registrationDate": "2026-09-05T11:15:21.601Z",
   "status": "approved",
   "rank": 0,
-  "country": "Iran"
+  "country": "Iran",
+  "achievements": [
+    {
+      "title": "مقاله",
+      "description": "خرد",
+      "category": "science",
+      "fileUrl": "https://raw.githubusercontent.com/ghrezaei1399-code/cultural-id/main/uploads/1788607518978-6s0wag.jpg",
+      "fileName": "1788607518978-6s0wag.jpg",
+      "status": "pending",
+      "uploadDate": "2026-09-05T11:25:19.699Z",
+      "section": "identity-card"
+    }
+  ]
 }
