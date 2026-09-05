@@ -7,342 +7,323 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', 'Vazir', sans-serif;
+            font-family: 'Segoe UI', 'Vazir', 'IRANSans', sans-serif;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 2rem 1rem;
-            background-image: url('assets/pisa.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: #1a0a0a;
-        }
-        body.dark { color: #f0e8e0; }
-        .container {
-            max-width: 700px;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 48px;
-            padding: 2.5rem 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.02);
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            font-size: 1.8rem;
-            font-weight: 800;
+            /* Modern Animated Background */
+            background: linear-gradient(-45deg, #fdf6e3, #e8f4f8, #f5e6d3, #e0f7fa);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
             color: #2a1a0a;
-            text-align: center;
-            margin-bottom: 0.3rem;
         }
-        body.dark h1 { color: #f9e79f; }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        body.dark { 
+            background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #232526);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #f0e8e0; 
+        }
+        .container {
+            max-width: 750px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 48px;
+            padding: 3rem 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s ease;
+        }
+        body.dark .container { background: rgba(0, 0, 0, 0.45); border-color: rgba(255, 255, 255, 0.1); }
+        
+        h1 {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #8a6d1f;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+            text-shadow: 0 2px 10px rgba(138, 109, 31, 0.1);
+        }
+        body.dark h1 { color: #ffd700; text-shadow: 0 2px 15px rgba(255, 215, 0, 0.2); }
+        
         .subtitle {
             text-align: center;
-            font-size: 0.9rem;
-            color: #4a2a1a;
-            opacity: 0.8;
-            margin-bottom: 2rem;
-            border-bottom: 1px solid rgba(30, 10, 0, 0.05);
-            padding-bottom: 1rem;
+            font-size: 1rem;
+            color: #6a5a3a;
+            opacity: 0.9;
+            margin-bottom: 2.5rem;
+            border-bottom: 2px dashed rgba(138, 109, 31, 0.2);
+            padding-bottom: 1.5rem;
+            font-weight: 600;
         }
-        body.dark .subtitle { color: #d0c0b0; border-bottom-color: rgba(255, 255, 255, 0.02); }
+        body.dark .subtitle { color: #c8b890; }
         
-        .form-group { margin-bottom: 1.5rem; }
+        /* Beautiful Form Fields with Animation */
+        .form-group { margin-bottom: 1.8rem; position: relative; }
         .form-group label {
             display: block;
-            font-weight: 700;
-            font-size: 0.9rem;
-            color: #2a1a0a;
-            margin-bottom: 0.3rem;
+            font-weight: 800;
+            font-size: 0.95rem;
+            color: #4a3a2a;
+            margin-bottom: 0.6rem;
+            transition: 0.3s;
         }
         body.dark .form-group label { color: #e8d8c8; }
         
-        .form-group input,
-        .form-group textarea {
+        .form-group input, .form-group textarea {
             width: 100%;
-            padding: 0.8rem 1rem;
-            border-radius: 16px;
-            border: 1px solid rgba(30, 10, 0, 0.02);
-            background: rgba(255, 255, 255, 0.02);
+            padding: 1.2rem;
+            border-radius: 20px;
+            border: 2px solid transparent;
+            background: rgba(255, 255, 255, 0.7);
             font-family: inherit;
-            font-size: 0.95rem;
-            color: #1a0a0a;
-            transition: all 0.3s ease;
+            font-size: 1rem;
+            color: #2a1a0a;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             outline: none;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.03);
         }
-        body.dark .form-group input,
-        body.dark .form-group textarea {
-            background: rgba(255, 255, 255, 0.02);
-            color: #e8d8c8;
-            border-color: rgba(255, 255, 255, 0.02);
+        body.dark .form-group input, body.dark .form-group textarea {
+            background: rgba(0, 0, 0, 0.35);
+            color: #f0e8d0;
         }
-        .form-group input:focus,
-        .form-group textarea:focus {
-            border-color: rgba(60, 30, 10, 0.05);
-            background: rgba(255, 255, 255, 0.03);
+        .form-group input:focus, .form-group textarea:focus {
+            background: #fff;
+            border-color: #d4af37;
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.2);
+            transform: translateY(-3px);
         }
-        body.dark .form-group input:focus,
-        body.dark .form-group textarea:focus {
-            border-color: rgba(255, 255, 255, 0.05);
-            background: rgba(255, 255, 255, 0.03);
-        }
-        
+        body.dark .form-group input:focus { background: #1a1a2e; border-color: #ffd700; }
+
+        /* Beautiful Value Boxes with Distinct Colors */
         .value-item {
-            background: rgba(255, 255, 255, 0.01);
-            border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border: 1px solid rgba(30, 10, 0, 0.02);
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 1.2rem;
+            border-left: 5px solid #d4af37; /* LTR direction */
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
         }
-        body.dark .value-item { border-color: rgba(255, 255, 255, 0.02); }
+        .value-item::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 5px; height: 100%;
+            background: linear-gradient(to bottom, #d4af37, #f9e79f);
+        }
+        .value-item:hover { transform: translateX(8px) scale(1.01); background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        body.dark .value-item { background: rgba(0,0,0,0.25); border-left-color: #ffd700; }
+        body.dark .value-item:hover { background: rgba(255,255,255,0.08); }
         
         .value-item .value-title {
-            font-weight: 700;
-            font-size: 0.9rem;
-            color: #2a1a0a;
-            margin-bottom: 0.5rem;
+            font-weight: 900;
+            font-size: 1rem;
+            color: #8a6d1f;
+            margin-bottom: 0.8rem;
             display: block;
         }
-        body.dark .value-item .value-title { color: #e8d8c8; }
+        body.dark .value-item .value-title { color: #ffd700; }
         
         .value-item input {
             width: 100%;
-            padding: 0.8rem;
-            border-radius: 8px;
-            border: 1px solid rgba(30, 10, 0, 0.02);
-            background: rgba(255, 255, 255, 0.02);
-            font-size: 0.9rem;
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.8);
+            font-size: 0.95rem;
+            transition: 0.3s;
         }
-        body.dark .value-item input {
-            background: rgba(255, 255, 255, 0.02);
-            color: #e8d8c8;
-            border-color: rgba(255, 255, 255, 0.02);
-        }
+        .value-item input:focus { border-color: #d4af37; background: #fff; }
+        body.dark .value-item input { background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.1); color: #f0e8d0; }
 
+        /* Priority Section with Organizational Colors */
         .priority-section {
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 2px dashed rgba(212, 175, 55, 0.3);
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 3px dashed rgba(212, 175, 55, 0.3);
         }
         .priority-title {
             text-align: center;
-            font-size: 1.1rem;
-            font-weight: 800;
+            font-size: 1.3rem;
+            font-weight: 900;
             color: #2874a6;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 5px rgba(40, 116, 166, 0.1);
         }
         body.dark .priority-title { color: #85c1e9; }
         
-        .priority-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 1rem;
-        }
+        .priority-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 1rem; }
         .priority-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 0.8rem;
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 1rem;
+            border-radius: 16px;
             text-align: center;
             border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
         }
-        .priority-item label {
-            display: block;
-            font-size: 0.8rem;
-            margin-bottom: 0.5rem;
-            color: #6a5a3a;
-        }
-        body.dark .priority-item label { color: #c8b890; }
+        .priority-item:hover { transform: translateY(-5px); background: #fff; box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+        body.dark .priority-item { background: rgba(0,0,0,0.25); }
+        
         .priority-item select {
             width: 100%;
-            padding: 0.4rem;
-            border-radius: 8px;
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            background: rgba(255, 255, 255, 0.1);
-            color: #2a1a0a;
-            font-weight: bold;
+            padding: 0.6rem;
+            border-radius: 10px;
+            border: 1px solid #d4af37;
+            background: #fff;
+            color: #8a6d1f;
+            font-weight: 800;
+            cursor: pointer;
+            outline: none;
         }
-        body.dark .priority-item select { color: #f9e79f; }
 
-        .btn-group { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+        /* Beautiful Animated Buttons */
+        .btn-group { display: flex; gap: 1.2rem; margin-top: 2.5rem; flex-wrap: wrap; }
         .btn {
             flex: 1;
-            padding: 0.8rem 1.5rem;
+            padding: 1.2rem 2rem;
             border-radius: 60px;
-            font-weight: 700;
-            font-size: 1rem;
+            font-weight: 900;
+            font-size: 1.1rem;
             text-decoration: none;
             text-align: center;
             border: none;
             cursor: pointer;
-            transition: all 0.3s ease;
-            min-width: 140px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            min-width: 150px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .btn::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+            z-index: -1; transition: 0.3s;
         }
         .btn-primary {
-            background: rgba(60, 30, 10, 0.02);
+            background: linear-gradient(135deg, #d4af37, #f9e79f);
             color: #2a1a0a;
-            border: 1px solid rgba(60, 30, 10, 0.02);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
         }
-        body.dark .btn-primary {
-            background: rgba(255, 255, 255, 0.02);
-            color: #f9e79f;
-            border-color: rgba(255, 255, 255, 0.02);
-        }
-        .btn-primary:hover { background: rgba(60, 30, 10, 0.04); transform: scale(1.02); }
-        body.dark .btn-primary:hover { background: rgba(255, 255, 255, 0.04); }
-        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-primary:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 15px 35px rgba(212, 175, 55, 0.4); }
         
         .btn-danger {
-            background: rgba(200, 50, 50, 0.02);
-            color: #8a1a1a;
-            border: 1px solid rgba(200, 50, 50, 0.02);
+            background: linear-gradient(135deg, #ff6b6b, #ee5253);
+            color: #fff;
+            box-shadow: 0 8px 25px rgba(238, 82, 83, 0.3);
         }
-        body.dark .btn-danger {
-            background: rgba(200, 50, 50, 0.02);
-            color: #f08080;
-            border-color: rgba(200, 50, 50, 0.02);
-        }
-        .btn-danger:hover { background: rgba(200, 50, 50, 0.04); transform: scale(1.02); }
+        .btn-danger:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 15px 35px rgba(238, 82, 83, 0.4); }
         
         .btn-secondary {
-            background: rgba(60, 30, 10, 0.01);
-            color: #3a2a1a;
-            border: 1px solid rgba(60, 30, 10, 0.01);
+            background: rgba(255, 255, 255, 0.6);
+            color: #6a5a3a;
+            border: 2px solid rgba(212, 175, 55, 0.3);
         }
-        body.dark .btn-secondary {
-            background: rgba(255, 255, 255, 0.01);
-            color: #a09080;
-            border-color: rgba(255, 255, 255, 0.01);
-        }
-        .btn-secondary:hover { background: rgba(60, 30, 10, 0.03); transform: scale(1.02); }
-        body.dark .btn-secondary:hover { background: rgba(255, 255, 255, 0.03); }
-        
+        .btn-secondary:hover { background: #fff; color: #8a6d1f; transform: translateY(-3px); }
+
         .note {
             text-align: center;
-            font-size: 0.75rem;
-            opacity: 0.5;
-            margin-top: 1.5rem;
-            color: #1a0a0a;
-            border-top: 1px solid rgba(30, 10, 0, 0.02);
-            padding-top: 1rem;
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin-top: 2.5rem;
+            color: #6a5a3a;
+            font-weight: 600;
         }
-        body.dark .note { color: #b0a090; border-top-color: rgba(255, 255, 255, 0.02); }
-        
-        .success-message {
-            display: none;
-            background: rgba(50, 200, 50, 0.02);
-            border: 1px solid rgba(50, 200, 50, 0.02);
-            border-radius: 16px;
-            padding: 1rem;
-            text-align: center;
-            margin-top: 1.5rem;
-            color: #0a5a0a;
-        }
-        body.dark .success-message {
-            color: #80b080;
-            background: rgba(50, 200, 50, 0.01);
-            border-color: rgba(50, 200, 50, 0.01);
-        }
-        .success-message.show { display: block; }
         
         .theme-toggle {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(30, 10, 0, 0.02);
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0.3rem 0.8rem;
-            border-radius: 40px;
-            transition: 0.3s;
-            color: #1a0a0a;
+            position: fixed; top: 1.5rem; right: 1.5rem; /* Keep right for consistency or switch to left for LTR? Usually right is fine for global tools */
+            background: rgba(255, 255, 255, 0.7);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            font-size: 1.6rem; cursor: pointer;
+            padding: 0.6rem 1.2rem; border-radius: 60px;
+            transition: 0.4s; color: #8a6d1f;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            z-index: 100;
         }
-        body.dark .theme-toggle {
-            color: #f9e79f;
-            background: rgba(0, 0, 0, 0.05);
-            border-color: rgba(255, 255, 255, 0.02);
-        }
-        .theme-toggle:hover { transform: scale(1.1); }
-        
-        @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
+        .theme-toggle:hover { transform: rotate(30deg) scale(1.15); background: #fff; }
+        body.dark .theme-toggle { background: rgba(0,0,0,0.5); color: #ffd700; border-color: rgba(255,255,255,0.1); }
 
         .pioneer-module {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            background: rgba(255, 215, 0, 0.05);
-            border: 1px dashed rgba(212, 172, 13, 0.3);
-            border-radius: 20px;
-            text-align: center;
-            animation: fadeIn 0.5s ease;
+            margin-top: 2.5rem; padding: 2rem;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 255, 255, 0.5));
+            border: 2px dashed #d4af37; border-radius: 30px;
+            text-align: center; animation: fadeInUp 1s ease;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.1);
         }
-        body.dark .pioneer-module { background: rgba(255, 215, 0, 0.02); }
-        
-        .pioneer-text {
-            font-size: 0.85rem;
-            color: #4a2a1a;
-            margin-bottom: 0.8rem;
-            line-height: 1.5;
-        }
-        body.dark .pioneer-text { color: #d0c0b0; }
-
         .btn-upload {
-            background: linear-gradient(135deg, #2a1a0a 0%, #5a3a2a 100%);
-            color: #fff !important;
-            box-shadow: 0 4px 15px rgba(42, 26, 10, 0.3);
-            display: inline-block;
-            width: auto;
-            min-width: 200px;
-            padding: 0.6rem 1.5rem;
-            border-radius: 50px;
-            font-weight: 700;
-            text-decoration: none;
-            transition: all 0.3s ease;
+            background: #2a1a0a; color: #fff !important;
+            padding: 1rem 2.5rem; border-radius: 60px;
+            font-weight: 900; text-decoration: none;
+            display: inline-block; margin-top: 1.2rem;
+            transition: 0.4s; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        body.dark .btn-upload {
-            background: linear-gradient(135deg, #f9e79f 0%, #d4ac0d 100%);
-            color: #1a0a0a !important;
-        }
-        .btn-upload:hover { transform: translateY(-2px); opacity: 0.9; }
+        body.dark .btn-upload { background: #ffd700; color: #1a1a2e !important; }
+        .btn-upload:hover { transform: scale(1.08) rotate(-1deg); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
 
         .welcome-back-module {
             display: none;
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            background: rgba(40, 116, 166, 0.1);
-            border: 1px solid rgba(40, 116, 166, 0.3);
-            border-radius: 20px;
+            margin-bottom: 2.5rem;
+            padding: 2rem;
+            background: rgba(40, 116, 166, 0.15);
+            border: 2px solid rgba(40, 116, 166, 0.3);
+            border-radius: 24px;
             text-align: center;
+            animation: fadeIn 0.8s ease;
         }
-        body.dark .welcome-back-module { background: rgba(133, 193, 233, 0.05); }
-        .welcome-text { font-size: 1rem; color: #2874a6; margin-bottom: 1rem; font-weight: 700; }
+        body.dark .welcome-back-module { background: rgba(133, 193, 233, 0.1); }
+        .welcome-text { font-size: 1.2rem; color: #2874a6; margin-bottom: 1.2rem; font-weight: 900; }
         body.dark .welcome-text { color: #85c1e9; }
 
         .delete-module {
-            margin-top: 3rem;
-            padding: 1.5rem;
-            background: rgba(200, 50, 50, 0.03);
-            border: 1px solid rgba(200, 50, 50, 0.1);
-            border-radius: 20px;
+            margin-top: 4rem;
+            padding: 2rem;
+            background: rgba(200, 50, 50, 0.05);
+            border: 2px solid rgba(200, 50, 50, 0.15);
+            border-radius: 24px;
             text-align: center;
+            transition: 0.3s;
         }
-        body.dark .delete-module { background: rgba(200, 50, 50, 0.02); }
-        .delete-title { font-size: 1.1rem; color: #8a1a1a; margin-bottom: 1rem; font-weight: 800; }
+        .delete-module:hover { background: rgba(200, 50, 50, 0.08); }
+        body.dark .delete-module { background: rgba(200, 50, 50, 0.05); }
+        .delete-title { font-size: 1.3rem; color: #8a1a1a; margin-bottom: 1.5rem; font-weight: 900; }
         body.dark .delete-title { color: #f08080; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .success-message {
+            display: none;
+            background: rgba(50, 200, 50, 0.1);
+            border: 2px solid rgba(50, 200, 50, 0.2);
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-top: 2rem;
+            color: #0a5a0a;
+            font-weight: 800;
+            animation: fadeIn 0.5s ease;
+        }
+        body.dark .success-message { color: #80b080; background: rgba(50, 200, 50, 0.05); }
+        .success-message.show { display: block; }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
     <button class="theme-toggle" id="themeToggle">🌙</button>
 
     <div class="container">
-        <!-- Welcome Back Module (Shown if user has a card code) -->
+        <!-- Welcome Back Module -->
         <div id="welcomeBackModule" class="welcome-back-module">
             <div class="welcome-text">✨ Welcome Back! Your Identity Card is Active.</div>
-            <p class="pioneer-text">Now it's your turn to share your cultural achievement with the world.</p>
+            <p class="pioneer-text" style="font-size:1rem; color:#4a3a2a;">Now it's your turn to share your cultural achievement with the world.</p>
             <a href="upload-achievement-en.html" class="btn btn-upload">🚀 Upload Achievement</a>
         </div>
 
@@ -400,10 +381,10 @@
                 </div>
             </div>
 
-            <div class="form-group" style="margin-top: 2rem;">
+            <div class="form-group" style="margin-top: 2.5rem;">
                 <label>Optional Code (5 custom characters)</label>
                 <input type="text" id="optionalCode" maxlength="5" placeholder="e.g. A-B-C-D-E" />
-                <small style="opacity:0.5; font-size:0.7rem;">Optional - you can leave it empty</small>
+                <small style="opacity:0.6; font-size:0.8rem; display:block; margin-top:0.5rem;">Optional - you can leave it empty</small>
             </div>
 
             <!-- Optional Email for Networking -->
@@ -417,14 +398,14 @@
                 <a href="index-en.html" class="btn btn-secondary">↩ Back</a>
             </div>
 
-            <!-- Pioneer Module (Visible during registration) -->
+            <!-- Pioneer Module -->
             <div class="pioneer-module">
-                <p class="pioneer-text">✨ <strong>Pioneer Member:</strong> Would you like to upload your cultural achievement to the global gallery?</p>
+                <p class="pioneer-text" style="font-size:1rem; color:#4a3a2a;">✨ <strong>Pioneer Member:</strong> Would you like to upload your cultural achievement to the global gallery?</p>
                 <a href="upload-achievement-en.html" class="btn-upload">🚀 Yes, Upload Achievement</a>
             </div>
         </form>
 
-        <!-- ===== Delete Module (Updated - connected to new API) ===== -->
+        <!-- ===== Delete Module ===== -->
         <div class="delete-module">
             <div class="delete-title">⚠️ Membership Cancellation Request</div>
             <div class="form-group">
@@ -435,7 +416,6 @@
                 <label>Reason for Cancellation (Optional)</label>
                 <textarea id="deleteReason" placeholder="Please state your reason..."></textarea>
             </div>
-            <!-- ===== Updated button connected to new API ===== -->
             <button class="btn btn-danger" onclick="submitDeleteRequest()">🚪 Submit Deletion Request</button>
         </div>
 
@@ -516,7 +496,7 @@
             }
         });
 
-        // ===== Delete Request (Updated - connected to new API) =====
+        // ===== Delete Request =====
         async function submitDeleteRequest() {
             const cardCode = document.getElementById('deleteCardCode').value.trim();
             const reason = document.getElementById('deleteReason').value.trim();
@@ -533,7 +513,6 @@
             btn.textContent = '⏳ Sending...';
 
             try {
-                // ===== Updated: Sending to new delete-user API =====
                 const response = await fetch('/api/delete-user', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
