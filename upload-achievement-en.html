@@ -7,210 +7,255 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', 'Vazir', sans-serif;
+            font-family: 'Segoe UI', 'Vazir', 'IRANSans', sans-serif;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 2rem 1rem;
-            background-image: url('assets/pisa.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: #1a0a0a;
-        }
-        body.dark { color: #f0e8e0; }
-        .container {
-            max-width: 700px;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 48px;
-            padding: 2.5rem 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.02);
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            font-size: 1.8rem;
-            font-weight: 800;
+            /* Modern Animated Background */
+            background: linear-gradient(-45deg, #e8f4f8, #fdf6e3, #f5e6d3, #e0f7fa);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
             color: #2a1a0a;
-            text-align: center;
-            margin-bottom: 0.3rem;
         }
-        body.dark h1 { color: #f9e79f; }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        body.dark { 
+            background: linear-gradient(-45deg, #0f3460, #1a1a2e, #16213e, #232526);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #f0e8d0; 
+        }
+        .container {
+            max-width: 750px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 48px;
+            padding: 3rem 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s ease;
+        }
+        body.dark .container { background: rgba(0, 0, 0, 0.45); border-color: rgba(255, 255, 255, 0.1); }
+        
+        h1 {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #8a6d1f;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+        }
+        body.dark h1 { color: #ffd700; }
+        
         .subtitle {
             text-align: center;
-            font-size: 0.9rem;
-            color: #4a2a1a;
-            opacity: 0.8;
-            margin-bottom: 2rem;
-            border-bottom: 1px solid rgba(30, 10, 0, 0.05);
-            padding-bottom: 1rem;
+            font-size: 1rem;
+            color: #6a5a3a;
+            opacity: 0.9;
+            margin-bottom: 2.5rem;
+            border-bottom: 2px dashed rgba(138, 109, 31, 0.2);
+            padding-bottom: 1.5rem;
+            font-weight: 600;
         }
-        body.dark .subtitle { color: #d0c0b0; border-bottom-color: rgba(255, 255, 255, 0.02); }
-        
-        .form-group { margin-bottom: 1.5rem; }
+        body.dark .subtitle { color: #c8b890; }
+
+        /* Beautiful Form Fields */
+        .form-group { margin-bottom: 1.8rem; position: relative; }
         .form-group label {
             display: block;
-            font-weight: 700;
-            font-size: 0.9rem;
-            color: #2a1a0a;
-            margin-bottom: 0.3rem;
+            font-weight: 800;
+            font-size: 0.95rem;
+            color: #4a3a2a;
+            margin-bottom: 0.6rem;
         }
         body.dark .form-group label { color: #e8d8c8; }
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
+        
+        .form-group input, .form-group textarea, .form-group select {
             width: 100%;
-            padding: 0.8rem 1rem;
-            border-radius: 16px;
-            border: 1px solid rgba(30, 10, 0, 0.02);
-            background: rgba(255, 255, 255, 0.02);
+            padding: 1.2rem;
+            border-radius: 20px;
+            border: 2px solid transparent;
+            background: rgba(255, 255, 255, 0.7);
             font-family: inherit;
-            font-size: 0.95rem;
-            color: #1a0a0a;
-            transition: all 0.3s ease;
+            font-size: 1rem;
+            color: #2a1a0a;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             outline: none;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.03);
         }
-        body.dark .form-group input,
-        body.dark .form-group textarea,
-        body.dark .form-group select {
-            background: rgba(255, 255, 255, 0.02);
-            color: #e8d8c8;
-            border-color: rgba(255, 255, 255, 0.02);
+        body.dark .form-group input, body.dark .form-group textarea, body.dark .form-group select {
+            background: rgba(0, 0, 0, 0.35);
+            color: #f0e8d0;
         }
-        .form-group input:focus,
-        .form-group textarea:focus {
-            border-color: rgba(60, 30, 10, 0.05);
-            background: rgba(255, 255, 255, 0.03);
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            background: #fff;
+            border-color: #d4af37;
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.2);
+            transform: translateY(-3px);
         }
-        
-        .code-check-box {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 2rem;
-            border-radius: 24px;
-            border: 1px dashed rgba(212, 175, 55, 0.3);
-            text-align: center;
-            margin-top: 2rem;
-        }
-        .code-input {
-            width: 100%;
-            padding: 1rem;
-            border-radius: 12px;
-            border: 1px solid rgba(30, 10, 0, 0.1);
-            background: rgba(255, 255, 255, 0.1);
-            font-size: 1.2rem;
-            text-align: center;
-            letter-spacing: 2px;
-            margin-bottom: 1rem;
-            color: #1a0a0a;
-            direction: ltr;
-        }
-        
+        body.dark .form-group input:focus { background: #1a1a2e; border-color: #ffd700; }
+
+        /* Beautiful Upload Box */
         .upload-zone {
-            border: 2px dashed rgba(212, 175, 55, 0.3);
-            border-radius: 16px;
-            padding: 2rem 1rem;
+            border: 3px dashed #d4af37;
+            border-radius: 30px;
+            padding: 3rem 1rem;
             text-align: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
             cursor: pointer;
-            transition: 0.3s;
-            background: rgba(255, 255, 255, 0.01);
+            transition: all 0.4s ease;
+            background: rgba(255, 255, 255, 0.4);
+            position: relative;
+            overflow: hidden;
         }
-        .upload-zone:hover { background: rgba(212, 175, 55, 0.05); border-color: #d4ac0d; }
-        .upload-zone .icon { font-size: 2.5rem; display: block; margin-bottom: 0.3rem; }
+        .upload-zone:hover { 
+            background: rgba(255, 255, 255, 0.8); 
+            border-color: #8a6d1f; 
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
+        }
+        body.dark .upload-zone { background: rgba(0,0,0,0.2); border-color: #ffd700; }
+        body.dark .upload-zone:hover { background: rgba(0,0,0,0.3); }
         
-        .btn-group { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+        .upload-zone .icon { font-size: 3rem; display: block; margin-bottom: 1rem; animation: floatIcon 3s ease-in-out infinite; }
+        @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        
+        .file-name { 
+            font-size: 1rem; 
+            color: #2874a6; 
+            margin-top: 1rem; 
+            display: block; 
+            font-weight: 800; 
+            background: rgba(40, 116, 166, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        body.dark .file-name { color: #85c1e9; background: rgba(133, 193, 233, 0.1); }
+
+        /* Animated Buttons */
+        .btn-group { display: flex; gap: 1.2rem; margin-top: 2.5rem; flex-wrap: wrap; }
         .btn {
             flex: 1;
-            padding: 0.8rem 1.5rem;
+            padding: 1.2rem 2rem;
             border-radius: 60px;
-            font-weight: 700;
-            font-size: 1rem;
+            font-weight: 900;
+            font-size: 1.1rem;
             text-decoration: none;
             text-align: center;
             border: none;
             cursor: pointer;
-            transition: all 0.3s ease;
-            min-width: 140px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            min-width: 150px;
+            position: relative;
+            overflow: hidden;
         }
         .btn-primary {
-            background: rgba(60, 30, 10, 0.02);
+            background: linear-gradient(135deg, #d4af37, #f9e79f);
             color: #2a1a0a;
-            border: 1px solid rgba(60, 30, 10, 0.02);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
         }
-        body.dark .btn-primary {
-            background: rgba(255, 255, 255, 0.02);
-            color: #f9e79f;
-            border-color: rgba(255, 255, 255, 0.02);
-        }
-        .btn-primary:hover { background: rgba(60, 30, 10, 0.04); transform: scale(1.02); }
-        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-primary:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 15px 35px rgba(212, 175, 55, 0.4); }
         
         .btn-secondary {
-            background: rgba(60, 30, 10, 0.01);
-            color: #3a2a1a;
-            border: 1px solid rgba(60, 30, 10, 0.01);
+            background: rgba(255, 255, 255, 0.6);
+            color: #6a5a3a;
+            border: 2px solid rgba(212, 175, 55, 0.3);
         }
-        body.dark .btn-secondary {
-            background: rgba(255, 255, 255, 0.01);
-            color: #a09080;
-            border-color: rgba(255, 255, 255, 0.01);
-        }
-        
+        .btn-secondary:hover { background: #fff; color: #8a6d1f; transform: translateY(-3px); }
+
         .note {
             text-align: center;
-            font-size: 0.75rem;
-            opacity: 0.5;
-            margin-top: 1.5rem;
-            color: #1a0a0a;
-            border-top: 1px solid rgba(30, 10, 0, 0.02);
-            padding-top: 1rem;
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin-top: 2.5rem;
+            color: #6a5a3a;
+            font-weight: 600;
         }
         
         .theme-toggle {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(30, 10, 0, 0.02);
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0.3rem 0.8rem;
-            border-radius: 40px;
-            transition: 0.3s;
-            color: #1a0a0a;
+            position: fixed; top: 1.5rem; right: 1.5rem;
+            background: rgba(255, 255, 255, 0.7);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            font-size: 1.6rem; cursor: pointer;
+            padding: 0.6rem 1.2rem; border-radius: 60px;
+            transition: 0.4s; color: #8a6d1f;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            z-index: 100;
         }
-        body.dark .theme-toggle { color: #f9e79f; background: rgba(0, 0, 0, 0.05); }
-        
-        @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
-        .hidden { display: none !important; }
-        .error-msg { color: #a00; margin-top: 1rem; font-size: 0.9rem; display: none; text-align: center; }
-        .file-name { font-size: 0.85rem; color: #2874a6; margin-top: 0.5rem; display: block; font-weight: bold; }
-        
+        .theme-toggle:hover { transform: rotate(30deg) scale(1.15); background: #fff; }
+        body.dark .theme-toggle { background: rgba(0,0,0,0.5); color: #ffd700; border-color: rgba(255,255,255,0.1); }
+
         .status-msg {
-            padding: 1rem;
-            border-radius: 12px;
-            margin-top: 1rem;
+            padding: 1.5rem;
+            border-radius: 20px;
+            margin-top: 2rem;
             text-align: center;
             display: none;
+            font-weight: 800;
+            animation: fadeIn 0.5s ease;
         }
-        .status-msg.success { background: rgba(0,200,0,0.1); color: #006400; border: 1px solid #006400; }
-        .status-msg.error { background: rgba(200,0,0,0.1); color: #8b0000; border: 1px solid #8b0000; }
-        
+        .status-msg.success { background: rgba(50, 200, 50, 0.1); color: #0a5a0a; border: 2px solid rgba(50, 200, 50, 0.2); }
+        .status-msg.error { background: rgba(200, 50, 50, 0.1); color: #8a1a1a; border: 2px solid rgba(200, 50, 50, 0.2); }
+        body.dark .status-msg.success { color: #80b080; }
+        body.dark .status-msg.error { color: #f08080; }
+
         .helper-text {
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             color: #6a5a3a;
-            margin-top: 1rem;
-            line-height: 1.6;
+            margin-top: 1.5rem;
+            line-height: 1.8;
             text-align: center;
-            background: rgba(255,255,255,0.05);
-            padding: 1rem;
-            border-radius: 12px;
+            background: rgba(255,255,255,0.5);
+            padding: 1.5rem;
+            border-radius: 20px;
+            border: 1px dashed rgba(212, 175, 55, 0.3);
         }
-        body.dark .helper-text { color: #c8b890; }
-        .helper-text a { color: #2874a6; text-decoration: none; font-weight: bold; }
+        body.dark .helper-text { color: #c8b890; background: rgba(0,0,0,0.2); }
+        .helper-text a { color: #2874a6; text-decoration: none; font-weight: 800; border-bottom: 2px solid rgba(40, 116, 166, 0.2); }
+        .helper-text a:hover { color: #d4af37; border-color: #d4af37; }
+
+        .hidden { display: none !important; }
+        .error-msg { color: #a00; margin-top: 1rem; font-size: 0.9rem; display: none; text-align: center; font-weight: 700; }
+        
+        .code-check-box {
+            background: rgba(255, 255, 255, 0.5);
+            padding: 2.5rem;
+            border-radius: 30px;
+            border: 2px dashed rgba(212, 175, 55, 0.3);
+            text-align: center;
+            margin-top: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+        body.dark .code-check-box { background: rgba(0,0,0,0.2); }
+        
+        .code-input {
+            width: 100%;
+            padding: 1.2rem;
+            border-radius: 16px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.8);
+            font-size: 1.3rem;
+            text-align: center;
+            letter-spacing: 3px;
+            margin-bottom: 1.5rem;
+            color: #2a1a0a;
+            font-family: monospace;
+            transition: 0.3s;
+            direction: ltr;
+        }
+        .code-input:focus { border-color: #d4af37; outline: none; background: #fff; }
+        body.dark .code-input { background: rgba(0,0,0,0.3); color: #f0e8d0; border-color: rgba(255,255,255,0.1); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -241,8 +286,8 @@
 
             <div class="upload-zone" id="dropZone">
                 <span class="icon">📂</span>
-                <p>Drag your file here or click to upload</p>
-                <p class="small" style="font-size:0.7rem; opacity:0.5;">Allowed formats: JPG, PNG, MP4 (No size limit)</p>
+                <p style="font-weight:800; font-size:1.1rem;">Drag your file here or click to upload</p>
+                <p class="small" style="font-size:0.8rem; opacity:0.6; margin-top:0.5rem;">Allowed formats: JPG, PNG, MP4 (No size limit)</p>
                 <input type="file" id="fileInput" class="hidden" accept="image/*,video/*,audio/*" />
                 <span id="fileName" class="file-name"></span>
             </div>
@@ -357,7 +402,7 @@
         }
     }
 
-    // ===== Upload Logic (Updated - No upload-file dependency) =====
+    // ===== Upload Logic =====
     const uploadForm = document.getElementById('uploadForm');
     if(uploadForm) {
         uploadForm.addEventListener('submit', async function(e) {
@@ -371,7 +416,6 @@
             if(statusBox) statusBox.style.display = 'none';
 
             try {
-                // ===== 1. Read file as base64 (if exists) =====
                 let fileData = '';
                 let fileName = '';
 
@@ -384,7 +428,6 @@
                     fileName = file.name;
                 }
 
-                // ===== 2. Send directly to upload-achievement (no need for upload-file) =====
                 btn.textContent = '⏳ Registering info...';
                 const cardCode = localStorage.getItem('verifiedCode') || document.getElementById('memberCode').value;
 
@@ -392,8 +435,8 @@
                     title: document.getElementById('title').value,
                     description: document.getElementById('description').value,
                     category: document.getElementById('category').value,
-                    fileData: fileData,    // Send base64 directly
-                    fileName: fileName,    // Send file name
+                    fileData: fileData,
+                    fileName: fileName,
                     section: 'identity-card'
                 };
 
