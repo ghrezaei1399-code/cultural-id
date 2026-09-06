@@ -208,8 +208,7 @@
         .scroll-hint { text-align: center; padding: 0.8rem; color: #888; font-size: 0.85rem; border-top: 1px solid rgba(212,175,55,0.1); margin-top: 0.5rem; font-weight: 700; }
         .btn-back-bottom { display: inline-block; margin-top: 2rem; padding: 0.8rem 1.5rem; background: rgba(212,175,55,0.2); color: #8a6d1f; border-radius: 30px; text-decoration: none; font-weight: 700; transition: 0.3s; }
         
-        /* ===== باکس تحلیل ۵ سطحی ===== */
-                /* ===== باکس تحلیل ۵ سطحی (اصلاح شده) ===== */
+        /* ===== باکس تحلیل ۵ سطحی (اصلاح شده) ===== */
         .analysis-box {
             margin-top: 1rem;
             padding: 1.5rem;
@@ -579,6 +578,10 @@
                     actionButtons = `
                         <div class="obs-actions">
                             <button class="btn-small btn-module" onclick="toggleAnalysis('${obs.number}')">📊 ویرایش تحلیل</button>
+                            
+                            <!-- دکمه جدید تحلیل هوشمند -->
+                            <button class="btn-small" onclick="autoFillAnalysis('${obs.number}')" style="background:#6366f1; color:white;">🤖 تحلیل هوشمند</button>
+                            
                             ${isScore5 ? `<button class="btn-small btn-approve" onclick="submitToGallery('${obs.number}')" style="background:rgba(212,175,55,0.2);color:#8a6d1f;">⭐ ارسال به گالری</button>` : ''}
                             <button class="btn-small btn-cluster" onclick="generateGuide('${obs.number}')">📋 تولید بسته راهنما</button>
                         </div>
@@ -736,7 +739,24 @@
             const obs = allObservations.find(o => o.number === parseInt(issueNumber));
             if (!obs) return;
             
-            // استفاده از خوشه تعیین شده توسط ادمین
+            // استفاده از تحلیل ذخیره شده یا تولید پیش‌فرض
+            const analysis = obs.analysis || {};
+            if (analysis.guide && analysis.guide.individual) {
+                 const guideBox = document.getElementById(`guide-${issueNumber}`);
+                 if (guideBox) {
+                    guideBox.innerHTML = `
+                        <div class="guide-title">📋 بسته راهنمای اقدام عملی</div>
+                        <div class="guide-item"><strong>📍 سطح فردی:</strong> ${analysis.guide.individual}</div>
+                        <div class="guide-item"><strong>🌐 سطح شبکه‌ای:</strong> ${analysis.guide.network}</div>
+                        <div class="guide-item"><strong>🏛️ سطح سیاستی:</strong> ${analysis.guide.policy}</div>
+                    `;
+                    guideBox.classList.add('active');
+                    guideBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                 }
+                 return;
+            }
+
+            // اگر تحلیل ذخیره نشده بود، از منطق قدیمی استفاده کن
             const clusterValue = obs.analysis?.adminCluster || 'other';
             const clusterNames = {
                 'human': 'انسان', 'knowledge': 'دانش و فناوری', 
@@ -832,7 +852,9 @@
                 scaleMatrix: document.getElementById(`scale-${issueNumber}`).value.trim(),
                 capacityMatrix: document.getElementById(`capacity-${issueNumber}`).value.trim(),
                 adminNote: adminNote,
-                adminCluster: adminCluster
+                adminCluster: adminCluster,
+                // ذخیره راهنماهای موقت تولید شده توسط AI
+                guide: window.tempGuides || {}
             };
             
             const score = parseInt(document.getElementById(`score-${issueNumber}`).value) || 0;
@@ -876,6 +898,7 @@
         
         loadObservations();
       let currentAnalyzingId = null; // متغیر جدید برای ردیابی مشاهده باز شده 
+      
        // ===== دستیار هوشمند ادمین برای تحلیل و تولید راهنما =====
 async function generateAdminAnalysis(obsText, cluster = 'human') {
     const prompt = `
@@ -917,13 +940,22 @@ window.autoFillAnalysis = async function(issueNumber) {
     const obs = allObservations.find(o => o.number === issueNumber);
     if (!obs) return;
 
-    const btn = document.querySelector(`button[onclick="openAnalysisModal(${issueNumber})"]`);
-    if(btn) {
-        btn.textContent = '🤖 در حال تحلیل...';
-        btn.disabled = true;
+    // پیدا کردن دکمه تحلیل هوشمند برای تغییر متن
+    const buttons = document.querySelectorAll(`#card-${issueNumber} button`);
+    let aiBtn = null;
+    buttons.forEach(b => {
+        if(b.textContent.includes('تحلیل هوشمند')) aiBtn = b;
+    });
+
+    if(aiBtn) {
+        aiBtn.textContent = '🤖 در حال تحلیل...';
+        aiBtn.disabled = true;
     }
 
-    const analysis = await generateAdminAnalysis(obs.observation, obs.cluster || 'human');
+    const clusterSelect = document.getElementById(`adminClusterSelect-${issueNumber}`);
+    const selectedCluster = clusterSelect ? clusterSelect.options[clusterSelect.selectedIndex].text.split(': ')[1] || 'human' : 'human';
+
+    const analysis = await generateAdminAnalysis(obs.observation, selectedCluster);
     
     if (analysis) {
         document.getElementById(`emergence-${issueNumber}`).value = analysis.emergence || '';
@@ -945,9 +977,9 @@ window.autoFillAnalysis = async function(issueNumber) {
         alert('❌ خطا در دریافت تحلیل هوشمند.');
     }
 
-    if(btn) {
-        btn.textContent = '📊 تحلیل ۵ سطحی';
-        btn.disabled = false;
+    if(aiBtn) {
+        aiBtn.textContent = '🤖 تحلیل هوشمند';
+        aiBtn.disabled = false;
     }
 } 
     </script>
