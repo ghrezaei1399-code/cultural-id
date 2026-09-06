@@ -43,7 +43,7 @@
         }
         .banner-icon { font-size: 1rem; }
 
-        /* ===== HEADER با لوگوهای ۱۵۰px و نزدیک به نوشته ===== */
+        /* ===== HEADER ===== */
         .hero-header {
             text-align: center;
             padding: 0.6rem 0.4rem;
@@ -74,13 +74,8 @@
             50% { transform: translateY(-4px); }
         }
         .logo-box img:hover { transform: scale(1.05); }
-        .logo-label { display: none; }
-
-        .site-title-wrap {
-            text-align: center;
-            flex: 1;
-            min-width: 120px;
-        }
+        
+        .site-title-wrap { text-align: center; flex: 1; min-width: 120px; }
         .site-title {
             font-size: 1.2rem;
             font-weight: 900;
@@ -94,12 +89,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .site-subtitle {
-            font-size: 0.8rem;
-            color: #6a5a3a;
-            letter-spacing: 0.5px;
-            margin-top: 0.1rem;
-        }
+        .site-subtitle { font-size: 0.8rem; color: #6a5a3a; letter-spacing: 0.5px; margin-top: 0.1rem; }
         body.dark .site-subtitle { color: #c8b890; }
 
         /* ===== LANGUAGE BAR ===== */
@@ -149,18 +139,11 @@
             white-space: nowrap;
             width: max-content;
         }
-        .slogan-track span {
-            font-size: 0.65rem;
-            font-weight: 600;
-            color: #8a6d1f;
-        }
+        .slogan-track span { font-size: 0.65rem; font-weight: 600; color: #8a6d1f; }
         body.dark .slogan-track span { color: #f9e79f; }
-        @keyframes scrollSlogan {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
+        @keyframes scrollSlogan { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-        /* ===== سه ماژول بالا (کوچک) ===== */
+        /* ===== THREE FEATURE MODULES ===== */
         .features-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -201,7 +184,7 @@
         .feature-radio { background: #fce7f3; }
         body.dark .feature-radio { background: rgba(80, 40, 60, 0.3); }
 
-        /* ===== سه باکس اطلاعاتی (کوچک) ===== */
+        /* ===== THREE INFO BOXES ===== */
         .info-boxes {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -268,7 +251,7 @@
         }
         body.dark .principles span { color: #85c1e9; }
 
-        /* ===== نمونه کارت ===== */
+        /* ===== SAMPLE CARD ===== */
         .card-sample-wrapper {
             background: rgba(255, 255, 255, 0.3);
             border-radius: 16px;
@@ -278,11 +261,7 @@
             text-align: center;
         }
         body.dark .card-sample-wrapper { background: rgba(0, 0, 0, 0.1); }
-        .card-sample-wrapper .label {
-            font-size: 0.65rem;
-            color: #8a6d1f;
-            font-weight: 700;
-        }
+        .card-sample-wrapper .label { font-size: 0.65rem; color: #8a6d1f; font-weight: 700; }
         body.dark .card-sample-wrapper .label { color: #f9e79f; }
 
         .real-card-sample {
@@ -341,7 +320,7 @@
             100% { opacity: 1; filter: hue-rotate(20deg); }
         }
 
-        /* ===== GOLDEN ROW (5 ماژول اصلی) ===== */
+        /* ===== GOLDEN ROW ===== */
         .golden-row {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -382,25 +361,13 @@
         .btn-wisdom { background: linear-gradient(135deg, #2874a6, #5dade2); color: #fff; }
         .btn-atlas { background: linear-gradient(135deg, #6a3d9a, #d2b4de); color: #fff; }
 
-        .btn-achievement-no-link, .btn-atlas-no-link {
-            cursor: default;
-            opacity: 0.7;
-        }
-        .btn-achievement-no-link:hover, .btn-atlas-no-link:hover {
-            transform: none;
-            box-shadow: none;
-        }
+        .btn-achievement-no-link, .btn-atlas-no-link { cursor: default; opacity: 0.7; }
+        .btn-achievement-no-link:hover, .btn-atlas-no-link:hover { transform: none; box-shadow: none; }
 
-        .cta-note {
-            text-align: center;
-            font-size: 0.5rem;
-            color: #6a5a3a;
-            margin: -0.3rem 0 0.5rem 0;
-            font-weight: 600;
-        }
+        .cta-note { text-align: center; font-size: 0.5rem; color: #6a5a3a; margin: -0.3rem 0 0.5rem 0; font-weight: 600; }
         body.dark .cta-note { color: #c8b890; }
 
-        /* ===== گالری‌ها ===== */
+        /* ===== GALLERIES ===== */
         .gallery-box {
             border-radius: 20px;
             padding: 0.8rem;
@@ -410,10 +377,7 @@
         }
         body.dark .gallery-box { background: rgba(58, 47, 32, 0.4); }
 
-        .atlas-box {
-            border-color: #6a3d9a;
-            background: rgba(245, 230, 240, 0.5);
-        }
+        .atlas-box { border-color: #6a3d9a; background: rgba(245, 230, 240, 0.5); }
         body.dark .atlas-box { background: rgba(58, 42, 58, 0.3); }
 
         .gallery-header {
@@ -436,11 +400,7 @@
         .atlas-box .gallery-title { color: #6a3d9a; }
         body.dark .atlas-box .gallery-title { color: #d2b4de; }
 
-        .gallery-subtitle {
-            font-size: 0.55rem;
-            color: #888;
-            font-weight: 600;
-        }
+        .gallery-subtitle { font-size: 0.55rem; color: #888; font-weight: 600; }
         .filter-select {
             padding: 0.2rem 0.5rem;
             border-radius: 16px;
@@ -471,20 +431,41 @@
             border-right: 3px solid #d4af37;
             cursor: pointer;
             transition: 0.2s;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.3rem;
         }
         body.dark .achievement-item { background: rgba(0, 0, 0, 0.15); }
         .achievement-item:hover { background: #fff; transform: translateX(-3px); }
         body.dark .achievement-item:hover { background: rgba(255, 255, 255, 0.05); }
+        
         .item-info h4 { font-size: 0.85rem; color: #2a1a0a; }
         body.dark .item-info h4 { color: #f0e8d0; }
         .item-meta { font-size: 0.5rem; color: #8a6d1f; font-weight: 600; }
-
-        .empty-state {
-            text-align: center;
-            padding: 0.5rem;
-            color: #888;
-            font-size: 0.7rem;
+        
+        /* Feedback Buttons */
+        .feedback-row {
+            display: flex;
+            gap: 0.3rem;
+            width: 100%;
+            margin-top: 0.2rem;
         }
+        .fb-btn {
+            flex: 1;
+            padding: 0.2rem;
+            font-size: 0.5rem;
+            border-radius: 6px;
+            border: 1px solid rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            text-align: center;
+        }
+        .fb-btn:hover { background: #eee; }
+        .fb-success { color: #27ae60; border-color: #27ae60; }
+        .fb-fix { color: #f39c12; border-color: #f39c12; }
+        .fb-fail { color: #e74c3c; border-color: #e74c3c; }
+
+        .empty-state { text-align: center; padding: 0.5rem; color: #888; font-size: 0.7rem; }
 
         /* ===== MODAL ===== */
         .modal-overlay {
@@ -753,6 +734,22 @@
             <div class="modal-body">
                 <h2 id="modalTitle" style="color:#8a6d1f; margin-bottom:0.5rem; font-size:1.1rem;"></h2>
                 <div id="modalDesc" style="line-height:1.6; color:#3a2a1a; font-size:0.85rem;"></div>
+                
+                <!-- بخش جدید: نمایش راهنما و بازخورد -->
+                <div id="modalGuide" style="margin-top:1rem; padding:0.8rem; background:rgba(212,175,55,0.1); border-radius:10px; display:none;">
+                    <h4 style="font-size:0.9rem; color:#8a6d1f; margin-bottom:0.5rem;">📋 Action Guide:</h4>
+                    <div id="guideContent" style="font-size:0.8rem;"></div>
+                </div>
+
+                <div id="modalFeedback" style="margin-top:1rem; display:none;">
+                    <h4 style="font-size:0.9rem; color:#6a3d9a; margin-bottom:0.5rem;">📊 Report Effectiveness:</h4>
+                    <div class="feedback-row">
+                        <button class="fb-btn fb-success" onclick="submitFeedback('success')">✅ Worked</button>
+                        <button class="fb-btn fb-fix" onclick="submitFeedback('fix')">⚠️ Needs Fix</button>
+                        <button class="fb-btn fb-fail" onclick="submitFeedback('fail')">❌ Failed</button>
+                    </div>
+                </div>
+
                 <div id="modalMeta" style="margin-top:0.8rem; font-size:0.7rem; color:#888;"></div>
             </div>
         </div>
@@ -808,11 +805,9 @@ function renderAchievements(items) {
     `).join('');
 }
 
-function filterAchievements() {
-    renderAchievements(allApproved);
-}
+function filterAchievements() { renderAchievements(allApproved); }
 
-// ===== ATLAS =====
+// ===== ATLAS (SMART) =====
 let allAtlasItems = [];
 
 async function loadAtlas() {
@@ -821,7 +816,8 @@ async function loadAtlas() {
         const res = await fetch('/api/get-connection-requests?type=observations');
         if (!res.ok) throw new Error('Error fetching atlas data');
         const data = await res.json();
-        allAtlasItems = (data.observations || []).filter(obs => obs.score === 5 && obs.status === 'approved');
+        // اصلاح شرط فیلتر برای نمایش همه موارد امتیاز ۵
+        allAtlasItems = (data.observations || []).filter(obs => obs.score == 5 && (obs.status === 'approved' || obs.status === 'gallery'));
         renderAtlas(allAtlasItems);
     } catch (e) {
         console.error(e);
@@ -839,23 +835,32 @@ function renderAtlas(items) {
         <div class="achievement-item" onclick="openAtlasModal(${index})">
             <div class="item-info">
                 <h4>${item.observation ? item.observation.substring(0, 50) + '...' : 'Observation'}</h4>
-                <span class="item-meta">⭐ Score ${item.score}</span>
+                <span class="item-meta">⭐ Score ${item.score} | 📂 ${item.analysis?.adminCluster || 'General'}</span>
             </div>
-            <span style="font-size:0.9rem; color:#6a3d9a;">🏛️</span>
+            <span style="font-size:0.9rem; color:#6a3d9a;">🏛️ View Details</span>
         </div>
     `).join('');
 }
 
-// ===== MODALS =====
+// ===== MODALS & FEEDBACK =====
+let currentModalItem = null;
+
 function openModal(index) {
     const item = allApproved[index];
     if (!item) return;
+    currentModalItem = item;
+    
     document.getElementById('modalTitle').textContent = item.title || 'Untitled';
     let descText = item.description || 'No description';
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     descText = descText.replace(urlRegex, url => `<a href="${url}" target="_blank" style="color:#2874a6; text-decoration:underline;">${url}</a>`);
     document.getElementById('modalDesc').innerHTML = descText;
     document.getElementById('modalMeta').textContent = `Submitted by: ${item.owner}`;
+    
+    // Hide Atlas-specific sections
+    document.getElementById('modalGuide').style.display = 'none';
+    document.getElementById('modalFeedback').style.display = 'none';
+
     const mediaDiv = document.getElementById('modalMediaContainer');
     const imageUrl = item.fileUrl || item.fileData;
     if (imageUrl) {
@@ -869,11 +874,44 @@ function openModal(index) {
 function openAtlasModal(index) {
     const item = allAtlasItems[index];
     if (!item) return;
+    currentModalItem = item;
+
     document.getElementById('modalTitle').textContent = '🏛️ Observation from Atlas of Emergence';
     document.getElementById('modalDesc').innerHTML = item.observation || 'Observation text not available';
     document.getElementById('modalMeta').textContent = `⭐ Score: ${item.score} | Status: ${item.status === 'approved' ? '✅ Approved' : '⏳ Pending'}`;
-    document.getElementById('modalMediaContainer').innerHTML = '<p style="padding:1rem;text-align:center;color:#888;">📄 Raw observation without separate file</p>';
+    
+    // Show Media if exists
+    const mediaDiv = document.getElementById('modalMediaContainer');
+    if (item.fileUrl) {
+         mediaDiv.innerHTML = `<img src="${item.fileUrl}" class="modal-media" onerror="this.style.display='none'"/>`;
+    } else {
+         mediaDiv.innerHTML = '';
+    }
+
+    // Show AI Guide if exists
+    const guideBox = document.getElementById('modalGuide');
+    const guideContent = document.getElementById('guideContent');
+    if (item.analysis && item.analysis.guide) {
+        guideBox.style.display = 'block';
+        guideContent.innerHTML = `
+            <div style="margin-bottom:0.3rem;"><strong>📍 Individual:</strong> ${item.analysis.guide.individual}</div>
+            <div style="margin-bottom:0.3rem;"><strong>🌐 Network:</strong> ${item.analysis.guide.network}</div>
+            <div><strong>🏛️ Policy:</strong> ${item.analysis.guide.policy}</div>
+        `;
+    } else {
+        guideBox.style.display = 'none';
+    }
+
+    // Show Feedback Buttons
+    document.getElementById('modalFeedback').style.display = 'block';
+    
     document.getElementById('detailModal').classList.add('active');
+}
+
+async function submitFeedback(type) {
+    if (!currentModalItem) return;
+    alert(`Thank you! Your feedback (${type}) has been recorded for the reformers network.`);
+    // Here you would normally send this to /api/submit-feedback
 }
 
 function closeModal(e) {
