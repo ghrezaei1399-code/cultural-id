@@ -683,15 +683,31 @@
             }
         }
         
-        function toggleAnalysis(issueNumber) {
-            const box = document.getElementById(`analysis-${issueNumber}`);
-            if (box) {
-                box.classList.toggle('active');
-                if (box.classList.contains('active')) {
-                    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
+       function toggleAnalysis(issueNumber) {
+    const box = document.getElementById(`analysis-${issueNumber}`);
+    if (box) {
+        // اگر باکس باز است، آن را ببند و متغیر را خالی کن
+        if (box.classList.contains('active')) {
+            box.classList.remove('active');
+            currentAnalyzingId = null;
+        } else {
+            // اگر بسته است، همه باکس‌های دیگر را ببند
+            document.querySelectorAll('.analysis-box').forEach(b => b.classList.remove('active'));
+            
+            // باکس مورد نظر را باز کن و شناسه‌اش را ذخیره کن
+            box.classList.add('active');
+            currentAnalyzingId = issueNumber;
+            box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // بارگذاری کلیدواژه‌های اولیه بر اساس خوشه فعلی
+            const obs = allObservations.find(o => o.number == issueNumber);
+            if(obs) {
+                const cluster = obs.analysis?.adminCluster || detectCluster(obs.observation || '');
+                updateKeywordsView(issueNumber, cluster);
             }
         }
+    }
+}
 
         // تابع جدید برای بروزرسانی کلیدواژه‌ها هنگام تغییر خوشه
         window.updateKeywordsView = function(issueNumber, clusterValue) {
@@ -772,6 +788,8 @@
             
             alert(`📋 بسته راهنما برای خوشه "${clusterName}" تولید شد.`);
         }
+
+
         
         async function approveObservation(issueNumber) {
             if (!confirm('آیا از تایید این مشاهده اطمینان دارید؟')) return;
@@ -857,7 +875,7 @@
         }
         
         loadObservations();
-        setInterval(loadObservations, 30000);
+      let currentAnalyzingId = null; // متغیر جدید برای ردیابی مشاهده باز شده  
     </script>
 </body>
 </html>
