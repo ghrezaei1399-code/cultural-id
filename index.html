@@ -810,24 +810,28 @@ function renderAchievements(items) {
 function filterAchievements() {
     renderAchievements(allApproved);
 }
-
-// ===== ATLAS =====
+// ===== ATLAS (اصلاح شده برای دریافت تحلیل کامل) =====
 let allAtlasItems = [];
 
 async function loadAtlas() {
     const container = document.getElementById('atlasListContainer');
     try {
-        const res = await fetch('/api/get-connection-requests?type=observations');
+        // دریافت اطلاعات کامل شامل تحلیل‌ها
+        const res = await fetch('/api/get-connection-requests?type=observations&t=' + new Date().getTime());
         if (!res.ok) throw new Error('خطا در دریافت اطلاعات');
         const data = await res.json();
-        allAtlasItems = (data.observations || []).filter(obs => obs.score === 5 && obs.status === 'approved');
+        
+        // فیلتر کردن مشاهدات امتیاز ۵ که تایید شده‌اند
+        allAtlasItems = (data.observations || []).filter(obs => 
+            obs.score === 5 && obs.status === 'approved'
+        );
+        
         renderAtlas(allAtlasItems);
     } catch (e) {
         console.error(e);
         container.innerHTML = '<div class="empty-state">خطا در دریافت اطلاعات اطلس.</div>';
     }
 }
-
 function renderAtlas(items) {
     const container = document.getElementById('atlasListContainer');
     if (items.length === 0) {
@@ -844,8 +848,7 @@ function renderAtlas(items) {
         </div>
     `).join('');
 }
-
-// ===== MODALS =====
+// ===== MODALS (اصلاح شده) =====
 function openModal(index) {
     const item = allApproved[index];
     if (!item) return;
@@ -868,10 +871,46 @@ function openModal(index) {
 function openAtlasModal(index) {
     const item = allAtlasItems[index];
     if (!item) return;
+
+    // تنظیم عنوان و متن اصلی
     document.getElementById('modalTitle').textContent = '🏛️ مشاهده از اطلس ظهور';
     document.getElementById('modalDesc').innerHTML = item.observation || 'متن مشاهده موجود نیست';
     document.getElementById('modalMeta').textContent = `⭐ امتیاز: ${item.score} | وضعیت: ${item.status === 'approved' ? '✅ تأیید شده' : '⏳ در انتظار'}`;
-    document.getElementById('modalMediaContainer').innerHTML = '<p style="padding:1rem;text-align:center;color:#888;">📄 مشاهده خام بدون فایل جداگانه</p>';
+    
+    // ساخت محتوای مودال با قابلیت نمایش بسته راهنما و نظر ادمین
+    let modalContentHtml = '';
+
+    // ۱. نمایش نظر مشروح ادمین (در صورت وجود)
+    if (item.analysis && item.analysis.adminNote) {
+        modalContentHtml += `
+            <div style="background:rgba(212,175,55,0.1); padding:1rem; border-radius:12px; margin-bottom:1rem; border-right:4px solid #d4af37;">
+                <h5 style="color:#8a6d1f; margin-bottom:0.5rem; font-weight:800;">📝 تحلیل اختصاصی ادمین:</h5>
+                <p style="font-size:0.9rem; line-height:1.8; color:#4a3a2a;">${item.analysis.adminNote}</p>
+            </div>
+        `;
+    }
+
+    // ۲. نمایش بسته راهنمای اقدام عملی (در صورت وجود)
+    if (item.analysis && item.analysis.guide) {
+        const guide = item.analysis.guide;
+        modalContentHtml += `
+            <div style="background:rgba(40,116,166,0.08); padding:1rem; border-radius:12px; margin-bottom:1rem; border:1px dashed #2874a6;">
+                <h5 style="color:#2874a6; margin-bottom:0.8rem; font-weight:800;">📋 بسته راهنمای اقدام عملی:</h5>
+                <ul style="list-style:none; padding:0; font-size:0.85rem; line-height:2;">
+                    ${guide.individual ? `<li><strong>📍 سطح فردی:</strong> ${guide.individual}</li>` : ''}
+                    ${guide.network ? `<li><strong>🌐 سطح شبکه‌ای:</strong> ${guide.network}</li>` : ''}
+                    ${guide.policy ? `<li><strong>🏛️ سطح سیاستی:</strong> ${guide.policy}</li>` : ''}
+                </ul>
+            </div>
+        `;
+    }
+
+    // ۳. حالت پیش‌فرض اگر هیچ تحلیلی نبود
+    if (!modalContentHtml) {
+        modalContentHtml = '<p style="padding:1rem;text-align:center;color:#888;">📄 مشاهده خام بدون تحلیل تکمیلی</p>';
+    }
+
+    document.getElementById('modalMediaContainer').innerHTML = modalContentHtml;
     document.getElementById('detailModal').classList.add('active');
 }
 
@@ -880,7 +919,7 @@ function closeModal(e) {
         e.target.classList.remove('active');
     }
 }
-
+   
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
     loadAchievements();
