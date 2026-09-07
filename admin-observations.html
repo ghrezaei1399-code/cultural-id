@@ -56,7 +56,6 @@
         }
         body.dark .page-subtitle { color: #c8b890; }
         
-        /* ===== آمار ===== */
         .stats-mini {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -76,7 +75,6 @@
         .stat-mini .label { font-size: 0.65rem; color: #6a6a7a; }
         body.dark .stat-mini .label { color: #a8a8b8; }
         
-        /* ===== فیلتر ===== */
         .filter-bar {
             display: flex;
             gap: 0.5rem;
@@ -103,7 +101,6 @@
         }
         body.dark .filter-btn.active { background: rgba(212,175,55,0.08); }
         
-        /* ===== لیست ===== */
         .observations-list {
             display: flex;
             flex-direction: column;
@@ -117,7 +114,6 @@
         .observations-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 10px; }
         .observations-list::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.3); border-radius: 10px; }
         
-        /* ===== کارت مشاهده ===== */
         .obs-card {
             background: rgba(255,255,255,0.05);
             border-radius: 16px;
@@ -156,7 +152,6 @@
         .obs-body p { font-size: 0.9rem; color: #4a4a5a; line-height: 1.6; }
         body.dark .obs-body p { color: #b0b0c0; }
         
-        /* ===== برچسب‌ها ===== */
         .badge {
             display: inline-block;
             padding: 0.15rem 0.6rem;
@@ -171,7 +166,6 @@
         .badge-cluster { background: rgba(40,116,166,0.15); color: #2874a6; }
         body.dark .badge-cluster { color: #85c1e9; background: rgba(40,116,166,0.05); }
         
-        /* ===== دکمه‌ها ===== */
         .btn-small {
             padding: 0.25rem 0.8rem;
             border-radius: 20px;
@@ -202,13 +196,18 @@
         }
         body.dark .btn-cluster { color: #f9e79f; background: rgba(212,175,55,0.05); }
         .btn-cluster:hover { background: rgba(212,175,55,0.25); }
+        .btn-ai {
+            background: #6366f1;
+            color: white;
+            border: none;
+        }
+        .btn-ai:hover { background: #4f46e5; }
         
         .empty-state { text-align: center; padding: 3rem; color: #888; }
         .obs-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
         .scroll-hint { text-align: center; padding: 0.8rem; color: #888; font-size: 0.85rem; border-top: 1px solid rgba(212,175,55,0.1); margin-top: 0.5rem; font-weight: 700; }
         .btn-back-bottom { display: inline-block; margin-top: 2rem; padding: 0.8rem 1.5rem; background: rgba(212,175,55,0.2); color: #8a6d1f; border-radius: 30px; text-decoration: none; font-weight: 700; transition: 0.3s; }
         
-        /* ===== باکس تحلیل ۵ سطحی (اصلاح شده) ===== */
         .analysis-box {
             margin-top: 1rem;
             padding: 1.5rem;
@@ -274,7 +273,6 @@
             background: #fff;
         }
 
-        /* ===== ابزارهای جدید ادمین ===== */
         .admin-tools-box {
             margin-top: 1.5rem;
             padding: 1.2rem;
@@ -326,13 +324,12 @@
         body.dark .score-section label { color: #e8d8c8; }
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        /* ===== وضعیت‌های مختلف ===== */
+        
         .obs-card.pending { border-color: #f39c12; border-width: 2px; }
         .obs-card.approved { border-color: #27ae60; border-width: 2px; }
         .obs-card.rejected { border-color: #e74c3c; border-width: 2px; }
         .obs-card.score5 { border-color: #d4af37; border-width: 2px; box-shadow: 0 0 20px rgba(212,175,55,0.15); }
         
-        /* ===== خوشه‌بندی ===== */
         .cluster-tag {
             display: inline-block;
             padding: 0.1rem 0.6rem;
@@ -374,6 +371,28 @@
         }
         body.dark .guide-box .guide-item { color: #d0c0b0; background: rgba(0,0,0,0.05); }
         
+        .ai-analysis-box {
+            margin-top: 0.8rem;
+            padding: 0.8rem;
+            background: rgba(99,102,241,0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(99,102,241,0.15);
+        }
+        body.dark .ai-analysis-box { background: rgba(99,102,241,0.02); }
+        .ai-analysis-box .ai-title {
+            font-weight: 800;
+            font-size: 0.8rem;
+            color: #6366f1;
+            margin-bottom: 0.3rem;
+        }
+        body.dark .ai-analysis-box .ai-title { color: #818cf8; }
+        .ai-analysis-box .ai-item {
+            padding: 0.2rem 0.4rem;
+            font-size: 0.75rem;
+            color: #4a3a2a;
+        }
+        body.dark .ai-analysis-box .ai-item { color: #d0c0b0; }
+        
         @media (max-width: 768px) {
             .container { padding: 1.2rem; }
             .top-bar { flex-direction: column; align-items: stretch; }
@@ -393,7 +412,6 @@
         <h1 class="page-title">👁️ مدیریت مشاهدات</h1>
         <div class="page-subtitle">بررسی، تحلیل و امتیازدهی مشاهدات خام بر اساس چارچوب سپهر خردمندی</div>
         
-        <!-- ===== آمار ===== -->
         <div class="stats-mini">
             <div class="stat-mini"><span class="number" id="totalObs">۰</span><div class="label">کل مشاهدات</div></div>
             <div class="stat-mini"><span class="number" id="pendingObs">۰</span><div class="label">⏳ در انتظار</div></div>
@@ -401,7 +419,6 @@
             <div class="stat-mini"><span class="number" id="score5Obs">۰</span><div class="label">⭐ امتیاز ۵</div></div>
         </div>
         
-        <!-- ===== فیلتر ===== -->
         <div class="filter-bar">
             <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">📋 همه</button>
             <button class="filter-btn" data-filter="pending" onclick="setFilter('pending')">⏳ در انتظار</button>
@@ -410,7 +427,6 @@
             <button class="filter-btn" data-filter="rejected" onclick="setFilter('rejected')">❌ رد شده</button>
         </div>
         
-        <!-- ===== لیست ===== -->
         <div id="observationsList" class="observations-list">
             <div class="empty-state">در حال بارگذاری...</div>
         </div>
@@ -419,36 +435,46 @@
             <a href="admin.html" class="btn-back-bottom">↩ بازگشت به پنل ادمین</a>
         </div>
     </div>
+    
     <script>
         let allObservations = [];
         let currentFilter = 'all';
+        let currentAnalyzingId = null;
         
         // ===== خوشه‌بندی بر اساس سند سپهر خردمندی =====
-        const clusters = [
-            { name: 'انسان', keywords: ['فقر', 'آموزش', 'سلامت', 'سلامت روان', 'اعتیاد', 'جوانان', 'خانواده', 'بیماری', 'محرومیت', 'بی‌سوادی'] },
-            { name: 'دانش و فناوری', keywords: ['هوش مصنوعی', 'فناوری', 'دانش', 'نوآوری', 'تحقیق', 'علم', 'شکاف دانشی', 'نابرابری علمی', 'انحصار دانش'] },
-            { name: 'حکمرانی و تمدن', keywords: ['فساد', 'جنگ', 'سیاست', 'حکمرانی', 'نهاد', 'قانون', 'مهاجرت نخبگان', 'بحران اعتماد', 'نابرابری'] },
-            { name: 'بقا و آینده', keywords: ['آب', 'انرژی', 'اقلیم', 'محیط زیست', 'غذا', 'کشاورزی', 'امنیت غذایی', 'پایداری'] }
-        ];
+        const clusterMap = {
+            'human': 'انسان',
+            'knowledge': 'دانش و فناوری',
+            'governance': 'حکمرانی و تمدن',
+            'survival': 'بقا و آینده'
+        };
+        
+        const clusterKeywords = {
+            'human': ['فقر', 'آموزش', 'سلامت', 'سلامت روان', 'اعتیاد', 'جوانان', 'خانواده', 'بیماری', 'محرومیت', 'بی‌سوادی'],
+            'knowledge': ['هوش مصنوعی', 'فناوری', 'دانش', 'نوآوری', 'تحقیق', 'علم', 'شکاف دانشی', 'نابرابری علمی', 'انحصار دانش'],
+            'governance': ['فساد', 'جنگ', 'سیاست', 'حکمرانی', 'نهاد', 'قانون', 'مهاجرت نخبگان', 'بحران اعتماد', 'نابرابری'],
+            'survival': ['آب', 'انرژی', 'اقلیم', 'محیط زیست', 'غذا', 'کشاورزی', 'امنیت غذایی', 'پایداری']
+        };
         
         function detectCluster(text) {
-            if (!text) return 'سایر';
+            if (!text) return 'other';
             const lowerText = text.toLowerCase();
-            for (const cluster of clusters) {
-                for (const keyword of cluster.keywords) {
+            for (const [cluster, keywords] of Object.entries(clusterKeywords)) {
+                for (const keyword of keywords) {
                     if (lowerText.includes(keyword)) {
-                        return cluster.name;
+                        return cluster;
                     }
                 }
             }
-            return 'سایر';
+            return 'other';
         }
-
-        // تابع جدید برای تولید کلیدواژه‌ها
-        function getKeywordsHtml(obsNumber, clusterName) {
-            const clusterObj = clusters.find(c => c.name === clusterName);
-            const keywords = clusterObj ? clusterObj.keywords : [];
-            
+        
+        function getClusterLabel(cluster) {
+            return clusterMap[cluster] || 'سایر';
+        }
+        
+        function getKeywordsHtml(obsNumber, cluster) {
+            const keywords = clusterKeywords[cluster] || [];
             let html = `<div class="keywords-container" id="kw-container-${obsNumber}">`;
             keywords.forEach(kw => {
                 html += `<span class="keyword-tag" onclick="addKeywordToNote('${obsNumber}', '${kw}')">${kw}</span>`;
@@ -502,15 +528,15 @@
             return labels[module] || module || 'بدون ماژول';
         }
 
-        // تابع کمکی برای تزریق کلیدواژه به باکس نظر
         window.addKeywordToNote = function(issueNumber, keyword) {
             const noteBox = document.getElementById(`adminNote-${issueNumber}`);
             if (noteBox) {
                 const currentVal = noteBox.value;
                 noteBox.value = currentVal ? currentVal + '، ' + keyword : keyword;
             }
-            // تغییر استایل دکمه کلیک شده
-            event.target.classList.toggle('selected');
+            if (event && event.target) {
+                event.target.classList.toggle('selected');
+            }
         }
         
         function renderObservations() {
@@ -533,7 +559,20 @@
             }
             
             container.innerHTML = filtered.map(obs => {
-                const cluster = obs.analysis?.adminCluster || detectCluster(obs.observation || '');
+                // تشخیص خوشه از تحلیل AI یا خودکار
+                let cluster = 'other';
+                let aiAnalysis = null;
+                
+                if (obs.aiAnalysis) {
+                    aiAnalysis = obs.aiAnalysis;
+                    cluster = aiAnalysis.cluster || 'other';
+                } else if (obs.analysis && obs.analysis.adminCluster) {
+                    cluster = obs.analysis.adminCluster;
+                } else {
+                    cluster = detectCluster(obs.observation || '');
+                }
+                
+                const clusterLabel = getClusterLabel(cluster);
                 
                 const statusMap = {
                     approved: `<span class="badge badge-approved">✅ تایید شده</span>`,
@@ -545,8 +584,8 @@
                     `<span class="badge badge-score-5">⭐ امتیاز ۵</span>` : 
                     (obs.score ? `<span class="badge" style="background:rgba(200,200,200,0.15);color:#888;">امتیاز ${obs.score}</span>` : '');
                 
-                const clusterBadge = cluster !== 'سایر' ? 
-                    `<span class="badge badge-cluster">📂 ${cluster}</span>` : '';
+                const clusterBadge = cluster !== 'other' ? 
+                    `<span class="badge badge-cluster">📂 ${clusterLabel}</span>` : '';
                 
                 const isPending = obs.status === 'pending';
                 const isApproved = obs.status === 'approved' && obs.score !== 5;
@@ -565,6 +604,21 @@
                 const analysis = obs.analysis || {};
                 const guide = analysis.guide || {};
                 
+                // نمایش تحلیل AI
+                let aiHtml = '';
+                if (aiAnalysis) {
+                    aiHtml = `
+                        <div class="ai-analysis-box">
+                            <div class="ai-title">🤖 تحلیل هوش مصنوعی</div>
+                            ${aiAnalysis.score_suggestion ? `<div class="ai-item">⭐ امتیاز پیشنهادی: ${aiAnalysis.score_suggestion}</div>` : ''}
+                            ${aiAnalysis.analysis_note ? `<div class="ai-item">📝 ${aiAnalysis.analysis_note}</div>` : ''}
+                            ${aiAnalysis.guide_individual ? `<div class="ai-item">📍 فردی: ${aiAnalysis.guide_individual}</div>` : ''}
+                            ${aiAnalysis.guide_network ? `<div class="ai-item">🌐 شبکه‌ای: ${aiAnalysis.guide_network}</div>` : ''}
+                            ${aiAnalysis.guide_policy ? `<div class="ai-item">🏛️ سیاستی: ${aiAnalysis.guide_policy}</div>` : ''}
+                        </div>
+                    `;
+                }
+                
                 let actionButtons = '';
                 if (isPending) {
                     actionButtons = `
@@ -572,37 +626,31 @@
                             <button class="btn-small btn-approve" onclick="approveObservation('${obs.number}')">✅ تایید</button>
                             <button class="btn-small btn-reject" onclick="rejectObservation('${obs.number}')">❌ رد</button>
                             <button class="btn-small btn-module" onclick="toggleAnalysis('${obs.number}')">📊 تحلیل ۵ سطحی</button>
+                            <button class="btn-small btn-ai" onclick="autoFillAnalysis('${obs.number}')">🤖 تحلیل هوشمند</button>
                         </div>
                     `;
                 } else if (isApproved || isScore5) {
                     actionButtons = `
                         <div class="obs-actions">
                             <button class="btn-small btn-module" onclick="toggleAnalysis('${obs.number}')">📊 ویرایش تحلیل</button>
-                            
-                            <!-- دکمه جدید تحلیل هوشمند -->
-                            <button class="btn-small" onclick="autoFillAnalysis('${obs.number}')" style="background:#6366f1; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;">
-                                🤖 تحلیل هوشمند
-                            </button>
-                            
+                            <button class="btn-small btn-ai" onclick="autoFillAnalysis('${obs.number}')">🤖 تحلیل هوشمند</button>
                             ${isScore5 ? `<button class="btn-small btn-approve" onclick="submitToGallery('${obs.number}')" style="background:rgba(212,175,55,0.2);color:#8a6d1f;">⭐ ارسال به گالری</button>` : ''}
                             <button class="btn-small btn-cluster" onclick="generateGuide('${obs.number}')">📋 تولید بسته راهنما</button>
                         </div>
                     `;
                 }
                 
-                // باکس تحلیل اصلاح شده با ابزارهای جدید ادمین
                 const analysisBox = `
                     <div class="analysis-box" id="analysis-${obs.number}">
                         <div class="title">📊 تحلیل ۵ سطحی و ابزارهای ادمین</div>
                         
-                        <!-- ابزارهای جدید ادمین -->
                         <div class="admin-tools-box">
                             <label>📂 تشخیص نهایی خوشه (توسط ادمین):</label>
                             <select id="adminClusterSelect-${obs.number}" onchange="updateKeywordsView('${obs.number}', this.value)">
-                                <option value="human" ${cluster === 'انسان' ? 'selected' : ''}>خوشه اول: انسان</option>
-                                <option value="knowledge" ${cluster === 'دانش و فناوری' ? 'selected' : ''}>خوشه دوم: دانش و فناوری</option>
-                                <option value="governance" ${cluster === 'حکمرانی و تمدن' ? 'selected' : ''}>خوشه سوم: حکمرانی و تمدن</option>
-                                <option value="survival" ${cluster === 'بقا و آینده' ? 'selected' : ''}>خوشه چهارم: بقا و آینده</option>
+                                <option value="human" ${cluster === 'human' ? 'selected' : ''}>خوشه اول: انسان</option>
+                                <option value="knowledge" ${cluster === 'knowledge' ? 'selected' : ''}>خوشه دوم: دانش و فناوری</option>
+                                <option value="governance" ${cluster === 'governance' ? 'selected' : ''}>خوشه سوم: حکمرانی و تمدن</option>
+                                <option value="survival" ${cluster === 'survival' ? 'selected' : ''}>خوشه چهارم: بقا و آینده</option>
                                 <option value="other">سایر / نیاز به بررسی</option>
                             </select>
 
@@ -613,7 +661,6 @@
                             <textarea id="adminNote-${obs.number}" rows="3" placeholder="تحلیل عمیق خود را اینجا بنویسید...">${analysis.adminNote || ''}</textarea>
                         </div>
 
-                        <!-- ماتریس‌های استاندارد -->
                         <div style="margin-top:1.5rem; border-top:1px dashed #ccc; padding-top:1rem;">
                             <div class="matrix-item">
                                 <label>۱. ماتریس ظهورها</label>
@@ -676,6 +723,7 @@
                             <p>${obs.observation || 'متن مشاهده موجود نیست'}</p>
                         </div>
                         ${moduleHtml}
+                        ${aiHtml}
                         ${actionButtons}
                         ${analysisBox}
                         ${guideBox}
@@ -688,45 +736,39 @@
             }
         }
         
-       function toggleAnalysis(issueNumber) {
-    const box = document.getElementById(`analysis-${issueNumber}`);
-    if (box) {
-        // اگر باکس باز است، آن را ببند و متغیر را خالی کن
-        if (box.classList.contains('active')) {
-            box.classList.remove('active');
-            currentAnalyzingId = null;
-        } else {
-            // اگر بسته است، همه باکس‌های دیگر را ببند
-            document.querySelectorAll('.analysis-box').forEach(b => b.classList.remove('active'));
-            
-            // باکس مورد نظر را باز کن و شناسه‌اش را ذخیره کن
-            box.classList.add('active');
-            currentAnalyzingId = issueNumber;
-            box.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            
-            // بارگذاری کلیدواژه‌های اولیه بر اساس خوشه فعلی
-            const obs = allObservations.find(o => o.number == issueNumber);
-            if(obs) {
-                const cluster = obs.analysis?.adminCluster || detectCluster(obs.observation || '');
-                updateKeywordsView(issueNumber, cluster);
+        function toggleAnalysis(issueNumber) {
+            const box = document.getElementById(`analysis-${issueNumber}`);
+            if (box) {
+                if (box.classList.contains('active')) {
+                    box.classList.remove('active');
+                    currentAnalyzingId = null;
+                } else {
+                    document.querySelectorAll('.analysis-box').forEach(b => b.classList.remove('active'));
+                    box.classList.add('active');
+                    currentAnalyzingId = issueNumber;
+                    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    
+                    const obs = allObservations.find(o => o.number == issueNumber);
+                    if(obs) {
+                        let cluster = 'other';
+                        if (obs.aiAnalysis && obs.aiAnalysis.cluster) {
+                            cluster = obs.aiAnalysis.cluster;
+                        } else if (obs.analysis && obs.analysis.adminCluster) {
+                            cluster = obs.analysis.adminCluster;
+                        } else {
+                            cluster = detectCluster(obs.observation || '');
+                        }
+                        updateKeywordsView(issueNumber, cluster);
+                    }
+                }
             }
         }
-    }
-}
-
-        // تابع جدید برای بروزرسانی کلیدواژه‌ها هنگام تغییر خوشه
+        
         window.updateKeywordsView = function(issueNumber, clusterValue) {
-            const clusterNames = {
-                'human': 'انسان',
-                'knowledge': 'دانش و فناوری',
-                'governance': 'حکمرانی و تمدن',
-                'survival': 'بقا و آینده',
-                'other': 'سایر'
-            };
             const container = document.getElementById(`kw-container-${issueNumber}`);
             if(container) {
                 container.innerHTML = '';
-                const kws = clusters.find(c => c.name === clusterNames[clusterValue])?.keywords || [];
+                const kws = clusterKeywords[clusterValue] || [];
                 kws.forEach(kw => {
                     const span = document.createElement('span');
                     span.className = 'keyword-tag';
@@ -741,48 +783,51 @@
             const obs = allObservations.find(o => o.number === parseInt(issueNumber));
             if (!obs) return;
             
-            // استفاده از خوشه تعیین شده توسط ادمین
-            const clusterValue = obs.analysis?.adminCluster || 'other';
-            const clusterNames = {
-                'human': 'انسان', 'knowledge': 'دانش و فناوری', 
-                'governance': 'حکمرانی و تمدن', 'survival': 'بقا و آینده', 'other': 'سایر'
-            };
-            const clusterName = clusterNames[clusterValue];
+            // استفاده از خوشه تعیین شده توسط ادمین یا AI
+            let cluster = 'other';
+            if (obs.analysis && obs.analysis.adminCluster) {
+                cluster = obs.analysis.adminCluster;
+            } else if (obs.aiAnalysis && obs.aiAnalysis.cluster) {
+                cluster = obs.aiAnalysis.cluster;
+            } else {
+                cluster = detectCluster(obs.observation || '');
+            }
             
             const guides = {
-                'انسان': {
+                'human': {
                     individual: 'روزانه یک ظهور مرتبط با این موضوع را در دفترچه مشاهده خود یادداشت کنید و از قضاوت بپرهیزید.',
                     network: 'این مشاهده را با ۳ نفر از هم‌فرهنگان دارای کارت به اشتراک بگذارید و بازخورد خام آنها را بگیرید.',
                     policy: 'یک یادداشت کوتاه درباره گسست میان سپهر آموزش و سلامت در این پدیده تهیه کنید.'
                 },
-                'دانش و فناوری': {
+                'knowledge': {
                     individual: 'ظرفیت‌های مغفول دانشی در این پدیده را فهرست کنید بدون اینکه راه‌حل فناورانه پیشنهاد دهید.',
                     network: 'در شبکه مجتمع هم‌اندیشی، پرونده مشابهی جستجو کنید و الگوی تکرارشونده آن را گزارش دهید.',
                     policy: 'خلأ نهادی در دسترسی به دانش مربوط به این ظهور را مستند کنید.'
                 },
-                'حکمرانی و تمدن': {
+                'governance': {
                     individual: 'ناهم‌ترازی میان ظرفیت موجود و تجلی واقعی را در این پدیده توصیف کنید.',
                     network: 'با اعضای خوشه حکمرانی در شبکه هم‌فرهنگان، ماتریس موانع این ظهور را تکمیل کنید.',
                     policy: 'یک پیشنهاد سیاستی مبتنی بر کرامت انسانی برای رفع گسست سپهری این پدیده بنویسید.'
                 },
-                'بقا و آینده': {
+                'survival': {
                     individual: 'ظرفیت‌های پنهان بقا در این بحران را شناسایی و ثبت کنید.',
                     network: 'این ظهور را به عنوان یک ابرسپهر احتمالی در پنل نام‌آوران مطرح کنید.',
                     policy: 'یادداشتی درباره ناهم‌ترازی میان منابع طبیعی و حکمرانی آب/انرژی تهیه نمایید.'
                 },
-                'سایر': {
+                'other': {
                     individual: 'این مشاهده را بدون قضاوت بازنویسی کنید و سعی کنید یک ظهور جدید در آن پیدا کنید.',
                     network: 'این مشاهده را با یک هم‌فرهنگ به اشتراک بگذارید و از او بخواهید یک مشاهده مشابه ثبت کند.',
                     policy: 'به این فکر کنید که اگر این پدیده در سطح کلان رخ دهد، چه گسست‌هایی ایجاد می‌کند؟'
                 }
             };
             
-            const guide = guides[clusterName] || guides['سایر'];
+            const guide = guides[cluster] || guides['other'];
+            const clusterLabel = getClusterLabel(cluster);
             
             const guideBox = document.getElementById(`guide-${issueNumber}`);
             if (guideBox) {
                 guideBox.innerHTML = `
-                    <div class="guide-title">📋 بسته راهنمای اقدام عملی</div>
+                    <div class="guide-title">📋 بسته راهنمای اقدام عملی (خوشه: ${clusterLabel})</div>
                     <div class="guide-item"><strong>📍 سطح فردی:</strong> ${guide.individual}</div>
                     <div class="guide-item"><strong>🌐 سطح شبکه‌ای:</strong> ${guide.network}</div>
                     <div class="guide-item"><strong>🏛️ سطح سیاستی:</strong> ${guide.policy}</div>
@@ -791,10 +836,8 @@
                 guideBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
             
-            alert(`📋 بسته راهنما برای خوشه "${clusterName}" تولید شد.`);
+            alert(`📋 بسته راهنما برای خوشه "${clusterLabel}" تولید شد.`);
         }
-
-
         
         async function approveObservation(issueNumber) {
             if (!confirm('آیا از تایید این مشاهده اطمینان دارید؟')) return;
@@ -879,21 +922,19 @@
             } catch (error) { alert('خطا: ' + error.message); }
         }
         
-        loadObservations();
-      let currentAnalyzingId = null; // متغیر جدید برای ردیابی مشاهده باز شده 
-      
-       // ===== دستیار هوشمند ادمین برای تحلیل و تولید راهنما =====
-       const SEPEHR_ADMIN_PROMPT = `
+        // ===== دستیار هوشمند ادمین =====
+        const SEPEHR_ADMIN_PROMPT = `
 === هویت تو ===
 تو "تحلیلگر ارشد سپهر خردمندی" هستی. وظیفه تو کمک به ادمین برای تحلیل عمیق مشاهدات است.
 
 === سند بنیادین سپهر خردمندی ===
 1. اصول: واقعیت‌محوری، مشاهده پیش از قضاوت، ظرفیت‌محوری، چندسپهری، کرامت انسانی، کشف نادیده‌ها.
-2. خوشه‌ها: انسان، دانش، حکمرانی، بقا.
+2. خوشه‌ها: human (انسان)، knowledge (دانش)، governance (حکمرانی)، survival (بقا).
 
 === دستورالعمل فنی خروجی (JSON) ===
 خروجی تو باید دقیقاً و فقط یک شیء JSON باشد:
 {
+    "cluster": "human" | "knowledge" | "governance" | "survival",
     "emergence": "ماتریس ظهورها (۴ مورد)",
     "layer": "ماتریس لایه‌ها (فردی، اجتماعی، نهادی، جهانی)",
     "connection": "ماتریس ارتباطات با سایر سپهرها",
@@ -906,63 +947,80 @@
 }
 `;
 
-async function generateAdminAnalysis(obsText, cluster = 'human') {
-    const prompt = `${SEPEHR_ADMIN_PROMPT}\n\nمشاهده: "${obsText}"\nخوشه: "${cluster}"`;
-    try {
-        const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
-        const result = await response.text();
-        try {
-            return JSON.parse(result);
-        } catch (e) {
-            return { note: result, emergence: "خطا در فرمت JSON" };
+        async function generateAdminAnalysis(obsText) {
+            const prompt = `${SEPEHR_ADMIN_PROMPT}\n\nمشاهده: "${obsText}"`;
+            try {
+                const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
+                const result = await response.text();
+                
+                let cleanedResult = result;
+                const jsonStart = result.indexOf('{');
+                const jsonEnd = result.lastIndexOf('}');
+                if (jsonStart !== -1 && jsonEnd !== -1) {
+                    cleanedResult = result.substring(jsonStart, jsonEnd + 1);
+                }
+                
+                try {
+                    return JSON.parse(cleanedResult);
+                } catch (e) {
+                    console.error("AI Admin analysis parse error:", cleanedResult);
+                    return null;
+                }
+            } catch (error) {
+                console.error("AI Admin Analysis Error:", error);
+                return null;
+            }
         }
-    } catch (error) {
-        console.error("AI Analysis Error:", error);
-        return null;
-    }
-}
 
-// تابع کمکی برای پر کردن خودکار فرم تحلیل توسط هوش مصنوعی
-window.autoFillAnalysis = async function(issueNumber) {
-    const obs = allObservations.find(o => o.number === issueNumber);
-    if (!obs) return;
+        window.autoFillAnalysis = async function(issueNumber) {
+            const obs = allObservations.find(o => o.number === issueNumber);
+            if (!obs) return;
 
-    const btn = document.querySelector(`#card-${issueNumber} button[onclick*="autoFillAnalysis"]`);
-    if(btn) {
-        btn.textContent = '🤖 در حال تحلیل...';
-        btn.disabled = true;
-    }
+            const btn = document.querySelector(`#card-${issueNumber} button[onclick*="autoFillAnalysis"]`);
+            if(btn) {
+                btn.textContent = '🤖 در حال تحلیل...';
+                btn.disabled = true;
+            }
 
-    const clusterSelect = document.getElementById(`adminClusterSelect-${issueNumber}`);
-    const selectedCluster = clusterSelect ? clusterSelect.options[clusterSelect.selectedIndex].text.split(': ')[1] || 'human' : 'human';
+            const analysis = await generateAdminAnalysis(obs.observation);
+            
+            if (analysis) {
+                // تنظیم خوشه
+                const clusterSelect = document.getElementById(`adminClusterSelect-${issueNumber}`);
+                if (clusterSelect && analysis.cluster) {
+                    clusterSelect.value = analysis.cluster;
+                }
+                
+                document.getElementById(`emergence-${issueNumber}`).value = analysis.emergence || '';
+                document.getElementById(`layer-${issueNumber}`).value = analysis.layer || '';
+                document.getElementById(`connection-${issueNumber}`).value = analysis.connection || '';
+                document.getElementById(`scale-${issueNumber}`).value = analysis.scale || '';
+                document.getElementById(`capacity-${issueNumber}`).value = analysis.capacity || '';
+                document.getElementById(`adminNote-${issueNumber}`).value = analysis.note || '';
+                
+                // به‌روزرسانی کلیدواژه‌ها
+                updateKeywordsView(issueNumber, analysis.cluster || 'other');
+                
+                // ذخیره موقت راهنماها
+                window.tempGuides = {
+                    individual: analysis.guide_individual,
+                    network: analysis.guide_network,
+                    policy: analysis.guide_policy
+                };
 
-    const analysis = await generateAdminAnalysis(obs.observation, selectedCluster);
-    
-    if (analysis) {
-        document.getElementById(`emergence-${issueNumber}`).value = analysis.emergence || '';
-        document.getElementById(`layer-${issueNumber}`).value = analysis.layer || '';
-        document.getElementById(`connection-${issueNumber}`).value = analysis.connection || '';
-        document.getElementById(`scale-${issueNumber}`).value = analysis.scale || '';
-        document.getElementById(`capacity-${issueNumber}`).value = analysis.capacity || '';
-        document.getElementById(`adminNote-${issueNumber}`).value = analysis.note || '';
+                alert('✅ تحلیل هوشمند آماده شد. لطفاً بررسی و ذخیره کنید.');
+            } else {
+                alert('❌ خطا در دریافت تحلیل هوشمند.');
+            }
+
+            if(btn) {
+                btn.textContent = '🤖 تحلیل هوشمند';
+                btn.disabled = false;
+            }
+        }
         
-        // ذخیره موقت راهنماها برای نمایش بعد از تایید
-        window.tempGuides = {
-            individual: analysis.guide_individual,
-            network: analysis.guide_network,
-            policy: analysis.guide_policy
-        };
-
-        alert('✅ تحلیل هوشمند آماده شد. لطفاً بررسی و ذخیره کنید.');
-    } else {
-        alert('❌ خطا در دریافت تحلیل هوشمند.');
-    }
-
-    if(btn) {
-        btn.textContent = '🤖 تحلیل هوشمند';
-        btn.disabled = false;
-    }
-} 
+        // ===== بارگذاری اولیه =====
+        loadObservations();
     </script>
 </body>
 </html>
