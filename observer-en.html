@@ -488,13 +488,30 @@
             }
         }
 
-        const FORBIDDEN_WORDS = [
-            'sell', 'buy', 'price', 'discount', 'marketing', 'advertising',
-            'branding', 'business', 'ecommerce', 'online store',
-            'hashtag', 'instagram', 'telegram',
-            'how to', 'method', 'guide', 'tutorial', 'suggestion', 'solution',
-            'best', 'effective', 'fastest', 'easiest', 'way to'
-        ];
+       const FORBIDDEN_WORDS = [
+    // ===== Violence, War, Death =====
+    'war', 'violence', 'murder', 'kill', 'killing', 'terror', 'bomb', 'explosion',
+    'death', 'homicide', 'crime', 'bloodshed', 'rape', 'massacre',
+    
+    // ===== Racism and Discrimination =====
+    'racist', 'racism', 'racial superiority', 'racial discrimination',
+    'execute', 'execution', 'slaughter',
+    
+    // ===== Colonialism, Exploitation, Plunder =====
+    'colonialism', 'exploitation', 'plunder', 'loot', 'pillage',
+    'theft', 'robbery', 'fraud', 'embezzlement', 'bribe', 'rent seeking',
+    
+    // ===== Drugs and Alcohol =====
+    'drugs', 'heroin', 'cocaine', 'marijuana', 'weed', 'opium',
+    'hashish', 'ecstasy', 'alcohol', 'liquor', 'wine',
+    'vodka', 'whiskey', 'pipe', 'syringe', 'crack',
+    
+    // ===== Sexual Issues =====
+    'sex', 'prostitution', 'porn', 'pornography', 'obscene',
+    
+    // ===== Weapons =====
+    'gun', 'rifle', 'weapon', 'missile', 'tank', 'fighter jet', 'bomber'
+];
 
         function fastFilter(text) {
             const lowerText = text.toLowerCase();
