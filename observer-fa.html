@@ -532,9 +532,8 @@
             return { blocked: false };
         }
 
-       async function smartAnalyzeObservation(text, language = 'fa') {
+async function smartAnalyzeObservation(text, language = 'fa') {
     try {
-        // ===== استفاده مستقیم از هوش مصنوعی در مرورگر =====
         const prompt = language === 'fa' ? 
 `متن: "${text}"
 
@@ -542,10 +541,10 @@
 status: approved یا rejected
 cluster: human یا knowledge یا governance یا survival
 score: 1 تا 5
-analysis: تحلیل عمیق
-individual: راهنمای فردی
-network: راهنمای شبکه‌ای
-policy: راهنمای سیاستی
+analysis: تحلیل عمیق حداقل 15 کلمه
+individual: راهنمای فردی حداقل 10 کلمه
+network: راهنمای شبکه‌ای حداقل 10 کلمه
+policy: راهنمای سیاستی حداقل 10 کلمه
 
 فقط JSON.` :
 `Text: "${text}"
@@ -554,10 +553,10 @@ Return JSON with:
 status: approved or rejected
 cluster: human or knowledge or governance or survival
 score: 1 to 5
-analysis: deep analysis
-individual: individual guide
-network: network guide
-policy: policy guide
+analysis: deep analysis minimum 15 words
+individual: individual guide minimum 10 words
+network: network guide minimum 10 words
+policy: policy guide minimum 10 words
 
 Only JSON.`;
 
