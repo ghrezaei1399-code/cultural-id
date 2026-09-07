@@ -28,64 +28,28 @@ module.exports = async function handler(req, res) {
     const repo = 'cultural-id';
 
     // ============================================================
-    // ===== بخش تحلیل هوش مصنوعی (اصلاح‌شده) =====
+    // ===== بخش تحلیل هوش مصنوعی (اصلاح‌شده نهایی) =====
     // ============================================================
     if (type === 'ai-analyze') {
       try {
         // ===== تشخیص زبان =====
         const isPersian = /[\u0600-\u06FF]/.test(text);
         
-        // ===== پرامپت فارسی =====
-        const promptFa = `شما تحلیلگر ارشد سپهر خردمندی هستید. متن زیر را تحلیل کنید و فقط یک JSON معتبر برگردانید. هیچ توضیح اضافی ننویسید.
+        // ===== پرامپت فارسی (کوتاه و دقیق) =====
+        const promptFa = `متن: "${text}" را تحلیل کن. فقط یک JSON معتبر برگردان. هیچ چیز دیگری ننویس.
 
-متن: "${text}"
+JSON باید دقیقاً این شکلی باشد:
+{"status":"approved","rejection_reason":null,"cluster":"human","score_suggestion":3,"analysis_note":"تحلیل","guide_individual":"راهنمای فردی","guide_network":"راهنمای شبکه‌ای","guide_policy":"راهنمای سیاستی"}
 
-قوانین:
-1. اگر متن تجاری، تبلیغاتی، درخواست راهنمایی عملی، سیاسی مخرب، نژادپرستانه، یا خشونت‌آمیز است → status: "rejected"
-2. در غیر این صورت → status: "approved"
-3. خوشه را از بین human, knowledge, governance, survival انتخاب کنید
-4. امتیاز 1 تا 5 بدهید
-5. راهنماهای سه‌گانه تولید کنید
+اگر متن تجاری یا تبلیغاتی بود، status را "rejected" کن.`;
 
-خروجی دقیقاً این ساختار JSON را داشته باشد (همه فیلدها را پر کنید):
-{
-    "status": "approved",
-    "rejection_reason": null,
-    "cluster": "human",
-    "score_suggestion": 3,
-    "analysis_note": "تحلیل عمیق",
-    "guide_individual": "راهنمای فردی",
-    "guide_network": "راهنمای شبکه‌ای",
-    "guide_policy": "راهنمای سیاستی"
-}
+        // ===== پرامپت انگلیسی (کوتاه و دقیق) =====
+        const promptEn = `Analyze: "${text}". Return ONLY valid JSON. Nothing else.
 
-فقط JSON برگردانید.`;
+JSON must be exactly:
+{"status":"approved","rejection_reason":null,"cluster":"human","score_suggestion":3,"analysis_note":"Analysis","guide_individual":"Individual guide","guide_network":"Network guide","guide_policy":"Policy guide"}
 
-        // ===== پرامپت انگلیسی =====
-        const promptEn = `You are the Senior Analyst of the Sphere of Wisdom. Analyze the text below and return ONLY a valid JSON. No extra explanation.
-
-Text: "${text}"
-
-Rules:
-1. If text is commercial, promotional, practical guidance, political destructive, racist, or violent → status: "rejected"
-2. Otherwise → status: "approved"
-3. Choose cluster from: human, knowledge, governance, survival
-4. Give score 1 to 5
-5. Generate three guides
-
-Output must be exactly this JSON structure (fill all fields):
-{
-    "status": "approved",
-    "rejection_reason": null,
-    "cluster": "human",
-    "score_suggestion": 3,
-    "analysis_note": "Deep analysis",
-    "guide_individual": "Individual guidance",
-    "guide_network": "Network guidance",
-    "guide_policy": "Policy guidance"
-}
-
-Return ONLY JSON.`;
+If text is commercial or promotional, set status to "rejected".`;
 
         const prompt = isPersian ? promptFa : promptEn;
         
@@ -103,16 +67,16 @@ Return ONLY JSON.`;
         // پارس کردن JSON
         const analysis = JSON.parse(jsonStr);
         
-        // ===== اطمینان از وجود همه فیلدها (با مقدار پیش‌فرض) =====
+        // ===== اطمینان از وجود همه فیلدها =====
         const result = {
           status: analysis.status || "approved",
           rejection_reason: analysis.rejection_reason || null,
           cluster: analysis.cluster || "human",
           score_suggestion: analysis.score_suggestion || 3,
-          analysis_note: analysis.analysis_note || (isPersian ? "تحلیل خودکار" : "Auto analysis"),
-          guide_individual: analysis.guide_individual || (isPersian ? "مشاهده خود را ثبت کنید." : "Register your observation."),
-          guide_network: analysis.guide_network || (isPersian ? "با دیگران به اشتراک بگذارید." : "Share with others."),
-          guide_policy: analysis.guide_policy || (isPersian ? "در شبکه خود مطرح کنید." : "Raise this in your network.")
+          analysis_note: analysis.analysis_note || (isPersian ? "تحلیل" : "Analysis"),
+          guide_individual: analysis.guide_individual || (isPersian ? "راهنمای فردی" : "Individual guide"),
+          guide_network: analysis.guide_network || (isPersian ? "راهنمای شبکه‌ای" : "Network guide"),
+          guide_policy: analysis.guide_policy || (isPersian ? "راهنمای سیاستی" : "Policy guide")
         };
         
         return res.status(200).json({ success: true, analysis: result });
