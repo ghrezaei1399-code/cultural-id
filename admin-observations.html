@@ -580,7 +580,9 @@
                             <button class="btn-small btn-module" onclick="toggleAnalysis('${obs.number}')">📊 ویرایش تحلیل</button>
                             
                             <!-- دکمه جدید تحلیل هوشمند -->
-                            <button class="btn-small" onclick="autoFillAnalysis('${obs.number}')" style="background:#6366f1; color:white;">🤖 تحلیل هوشمند</button>
+                            <button class="btn-small" onclick="autoFillAnalysis('${obs.number}')" style="background:#6366f1; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;">
+                                🤖 تحلیل هوشمند
+                            </button>
                             
                             ${isScore5 ? `<button class="btn-small btn-approve" onclick="submitToGallery('${obs.number}')" style="background:rgba(212,175,55,0.2);color:#8a6d1f;">⭐ ارسال به گالری</button>` : ''}
                             <button class="btn-small btn-cluster" onclick="generateGuide('${obs.number}')">📋 تولید بسته راهنما</button>
@@ -739,24 +741,7 @@
             const obs = allObservations.find(o => o.number === parseInt(issueNumber));
             if (!obs) return;
             
-            // استفاده از تحلیل ذخیره شده یا تولید پیش‌فرض
-            const analysis = obs.analysis || {};
-            if (analysis.guide && analysis.guide.individual) {
-                 const guideBox = document.getElementById(`guide-${issueNumber}`);
-                 if (guideBox) {
-                    guideBox.innerHTML = `
-                        <div class="guide-title">📋 بسته راهنمای اقدام عملی</div>
-                        <div class="guide-item"><strong>📍 سطح فردی:</strong> ${analysis.guide.individual}</div>
-                        <div class="guide-item"><strong>🌐 سطح شبکه‌ای:</strong> ${analysis.guide.network}</div>
-                        <div class="guide-item"><strong>🏛️ سطح سیاستی:</strong> ${analysis.guide.policy}</div>
-                    `;
-                    guideBox.classList.add('active');
-                    guideBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                 }
-                 return;
-            }
-
-            // اگر تحلیل ذخیره نشده بود، از منطق قدیمی استفاده کن
+            // استفاده از خوشه تعیین شده توسط ادمین
             const clusterValue = obs.analysis?.adminCluster || 'other';
             const clusterNames = {
                 'human': 'انسان', 'knowledge': 'دانش و فناوری', 
@@ -852,9 +837,7 @@
                 scaleMatrix: document.getElementById(`scale-${issueNumber}`).value.trim(),
                 capacityMatrix: document.getElementById(`capacity-${issueNumber}`).value.trim(),
                 adminNote: adminNote,
-                adminCluster: adminCluster,
-                // ذخیره راهنماهای موقت تولید شده توسط AI
-                guide: window.tempGuides || {}
+                adminCluster: adminCluster
             };
             
             const score = parseInt(document.getElementById(`score-${issueNumber}`).value) || 0;
@@ -900,33 +883,37 @@
       let currentAnalyzingId = null; // متغیر جدید برای ردیابی مشاهده باز شده 
       
        // ===== دستیار هوشمند ادمین برای تحلیل و تولید راهنما =====
+       const SEPEHR_ADMIN_PROMPT = `
+=== هویت تو ===
+تو "تحلیلگر ارشد سپهر خردمندی" هستی. وظیفه تو کمک به ادمین برای تحلیل عمیق مشاهدات است.
+
+=== سند بنیادین سپهر خردمندی ===
+1. اصول: واقعیت‌محوری، مشاهده پیش از قضاوت، ظرفیت‌محوری، چندسپهری، کرامت انسانی، کشف نادیده‌ها.
+2. خوشه‌ها: انسان، دانش، حکمرانی، بقا.
+
+=== دستورالعمل فنی خروجی (JSON) ===
+خروجی تو باید دقیقاً و فقط یک شیء JSON باشد:
+{
+    "emergence": "ماتریس ظهورها (۴ مورد)",
+    "layer": "ماتریس لایه‌ها (فردی، اجتماعی، نهادی، جهانی)",
+    "connection": "ماتریس ارتباطات با سایر سپهرها",
+    "scale": "ماتریس مقیاس (ملی، منطقه‌ای، جهانی)",
+    "capacity": "ماتریس ظرفیت‌های مغفول (۴ مورد)",
+    "note": "نظر تحلیلی مشروح ادمین (کوتاه و عمیق)",
+    "guide_individual": "بسته راهنما - سطح فردی (اقدام کوچک و مستند)",
+    "guide_network": "بسته راهنما - سطح شبکه‌ای (ارتباط با هم‌فرهنگان)",
+    "guide_policy": "بسته راهنما - سطح سیاستی (پرسشگری مستند)"
+}
+`;
+
 async function generateAdminAnalysis(obsText, cluster = 'human') {
-    const prompt = `
-    به عنوان یک تحلیلگر ارشد سپهر خردمندی عمل کن. برای مشاهده زیر با خوشه "${cluster}" موارد زیر را تولید کن:
-    متن مشاهده: "${obsText}"
-
-    خروجی باید دقیقاً به فرمت JSON باشد:
-    {
-        "emergence": "ماتریس ظهورها (۴ مورد)",
-        "layer": "ماتریس لایه‌ها (فردی، اجتماعی، نهادی، جهانی)",
-        "connection": "ماتریس ارتباطات با سایر سپهرها",
-        "scale": "ماتریس مقیاس (ملی، منطقه‌ای، جهانی)",
-        "capacity": "ماتریس ظرفیت‌های مغفول (۴ مورد)",
-        "note": "نظر تحلیلی مشروح ادمین (کوتاه و عمیق)",
-        "guide_individual": "بسته راهنما - سطح فردی (اقدام کوچک و مستند)",
-        "guide_network": "بسته راهنما - سطح شبکه‌ای (ارتباط با هم‌فرهنگان)",
-        "guide_policy": "بسته راهنما - سطح سیاستی (پرسشگری مستند)"
-    }
-    `;
-
+    const prompt = `${SEPEHR_ADMIN_PROMPT}\n\nمشاهده: "${obsText}"\nخوشه: "${cluster}"`;
     try {
         const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
         const result = await response.text();
-        
         try {
             return JSON.parse(result);
         } catch (e) {
-            // اگر JSON نبود، پاسخ خام را برگردان
             return { note: result, emergence: "خطا در فرمت JSON" };
         }
     } catch (error) {
@@ -940,16 +927,10 @@ window.autoFillAnalysis = async function(issueNumber) {
     const obs = allObservations.find(o => o.number === issueNumber);
     if (!obs) return;
 
-    // پیدا کردن دکمه تحلیل هوشمند برای تغییر متن
-    const buttons = document.querySelectorAll(`#card-${issueNumber} button`);
-    let aiBtn = null;
-    buttons.forEach(b => {
-        if(b.textContent.includes('تحلیل هوشمند')) aiBtn = b;
-    });
-
-    if(aiBtn) {
-        aiBtn.textContent = '🤖 در حال تحلیل...';
-        aiBtn.disabled = true;
+    const btn = document.querySelector(`#card-${issueNumber} button[onclick*="autoFillAnalysis"]`);
+    if(btn) {
+        btn.textContent = '🤖 در حال تحلیل...';
+        btn.disabled = true;
     }
 
     const clusterSelect = document.getElementById(`adminClusterSelect-${issueNumber}`);
@@ -977,86 +958,9 @@ window.autoFillAnalysis = async function(issueNumber) {
         alert('❌ خطا در دریافت تحلیل هوشمند.');
     }
 
-    if(aiBtn) {
-        aiBtn.textContent = '🤖 تحلیل هوشمند';
-        aiBtn.disabled = false;
-    }
-}
-       // ===== ۱. هسته کامل دانش و دستورات سپهر خردمندی =====
-const SEPEHR_FULL_SYSTEM_PROMPT = `
-=== هویت تو ===
-تو "تحلیلگر ارشد سپهر خردمندی" هستی. وظیفه تو مشاهده عمیق، تحلیل ساختاری و راهنمایی کنشگران فرهنگی است.
-
-=== سند بنیادین سپهر خردمندی (دانش پایه تو) ===
-1. تعریف: چارچوبی نظری و عملیاتی برای گذار از تفسیر به مشاهده و از قضاوت به تمایز.
-2. شعار محوری: «بهتر دیدن، پیش از بهتر داوری کردن.»
-3. اصول ۶ گانه بنیادین:
-   - واقعیت‌محوری: تمام تحلیل‌ها باید بر پایه پدیده‌های عینی و واقعی باشند.
-   - مشاهده پیش از قضاوت: ابتدا مشاهده دقیق، سپس تحلیل لایه‌ها، و در نهایت داوری.
-   - ظرفیت‌محوری: شروع تحلیل از ظرفیت‌های مغفول و پنهان، نه فقط تمرکز بر مشکلات.
-   - چندسپهری: هر پدیده فرهنگی پیوندی میان سپهرهای انسان، دانش، حکمرانی و بقا دارد.
-   - کرامت انسانی: معیار نهایی و خط قرمز تمام تمایزگذاری‌ها و تحلیل‌ها.
-   - کشف نادیده‌ها: رسالت اصلی تو آشکار کردن لایه‌هایی است که معمولاً دیده نمی‌شوند.
-4. خوشه‌های چهارگانه:
-   - انسان: هویت، سلامت روان، آموزش، فقرزدایی، مهارت‌های سنتی.
-   - دانش: شکاف علمی، بومی‌سازی فناوری، نوآوری مسئولانه، انحصار دانش.
-   - حکمرانی: عدالت نهادی، شفافیت، بحران اعتماد، مشارکت مدنی، مدیریت منابع.
-   - بقا: امنیت غذایی، بحران آب، پایداری اکولوژیک، تاب‌آوری محیط زیست.
-
-=== قواعد بازی (Game Rules) ===
-- امتیازدهی هوشمند: از ۱ تا ۵. امتیاز ۵ فقط مخصوص مشاهداتی است که دارای "راه‌حل بومی"، "ظرفیت تکثیر" و "عمق تحلیلی" باشند.
-- فیلتر فرهنگی سخت‌گیرانه: هر محتوای توهین‌آمیز، سیاسیِ مخرب، نژادپرستانه یا خلاف کرامت انسانی باید بلافاصله REJECT شود.
-- زبان خروجی: خروجی تو باید دقیقاً به زبان ورودی کاربر (فارسی یا انگلیسی) باشد.
-
-=== اهمیت حیاتی پاسخ تو ===
-- تو "دروازه‌بان کیفیت" شبکه جهانی مصلحان فرهنگی هستی.
-- پاسخ‌های تو مستقیماً روی ذهنیت، انگیزه و اقدامات عملی اعضا اثر می‌گذارد.
-- از کلی‌گویی، شعارزدگی و جملات تکراری به شدت پرهیز کن.
-- راهنماهای تو باید "کوچک"، "مستند"، "غیرشعاری" و "قابل اجرا" باشند.
-- اگر تحلیلی سطحی باشد، اعتماد به کل اکوسیستم سپهر خردمندی از بین می‌رود.
-
-=== دستورالعمل فنی خروجی (JSON) ===
-خروجی تو باید دقیقاً و فقط یک شیء JSON باشد:
-{
-    "status": "approved" | "rejected",
-    "rejection_reason": "اگر رد شد دلیل کوتاه را بنویس، در غیر این صورت null",
-    "cluster": "human" | "knowledge" | "governance" | "survival",
-    "score_suggestion": number (1-5),
-    "analysis_note": "تحلیل عمیق مبتنی بر گسست میان ظرفیت و تجلی واقعی",
-    "guide_individual": "یک اقدام کوچک و مستند در سطح فردی",
-    "guide_network": "یک اقدام برای ارتباط با هم‌فرهنگان و شبکه‌سازی",
-    "guide_policy": "یک پرسش یا مستندسازی سیاستی برای تغییر ساختار"
-}
-`;
-
-// ===== ۲. تابع اجرایی (قلب تپنده سیستم) =====
-async function smartAnalyzeObservation(text, language = 'fa') {
-    // ترکیب پرامپت ثابت با متن متغیر کاربر
-    const prompt = `
-    ${SEPEHR_FULL_SYSTEM_PROMPT}
-    
-    ---
-    ورودی فعلی:
-    متن مشاهده: "${text}"
-    زبان درخواستی: ${language === 'fa' ? 'فارسی' : 'English'}
-    `;
-
-    try {
-        // ارسال درخواست به هوش مصنوعی Pollinations
-        const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
-        const result = await response.text();
-        
-        // تلاش برای تبدیل پاسخ به فرمت JSON
-        try {
-            return JSON.parse(result);
-        } catch (e) {
-            // اگر هوش مصنوعی JSON نساخت، یک خطا برمی‌گردانیم
-            console.error("AI did not return valid JSON:", result);
-            return { status: 'error', message: 'خطا در فرمت پاسخ هوش مصنوعی' };
-        }
-    } catch (e) {
-        console.error("Connection Error:", e);
-        return { status: 'error', message: 'خطا در ارتباط با سرور هوش مصنوعی' };
+    if(btn) {
+        btn.textContent = '🤖 تحلیل هوشمند';
+        btn.disabled = false;
     }
 } 
     </script>
