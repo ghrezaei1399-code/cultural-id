@@ -26,45 +26,65 @@ module.exports = async function handler(req, res) {
 
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
+       // ===== بخش تحلیل هوش مصنوعی =====
+if (type === 'ai-analyze') {
+  try {
+    const prompt = `شما تحلیلگر ارشد سپهر خردمندی هستید. وظیفه شما تحلیل عمیق مشاهده کاربر و تولید راهنماهای عملی است.
 
-    // ===== بخش جدید: تحلیل هوش مصنوعی =====
-    if (type === 'ai-analyze') {
-      try {
-       const prompt = `شما تحلیلگر سپهر خردمندی هستید. متن زیر را تحلیل کنید و فقط یک JSON معتبر برگردانید. هیچ توضیح اضافی ننویسید.
+متن مشاهده: "${text}"
 
-متن: "${text}"
+قوانین سختگیرانه:
+1. اگر متن تجاری، تبلیغاتی، یا درخواست راهنمایی عملی است → status: "rejected"
+2. اگر متن فرهنگی، اجتماعی، یا انسانی است → status: "approved"
+3. همیشه یک خوشه انتخاب کنید: "human" یا "knowledge" یا "governance" یا "survival"
+4. همیشه امتیاز 1 تا 5 بدهید
+5. همیشه راهنماهای سه‌گانه (فردی، شبکه‌ای، سیاستی) تولید کنید
 
-خروجی دقیقاً این ساختار را داشته باشد:
+خروجی را دقیقاً به این صورت JSON برگردانید (مقادیر را بر اساس متن پر کنید):
 {
     "status": "approved",
     "rejection_reason": null,
     "cluster": "human",
     "score_suggestion": 4,
-    "analysis_note": "این یک مشاهده فرهنگی درباره کمبود فضای فرهنگی برای جوانان است",
-    "guide_individual": "یک فضای فرهنگی کوچک در محله ایجاد کنید",
-    "guide_network": "با ۳ هم‌فرهنگ برای راه‌اندازی برنامه گفتگو کنید",
-    "guide_policy": "از شهرداری بخواهید بودجه برای فضاهای فرهنگی اختصاص دهد"
-}`;
-        
-        const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
-        const aiText = await response.text();
-        
-        let jsonStr = aiText;
-        const s = aiText.indexOf('{');
-        const e = aiText.lastIndexOf('}');
-        if (s !== -1 && e !== -1) jsonStr = aiText.substring(s, e + 1);
-        
-        const analysis = JSON.parse(jsonStr);
-        return res.status(200).json({ success: true, analysis: analysis });
-        
-      } catch (error) {
-        console.error('AI Analysis Error:', error);
-        return res.status(500).json({ 
-          success: false, 
-          error: 'خطا در تحلیل هوش مصنوعی: ' + error.message 
-        });
+    "analysis_note": "تحلیل عمیق بر اساس محتوای مشاهده",
+    "guide_individual": "یک اقدام کوچک و عملی در سطح فردی",
+    "guide_network": "یک اقدام برای ارتباط با دیگران",
+    "guide_policy": "یک پرسش یا پیشنهاد سیاستی"
+}
+
+توجه: حتی اگر status "rejected" است، باز هم همه فیلدها را پر کنید. فقط rejection_reason را توضیح دهید.
+
+فقط JSON برگردانید. هیچ توضیح اضافی ننویسید.`;
+    
+    const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
+    const aiText = await response.text();
+    
+    let jsonStr = aiText;
+    const s = aiText.indexOf('{');
+    const e = aiText.lastIndexOf('}');
+    if (s !== -1 && e !== -1) jsonStr = aiText.substring(s, e + 1);
+    
+    const analysis = JSON.parse(jsonStr);
+    return res.status(200).json({ success: true, analysis: analysis });
+    
+  } catch (error) {
+    console.error('AI Analysis Error:', error);
+    // اگر هوش مصنوعی خطا داد، یک تحلیل پیش‌فرض برگردان
+    return res.status(200).json({ 
+      success: true, 
+      analysis: {
+        status: "approved",
+        rejection_reason: null,
+        cluster: "human",
+        score_suggestion: 3,
+        analysis_note: "تحلیل خودکار (هوش مصنوعی در دسترس نبود)",
+        guide_individual: "مشاهده خود را ثبت کنید و منتظر راهنمایی باشید.",
+        guide_network: "این مشاهده را با دیگران به اشتراک بگذارید.",
+        guide_policy: "این موضوع را در شبکه خود مطرح کنید."
       }
-    }
+    });
+  }
+}
 
     // ===== بخش ۱: ثبت مشاهدات =====
     if (type === 'observations' && observations && observations.length > 0) {
