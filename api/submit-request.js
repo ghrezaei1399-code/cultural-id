@@ -27,41 +27,38 @@ module.exports = async function handler(req, res) {
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
 
-    // ============================================================
-    // ===== بخش تحلیل هوش مصنوعی =====
-    // ============================================================
     if (type === 'ai-analyze') {
       try {
         const isPersian = /[\u0600-\u06FF]/.test(text);
         
-        const promptFa = `متن: "${text}" را تحلیل کن. فقط JSON برگردان.
+        const prompt = isPersian ? 
+`متن: "${text}"
 
-قوانین:
-- status: "approved" یا "rejected"
-- cluster: human یا knowledge یا governance یا survival
-- score_suggestion: عدد 1 تا 5
-- analysis_note: تحلیل مبتنی بر متن
-- guide_individual: راهنمای عملی برای فرد
-- guide_network: راهنمای عملی برای شبکه
-- guide_policy: راهنمای عملی برای سیاست
+شما تحلیلگر سپهر خردمندی هستید. وظایف:
+1. تشخیص رد یا تایید (قوانین: تجاری، تبلیغاتی، درخواست راهنمایی، سیاسی مخرب، نژادپرستانه، خشونت‌آمیز → rejected)
+2. تعیین خوشه: human, knowledge, governance, survival
+3. امتیاز 1 تا 5
+4. تحلیل عمیق (حداقل 30 کلمه)
+5. راهنمای فردی (اقدام عملی برای فرد)
+6. راهنمای شبکه‌ای (هماهنگی با دیگران)
+7. راهنمای سیاستی (پرسش یا پیشنهاد ساختاری)
 
-فقط JSON برگردان.`;
+فقط JSON برگردان:
+{"status":"","rejection_reason":null,"cluster":"","score_suggestion":0,"analysis_note":"","guide_individual":"","guide_network":"","guide_policy":""}` :
+`Text: "${text}"
 
-        const promptEn = `Analyze: "${text}". Return ONLY JSON.
+You are Sphere of Wisdom analyst. Tasks:
+1. Detect reject or approve (rules: commercial, promotional, guidance request, political destructive, racist, violent → rejected)
+2. Determine cluster: human, knowledge, governance, survival
+3. Score 1 to 5
+4. Deep analysis (minimum 30 words)
+5. Individual guide (practical action for individual)
+6. Network guide (coordination with others)
+7. Policy guide (question or proposal for structural change)
 
-Rules:
-- status: "approved" or "rejected"
-- cluster: human or knowledge or governance or survival
-- score_suggestion: number 1-5
-- analysis_note: analysis based on text
-- guide_individual: practical guide for individual
-- guide_network: practical guide for network
-- guide_policy: practical guide for policy
+Return ONLY JSON:
+{"status":"","rejection_reason":null,"cluster":"","score_suggestion":0,"analysis_note":"","guide_individual":"","guide_network":"","guide_policy":""}`;
 
-Return ONLY JSON.`;
-
-        const prompt = isPersian ? promptFa : promptEn;
-        
         const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
         const aiText = await response.text();
         
@@ -96,9 +93,6 @@ Return ONLY JSON.`;
       }
     }
 
-    // ============================================================
-    // ===== بخش ۱: ثبت مشاهدات =====
-    // ============================================================
     if (type === 'observations' && observations && observations.length > 0) {
       if (!cardCode) {
         return res.status(400).json({ error: 'کد کارت الزامی است' });
@@ -211,9 +205,6 @@ ${aiSection}
       });
     }
 
-    // ============================================================
-    // ===== بخش ۲: درخواست حذف =====
-    // ============================================================
     if (type === 'delete') {
       if (!cardCode) {
         return res.status(400).json({ error: 'Card code is required' });
@@ -257,9 +248,6 @@ ${aiSection}
       });
     }
 
-    // ============================================================
-    // ===== بخش ۳: درخواست ارتباط =====
-    // ============================================================
     if (type === 'connection') {
       if (!cardCode) {
         return res.status(400).json({ error: 'Card code is required' });
