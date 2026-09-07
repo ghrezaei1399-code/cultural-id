@@ -27,10 +27,17 @@ module.exports = async function handler(req, res) {
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
 
+    // ============================================================
     // ===== بخش تحلیل هوش مصنوعی =====
+    // ============================================================
     if (type === 'ai-analyze') {
-  try {
-    const prompt = `شما تحلیلگر ارشد سپهر خردمندی هستید. متن زیر را تحلیل کنید.
+      try {
+        // ===== تشخیص زبان =====
+        const isPersian = /[\u0600-\u06FF]/.test(text);
+        const lang = isPersian ? 'fa' : 'en';
+        
+        // ===== پرامپت فارسی =====
+        const promptFa = `شما تحلیلگر ارشد سپهر خردمندی هستید. متن زیر را دقیقاً تحلیل کنید و فقط یک JSON معتبر برگردانید. هیچ توضیح اضافی ننویسید.
 
 متن: "${text}"
 
@@ -44,23 +51,70 @@ module.exports = async function handler(req, res) {
 قوانین تأیید (APPROVE):
 1. یک پدیده فرهنگی، اجتماعی یا انسانی را توصیف کند (نه سوال بپرسد)
 2. شامل مشاهده عینی باشد (نه نظر یا قضاوت شخصی)
-3. به یکی از خوشه‌های چهارگانه مرتبط باشد: human, knowledge, governance, survival
+3. به یکی از خوشه‌های چهارگانه مرتبط باشد
 
-خروجی را دقیقاً به این صورت JSON برگردانید:
+خوشه‌ها:
+- human: هویت، سلامت روان، آموزش، فقرزدایی، مهارت‌های سنتی
+- knowledge: شکاف علمی، بومی‌سازی فناوری، نوآوری مسئولانه، انحصار دانش
+- governance: عدالت نهادی، شفافیت، بحران اعتماد، مشارکت مدنی، مدیریت منابع
+- survival: امنیت غذایی، بحران آب، پایداری اکولوژیک، تاب‌آوری محیط زیست
+
+خروجی را دقیقاً به این صورت JSON برگردانید (همه فیلدها را پر کنید):
 {
-    "status": "approved" یا "rejected",
-    "rejection_reason": "دلیل رد یا null",
-    "cluster": "human" یا "knowledge" یا "governance" یا "survival",
-    "score_suggestion": عدد 1 تا 5,
-    "analysis_note": "تحلیل عمیق مبتنی بر گسست میان ظرفیت و تجلی واقعی",
-    "guide_individual": "یک اقدام کوچک و مستند در سطح فردی",
-    "guide_network": "یک اقدام برای ارتباط با هم‌فرهنگان و شبکه‌سازی",
-    "guide_policy": "یک پرسش یا مستندسازی سیاستی برای تغییر ساختار"
+    "status": "approved",
+    "rejection_reason": null,
+    "cluster": "human",
+    "score_suggestion": 3,
+    "analysis_note": "تحلیل عمیق بر اساس متن",
+    "guide_individual": "راهنمای سطح فردی",
+    "guide_network": "راهنمای سطح شبکه‌ای",
+    "guide_policy": "راهنمای سطح سیاستی"
 }
 
-توجه: حتی اگر status "rejected" است، باز هم همه فیلدها را پر کنید. فقط rejection_reason را توضیح دهید.
+اگر متن رد شد، status را "rejected" کنید و rejection_reason را توضیح دهید.
 
-فقط JSON برگردانید. هیچ توضیح اضافی ننویسید.`;
+فقط JSON برگردانید.`;
+
+        // ===== پرامپت انگلیسی =====
+        const promptEn = `You are the Senior Analyst of the Sphere of Wisdom. Analyze the text below and return ONLY a valid JSON. No extra explanation.
+
+Text: "${text}"
+
+Strict rules for REJECT:
+1. Destructive political content, offensive, racist, warmongering, encouraging violence or death
+2. Commercial, promotional, marketing, sales, buying, pricing, discounts
+3. Request for practical guidance, step-by-step training, method suggestions
+4. Offensive content against culture, religion, ethnicity, nationality
+5. Anything not related to culture, society, humanity, knowledge, governance, or survival
+
+Rules for APPROVE:
+1. Describes a cultural, social, or human phenomenon (not asking questions)
+2. Includes objective observation (not opinion or personal judgment)
+3. Related to one of the four clusters
+
+Clusters:
+- human: Identity, mental health, education, poverty alleviation, traditional skills
+- knowledge: Scientific gap, technology localization, responsible innovation, knowledge monopoly
+- governance: Institutional justice, transparency, trust crisis, civil participation, resource management
+- survival: Food security, water crisis, ecological sustainability, environmental resilience
+
+Output must be exactly this JSON structure (fill all fields):
+{
+    "status": "approved",
+    "rejection_reason": null,
+    "cluster": "human",
+    "score_suggestion": 3,
+    "analysis_note": "Deep analysis based on text",
+    "guide_individual": "Individual level guidance",
+    "guide_network": "Network level guidance",
+    "guide_policy": "Policy level guidance"
+}
+
+If text is rejected, set status to "rejected" and explain rejection_reason.
+
+Return ONLY JSON.`;
+
+        const prompt = isPersian ? promptFa : promptEn;
         
         const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
         const aiText = await response.text();
@@ -73,57 +127,36 @@ module.exports = async function handler(req, res) {
           jsonStr = aiText.substring(s, e + 1);
         }
         
-        // اگر JSON معتبر نبود، از مقدار پیش‌فرض استفاده کن
-        let analysis;
-        try {
-          analysis = JSON.parse(jsonStr);
-          // اطمینان از وجود همه فیلدها
-          analysis = {
-            status: analysis.status || "approved",
-            rejection_reason: analysis.rejection_reason || null,
-            cluster: analysis.cluster || "human",
-            score_suggestion: analysis.score_suggestion || 3,
-            analysis_note: analysis.analysis_note || "تحلیل خودکار",
-            guide_individual: analysis.guide_individual || "مشاهده خود را ثبت کنید.",
-            guide_network: analysis.guide_network || "با دیگران به اشتراک بگذارید.",
-            guide_policy: analysis.guide_policy || "در شبکه خود مطرح کنید."
-          };
-        } catch (e) {
-          // اگر JSON خراب بود، از مقدار پیش‌فرض استفاده کن
-          analysis = {
-            status: "approved",
-            rejection_reason: null,
-            cluster: "human",
-            score_suggestion: 3,
-            analysis_note: "تحلیل خودکار (پاسخ هوش مصنوعی نامعتبر بود)",
-            guide_individual: "مشاهده خود را ثبت کنید.",
-            guide_network: "با دیگران به اشتراک بگذارید.",
-            guide_policy: "در شبکه خود مطرح کنید."
-          };
-        }
+        // پارس کردن JSON
+        const analysis = JSON.parse(jsonStr);
         
-        return res.status(200).json({ success: true, analysis: analysis });
+        // اطمینان از وجود همه فیلدها
+        const result = {
+          status: analysis.status || "approved",
+          rejection_reason: analysis.rejection_reason || null,
+          cluster: analysis.cluster || "human",
+          score_suggestion: analysis.score_suggestion || 3,
+          analysis_note: analysis.analysis_note || (isPersian ? "تحلیل مشاهده" : "Observation analysis"),
+          guide_individual: analysis.guide_individual || (isPersian ? "راهنمای فردی" : "Individual guidance"),
+          guide_network: analysis.guide_network || (isPersian ? "راهنمای شبکه‌ای" : "Network guidance"),
+          guide_policy: analysis.guide_policy || (isPersian ? "راهنمای سیاستی" : "Policy guidance")
+        };
+        
+        return res.status(200).json({ success: true, analysis: result });
         
       } catch (error) {
         console.error('AI Analysis Error:', error);
-        // در صورت هرگونه خطا، یک تحلیل پیش‌فرض برگردان
-        return res.status(200).json({ 
-          success: true, 
-          analysis: {
-            status: "approved",
-            rejection_reason: null,
-            cluster: "human",
-            score_suggestion: 3,
-            analysis_note: "تحلیل خودکار (سرور هوش مصنوعی در دسترس نبود)",
-            guide_individual: "مشاهده خود را ثبت کنید و منتظر راهنمایی باشید.",
-            guide_network: "این مشاهده را با دیگران به اشتراک بگذارید.",
-            guide_policy: "این موضوع را در شبکه خود مطرح کنید."
-          }
+        // خطای واقعی را برگردان
+        return res.status(500).json({ 
+          success: false, 
+          error: 'خطا در تحلیل هوش مصنوعی: ' + error.message 
         });
       }
     }
 
+    // ============================================================
     // ===== بخش ۱: ثبت مشاهدات =====
+    // ============================================================
     if (type === 'observations' && observations && observations.length > 0) {
       if (!cardCode) {
         return res.status(400).json({ error: 'کد کارت الزامی است' });
@@ -143,38 +176,58 @@ module.exports = async function handler(req, res) {
 
         const selectedModule = obs.module ? moduleNames[obs.module] || obs.module : 'هیچ‌کدام';
         
-        // ساخت بخش تحلیل AI
+        // ===== تشخیص زبان =====
+        const isPersian = /[\u0600-\u06FF]/.test(obs.text);
+        
+        // ===== ساخت بخش تحلیل AI =====
         let aiSection = '';
         if (obs.aiAnalysis) {
           const ai = obs.aiAnalysis;
           const statusText = ai.status === 'approved' ? '✅ تایید شده' : '❌ رد شده';
+          const statusTextEn = ai.status === 'approved' ? '✅ Approved' : '❌ Rejected';
+          
+          const statusLabel = isPersian ? statusText : statusTextEn;
+          const clusterLabel = isPersian ? 
+            (ai.cluster === 'human' ? 'انسان' : 
+             ai.cluster === 'knowledge' ? 'دانش و فناوری' : 
+             ai.cluster === 'governance' ? 'حکمرانی و تمدن' : 
+             ai.cluster === 'survival' ? 'بقا و آینده' : 'نامشخص') :
+            (ai.cluster || 'Unknown');
+          
+          const analysisLabel = isPersian ? 'تحلیل' : 'Analysis';
+          const scoreLabel = isPersian ? 'امتیاز پیشنهادی' : 'Suggested Score';
+          const guideTitle = isPersian ? '📋 بسته راهنمای اقدام عملی' : '📋 Action Guide Package';
+          const individualLabel = isPersian ? 'فردی' : 'Individual';
+          const networkLabel = isPersian ? 'شبکه‌ای' : 'Network';
+          const policyLabel = isPersian ? 'سیاستی' : 'Policy';
+          
           aiSection = `
-**🤖 تحلیل هوش مصنوعی:**
-- **وضعیت:** ${statusText}
-- **خوشه:** ${ai.cluster || 'نامشخص'}
-- **امتیاز پیشنهادی:** ${ai.score_suggestion || '---'}
-- **تحلیل:** ${ai.analysis_note || '---'}
+**🤖 AI Analysis:**
+- **Status:** ${statusLabel}
+- **Cluster:** ${clusterLabel}
+- **${scoreLabel}:** ${ai.score_suggestion || '---'}
+- **${analysisLabel}:** ${ai.analysis_note || '---'}
 
-**📋 بسته راهنمای اقدام عملی:**
-- **فردی:** ${ai.guide_individual || '---'}
-- **شبکه‌ای:** ${ai.guide_network || '---'}
-- **سیاستی:** ${ai.guide_policy || '---'}
+**${guideTitle}**
+- **${individualLabel}:** ${ai.guide_individual || '---'}
+- **${networkLabel}:** ${ai.guide_network || '---'}
+- **${policyLabel}:** ${ai.guide_policy || '---'}
 `;
         }
 
-        const issueTitle = `مشاهده خام: ${cardCode}`;
+        const issueTitle = isPersian ? `مشاهده خام: ${cardCode}` : `Raw Observation: ${cardCode}`;
         const issueBody = `
-**کد کارت:** ${cardCode}
+**Card Code:** ${cardCode}
 
-**مشاهده خام:**
+**Observation:**
 ${obs.text}
 
-**ماژول انتخاب‌شده:**
+**Selected Module:**
 ${selectedModule}
 
 ${aiSection}
 ---
-*این مشاهده توسط کاربر ثبت شده و در انتظار بررسی است.*
+*This observation has been registered and is pending review.*
         `;
 
         const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues`, {
@@ -193,7 +246,7 @@ ${aiSection}
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.message || 'خطا در ایجاد Issue در گیت‌هاب');
+          throw new Error(errorData.message || 'Error creating GitHub issue');
         }
 
         const issueData = await response.json();
@@ -206,22 +259,24 @@ ${aiSection}
       }
 
       if (createdIssues.length === 0) {
-        return res.status(400).json({ error: 'هیچ مشاهده‌ی معتبری ثبت نشد.' });
+        return res.status(400).json({ error: 'No valid observations were registered.' });
       }
 
-      const trackingCodes = createdIssues.map(i => `#${i.number}`).join('، ');
+      const trackingCodes = createdIssues.map(i => `#${i.number}`).join(', ');
       return res.status(200).json({
         success: true,
         trackingCode: trackingCodes,
         issues: createdIssues,
-        message: `${createdIssues.length} مشاهده با موفقیت ثبت شد.`
+        message: `${createdIssues.length} observation(s) successfully registered.`
       });
     }
 
+    // ============================================================
     // ===== بخش ۲: درخواست حذف =====
+    // ============================================================
     if (type === 'delete') {
       if (!cardCode) {
-        return res.status(400).json({ error: 'کد کارت الزامی است' });
+        return res.status(400).json({ error: 'Card code is required' });
       }
 
       const trackingCode = `DEL-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
@@ -258,14 +313,16 @@ ${aiSection}
       return res.status(200).json({
         success: true,
         trackingCode: trackingCode,
-        message: 'درخواست حذف شما با موفقیت ثبت شد.'
+        message: 'Delete request successfully registered.'
       });
     }
 
+    // ============================================================
     // ===== بخش ۳: درخواست ارتباط =====
+    // ============================================================
     if (type === 'connection') {
       if (!cardCode) {
-        return res.status(400).json({ error: 'کد کارت الزامی است' });
+        return res.status(400).json({ error: 'Card code is required' });
       }
 
       const userPath = `data/active/${cardCode}.json`;
@@ -275,9 +332,9 @@ ${aiSection}
 
       if (!userRes.ok) {
         if (userRes.status === 404) {
-          return res.status(404).json({ error: 'کاربر یافت نشد' });
+          return res.status(404).json({ error: 'User not found' });
         }
-        return res.status(userRes.status).json({ error: 'خطا در دریافت اطلاعات کاربر' });
+        return res.status(userRes.status).json({ error: 'Error fetching user data' });
       }
 
       const userDataRaw = await userRes.json();
@@ -285,8 +342,8 @@ ${aiSection}
 
       if (!userData.communicationEmail || userData.communicationEmail.length < 5) {
         return res.status(400).json({ 
-          error: 'برای استفاده از بخش ارتباط با هم‌فکران، ابتدا باید ایمیل خود را ثبت کنید.',
-          redirect: 'edit-fa.html',
+          error: 'To use connection feature, please register your email first.',
+          redirect: 'edit-en.html',
           emailRequired: true
         });
       }
@@ -296,7 +353,7 @@ ${aiSection}
       });
 
       if (!allUsersRes.ok) {
-        return res.status(500).json({ error: 'خطا در دریافت لیست کاربران' });
+        return res.status(500).json({ error: 'Error fetching user list' });
       }
 
       const files = await allUsersRes.json();
@@ -388,8 +445,8 @@ ${aiSection}
         success: true,
         trackingCode: trackingCode,
         message: matched.length > 0 
-          ? `${matched.length} هم‌فکر با ارزش‌های مشترک شما پیدا شد.` 
-          : 'هیچ هم‌فکری با ارزش‌های مشترک شما پیدا نشد. لطفاً بعداً مجدداً تلاش کنید.',
+          ? `${matched.length} like-minded people found with shared values.` 
+          : 'No like-minded people found with shared values. Please try again later.',
         connections: matched.map(u => u.email),
         connectionDetails: matched,
         totalFound: matched.length,
@@ -399,7 +456,7 @@ ${aiSection}
     }
 
     // ===== درخواست نامشخص =====
-    return res.status(400).json({ error: 'نوع درخواست نامعتبر است.' });
+    return res.status(400).json({ error: 'Invalid request type.' });
 
   } catch (error) {
     console.error('Submit Request Error:', error);
