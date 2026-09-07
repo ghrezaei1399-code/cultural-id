@@ -496,15 +496,22 @@
         // ===== 2. Forbidden Words (Client-side Fast Filter) =====
         // ============================================================
         const FORBIDDEN_WORDS = [
-            'sell', 'buy', 'price', 'discount', 'marketing', 'advertising',
-            'business', 'brand', 'product', 'service', 'profit', 'income',
-            'hashtag', 'instagram', 'telegram', 'views', 'store', 'shop',
-            'startup', 'entrepreneur', 'ecommerce', 'branding', 'shoes',
-            'clothes', 'mobile', 'laptop', 'gold', 'jewelry',
-            'how to', 'method', 'guide', 'tutorial', 'suggestion', 'solution',
-            'best', 'effective', 'fastest', 'easiest', 'way to',
-            'please', 'thank you', 'hello', 'hi'
-        ];
+    // ===== Political & Violent Words =====
+    'war', 'violence', 'murder', 'kill', 'terror', 'bomb', 'explosion',
+    'racism', 'racist', 'racial', 'racial superiority',
+    'ethnic insult', 'religious insult', 'national insult',
+    'revolution', 'rebellion', 'overthrow', 'coup', 'sedition',
+    'enemy', 'hatred', 'hate', 'hostility', 'division',
+    
+    // ===== Commercial Words =====
+    'sell', 'buy', 'price', 'discount', 'marketing', 'advertising',
+    'branding', 'business', 'ecommerce', 'online store',
+    'hashtag', 'instagram', 'telegram',
+    
+    // ===== Guidance Request Words =====
+    'how to', 'method', 'guide', 'tutorial', 'suggestion', 'solution',
+    'best', 'effective', 'fastest', 'easiest', 'way to'
+];
 
         function fastFilter(text) {
             const lowerText = text.toLowerCase();
