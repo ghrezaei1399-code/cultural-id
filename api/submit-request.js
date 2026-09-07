@@ -1,1003 +1,409 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>مدیریت مشاهدات | سپهر خردمندی</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
-            min-height: 100vh;
-            padding: 1.5rem 1rem;
-            background: linear-gradient(135deg, #fdf6e3 0%, #e8f4f8 50%, #f5e6d3 100%);
-            color: #2a1a0a;
-        }
-        body.dark { background: linear-gradient(135deg, #3a2f20 0%, #2a2418 50%, #4a3a28 100%); color: #f0e8d0; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 0.8rem;
-            margin-bottom: 1.5rem;
-        }
-        .back-link {
-            padding: 0.5rem 1.2rem;
-            border-radius: 30px;
-            background: rgba(255,255,255,0.05);
-            color: #0a0a1a;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 0.85rem;
-            border: 1px solid rgba(255,255,255,0.08);
-            transition: 0.3s;
-        }
-        body.dark .back-link { color: #f0e8d0; }
-        .back-link:hover { background: rgba(255,255,255,0.08); }
-        
-        .page-title {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: #0a0a1a;
-            text-align: center;
-            margin-bottom: 0.2rem;
-        }
-        body.dark .page-title { color: #f0e8e0; }
-        .page-subtitle {
-            text-align: center;
-            font-size: 0.8rem;
-            color: #2a2a3a;
-            opacity: 0.7;
-            margin-bottom: 1.5rem;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding-bottom: 1rem;
-        }
-        body.dark .page-subtitle { color: #c8b890; }
-        
-        .stats-mini {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 0.8rem;
-            margin-bottom: 1.5rem;
-        }
-        .stat-mini {
-            background: rgba(255,255,255,0.04);
-            border-radius: 14px;
-            padding: 0.8rem;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.04);
-        }
-        body.dark .stat-mini { background: rgba(0,0,0,0.1); }
-        .stat-mini .number { font-size: 1.3rem; font-weight: 800; color: #0a0a1a; display: block; }
-        body.dark .stat-mini .number { color: #f0e8e0; }
-        .stat-mini .label { font-size: 0.65rem; color: #6a6a7a; }
-        body.dark .stat-mini .label { color: #a8a8b8; }
-        
-        .filter-bar {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-bottom: 1.2rem;
-            justify-content: center;
-        }
-        .filter-btn {
-            padding: 0.4rem 1.2rem;
-            border-radius: 30px;
-            border: 1px solid rgba(212,175,55,0.15);
-            background: rgba(255,255,255,0.03);
-            color: #0a0a1a;
-            font-weight: 700;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        body.dark .filter-btn { color: #f0e8d0; }
-        .filter-btn:hover { background: rgba(212,175,55,0.05); }
-        .filter-btn.active {
-            background: rgba(212,175,55,0.12);
-            border-color: #d4af37;
-        }
-        body.dark .filter-btn.active { background: rgba(212,175,55,0.08); }
-        
-        .observations-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            max-height: 900px;
-            overflow-y: auto;
-            padding-left: 0.3rem;
-            padding-right: 0.3rem;
-        }
-        .observations-list::-webkit-scrollbar { width: 6px; }
-        .observations-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 10px; }
-        .observations-list::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.3); border-radius: 10px; }
-        
-        .obs-card {
-            background: rgba(255,255,255,0.05);
-            border-radius: 16px;
-            padding: 1.5rem;
-            border: 1px solid rgba(255,255,255,0.06);
-            transition: 0.3s;
-        }
-        body.dark .obs-card { background: rgba(0,0,0,0.15); }
-        .obs-card:hover { background: rgba(255,255,255,0.08); }
-        body.dark .obs-card:hover { background: rgba(255,255,255,0.02); }
-        
-        .obs-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-        .obs-code {
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #8a6d1f;
-        }
-        body.dark .obs-code { color: #f9e79f; }
-        .obs-meta { font-size: 0.7rem; color: #888; }
-        .obs-body {
-            margin-top: 0.5rem;
-            padding: 0.8rem;
-            background: rgba(255,255,255,0.2);
-            border-radius: 8px;
-            border-right: 3px solid rgba(212,175,55,0.3);
-        }
-        body.dark .obs-body { background: rgba(0,0,0,0.1); }
-        .obs-body p { font-size: 0.9rem; color: #4a4a5a; line-height: 1.6; }
-        body.dark .obs-body p { color: #b0b0c0; }
-        
-        .badge {
-            display: inline-block;
-            padding: 0.15rem 0.6rem;
-            border-radius: 30px;
-            font-size: 0.65rem;
-            font-weight: 700;
-        }
-        .badge-approved { background: rgba(50,200,50,0.15); color: #0a6a0a; }
-        .badge-rejected { background: rgba(200,50,50,0.15); color: #6a1a1a; }
-        .badge-pending { background: rgba(255,200,50,0.15); color: #8a7a0a; }
-        .badge-score-5 { background: rgba(212,175,55,0.25); color: #8a6d1f; border: 1px solid #d4af37; }
-        .badge-cluster { background: rgba(40,116,166,0.15); color: #2874a6; }
-        body.dark .badge-cluster { color: #85c1e9; background: rgba(40,116,166,0.05); }
-        
-        .btn-small {
-            padding: 0.25rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: 0.3s;
-            margin: 0.1rem;
-        }
-        .btn-approve { background: rgba(50,200,50,0.15); color: #0a6a0a; }
-        body.dark .btn-approve { color: #82e0aa; }
-        .btn-approve:hover { background: rgba(50,200,50,0.25); }
-        .btn-reject { background: rgba(200,50,50,0.15); color: #6a1a1a; }
-        body.dark .btn-reject { color: #f1948a; }
-        .btn-reject:hover { background: rgba(200,50,50,0.25); }
-        .btn-module {
-            background: rgba(40,116,166,0.1);
-            color: #2874a6;
-            border: 1px solid rgba(40,116,166,0.15);
-        }
-        body.dark .btn-module { color: #85c1e9; }
-        .btn-module:hover { background: rgba(40,116,166,0.2); }
-        .btn-cluster {
-            background: rgba(212,175,55,0.15);
-            color: #8a6d1f;
-            border: 1px solid rgba(212,175,55,0.2);
-        }
-        body.dark .btn-cluster { color: #f9e79f; background: rgba(212,175,55,0.05); }
-        .btn-cluster:hover { background: rgba(212,175,55,0.25); }
-        .btn-ai {
-            background: #6366f1;
-            color: white;
-            border: none;
-        }
-        .btn-ai:hover { background: #4f46e5; }
-        .btn-gallery {
-            background: rgba(212,175,55,0.2);
-            color: #8a6d1f;
-            border: 1px solid #d4af37;
-        }
-        body.dark .btn-gallery { color: #f9e79f; background: rgba(212,175,55,0.05); }
-        .btn-gallery:hover { background: rgba(212,175,55,0.3); }
-        
-        .empty-state { text-align: center; padding: 3rem; color: #888; }
-        .obs-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
-        .scroll-hint { text-align: center; padding: 0.8rem; color: #888; font-size: 0.85rem; border-top: 1px solid rgba(212,175,55,0.1); margin-top: 0.5rem; font-weight: 700; }
-        .btn-back-bottom { display: inline-block; margin-top: 2rem; padding: 0.8rem 1.5rem; background: rgba(212,175,55,0.2); color: #8a6d1f; border-radius: 30px; text-decoration: none; font-weight: 700; transition: 0.3s; }
-        
-        .analysis-box {
-            margin-top: 1rem;
-            padding: 1.5rem;
-            background: rgba(212,175,55,0.05);
-            border-radius: 16px;
-            border: 1px solid rgba(212,175,55,0.2);
-            display: none;
-            animation: fadeIn 0.4s ease;
-        }
-        body.dark .analysis-box { background: rgba(212,175,55,0.02); border-color: rgba(212,175,55,0.1); }
-        .analysis-box.active { display: block; }
-        
-        .analysis-box .title {
-            font-weight: 900;
-            font-size: 1rem;
-            color: #8a6d1f;
-            margin-bottom: 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            border-bottom: 2px dashed rgba(212,175,55,0.3);
-            padding-bottom: 0.8rem;
-        }
-        body.dark .analysis-box .title { color: #f9e79f; }
-        
-        .analysis-box .matrix-item { margin-bottom: 1rem; }
-        .analysis-box .matrix-item label {
-            display: block;
-            font-weight: 800;
-            font-size: 0.85rem;
-            color: #2a1a0a;
-            margin-bottom: 0.4rem;
-        }
-        body.dark .analysis-box .matrix-item label { color: #e8d8c8; }
-        
-        .analysis-box .matrix-item textarea, 
-        .analysis-box .matrix-item select,
-        .admin-tools-box textarea,
-        .admin-tools-box select {
-            width: 100%;
-            padding: 0.8rem;
-            border-radius: 10px;
-            border: 1px solid rgba(212,175,55,0.2);
-            background: rgba(255,255,255,0.6);
-            font-family: inherit;
-            font-size: 0.9rem;
-            color: #1a0a0a;
-            resize: vertical;
-            min-height: 45px;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-        body.dark .analysis-box .matrix-item textarea,
-        body.dark .admin-tools-box textarea {
-            background: rgba(0,0,0,0.15);
-            color: #f0e8d0;
-            border-color: rgba(212,175,55,0.1);
-        }
-        .analysis-box .matrix-item textarea:focus,
-        .admin-tools-box textarea:focus { 
-            border-color: #d4af37; 
-            box-shadow: 0 0 0 4px rgba(212,175,55,0.1); 
-            background: #fff;
-        }
+// api/submit-request.js
+module.exports = async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
-        .admin-tools-box {
-            margin-top: 1.5rem;
-            padding: 1.2rem;
-            background: rgba(40,116,166,0.05);
-            border-radius: 12px;
-            border: 1px solid rgba(40,116,166,0.15);
-        }
-        .admin-tools-box label {
-            font-weight: 800;
-            font-size: 0.85rem;
-            color: #2874a6;
-            display: block;
-            margin-bottom: 0.4rem;
-        }
-        body.dark .admin-tools-box label { color: #85c1e9; }
-        
-        .keywords-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        .keyword-tag {
-            padding: 0.4rem 0.8rem;
-            background: rgba(212,175,55,0.15);
-            border-radius: 20px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: 0.2s;
-            border: 1px solid transparent;
-        }
-        .keyword-tag:hover { background: rgba(212,175,55,0.3); }
-        .keyword-tag.selected {
-            background: #d4af37;
-            color: #fff;
-            font-weight: bold;
-        }
-        
-        .score-section {
-            margin-top: 1.5rem;
-            padding-top: 1rem;
-            border-top: 1px solid rgba(0,0,0,0.05);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-        .score-section label { font-weight: 800; font-size: 0.9rem; color: #2a1a0a; }
-        body.dark .score-section label { color: #e8d8c8; }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .obs-card.pending { border-color: #f39c12; border-width: 2px; }
-        .obs-card.approved { border-color: #27ae60; border-width: 2px; }
-        .obs-card.rejected { border-color: #e74c3c; border-width: 2px; }
-        .obs-card.score5 { border-color: #d4af37; border-width: 2px; box-shadow: 0 0 20px rgba(212,175,55,0.15); }
-        
-        .cluster-tag {
-            display: inline-block;
-            padding: 0.1rem 0.6rem;
-            border-radius: 12px;
-            font-size: 0.6rem;
-            font-weight: 700;
-            background: rgba(40,116,166,0.1);
-            color: #2874a6;
-            border: 1px solid rgba(40,116,166,0.15);
-            margin-left: 0.3rem;
-        }
-        body.dark .cluster-tag { color: #85c1e9; background: rgba(40,116,166,0.05); }
-        
-        .guide-box {
-            margin-top: 0.8rem;
-            padding: 0.8rem;
-            background: rgba(212,175,55,0.05);
-            border-radius: 8px;
-            border: 1px solid rgba(212,175,55,0.15);
-            display: none;
-        }
-        body.dark .guide-box { background: rgba(212,175,55,0.02); }
-        .guide-box.active { display: block; }
-        .guide-box .guide-title {
-            font-weight: 800;
-            font-size: 0.8rem;
-            color: #8a6d1f;
-            margin-bottom: 0.3rem;
-        }
-        body.dark .guide-box .guide-title { color: #f9e79f; }
-        .guide-box .guide-item {
-            padding: 0.3rem 0.5rem;
-            border-right: 2px solid #d4af37;
-            margin-bottom: 0.3rem;
-            font-size: 0.8rem;
-            color: #4a3a2a;
-            background: rgba(255,255,255,0.3);
-            border-radius: 4px;
-        }
-        body.dark .guide-box .guide-item { color: #d0c0b0; background: rgba(0,0,0,0.05); }
-        
-        .ai-analysis-box {
-            margin-top: 0.8rem;
-            padding: 0.8rem;
-            background: rgba(99,102,241,0.05);
-            border-radius: 8px;
-            border: 1px solid rgba(99,102,241,0.15);
-        }
-        body.dark .ai-analysis-box { background: rgba(99,102,241,0.02); }
-        .ai-analysis-box .ai-title {
-            font-weight: 800;
-            font-size: 0.8rem;
-            color: #6366f1;
-            margin-bottom: 0.3rem;
-        }
-        body.dark .ai-analysis-box .ai-title { color: #818cf8; }
-        .ai-analysis-box .ai-item {
-            padding: 0.2rem 0.4rem;
-            font-size: 0.75rem;
-            color: #4a3a2a;
-        }
-        body.dark .ai-analysis-box .ai-item { color: #d0c0b0; }
-        
-        @media (max-width: 768px) {
-            .container { padding: 1.2rem; }
-            .top-bar { flex-direction: column; align-items: stretch; }
-            .obs-header { flex-direction: column; align-items: stretch; }
-            .obs-actions { flex-direction: column; }
-            .obs-actions .btn-small { width: 100%; text-align: center; }
-            .score-section { flex-direction: column; align-items: stretch; }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="top-bar">
-            <a href="admin.html" class="back-link">↩ بازگشت به داشبورد</a>
-        </div>
-        
-        <h1 class="page-title">👁️ مدیریت مشاهدات</h1>
-        <div class="page-subtitle">بررسی، تحلیل و تأیید نهایی مشاهدات برای ارسال به گالری اطلس ظهور</div>
-        
-        <div class="stats-mini">
-            <div class="stat-mini"><span class="number" id="totalObs">۰</span><div class="label">کل مشاهدات</div></div>
-            <div class="stat-mini"><span class="number" id="pendingObs">۰</span><div class="label">⏳ در انتظار</div></div>
-            <div class="stat-mini"><span class="number" id="approvedObs">۰</span><div class="label">✅ تایید شده</div></div>
-            <div class="stat-mini"><span class="number" id="score5Obs">۰</span><div class="label">⭐ امتیاز ۵</div></div>
-        </div>
-        
-        <div class="filter-bar">
-            <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">📋 همه</button>
-            <button class="filter-btn" data-filter="pending" onclick="setFilter('pending')">⏳ در انتظار</button>
-            <button class="filter-btn" data-filter="approved" onclick="setFilter('approved')">✅ تایید شده</button>
-            <button class="filter-btn" data-filter="score5" onclick="setFilter('score5')">⭐ امتیاز ۵</button>
-            <button class="filter-btn" data-filter="rejected" onclick="setFilter('rejected')">❌ رد شده</button>
-        </div>
-        
-        <div id="observationsList" class="observations-list">
-            <div class="empty-state">در حال بارگذاری...</div>
-        </div>
-        
-        <div style="text-align:center; margin-top:2rem;">
-            <a href="admin.html" class="btn-back-bottom">↩ بازگشت به پنل ادمین</a>
-        </div>
-    </div>
+  const token = process.env.OBSERVER_TOKEN || process.env.GH_TOKEN;
+  if (!token) {
+    return res.status(500).json({ error: 'Token is not configured' });
+  }
+
+  try {
+    let body = '';
+    for await (const chunk of req) {
+      body += chunk;
+    }
     
-    <script>
-        let allObservations = [];
-        let currentFilter = 'all';
-        let currentAnalyzingId = null;
+    let parsedBody;
+    try {
+      parsedBody = JSON.parse(body);
+    } catch (e) {
+      return res.status(400).json({ error: 'Invalid JSON in request body' });
+    }
+
+    const { cardCode, type, description, observations, text } = parsedBody;
+
+    const owner = 'ghrezaei1399-code';
+    const repo = 'cultural-id';
+
+    // ===== بخش تحلیل هوش مصنوعی =====
+    if (type === 'ai-analyze') {
+      try {
+        const isPersian = /[\u0600-\u06FF]/.test(text);
         
-        const clusterMap = {
-            'human': 'انسان',
-            'knowledge': 'دانش و فناوری',
-            'governance': 'حکمرانی و تمدن',
-            'survival': 'بقا و آینده'
+        const prompt = isPersian ? 
+`متن: "${text}"
+
+شما تحلیلگر سپهر خردمندی هستید. وظایف:
+1. تشخیص رد یا تایید (قوانین: تجاری، تبلیغاتی، درخواست راهنمایی، سیاسی مخرب، نژادپرستانه، خشونت‌آمیز → rejected)
+2. تعیین خوشه: human, knowledge, governance, survival
+3. امتیاز 1 تا 5
+4. تحلیل عمیق (حداقل 30 کلمه)
+5. راهنمای فردی (اقدام عملی برای فرد)
+6. راهنمای شبکه‌ای (هماهنگی با دیگران)
+7. راهنمای سیاستی (پرسش یا پیشنهاد ساختاری)
+
+فقط JSON برگردان:
+{"status":"","rejection_reason":null,"cluster":"","score_suggestion":0,"analysis_note":"","guide_individual":"","guide_network":"","guide_policy":""}` :
+`Text: "${text}"
+
+You are Sphere of Wisdom analyst. Tasks:
+1. Detect reject or approve (rules: commercial, promotional, guidance request, political destructive, racist, violent → rejected)
+2. Determine cluster: human, knowledge, governance, survival
+3. Score 1 to 5
+4. Deep analysis (minimum 30 words)
+5. Individual guide (practical action for individual)
+6. Network guide (coordination with others)
+7. Policy guide (question or proposal for structural change)
+
+Return ONLY JSON:
+{"status":"","rejection_reason":null,"cluster":"","score_suggestion":0,"analysis_note":"","guide_individual":"","guide_network":"","guide_policy":""}`;
+
+        const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
+        const aiText = await response.text();
+        
+        let jsonStr = aiText;
+        const s = aiText.indexOf('{');
+        const e = aiText.lastIndexOf('}');
+        if (s !== -1 && e !== -1) {
+          jsonStr = aiText.substring(s, e + 1);
+        } else {
+          return res.status(200).json({ 
+            success: true, 
+            analysis: {
+              status: "approved",
+              rejection_reason: null,
+              cluster: "human",
+              score_suggestion: 3,
+              analysis_note: isPersian ? "تحلیل خودکار" : "Auto analysis",
+              guide_individual: isPersian ? "مشاهده خود را ثبت کنید." : "Register your observation.",
+              guide_network: isPersian ? "با دیگران به اشتراک بگذارید." : "Share with others.",
+              guide_policy: isPersian ? "در شبکه خود مطرح کنید." : "Raise in your network."
+            }
+          });
+        }
+        
+        const analysis = JSON.parse(jsonStr);
+        
+        const result = {
+          status: analysis.status || "approved",
+          rejection_reason: analysis.rejection_reason || null,
+          cluster: analysis.cluster || "human",
+          score_suggestion: analysis.score_suggestion || 3,
+          analysis_note: analysis.analysis_note || (isPersian ? "تحلیل" : "Analysis"),
+          guide_individual: analysis.guide_individual || (isPersian ? "راهنمای فردی" : "Individual guide"),
+          guide_network: analysis.guide_network || (isPersian ? "راهنمای شبکه‌ای" : "Network guide"),
+          guide_policy: analysis.guide_policy || (isPersian ? "راهنمای سیاستی" : "Policy guide")
         };
         
-        const clusterKeywords = {
-            'human': ['فقر', 'آموزش', 'سلامت', 'سلامت روان', 'اعتیاد', 'جوانان', 'خانواده', 'بیماری', 'محرومیت', 'بی‌سوادی'],
-            'knowledge': ['هوش مصنوعی', 'فناوری', 'دانش', 'نوآوری', 'تحقیق', 'علم', 'شکاف دانشی', 'نابرابری علمی', 'انحصار دانش'],
-            'governance': ['فساد', 'جنگ', 'سیاست', 'حکمرانی', 'نهاد', 'قانون', 'مهاجرت نخبگان', 'بحران اعتماد', 'نابرابری'],
-            'survival': ['آب', 'انرژی', 'اقلیم', 'محیط زیست', 'غذا', 'کشاورزی', 'امنیت غذایی', 'پایداری']
+        return res.status(200).json({ success: true, analysis: result });
+        
+      } catch (error) {
+        console.error('AI Analysis Error:', error);
+        const isPersian = /[\u0600-\u06FF]/.test(text);
+        return res.status(200).json({ 
+          success: true, 
+          analysis: {
+            status: "approved",
+            rejection_reason: null,
+            cluster: "human",
+            score_suggestion: 3,
+            analysis_note: isPersian ? "تحلیل خودکار" : "Auto analysis",
+            guide_individual: isPersian ? "مشاهده خود را ثبت کنید." : "Register your observation.",
+            guide_network: isPersian ? "با دیگران به اشتراک بگذارید." : "Share with others.",
+            guide_policy: isPersian ? "در شبکه خود مطرح کنید." : "Raise in your network."
+          }
+        });
+      }
+    }
+
+    // ===== بخش ثبت مشاهدات =====
+    if (type === 'observations' && observations && observations.length > 0) {
+      if (!cardCode) {
+        return res.status(400).json({ error: 'کد کارت الزامی است' });
+      }
+
+      const moduleNames = {
+        'collaboration': 'همفکری با دیگران',
+        'related': 'مشاهدات مرتبط دیگران',
+        'referral': 'ارجاع به ۵ همفرهنگ'
+      };
+
+      const createdIssues = [];
+      for (const obs of observations) {
+        if (!obs.text || obs.text.length < 10) {
+          continue;
+        }
+
+        const selectedModule = obs.module ? moduleNames[obs.module] || obs.module : 'هیچ‌کدام';
+        const isPersian = /[\u0600-\u06FF]/.test(obs.text);
+        
+        let aiSection = '';
+        if (obs.aiAnalysis) {
+          const ai = obs.aiAnalysis;
+          const statusLabel = ai.status === 'approved' ? '✅ تایید شده' : '❌ رد شده';
+          const clusterLabel = isPersian ? 
+            (ai.cluster === 'human' ? 'انسان' : 
+             ai.cluster === 'knowledge' ? 'دانش و فناوری' : 
+             ai.cluster === 'governance' ? 'حکمرانی و تمدن' : 
+             ai.cluster === 'survival' ? 'بقا و آینده' : 'نامشخص') :
+            (ai.cluster || 'Unknown');
+          
+          aiSection = `
+**🤖 AI Analysis:**
+- **Status:** ${statusLabel}
+- **Cluster:** ${clusterLabel}
+- **Suggested Score:** ${ai.score_suggestion || '---'}
+- **Analysis:** ${ai.analysis_note || '---'}
+
+**Action Guide:**
+- **Individual:** ${ai.guide_individual || '---'}
+- **Network:** ${ai.guide_network || '---'}
+- **Policy:** ${ai.guide_policy || '---'}
+`;
+        }
+
+        const issueTitle = isPersian ? `مشاهده خام: ${cardCode}` : `Raw Observation: ${cardCode}`;
+        const issueBody = `
+**Card Code:** ${cardCode}
+
+**Observation:**
+${obs.text}
+
+**Selected Module:**
+${selectedModule}
+
+${aiSection}
+---
+*This observation has been registered and is pending review.*
+        `;
+
+        const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/vnd.github.v3+json'
+          },
+          body: JSON.stringify({
+            title: issueTitle,
+            body: issueBody,
+            labels: ['observation', 'pending-review']
+          })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || 'Error creating GitHub issue');
+        }
+
+        const issueData = await response.json();
+        createdIssues.push({
+          number: issueData.number,
+          url: issueData.html_url,
+          observation: obs.text.substring(0, 50) + '...',
+          module: selectedModule
+        });
+      }
+
+      if (createdIssues.length === 0) {
+        return res.status(400).json({ error: 'No valid observations were registered.' });
+      }
+
+      const trackingCodes = createdIssues.map(i => `#${i.number}`).join(', ');
+      return res.status(200).json({
+        success: true,
+        trackingCode: trackingCodes,
+        issues: createdIssues,
+        message: `${createdIssues.length} observation(s) successfully registered.`
+      });
+    }
+
+    // ===== بخش درخواست حذف =====
+    if (type === 'delete') {
+      if (!cardCode) {
+        return res.status(400).json({ error: 'Card code is required' });
+      }
+
+      const trackingCode = `DEL-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+
+      const fileName = `delete-${Date.now()}-${Math.random().toString(36).substring(7)}.json`;
+      const requestPath = `data/requests/${fileName}`;
+
+      const requestData = {
+        fileName: fileName,
+        trackingCode: trackingCode,
+        senderCode: cardCode,
+        type: 'delete',
+        description: description || '',
+        status: 'pending',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      const newContent = Buffer.from(JSON.stringify(requestData, null, 2), 'utf8').toString('base64');
+
+      await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${requestPath}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: `Delete request from ${cardCode} - ${trackingCode}`,
+          content: newContent,
+          branch: 'main'
+        })
+      });
+
+      return res.status(200).json({
+        success: true,
+        trackingCode: trackingCode,
+        message: 'Delete request successfully registered.'
+      });
+    }
+
+    // ===== بخش درخواست ارتباط =====
+    if (type === 'connection') {
+      if (!cardCode) {
+        return res.status(400).json({ error: 'Card code is required' });
+      }
+
+      const userPath = `data/active/${cardCode}.json`;
+      const userRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (!userRes.ok) {
+        if (userRes.status === 404) {
+          return res.status(404).json({ error: 'User not found' });
+        }
+        return res.status(userRes.status).json({ error: 'Error fetching user data' });
+      }
+
+      const userDataRaw = await userRes.json();
+      const userData = JSON.parse(Buffer.from(userDataRaw.content, 'base64').toString('utf8'));
+
+      if (!userData.communicationEmail || userData.communicationEmail.length < 5) {
+        return res.status(400).json({ 
+          error: 'To use connection feature, please register your email first.',
+          redirect: 'edit-en.html',
+          emailRequired: true
+        });
+      }
+
+      const allUsersRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/active`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (!allUsersRes.ok) {
+        return res.status(500).json({ error: 'Error fetching user list' });
+      }
+
+      const files = await allUsersRes.json();
+      const allUsers = [];
+
+      for (const file of files) {
+        if (file.name.endsWith('.json') && file.name !== `${cardCode}.json`) {
+          try {
+            const fRes = await fetch(file.download_url);
+            const uData = await fRes.json();
+            if (uData.status === 'approved' && uData.communicationEmail && uData.communicationEmail.length > 5) {
+              allUsers.push(uData);
+            }
+          } catch (e) { continue; }
+        }
+      }
+
+      const senderValues = userData.values || [];
+      const senderPriorities = userData.priorities || [];
+
+      const scoredUsers = allUsers.map(user => {
+        const userValues = user.values || [];
+        const userPriorities = user.priorities || [];
+        let matchCount = 0;
+        let score = 0;
+
+        senderValues.forEach((value, idx) => {
+          const userIndex = userValues.indexOf(value);
+          if (userIndex !== -1) {
+            matchCount++;
+            const priorityDiff = Math.abs((senderPriorities[idx] || 999) - (userPriorities[userIndex] || 999));
+            score += Math.max(0, 10 - priorityDiff);
+          }
+        });
+
+        return {
+          cardCode: user.cardCode,
+          email: user.communicationEmail || '',
+          matchCount: matchCount,
+          matchScore: score,
+          similarityScore: Math.round((matchCount / Math.min(senderValues.length || 1, userValues.length || 1)) * 100) || 0
         };
-        
-        function detectCluster(text) {
-            if (!text) return 'other';
-            const lowerText = text.toLowerCase();
-            for (const [cluster, keywords] of Object.entries(clusterKeywords)) {
-                for (const keyword of keywords) {
-                    if (lowerText.includes(keyword)) {
-                        return cluster;
-                    }
-                }
-            }
-            return 'other';
-        }
-        
-        function getClusterLabel(cluster) {
-            return clusterMap[cluster] || 'سایر';
-        }
-        
-        function getKeywordsHtml(obsNumber, cluster) {
-            const keywords = clusterKeywords[cluster] || [];
-            let html = `<div class="keywords-container" id="kw-container-${obsNumber}">`;
-            keywords.forEach(kw => {
-                html += `<span class="keyword-tag" onclick="addKeywordToNote('${obsNumber}', '${kw}')">${kw}</span>`;
-            });
-            html += `</div>`;
-            return html;
-        }
+      });
 
-        async function loadObservations() {
-            try {
-                const response = await fetch('/api/get-connection-requests?type=observations');
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.error || 'خطا در دریافت مشاهدات');
-                
-                allObservations = data.observations || [];
-                updateStats();
-                renderObservations();
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('observationsList').innerHTML = 
-                    `<div class="empty-state" style="color:red;">خطا: ${error.message}</div>`;
-            }
-        }
-        
-        function updateStats() {
-            const total = allObservations.length;
-            const pending = allObservations.filter(o => o.status === 'pending').length;
-            const approved = allObservations.filter(o => o.status === 'approved' && o.score !== 5).length;
-            const score5 = allObservations.filter(o => o.score === 5).length;
-            
-            document.getElementById('totalObs').textContent = total;
-            document.getElementById('pendingObs').textContent = pending;
-            document.getElementById('approvedObs').textContent = approved;
-            document.getElementById('score5Obs').textContent = score5;
-        }
-        
-        function setFilter(filter) {
-            currentFilter = filter;
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.filter === filter);
-            });
-            renderObservations();
-        }
-        
-        function getModuleLabel(module) {
-            const labels = {
-                'collaboration': '🤝 همفکری با دیگران',
-                'related': '👁️ مشاهدات مرتبط دیگران',
-                'referral': '📤 ارجاع به ۵ همفرهنگ'
-            };
-            return labels[module] || module || 'بدون ماژول';
-        }
+      const MIN_MATCH_COUNT = 5;
+      const MAX_RESULTS = 10;
 
-        window.addKeywordToNote = function(issueNumber, keyword) {
-            const noteBox = document.getElementById(`adminNote-${issueNumber}`);
-            if (noteBox) {
-                const currentVal = noteBox.value;
-                noteBox.value = currentVal ? currentVal + '، ' + keyword : keyword;
-            }
-            if (event && event.target) {
-                event.target.classList.toggle('selected');
-            }
-        }
-        
-        function renderObservations() {
-            const container = document.getElementById('observationsList');
-            
-            let filtered = allObservations;
-            if (currentFilter === 'pending') {
-                filtered = filtered.filter(o => o.status === 'pending');
-            } else if (currentFilter === 'approved') {
-                filtered = filtered.filter(o => o.status === 'approved' && o.score !== 5);
-            } else if (currentFilter === 'score5') {
-                filtered = filtered.filter(o => o.score === 5);
-            } else if (currentFilter === 'rejected') {
-                filtered = filtered.filter(o => o.status === 'rejected');
-            }
-            
-            if (filtered.length === 0) {
-                container.innerHTML = `<div class="empty-state">هیچ مشاهده‌ای با این وضعیت وجود ندارد</div>`;
-                return;
-            }
-            
-            container.innerHTML = filtered.map(obs => {
-                let cluster = 'other';
-                let aiAnalysis = null;
-                
-                if (obs.aiAnalysis) {
-                    aiAnalysis = obs.aiAnalysis;
-                    cluster = aiAnalysis.cluster || 'other';
-                } else if (obs.analysis && obs.analysis.adminCluster) {
-                    cluster = obs.analysis.adminCluster;
-                } else {
-                    cluster = detectCluster(obs.observation || '');
-                }
-                
-                const clusterLabel = getClusterLabel(cluster);
-                
-                const statusMap = {
-                    approved: `<span class="badge badge-approved">✅ تایید شده</span>`,
-                    rejected: `<span class="badge badge-rejected">❌ رد شده</span>`,
-                    pending: `<span class="badge badge-pending">⏳ در انتظار</span>`
-                };
-                
-                const scoreBadge = obs.score === 5 ? 
-                    `<span class="badge badge-score-5">⭐ امتیاز ۵</span>` : 
-                    (obs.score ? `<span class="badge" style="background:rgba(200,200,200,0.15);color:#888;">امتیاز ${obs.score}</span>` : '');
-                
-                const clusterBadge = cluster !== 'other' ? 
-                    `<span class="badge badge-cluster">📂 ${clusterLabel}</span>` : '';
-                
-                const isPending = obs.status === 'pending';
-                const isApproved = obs.status === 'approved' && obs.score !== 5;
-                const isScore5 = obs.score === 5;
-                
-                let cardClass = 'obs-card';
-                if (isPending) cardClass += ' pending';
-                else if (isScore5) cardClass += ' score5';
-                else if (isApproved) cardClass += ' approved';
-                else if (obs.status === 'rejected') cardClass += ' rejected';
-                
-                const moduleHtml = obs.module 
-                    ? `<div class="obs-module"><span class="icon">📌</span> ${getModuleLabel(obs.module)}</div>`
-                    : '';
-                
-                const analysis = obs.analysis || {};
-                const guide = analysis.guide || {};
-                
-                let aiHtml = '';
-                if (aiAnalysis) {
-                    aiHtml = `
-                        <div class="ai-analysis-box">
-                            <div class="ai-title">🤖 تحلیل هوش مصنوعی</div>
-                            ${aiAnalysis.score_suggestion ? `<div class="ai-item">⭐ امتیاز پیشنهادی: ${aiAnalysis.score_suggestion}</div>` : ''}
-                            ${aiAnalysis.analysis_note ? `<div class="ai-item">📝 ${aiAnalysis.analysis_note}</div>` : ''}
-                            ${aiAnalysis.guide_individual ? `<div class="ai-item">📍 فردی: ${aiAnalysis.guide_individual}</div>` : ''}
-                            ${aiAnalysis.guide_network ? `<div class="ai-item">🌐 شبکه‌ای: ${aiAnalysis.guide_network}</div>` : ''}
-                            ${aiAnalysis.guide_policy ? `<div class="ai-item">🏛️ سیاستی: ${aiAnalysis.guide_policy}</div>` : ''}
-                        </div>
-                    `;
-                }
-                
-                // حذف دکمه‌های تایید و رد - فقط دکمه ارسال به گالری برای امتیاز ۵
-                let actionButtons = '';
-                if (isPending || isApproved || isScore5) {
-                    actionButtons = `
-                        <div class="obs-actions">
-                            <button class="btn-small btn-module" onclick="toggleAnalysis('${obs.number}')">📊 تحلیل ۵ سطحی</button>
-                            <button class="btn-small btn-ai" onclick="autoFillAnalysis('${obs.number}')">🤖 تحلیل هوشمند</button>
-                            ${isScore5 ? `<button class="btn-small btn-gallery" onclick="submitToGallery('${obs.number}')">⭐ ارسال به گالری اطلس ظهور</button>` : ''}
-                            <button class="btn-small btn-cluster" onclick="generateGuide('${obs.number}')">📋 تولید بسته راهنما</button>
-                        </div>
-                    `;
-                }
-                
-                const analysisBox = `
-                    <div class="analysis-box" id="analysis-${obs.number}">
-                        <div class="title">📊 تحلیل ۵ سطحی و ابزارهای ادمین</div>
-                        
-                        <div class="admin-tools-box">
-                            <label>📂 تشخیص نهایی خوشه (توسط ادمین):</label>
-                            <select id="adminClusterSelect-${obs.number}" onchange="updateKeywordsView('${obs.number}', this.value)">
-                                <option value="human" ${cluster === 'human' ? 'selected' : ''}>خوشه اول: انسان</option>
-                                <option value="knowledge" ${cluster === 'knowledge' ? 'selected' : ''}>خوشه دوم: دانش و فناوری</option>
-                                <option value="governance" ${cluster === 'governance' ? 'selected' : ''}>خوشه سوم: حکمرانی و تمدن</option>
-                                <option value="survival" ${cluster === 'survival' ? 'selected' : ''}>خوشه چهارم: بقا و آینده</option>
-                                <option value="other">سایر / نیاز به بررسی</option>
-                            </select>
+      const matched = scoredUsers
+        .filter(u => u.matchCount >= MIN_MATCH_COUNT)
+        .sort((a, b) => b.matchScore - a.matchScore)
+        .slice(0, MAX_RESULTS);
 
-                            <label style="margin-top:1rem; display:block;">🔑 کلیدواژه‌های ظهور (برای تکمیل سریع):</label>
-                            ${getKeywordsHtml(obs.number, cluster)}
+      const trackingCode = `CON-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
-                            <label style="margin-top:1rem; display:block;">📝 نظر تحلیلی مشروح ادمین:</label>
-                            <textarea id="adminNote-${obs.number}" rows="3" placeholder="تحلیل عمیق خود را اینجا بنویسید...">${analysis.adminNote || ''}</textarea>
-                        </div>
+      const fileName = `connection-${Date.now()}-${Math.random().toString(36).substring(7)}.json`;
+      const requestPath = `data/requests/${fileName}`;
 
-                        <div style="margin-top:1.5rem; border-top:1px dashed #ccc; padding-top:1rem;">
-                            <div class="matrix-item">
-                                <label>۱. ماتریس ظهورها</label>
-                                <textarea id="emergence-${obs.number}" rows="2">${analysis.emergenceMatrix || ''}</textarea>
-                            </div>
-                            <div class="matrix-item">
-                                <label>۲. ماتریس لایه‌ها</label>
-                                <textarea id="layer-${obs.number}" rows="2">${analysis.layerMatrix || ''}</textarea>
-                            </div>
-                            <div class="matrix-item">
-                                <label>۳. ماتریس ارتباطات</label>
-                                <textarea id="connection-${obs.number}" rows="2">${analysis.connectionMatrix || ''}</textarea>
-                            </div>
-                            <div class="matrix-item">
-                                <label>۴. ماتریس مقیاس</label>
-                                <textarea id="scale-${obs.number}" rows="2">${analysis.scaleMatrix || ''}</textarea>
-                            </div>
-                            <div class="matrix-item">
-                                <label>۵. ماتریس ظرفیت</label>
-                                <textarea id="capacity-${obs.number}" rows="2">${analysis.capacityMatrix || ''}</textarea>
-                            </div>
-                        </div>
+      const requestData = {
+        fileName: fileName,
+        trackingCode: trackingCode,
+        senderCode: cardCode,
+        senderEmail: userData.communicationEmail,
+        type: 'connection',
+        description: description || '',
+        status: 'completed',
+        connections: matched.map(u => u.email),
+        connectionDetails: matched,
+        totalFound: matched.length,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
 
-                        <div class="score-section">
-                            <label>⭐ امتیاز (۱ تا ۵):</label>
-                            <select id="score-${obs.number}">
-                                <option value="1" ${obs.score === 1 ? 'selected' : ''}>۱</option>
-                                <option value="2" ${obs.score === 2 ? 'selected' : ''}>۲</option>
-                                <option value="3" ${obs.score === 3 ? 'selected' : ''}>۳</option>
-                                <option value="4" ${obs.score === 4 ? 'selected' : ''}>۴</option>
-                                <option value="5" ${obs.score === 5 ? 'selected' : ''}>۵</option>
-                            </select>
-                            <span class="score-hint">(فقط امتیاز ۵ به گالری اطلس ظهور می‌رود)</span>
-                            <button class="btn-small btn-approve" onclick="saveAnalysis('${obs.number}')">💾 ذخیره تحلیل</button>
-                        </div>
-                    </div>
-                `;
-                
-                const guideBox = `
-                    <div class="guide-box" id="guide-${obs.number}">
-                        <div class="guide-title">📋 بسته راهنمای اقدام عملی</div>
-                        <div class="guide-item"><strong>📍 سطح فردی:</strong> ${guide.individual || 'توصیه‌ای ثبت نشده است.'}</div>
-                        <div class="guide-item"><strong>🌐 سطح شبکه‌ای:</strong> ${guide.network || 'توصیه‌ای ثبت نشده است.'}</div>
-                        <div class="guide-item"><strong>🏛️ سطح سیاستی:</strong> ${guide.policy || 'توصیه‌ای ثبت نشده است.'}</div>
-                    </div>
-                `;
-                
-                return `
-                    <div class="${cardClass}" id="card-${obs.number}">
-                        <div class="obs-header">
-                            <div>
-                                <span class="obs-code">#${obs.number} - ${obs.cardCode || 'ناشناس'}</span>
-                                ${statusMap[obs.status] || ''}
-                                ${scoreBadge}
-                                ${clusterBadge}
-                            </div>
-                            <div class="obs-meta">${new Date(obs.createdAt).toLocaleString('fa-IR')}</div>
-                        </div>
-                        <div class="obs-body">
-                            <p>${obs.observation || 'متن مشاهده موجود نیست'}</p>
-                        </div>
-                        ${moduleHtml}
-                        ${aiHtml}
-                        ${actionButtons}
-                        ${analysisBox}
-                        ${guideBox}
-                    </div>
-                `;
-            }).join('');
-            
-            if (filtered.length > 5) {
-                container.innerHTML += `<div class="scroll-hint">⬇️ ${filtered.length} مشاهده وجود دارد (اسکرول کنید)</div>`;
-            }
-        }
-        
-        function toggleAnalysis(issueNumber) {
-            const box = document.getElementById(`analysis-${issueNumber}`);
-            if (box) {
-                if (box.classList.contains('active')) {
-                    box.classList.remove('active');
-                    currentAnalyzingId = null;
-                } else {
-                    document.querySelectorAll('.analysis-box').forEach(b => b.classList.remove('active'));
-                    box.classList.add('active');
-                    currentAnalyzingId = issueNumber;
-                    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    
-                    const obs = allObservations.find(o => o.number == issueNumber);
-                    if(obs) {
-                        let cluster = 'other';
-                        if (obs.aiAnalysis && obs.aiAnalysis.cluster) {
-                            cluster = obs.aiAnalysis.cluster;
-                        } else if (obs.analysis && obs.analysis.adminCluster) {
-                            cluster = obs.analysis.adminCluster;
-                        } else {
-                            cluster = detectCluster(obs.observation || '');
-                        }
-                        updateKeywordsView(issueNumber, cluster);
-                    }
-                }
-            }
-        }
-        
-        window.updateKeywordsView = function(issueNumber, clusterValue) {
-            const container = document.getElementById(`kw-container-${issueNumber}`);
-            if(container) {
-                container.innerHTML = '';
-                const kws = clusterKeywords[clusterValue] || [];
-                kws.forEach(kw => {
-                    const span = document.createElement('span');
-                    span.className = 'keyword-tag';
-                    span.textContent = kw;
-                    span.onclick = () => addKeywordToNote(issueNumber, kw);
-                    container.appendChild(span);
-                });
-            }
-        }
-        
-        function generateGuide(issueNumber) {
-            const obs = allObservations.find(o => o.number === parseInt(issueNumber));
-            if (!obs) return;
-            
-            let cluster = 'other';
-            if (obs.analysis && obs.analysis.adminCluster) {
-                cluster = obs.analysis.adminCluster;
-            } else if (obs.aiAnalysis && obs.aiAnalysis.cluster) {
-                cluster = obs.aiAnalysis.cluster;
-            } else {
-                cluster = detectCluster(obs.observation || '');
-            }
-            
-            const guides = {
-                'human': {
-                    individual: 'روزانه یک ظهور مرتبط با این موضوع را در دفترچه مشاهده خود یادداشت کنید و از قضاوت بپرهیزید.',
-                    network: 'این مشاهده را با ۳ نفر از هم‌فرهنگان دارای کارت به اشتراک بگذارید و بازخورد خام آنها را بگیرید.',
-                    policy: 'یک یادداشت کوتاه درباره گسست میان سپهر آموزش و سلامت در این پدیده تهیه کنید.'
-                },
-                'knowledge': {
-                    individual: 'ظرفیت‌های مغفول دانشی در این پدیده را فهرست کنید بدون اینکه راه‌حل فناورانه پیشنهاد دهید.',
-                    network: 'در شبکه مجتمع هم‌اندیشی، پرونده مشابهی جستجو کنید و الگوی تکرارشونده آن را گزارش دهید.',
-                    policy: 'خلأ نهادی در دسترسی به دانش مربوط به این ظهور را مستند کنید.'
-                },
-                'governance': {
-                    individual: 'ناهم‌ترازی میان ظرفیت موجود و تجلی واقعی را در این پدیده توصیف کنید.',
-                    network: 'با اعضای خوشه حکمرانی در شبکه هم‌فرهنگان، ماتریس موانع این ظهور را تکمیل کنید.',
-                    policy: 'یک پیشنهاد سیاستی مبتنی بر کرامت انسانی برای رفع گسست سپهری این پدیده بنویسید.'
-                },
-                'survival': {
-                    individual: 'ظرفیت‌های پنهان بقا در این بحران را شناسایی و ثبت کنید.',
-                    network: 'این ظهور را به عنوان یک ابرسپهر احتمالی در پنل نام‌آوران مطرح کنید.',
-                    policy: 'یادداشتی درباره ناهم‌ترازی میان منابع طبیعی و حکمرانی آب/انرژی تهیه نمایید.'
-                },
-                'other': {
-                    individual: 'این مشاهده را بدون قضاوت بازنویسی کنید و سعی کنید یک ظهور جدید در آن پیدا کنید.',
-                    network: 'این مشاهده را با یک هم‌فرهنگ به اشتراک بگذارید و از او بخواهید یک مشاهده مشابه ثبت کند.',
-                    policy: 'به این فکر کنید که اگر این پدیده در سطح کلان رخ دهد، چه گسست‌هایی ایجاد می‌کند؟'
-                }
-            };
-            
-            const guide = guides[cluster] || guides['other'];
-            const clusterLabel = getClusterLabel(cluster);
-            
-            const guideBox = document.getElementById(`guide-${issueNumber}`);
-            if (guideBox) {
-                guideBox.innerHTML = `
-                    <div class="guide-title">📋 بسته راهنمای اقدام عملی (خوشه: ${clusterLabel})</div>
-                    <div class="guide-item"><strong>📍 سطح فردی:</strong> ${guide.individual}</div>
-                    <div class="guide-item"><strong>🌐 سطح شبکه‌ای:</strong> ${guide.network}</div>
-                    <div class="guide-item"><strong>🏛️ سطح سیاستی:</strong> ${guide.policy}</div>
-                `;
-                guideBox.classList.add('active');
-                guideBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-            
-            alert(`📋 بسته راهنما برای خوشه "${clusterLabel}" تولید شد.`);
-        }
-        
-        async function saveAnalysis(issueNumber) {
-            const adminCluster = document.getElementById(`adminClusterSelect-${issueNumber}`)?.value || 'other';
-            const adminNote = document.getElementById(`adminNote-${issueNumber}`)?.value.trim() || '';
+      const newContent = Buffer.from(JSON.stringify(requestData, null, 2), 'utf8').toString('base64');
 
-            const analysis = {
-                emergenceMatrix: document.getElementById(`emergence-${issueNumber}`).value.trim(),
-                layerMatrix: document.getElementById(`layer-${issueNumber}`).value.trim(),
-                connectionMatrix: document.getElementById(`connection-${issueNumber}`).value.trim(),
-                scaleMatrix: document.getElementById(`scale-${issueNumber}`).value.trim(),
-                capacityMatrix: document.getElementById(`capacity-${issueNumber}`).value.trim(),
-                adminNote: adminNote,
-                adminCluster: adminCluster,
-                guide: {
-                    individual: document.getElementById(`guide-${issueNumber}`)?.querySelector('.guide-item:nth-child(1)')?.textContent?.replace('📍 سطح فردی:', '').trim() || '',
-                    network: document.getElementById(`guide-${issueNumber}`)?.querySelector('.guide-item:nth-child(2)')?.textContent?.replace('🌐 سطح شبکه‌ای:', '').trim() || '',
-                    policy: document.getElementById(`guide-${issueNumber}`)?.querySelector('.guide-item:nth-child(3)')?.textContent?.replace('🏛️ سطح سیاستی:', '').trim() || ''
-                }
-            };
-            
-            const score = parseInt(document.getElementById(`score-${issueNumber}`).value) || 0;
-            
-            try {
-                const response = await fetch('/api/approve-connection', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        issueNumber, 
-                        action: 'save_analysis',
-                        type: 'observation',
-                        analysis: analysis,
-                        score: score
-                    })
-                });
-                const result = await response.json();
-                if (!response.ok) throw new Error(result.error || 'خطا در ذخیره تحلیل');
-                
-                alert('✅ تحلیل با موفقیت ذخیره شد.');
-                loadObservations();
-            } catch (error) { 
-                alert('خطا: ' + error.message); 
-            }
-        }
-        
-        async function submitToGallery(issueNumber) {
-            if (!confirm('آیا این مشاهده با امتیاز ۵ به گالری اطلس ظهور ارسال شود؟')) return;
-            
-            try {
-                const response = await fetch('/api/approve-connection', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        issueNumber, 
-                        action: 'submit_gallery', 
-                        type: 'observation' 
-                    })
-                });
-                const result = await response.json();
-                if (!response.ok) throw new Error(result.error || 'خطا در ارسال به گالری');
-                
-                alert('⭐ مشاهده با امتیاز ۵ به گالری اطلس ظهور ارسال شد.');
-                loadObservations();
-            } catch (error) { 
-                alert('خطا: ' + error.message); 
-            }
-        }
-        
-        const SEPEHR_ADMIN_PROMPT = `
-=== هویت تو ===
-تو "تحلیلگر ارشد سپهر خردمندی" هستی. وظیفه تو کمک به ادمین برای تحلیل عمیق مشاهدات است.
+      await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${requestPath}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: `Connection request from ${cardCode} - ${trackingCode}`,
+          content: newContent,
+          branch: 'main'
+        })
+      });
 
-=== سند بنیادین سپهر خردمندی ===
-1. اصول: واقعیت‌محوری، مشاهده پیش از قضاوت، ظرفیت‌محوری، چندسپهری، کرامت انسانی، کشف نادیده‌ها.
-2. خوشه‌ها: human (انسان)، knowledge (دانش)، governance (حکمرانی)، survival (بقا).
+      return res.status(200).json({
+        success: true,
+        trackingCode: trackingCode,
+        message: matched.length > 0 
+          ? `${matched.length} like-minded people found with shared values.` 
+          : 'No like-minded people found with shared values. Please try again later.',
+        connections: matched.map(u => u.email),
+        connectionDetails: matched,
+        totalFound: matched.length,
+        minMatchRequired: MIN_MATCH_COUNT,
+        status: 'completed'
+      });
+    }
 
-=== دستورالعمل فنی خروجی (JSON) ===
-خروجی تو باید دقیقاً و فقط یک شیء JSON باشد:
-{
-    "cluster": "human" | "knowledge" | "governance" | "survival",
-    "emergence": "ماتریس ظهورها (۴ مورد)",
-    "layer": "ماتریس لایه‌ها (فردی، اجتماعی، نهادی، جهانی)",
-    "connection": "ماتریس ارتباطات با سایر سپهرها",
-    "scale": "ماتریس مقیاس (ملی، منطقه‌ای، جهانی)",
-    "capacity": "ماتریس ظرفیت‌های مغفول (۴ مورد)",
-    "note": "نظر تحلیلی مشروح ادمین (کوتاه و عمیق)",
-    "guide_individual": "بسته راهنما - سطح فردی (اقدام کوچک و مستند)",
-    "guide_network": "بسته راهنما - سطح شبکه‌ای (ارتباط با هم‌فرهنگان)",
-    "guide_policy": "بسته راهنما - سطح سیاستی (پرسشگری مستند)"
-}`;
+    return res.status(400).json({ error: 'Invalid request type.' });
 
-        async function generateAdminAnalysis(obsText) {
-            const prompt = `${SEPEHR_ADMIN_PROMPT}\n\nمشاهده: "${obsText}"`;
-            try {
-                const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
-                const result = await response.text();
-                
-                let cleanedResult = result;
-                const jsonStart = result.indexOf('{');
-                const jsonEnd = result.lastIndexOf('}');
-                if (jsonStart !== -1 && jsonEnd !== -1) {
-                    cleanedResult = result.substring(jsonStart, jsonEnd + 1);
-                }
-                
-                try {
-                    return JSON.parse(cleanedResult);
-                } catch (e) {
-                    console.error("AI Admin analysis parse error:", cleanedResult);
-                    return null;
-                }
-            } catch (error) {
-                console.error("AI Admin Analysis Error:", error);
-                return null;
-            }
-        }
-
-        window.autoFillAnalysis = async function(issueNumber) {
-            const obs = allObservations.find(o => o.number === issueNumber);
-            if (!obs) return;
-
-            const btn = document.querySelector(`#card-${issueNumber} button[onclick*="autoFillAnalysis"]`);
-            if(btn) {
-                btn.textContent = '🤖 در حال تحلیل...';
-                btn.disabled = true;
-            }
-
-            const analysis = await generateAdminAnalysis(obs.observation);
-            
-            if (analysis) {
-                const clusterSelect = document.getElementById(`adminClusterSelect-${issueNumber}`);
-                if (clusterSelect && analysis.cluster) {
-                    clusterSelect.value = analysis.cluster;
-                }
-                
-                document.getElementById(`emergence-${issueNumber}`).value = analysis.emergence || '';
-                document.getElementById(`layer-${issueNumber}`).value = analysis.layer || '';
-                document.getElementById(`connection-${issueNumber}`).value = analysis.connection || '';
-                document.getElementById(`scale-${issueNumber}`).value = analysis.scale || '';
-                document.getElementById(`capacity-${issueNumber}`).value = analysis.capacity || '';
-                document.getElementById(`adminNote-${issueNumber}`).value = analysis.note || '';
-                
-                updateKeywordsView(issueNumber, analysis.cluster || 'other');
-                
-                const guideBox = document.getElementById(`guide-${issueNumber}`);
-                if (guideBox) {
-                    guideBox.innerHTML = `
-                        <div class="guide-title">📋 بسته راهنمای اقدام عملی (خوشه: ${getClusterLabel(analysis.cluster || 'other')})</div>
-                        <div class="guide-item"><strong>📍 سطح فردی:</strong> ${analysis.guide_individual || 'توصیه‌ای ثبت نشده است.'}</div>
-                        <div class="guide-item"><strong>🌐 سطح شبکه‌ای:</strong> ${analysis.guide_network || 'توصیه‌ای ثبت نشده است.'}</div>
-                        <div class="guide-item"><strong>🏛️ سطح سیاستی:</strong> ${analysis.guide_policy || 'توصیه‌ای ثبت نشده است.'}</div>
-                    `;
-                    guideBox.classList.add('active');
-                }
-
-                alert('✅ تحلیل هوشمند آماده شد. لطفاً بررسی و ذخیره کنید.');
-            } else {
-                alert('❌ خطا در دریافت تحلیل هوشمند.');
-            }
-
-            if(btn) {
-                btn.textContent = '🤖 تحلیل هوشمند';
-                btn.disabled = false;
-            }
-        }
-        
-        loadObservations();
-    </script>
-</body>
-</html>
+  } catch (error) {
+    console.error('Submit Request Error:', error);
+    return res.status(500).json({ error: error.message });
+  }
+};
