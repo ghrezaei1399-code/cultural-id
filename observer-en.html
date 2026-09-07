@@ -491,11 +491,11 @@ You are the "Senior Analyst of the Sphere of Wisdom". Your task is deep observat
                         throw new Error(`Observation #${obs.index} does not align with Sphere of Wisdom principles. Reason: ${aiResult.rejection_reason || 'Unspecified'}`);
                     }
                     
-                    if (aiResult.status === 'error') {
-                        console.warn(`AI error for obs ${obs.index}, proceeding without AI analysis.`);
+                                      if (aiResult.status === 'error') {
+                        throw new Error(`AI analysis failed for observation #${obs.index}. Please try again.`);
                     } else {
                         obs.aiAnalysis = aiResult;
-                    }
+                    } 
                 }
 
                 // 2. Send to server if approved
