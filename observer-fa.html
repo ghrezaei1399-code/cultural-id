@@ -537,28 +537,28 @@ async function smartAnalyzeObservation(text, language = 'fa') {
         const prompt = language === 'fa' ? 
 `متن: "${text}"
 
-یک JSON با این فیلدها برگردان:
+یک JSON با این فیلدها برگردان. تمام فیلدها را پر کن. هیچ فیلدی را خالی نگذار.
 status: approved یا rejected
 cluster: human یا knowledge یا governance یا survival
-score: 1 تا 5
-analysis: تحلیل عمیق حداقل 15 کلمه
-individual: راهنمای فردی حداقل 10 کلمه
-network: راهنمای شبکه‌ای حداقل 10 کلمه
-policy: راهنمای سیاستی حداقل 10 کلمه
+score: عدد 1 تا 5
+analysis: یک تحلیل عمیق و کامل (حداقل 20 کلمه)
+individual: یک راهنمای عملی برای فرد (حداقل 15 کلمه)
+network: یک راهنمای عملی برای شبکه (حداقل 15 کلمه)
+policy: یک راهنمای عملی برای سیاست (حداقل 15 کلمه)
 
-فقط JSON.` :
+فقط JSON برگردان.` :
 `Text: "${text}"
 
-Return JSON with:
+Return JSON with all fields filled. Do not leave any field empty.
 status: approved or rejected
 cluster: human or knowledge or governance or survival
-score: 1 to 5
-analysis: deep analysis minimum 15 words
-individual: individual guide minimum 10 words
-network: network guide minimum 10 words
-policy: policy guide minimum 10 words
+score: number 1 to 5
+analysis: deep and complete analysis (minimum 20 words)
+individual: practical guide for individual (minimum 15 words)
+network: practical guide for network (minimum 15 words)
+policy: practical guide for policy (minimum 15 words)
 
-Only JSON.`;
+Return ONLY JSON.`;
 
         const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
         const aiText = await response.text();
