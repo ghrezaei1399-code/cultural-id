@@ -29,16 +29,38 @@ module.exports = async function handler(req, res) {
 
     // ===== بخش تحلیل هوش مصنوعی =====
     if (type === 'ai-analyze') {
-      try {
-        // ساخت پرامپت ساده و دقیق
-        const prompt = `متن زیر را تحلیل کن و فقط یک JSON معتبر برگردان. هیچ توضیح دیگری ننویس.
+  try {
+    const prompt = `شما تحلیلگر ارشد سپهر خردمندی هستید. متن زیر را تحلیل کنید.
 
 متن: "${text}"
 
-JSON باید دقیقاً این ساختار را داشته باشد:
-{"status":"approved","rejection_reason":null,"cluster":"human","score_suggestion":3,"analysis_note":"تحلیل","guide_individual":"راهنمای فردی","guide_network":"راهنمای شبکه‌ای","guide_policy":"راهنمای سیاستی"}
+قوانین سختگیرانه برای رد (REJECT):
+1. محتوای سیاسی مخرب، توهین‌آمیز، نژادپرستانه، جنگ‌طلبانه، تشویق به خشونت یا مرگ
+2. محتوای تجاری، تبلیغاتی، بازاریابی، فروش، خرید، قیمت، تخفیف
+3. درخواست راهنمایی عملی، آموزش گام‌به‌گام، پیشنهاد روش
+4. محتوای توهین‌آمیز به فرهنگ، مذهب، قومیت، ملیت
+5. هر چیزی که به فرهنگ، جامعه، انسان، دانش، حکمرانی یا بقا مرتبط نباشد
 
-توجه: اگر متن تجاری یا تبلیغاتی است، status را "rejected" کن.`;
+قوانین تأیید (APPROVE):
+1. یک پدیده فرهنگی، اجتماعی یا انسانی را توصیف کند (نه سوال بپرسد)
+2. شامل مشاهده عینی باشد (نه نظر یا قضاوت شخصی)
+3. به یکی از خوشه‌های چهارگانه مرتبط باشد: human, knowledge, governance, survival
+
+خروجی را دقیقاً به این صورت JSON برگردانید:
+{
+    "status": "approved" یا "rejected",
+    "rejection_reason": "دلیل رد یا null",
+    "cluster": "human" یا "knowledge" یا "governance" یا "survival",
+    "score_suggestion": عدد 1 تا 5,
+    "analysis_note": "تحلیل عمیق مبتنی بر گسست میان ظرفیت و تجلی واقعی",
+    "guide_individual": "یک اقدام کوچک و مستند در سطح فردی",
+    "guide_network": "یک اقدام برای ارتباط با هم‌فرهنگان و شبکه‌سازی",
+    "guide_policy": "یک پرسش یا مستندسازی سیاستی برای تغییر ساختار"
+}
+
+توجه: حتی اگر status "rejected" است، باز هم همه فیلدها را پر کنید. فقط rejection_reason را توضیح دهید.
+
+فقط JSON برگردانید. هیچ توضیح اضافی ننویسید.`;
         
         const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
         const aiText = await response.text();
