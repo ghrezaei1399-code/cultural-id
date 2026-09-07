@@ -599,6 +599,7 @@
         // ============================================================
         // ===== ۴. تابع هوش مصنوعی =====
         // ============================================================
+     
         async function smartAnalyzeObservation(text, language = 'fa') {
             const prompt = `
             ${SEPEHR_FULL_SYSTEM_PROMPT}
@@ -612,7 +613,18 @@
             `;
 
             try {
-                const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
+                // استفاده از روش جایگزین برای رفع مشکل CORS
+                const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'text/plain'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 const result = await response.text();
                 
                 // پاکسازی پاسخ (برخی مواقع هوش مصنوعی توضیح اضافی می‌دهد)
@@ -635,10 +647,9 @@
                 }
             } catch (e) {
                 console.error("Connection Error:", e);
-                return { status: 'error', message: 'خطا در ارتباط با سرور هوش مصنوعی' };
+                return { status: 'error', message: 'خطا در ارتباط با سرور هوش مصنوعی: ' + e.message };
             }
         }
-
         // ============================================================
         // ===== ۵. تابع ثبت نهایی =====
         // ============================================================
