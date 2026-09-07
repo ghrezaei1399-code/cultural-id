@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>ثبت مشاهدات | مجتمع هم‌اندیشی سپهر خردمندی</title>
     <style>
-        /* ===== استایل‌های قبلی ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
@@ -418,9 +417,6 @@
     </div>
     
     <script>
-        // ============================================================
-        // ===== ۱. توابع پایه (مدیریت باکس‌ها) =====
-        // ============================================================
         function selectModule(btn, module) {
             const parent = btn.closest('.observation-box');
             parent.querySelectorAll('.box-module-btn').forEach(b => b.classList.remove('active'));
@@ -492,27 +488,13 @@
             }
         }
 
-        // ============================================================
-        // ===== ۲. کلمات ممنوعه (فیلتر سریع سمت کاربر) =====
-        // ============================================================
-     
-const FORBIDDEN_WORDS = [
-    // ===== کلمات سیاسی و خشونت‌آمیز =====
-    'جنگ', 'خشونت', 'قتل', 'کشتار', 'ترور', 'بمب', 'انفجار',
-    'نژاد', 'نژادپرست', 'برتری نژادی', 'توهین نژادی',
-    'توهین قومی', 'توهین مذهبی', 'توهین ملیتی',
-    'انقلاب', 'شورش', 'براندازی', 'کودتا', 'فتنه',
-    'دشمن', 'نفرت', 'کینه', 'دشمنی', 'تفرقه',
-    
-    // ===== کلمات تجاری و تبلیغاتی =====
-    'فروش', 'خرید', 'قیمت', 'تخفیف', 'بازاریابی', 'تبلیغات',
-    'برندینگ', 'مارکتینگ', 'بیزینس', 'فروشگاه اینترنتی',
-    'هشتگ', 'اینستاگرام', 'تلگرام',
-    
-    // ===== کلمات درخواست راهنمایی =====
-    'چگونه', 'روش', 'آموزش', 'پیشنهاد', 'راهکار', 'راه حل',
-    'بهترین', 'موثرترین', 'سریعترین', 'آسانترین', 'نحوه'
-];
+        const FORBIDDEN_WORDS = [
+            'فروش', 'خرید', 'قیمت', 'تخفیف', 'بازاریابی', 'تبلیغات', 'برندینگ', 'مارکتینگ',
+            'بیزینس', 'فروشگاه اینترنتی', 'هشتگ', 'اینستاگرام', 'تلگرام',
+            'چگونه', 'روش', 'آموزش', 'پیشنهاد', 'راهکار', 'راه حل',
+            'بهترین', 'موثرترین', 'سریعترین', 'آسانترین', 'نحوه'
+        ];
+
         function fastFilter(text) {
             const lowerText = text.toLowerCase();
             for (const keyword of FORBIDDEN_WORDS) {
@@ -532,9 +514,6 @@ const FORBIDDEN_WORDS = [
             return { blocked: false };
         }
 
-        // ============================================================
-        // ===== ۳. تابع هوش مصنوعی (ارسال به سرور) =====
-        // ============================================================
         async function smartAnalyzeObservation(text, language = 'fa') {
             try {
                 const response = await fetch('/api/submit-request', {
@@ -564,9 +543,6 @@ const FORBIDDEN_WORDS = [
             }
         }
 
-        // ============================================================
-        // ===== ۴. تابع ثبت نهایی =====
-        // ============================================================
         async function submitObservations() {
             const userCode = document.getElementById('userCode').value.trim();
             const boxes = document.querySelectorAll('.observation-box');
@@ -713,20 +689,9 @@ const FORBIDDEN_WORDS = [
             }
         }
 
-        // ============================================================
-        // ===== ۵. مقداردهی اولیه =====
-        // ============================================================
         document.addEventListener('DOMContentLoaded', function() {
             updateAddButton();
-            
-            const observer = new MutationObserver(updateAddButton);
-            const container = document.getElementById('observationsContainer');
-            if (container) {
-                observer.observe(container, { childList: true, subtree: true });
-            }
-            
             console.log('📌 سپهر خردمندی - ثبت مشاهدات');
-            console.log('🔑 از کلیدواژه‌های #آموزش #سلامت #فناوری #فرهنگ استفاده کنید.');
         });
     </script>
 </body>
