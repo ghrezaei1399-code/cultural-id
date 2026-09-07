@@ -20,7 +20,6 @@
         }
         .container { max-width: 900px; width: 100%; margin: 0 auto; }
 
-        /* ===== BANNER ===== */
         .global-call-banner {
             background: linear-gradient(135deg, #d4af37, #f9e79f, #d4af37);
             border-radius: 16px;
@@ -39,10 +38,10 @@
             align-items: center;
             justify-content: center;
             gap: 0.3rem;
+            flex-wrap: wrap;
         }
         .banner-icon { font-size: 1rem; }
 
-        /* ===== HEADER با لوگوهای ۱۵۰px و نزدیک به نوشته ===== */
         .hero-header {
             text-align: center;
             padding: 0.6rem 0.4rem;
@@ -73,13 +72,8 @@
             50% { transform: translateY(-4px); }
         }
         .logo-box img:hover { transform: scale(1.05); }
-        .logo-label { display: none; }
-
-        .site-title-wrap {
-            text-align: center;
-            flex: 1;
-            min-width: 120px;
-        }
+        
+        .site-title-wrap { text-align: center; flex: 1; min-width: 120px; }
         .site-title {
             font-size: 1.2rem;
             font-weight: 900;
@@ -93,15 +87,9 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .site-subtitle {
-            font-size: 0.8rem;
-            color: #6a5a3a;
-            letter-spacing: 0.5px;
-            margin-top: 0.1rem;
-        }
+        .site-subtitle { font-size: 0.8rem; color: #6a5a3a; letter-spacing: 0.5px; margin-top: 0.1rem; }
         body.dark .site-subtitle { color: #c8b890; }
 
-        /* ===== LANGUAGE BAR ===== */
         .lang-bar {
             display: flex;
             justify-content: center;
@@ -132,7 +120,6 @@
             box-shadow: 0 2px 8px rgba(212, 175, 55, 0.2);
         }
 
-        /* ===== SLOGAN SCROLLER ===== */
         .slogan-scroller {
             overflow: hidden;
             background: rgba(212, 175, 55, 0.08);
@@ -148,18 +135,10 @@
             white-space: nowrap;
             width: max-content;
         }
-        .slogan-track span {
-            font-size: 0.65rem;
-            font-weight: 600;
-            color: #8a6d1f;
-        }
+        .slogan-track span { font-size: 0.65rem; font-weight: 600; color: #8a6d1f; }
         body.dark .slogan-track span { color: #f9e79f; }
-        @keyframes scrollSlogan {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
+        @keyframes scrollSlogan { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-        /* ===== سه ماژول بالا (کوچک) ===== */
         .features-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -200,7 +179,6 @@
         .feature-radio { background: #fce7f3; }
         body.dark .feature-radio { background: rgba(80, 40, 60, 0.3); }
 
-        /* ===== سه باکس اطلاعاتی (کوچک) ===== */
         .info-boxes {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -267,7 +245,6 @@
         }
         body.dark .principles span { color: #85c1e9; }
 
-        /* ===== نمونه کارت ===== */
         .card-sample-wrapper {
             background: rgba(255, 255, 255, 0.3);
             border-radius: 16px;
@@ -277,11 +254,7 @@
             text-align: center;
         }
         body.dark .card-sample-wrapper { background: rgba(0, 0, 0, 0.1); }
-        .card-sample-wrapper .label {
-            font-size: 0.65rem;
-            color: #8a6d1f;
-            font-weight: 700;
-        }
+        .card-sample-wrapper .label { font-size: 0.65rem; color: #8a6d1f; font-weight: 700; }
         body.dark .card-sample-wrapper .label { color: #f9e79f; }
 
         .real-card-sample {
@@ -340,7 +313,6 @@
             100% { opacity: 1; filter: hue-rotate(20deg); }
         }
 
-        /* ===== GOLDEN ROW (5 ماژول اصلی) ===== */
         .golden-row {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -381,25 +353,12 @@
         .btn-wisdom { background: linear-gradient(135deg, #2874a6, #5dade2); color: #fff; }
         .btn-atlas { background: linear-gradient(135deg, #6a3d9a, #d2b4de); color: #fff; }
 
-        .btn-achievement-no-link, .btn-atlas-no-link {
-            cursor: default;
-            opacity: 0.7;
-        }
-        .btn-achievement-no-link:hover, .btn-atlas-no-link:hover {
-            transform: none;
-            box-shadow: none;
-        }
+        .btn-achievement-no-link, .btn-atlas-no-link { cursor: default; opacity: 0.7; }
+        .btn-achievement-no-link:hover, .btn-atlas-no-link:hover { transform: none; box-shadow: none; }
 
-        .cta-note {
-            text-align: center;
-            font-size: 0.5rem;
-            color: #6a5a3a;
-            margin: -0.3rem 0 0.5rem 0;
-            font-weight: 600;
-        }
+        .cta-note { text-align: center; font-size: 0.5rem; color: #6a5a3a; margin: -0.3rem 0 0.5rem 0; font-weight: 600; }
         body.dark .cta-note { color: #c8b890; }
 
-        /* ===== گالری‌ها ===== */
         .gallery-box {
             border-radius: 20px;
             padding: 0.8rem;
@@ -409,10 +368,7 @@
         }
         body.dark .gallery-box { background: rgba(58, 47, 32, 0.4); }
 
-        .atlas-box {
-            border-color: #6a3d9a;
-            background: rgba(245, 230, 240, 0.5);
-        }
+        .atlas-box { border-color: #6a3d9a; background: rgba(245, 230, 240, 0.5); }
         body.dark .atlas-box { background: rgba(58, 42, 58, 0.3); }
 
         .gallery-header {
@@ -435,11 +391,7 @@
         .atlas-box .gallery-title { color: #6a3d9a; }
         body.dark .atlas-box .gallery-title { color: #d2b4de; }
 
-        .gallery-subtitle {
-            font-size: 0.55rem;
-            color: #888;
-            font-weight: 600;
-        }
+        .gallery-subtitle { font-size: 0.55rem; color: #888; font-weight: 600; }
         .filter-select {
             padding: 0.2rem 0.5rem;
             border-radius: 16px;
@@ -470,22 +422,41 @@
             border-right: 3px solid #d4af37;
             cursor: pointer;
             transition: 0.2s;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.3rem;
         }
         body.dark .achievement-item { background: rgba(0, 0, 0, 0.15); }
         .achievement-item:hover { background: #fff; transform: translateX(-3px); }
         body.dark .achievement-item:hover { background: rgba(255, 255, 255, 0.05); }
+        
         .item-info h4 { font-size: 0.85rem; color: #2a1a0a; }
         body.dark .item-info h4 { color: #f0e8d0; }
         .item-meta { font-size: 0.5rem; color: #8a6d1f; font-weight: 600; }
-
-        .empty-state {
-            text-align: center;
-            padding: 0.5rem;
-            color: #888;
-            font-size: 0.7rem;
+        
+        .feedback-row {
+            display: flex;
+            gap: 0.3rem;
+            width: 100%;
+            margin-top: 0.2rem;
         }
+        .fb-btn {
+            flex: 1;
+            padding: 0.2rem;
+            font-size: 0.5rem;
+            border-radius: 6px;
+            border: 1px solid rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            text-align: center;
+        }
+        .fb-btn:hover { background: #eee; }
+        .fb-success { color: #27ae60; border-color: #27ae60; }
+        .fb-fix { color: #f39c12; border-color: #f39c12; }
+        .fb-fail { color: #e74c3c; border-color: #e74c3c; }
 
-        /* ===== MODAL ===== */
+        .empty-state { text-align: center; padding: 0.5rem; color: #888; font-size: 0.7rem; }
+
         .modal-overlay {
             display: none;
             position: fixed;
@@ -515,7 +486,7 @@
         .modal-close {
             position: absolute;
             top: 0.5rem;
-            right: 0.5rem;
+            left: 0.5rem;
             background: rgba(0,0,0,0.4);
             color: #fff;
             width: 30px;
@@ -528,7 +499,6 @@
         }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* ===== Responsive ===== */
         @media (max-width: 768px) {
             body { padding: 0.5rem; }
             .logo-box img { width: 70px; height: 70px; }
@@ -581,13 +551,11 @@
 <body>
 <div class="container">
 
-    <!-- ===== BANNER ===== -->
     <div class="global-call-banner">
         <div class="banner-slogan"><span class="banner-icon">🌍</span>هم‌فرهنگان جهان، برای حفظ میراث مشترکمان متحد شوید</div>
         <div class="banner-slogan"><span class="banner-icon">⚠️</span>هر فرهنگ که از دست برود، تکه‌ای از روح بشریت محو می‌شود</div>
     </div>
 
-    <!-- ===== HEADER ===== -->
     <div class="hero-header">
         <div class="logo-row">
             <div class="logo-box"><img src="assets/logo-fa.png" alt="لوگو فارسی" /></div>
@@ -603,7 +571,6 @@
         </div>
     </div>
 
-    <!-- ===== THREE FEATURE MODULES ===== -->
     <div class="features-grid">
         <a href="about-fa.html" class="feature-card feature-about">
             <span class="icon">📖</span>
@@ -625,7 +592,6 @@
         </a>
     </div>
 
-    <!-- ===== SLOGAN SCROLLER ===== -->
     <div class="slogan-scroller">
         <div class="slogan-track">
             <span>✦ فرهنگ ما، ارتباط ما، آینده‌ی مشترک ما ✦</span>
@@ -637,7 +603,6 @@
         </div>
     </div>
 
-    <!-- ===== THREE INFO BOXES ===== -->
     <div class="info-boxes">
         <div class="box box-gold">
             <div class="box-title">📋 مشخصات کارت</div>
@@ -670,7 +635,6 @@
         </div>
     </div>
 
-    <!-- ===== SAMPLE CARD ===== -->
     <div class="card-sample-wrapper">
         <div class="label">🪪 نمونه کارت صادر شده</div>
         <div class="real-card-sample">
@@ -687,7 +651,6 @@
         </div>
     </div>
 
-    <!-- ===== GOLDEN ROW (5 ماژول) ===== -->
     <div class="golden-row">
         <a href="register-fa.html" class="golden-btn btn-register">
             <span class="icon">🪪</span>
@@ -717,7 +680,6 @@
     </div>
     <div class="cta-note">بدون اطلاعات شخصی • کاملاً ناشناس • ۲ دقیقه</div>
 
-    <!-- ===== GALLERY: دستاوردهای فرهنگی ۲۰۰ عضو اول ===== -->
     <div class="gallery-box">
         <div class="gallery-header">
             <div class="gallery-title">🏆 گالری دستاوردهای فرهنگی ۲۰۰ عضو اول</div>
@@ -733,7 +695,6 @@
         </div>
     </div>
 
-    <!-- ===== GALLERY: نام‌آوران ظهور ===== -->
     <div class="gallery-box atlas-box">
         <div class="gallery-header">
             <div class="gallery-title">🏛️ گالری نام‌آوران ظهور</div>
@@ -744,7 +705,6 @@
         </div>
     </div>
 
-    <!-- ===== MODAL ===== -->
     <div id="detailModal" class="modal-overlay" onclick="closeModal(event)">
         <div class="modal-content">
             <button class="modal-close" onclick="document.getElementById('detailModal').classList.remove('active')">✕</button>
@@ -752,6 +712,18 @@
             <div class="modal-body">
                 <h2 id="modalTitle" style="color:#8a6d1f; margin-bottom:0.5rem; font-size:1.1rem;"></h2>
                 <div id="modalDesc" style="line-height:1.6; color:#3a2a1a; font-size:0.85rem;"></div>
+                <div id="modalGuide" style="margin-top:1rem; padding:0.8rem; background:rgba(212,175,55,0.1); border-radius:10px; display:none;">
+                    <h4 style="font-size:0.9rem; color:#8a6d1f; margin-bottom:0.5rem;">📋 راهنمای اقدام:</h4>
+                    <div id="guideContent" style="font-size:0.8rem;"></div>
+                </div>
+                <div id="modalFeedback" style="margin-top:1rem; display:none;">
+                    <h4 style="font-size:0.9rem; color:#6a3d9a; margin-bottom:0.5rem;">📊 گزارش اثربخشی:</h4>
+                    <div class="feedback-row">
+                        <button class="fb-btn fb-success" onclick="submitFeedback('success')">✅ موفق بود</button>
+                        <button class="fb-btn fb-fix" onclick="submitFeedback('fix')">⚠️ نیاز به اصلاح</button>
+                        <button class="fb-btn fb-fail" onclick="submitFeedback('fail')">❌ شکست خورد</button>
+                    </div>
+                </div>
                 <div id="modalMeta" style="margin-top:0.8rem; font-size:0.7rem; color:#888;"></div>
             </div>
         </div>
@@ -760,8 +732,9 @@
 </div>
 
 <script>
-// ===== ACHIEVEMENTS =====
 let allApproved = [];
+let allAtlasItems = [];
+let currentModalItem = null;
 
 async function loadAchievements() {
     const container = document.getElementById('achievementsListContainer');
@@ -807,31 +780,22 @@ function renderAchievements(items) {
     `).join('');
 }
 
-function filterAchievements() {
-    renderAchievements(allApproved);
-}
-// ===== ATLAS (اصلاح شده برای دریافت تحلیل کامل) =====
-let allAtlasItems = [];
+function filterAchievements() { renderAchievements(allApproved); }
 
 async function loadAtlas() {
     const container = document.getElementById('atlasListContainer');
     try {
-        // دریافت اطلاعات کامل شامل تحلیل‌ها
         const res = await fetch('/api/get-connection-requests?type=observations&t=' + new Date().getTime());
         if (!res.ok) throw new Error('خطا در دریافت اطلاعات');
         const data = await res.json();
-        
-        // فیلتر کردن مشاهدات امتیاز ۵ که تایید شده‌اند
-        allAtlasItems = (data.observations || []).filter(obs => 
-            obs.score === 5 && obs.status === 'approved'
-        );
-        
+        allAtlasItems = (data.observations || []).filter(obs => obs.score === 5 && obs.status === 'approved');
         renderAtlas(allAtlasItems);
     } catch (e) {
         console.error(e);
         container.innerHTML = '<div class="empty-state">خطا در دریافت اطلاعات اطلس.</div>';
     }
 }
+
 function renderAtlas(items) {
     const container = document.getElementById('atlasListContainer');
     if (items.length === 0) {
@@ -848,16 +812,19 @@ function renderAtlas(items) {
         </div>
     `).join('');
 }
-// ===== MODALS (اصلاح شده) =====
+
 function openModal(index) {
     const item = allApproved[index];
     if (!item) return;
+    currentModalItem = item;
     document.getElementById('modalTitle').textContent = item.title || 'بدون عنوان';
     let descText = item.description || 'بدون توضیحات';
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     descText = descText.replace(urlRegex, url => `<a href="${url}" target="_blank" style="color:#2874a6; text-decoration:underline;">${url}</a>`);
     document.getElementById('modalDesc').innerHTML = descText;
     document.getElementById('modalMeta').textContent = `ارسال کننده: ${item.owner}`;
+    document.getElementById('modalGuide').style.display = 'none';
+    document.getElementById('modalFeedback').style.display = 'none';
     const mediaDiv = document.getElementById('modalMediaContainer');
     const imageUrl = item.fileUrl || item.fileData;
     if (imageUrl) {
@@ -871,47 +838,35 @@ function openModal(index) {
 function openAtlasModal(index) {
     const item = allAtlasItems[index];
     if (!item) return;
-
-    // تنظیم عنوان و متن اصلی
+    currentModalItem = item;
     document.getElementById('modalTitle').textContent = '🏛️ مشاهده از اطلس ظهور';
     document.getElementById('modalDesc').innerHTML = item.observation || 'متن مشاهده موجود نیست';
     document.getElementById('modalMeta').textContent = `⭐ امتیاز: ${item.score} | وضعیت: ${item.status === 'approved' ? '✅ تأیید شده' : '⏳ در انتظار'}`;
-    
-    // ساخت محتوای مودال با قابلیت نمایش بسته راهنما و نظر ادمین
-    let modalContentHtml = '';
-
-    // ۱. نمایش نظر مشروح ادمین (در صورت وجود)
-    if (item.analysis && item.analysis.adminNote) {
-        modalContentHtml += `
-            <div style="background:rgba(212,175,55,0.1); padding:1rem; border-radius:12px; margin-bottom:1rem; border-right:4px solid #d4af37;">
-                <h5 style="color:#8a6d1f; margin-bottom:0.5rem; font-weight:800;">📝 تحلیل اختصاصی ادمین:</h5>
-                <p style="font-size:0.9rem; line-height:1.8; color:#4a3a2a;">${item.analysis.adminNote}</p>
-            </div>
-        `;
+    const mediaDiv = document.getElementById('modalMediaContainer');
+    if (item.fileUrl) {
+        mediaDiv.innerHTML = `<img src="${item.fileUrl}" class="modal-media" onerror="this.style.display='none'"/>`;
+    } else {
+        mediaDiv.innerHTML = '';
     }
-
-    // ۲. نمایش بسته راهنمای اقدام عملی (در صورت وجود)
+    const guideBox = document.getElementById('modalGuide');
+    const guideContent = document.getElementById('guideContent');
     if (item.analysis && item.analysis.guide) {
-        const guide = item.analysis.guide;
-        modalContentHtml += `
-            <div style="background:rgba(40,116,166,0.08); padding:1rem; border-radius:12px; margin-bottom:1rem; border:1px dashed #2874a6;">
-                <h5 style="color:#2874a6; margin-bottom:0.8rem; font-weight:800;">📋 بسته راهنمای اقدام عملی:</h5>
-                <ul style="list-style:none; padding:0; font-size:0.85rem; line-height:2;">
-                    ${guide.individual ? `<li><strong>📍 سطح فردی:</strong> ${guide.individual}</li>` : ''}
-                    ${guide.network ? `<li><strong>🌐 سطح شبکه‌ای:</strong> ${guide.network}</li>` : ''}
-                    ${guide.policy ? `<li><strong>🏛️ سطح سیاستی:</strong> ${guide.policy}</li>` : ''}
-                </ul>
-            </div>
+        guideBox.style.display = 'block';
+        guideContent.innerHTML = `
+            <div style="margin-bottom:0.3rem;"><strong>📍 سطح فردی:</strong> ${item.analysis.guide.individual}</div>
+            <div style="margin-bottom:0.3rem;"><strong>🌐 سطح شبکه‌ای:</strong> ${item.analysis.guide.network}</div>
+            <div><strong>🏛️ سطح سیاستی:</strong> ${item.analysis.guide.policy}</div>
         `;
+    } else {
+        guideBox.style.display = 'none';
     }
-
-    // ۳. حالت پیش‌فرض اگر هیچ تحلیلی نبود
-    if (!modalContentHtml) {
-        modalContentHtml = '<p style="padding:1rem;text-align:center;color:#888;">📄 مشاهده خام بدون تحلیل تکمیلی</p>';
-    }
-
-    document.getElementById('modalMediaContainer').innerHTML = modalContentHtml;
+    document.getElementById('modalFeedback').style.display = 'block';
     document.getElementById('detailModal').classList.add('active');
+}
+
+async function submitFeedback(type) {
+    if (!currentModalItem) return;
+    alert(`متشکریم! بازخورد شما (${type}) برای شبکه مصلحان ثبت شد.`);
 }
 
 function closeModal(e) {
@@ -919,14 +874,12 @@ function closeModal(e) {
         e.target.classList.remove('active');
     }
 }
-   
-// ===== INIT =====
+
 document.addEventListener('DOMContentLoaded', () => {
     loadAchievements();
     loadAtlas();
 });
 
-// Theme
 if (localStorage.getItem('theme') === 'dark') {
     document.body.classList.add('dark');
 }
