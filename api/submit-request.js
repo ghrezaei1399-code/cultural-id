@@ -26,65 +26,80 @@ module.exports = async function handler(req, res) {
 
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
-       // ===== بخش تحلیل هوش مصنوعی =====
-if (type === 'ai-analyze') {
-  try {
-    const prompt = `شما تحلیلگر ارشد سپهر خردمندی هستید. وظیفه شما تحلیل عمیق مشاهده کاربر و تولید راهنماهای عملی است.
 
-متن مشاهده: "${text}"
+    // ===== بخش تحلیل هوش مصنوعی =====
+    if (type === 'ai-analyze') {
+      try {
+        // ساخت پرامپت ساده و دقیق
+        const prompt = `متن زیر را تحلیل کن و فقط یک JSON معتبر برگردان. هیچ توضیح دیگری ننویس.
 
-قوانین سختگیرانه:
-1. اگر متن تجاری، تبلیغاتی، یا درخواست راهنمایی عملی است → status: "rejected"
-2. اگر متن فرهنگی، اجتماعی، یا انسانی است → status: "approved"
-3. همیشه یک خوشه انتخاب کنید: "human" یا "knowledge" یا "governance" یا "survival"
-4. همیشه امتیاز 1 تا 5 بدهید
-5. همیشه راهنماهای سه‌گانه (فردی، شبکه‌ای، سیاستی) تولید کنید
+متن: "${text}"
 
-خروجی را دقیقاً به این صورت JSON برگردانید (مقادیر را بر اساس متن پر کنید):
-{
-    "status": "approved",
-    "rejection_reason": null,
-    "cluster": "human",
-    "score_suggestion": 4,
-    "analysis_note": "تحلیل عمیق بر اساس محتوای مشاهده",
-    "guide_individual": "یک اقدام کوچک و عملی در سطح فردی",
-    "guide_network": "یک اقدام برای ارتباط با دیگران",
-    "guide_policy": "یک پرسش یا پیشنهاد سیاستی"
-}
+JSON باید دقیقاً این ساختار را داشته باشد:
+{"status":"approved","rejection_reason":null,"cluster":"human","score_suggestion":3,"analysis_note":"تحلیل","guide_individual":"راهنمای فردی","guide_network":"راهنمای شبکه‌ای","guide_policy":"راهنمای سیاستی"}
 
-توجه: حتی اگر status "rejected" است، باز هم همه فیلدها را پر کنید. فقط rejection_reason را توضیح دهید.
-
-فقط JSON برگردانید. هیچ توضیح اضافی ننویسید.`;
-    
-    const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
-    const aiText = await response.text();
-    
-    let jsonStr = aiText;
-    const s = aiText.indexOf('{');
-    const e = aiText.lastIndexOf('}');
-    if (s !== -1 && e !== -1) jsonStr = aiText.substring(s, e + 1);
-    
-    const analysis = JSON.parse(jsonStr);
-    return res.status(200).json({ success: true, analysis: analysis });
-    
-  } catch (error) {
-    console.error('AI Analysis Error:', error);
-    // اگر هوش مصنوعی خطا داد، یک تحلیل پیش‌فرض برگردان
-    return res.status(200).json({ 
-      success: true, 
-      analysis: {
-        status: "approved",
-        rejection_reason: null,
-        cluster: "human",
-        score_suggestion: 3,
-        analysis_note: "تحلیل خودکار (هوش مصنوعی در دسترس نبود)",
-        guide_individual: "مشاهده خود را ثبت کنید و منتظر راهنمایی باشید.",
-        guide_network: "این مشاهده را با دیگران به اشتراک بگذارید.",
-        guide_policy: "این موضوع را در شبکه خود مطرح کنید."
+توجه: اگر متن تجاری یا تبلیغاتی است، status را "rejected" کن.`;
+        
+        const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
+        const aiText = await response.text();
+        
+        // استخراج JSON
+        let jsonStr = aiText;
+        const s = aiText.indexOf('{');
+        const e = aiText.lastIndexOf('}');
+        if (s !== -1 && e !== -1) {
+          jsonStr = aiText.substring(s, e + 1);
+        }
+        
+        // اگر JSON معتبر نبود، از مقدار پیش‌فرض استفاده کن
+        let analysis;
+        try {
+          analysis = JSON.parse(jsonStr);
+          // اطمینان از وجود همه فیلدها
+          analysis = {
+            status: analysis.status || "approved",
+            rejection_reason: analysis.rejection_reason || null,
+            cluster: analysis.cluster || "human",
+            score_suggestion: analysis.score_suggestion || 3,
+            analysis_note: analysis.analysis_note || "تحلیل خودکار",
+            guide_individual: analysis.guide_individual || "مشاهده خود را ثبت کنید.",
+            guide_network: analysis.guide_network || "با دیگران به اشتراک بگذارید.",
+            guide_policy: analysis.guide_policy || "در شبکه خود مطرح کنید."
+          };
+        } catch (e) {
+          // اگر JSON خراب بود، از مقدار پیش‌فرض استفاده کن
+          analysis = {
+            status: "approved",
+            rejection_reason: null,
+            cluster: "human",
+            score_suggestion: 3,
+            analysis_note: "تحلیل خودکار (پاسخ هوش مصنوعی نامعتبر بود)",
+            guide_individual: "مشاهده خود را ثبت کنید.",
+            guide_network: "با دیگران به اشتراک بگذارید.",
+            guide_policy: "در شبکه خود مطرح کنید."
+          };
+        }
+        
+        return res.status(200).json({ success: true, analysis: analysis });
+        
+      } catch (error) {
+        console.error('AI Analysis Error:', error);
+        // در صورت هرگونه خطا، یک تحلیل پیش‌فرض برگردان
+        return res.status(200).json({ 
+          success: true, 
+          analysis: {
+            status: "approved",
+            rejection_reason: null,
+            cluster: "human",
+            score_suggestion: 3,
+            analysis_note: "تحلیل خودکار (سرور هوش مصنوعی در دسترس نبود)",
+            guide_individual: "مشاهده خود را ثبت کنید و منتظر راهنمایی باشید.",
+            guide_network: "این مشاهده را با دیگران به اشتراک بگذارید.",
+            guide_policy: "این موضوع را در شبکه خود مطرح کنید."
+          }
+        });
       }
-    });
-  }
-}
+    }
 
     // ===== بخش ۱: ثبت مشاهدات =====
     if (type === 'observations' && observations && observations.length > 0) {
@@ -106,12 +121,14 @@ if (type === 'ai-analyze') {
 
         const selectedModule = obs.module ? moduleNames[obs.module] || obs.module : 'هیچ‌کدام';
         
+        // ساخت بخش تحلیل AI
         let aiSection = '';
-        if (obs.aiAnalysis && obs.aiAnalysis.status !== 'error') {
+        if (obs.aiAnalysis) {
           const ai = obs.aiAnalysis;
+          const statusText = ai.status === 'approved' ? '✅ تایید شده' : '❌ رد شده';
           aiSection = `
 **🤖 تحلیل هوش مصنوعی:**
-- **وضعیت:** ${ai.status === 'approved' ? '✅ تایید شده' : '❌ رد شده'}
+- **وضعیت:** ${statusText}
 - **خوشه:** ${ai.cluster || 'نامشخص'}
 - **امتیاز پیشنهادی:** ${ai.score_suggestion || '---'}
 - **تحلیل:** ${ai.analysis_note || '---'}
