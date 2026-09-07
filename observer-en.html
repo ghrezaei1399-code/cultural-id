@@ -496,18 +496,13 @@
         // ===== 2. Forbidden Words (Client-side Fast Filter) =====
         // ============================================================
         const FORBIDDEN_WORDS = [
-            // Commercial
             'sell', 'buy', 'price', 'discount', 'marketing', 'advertising',
             'business', 'brand', 'product', 'service', 'profit', 'income',
             'hashtag', 'instagram', 'telegram', 'views', 'store', 'shop',
             'startup', 'entrepreneur', 'ecommerce', 'branding', 'shoes',
             'clothes', 'mobile', 'laptop', 'gold', 'jewelry',
-            
-            // Guidance requests
             'how to', 'method', 'guide', 'tutorial', 'suggestion', 'solution',
             'best', 'effective', 'fastest', 'easiest', 'way to',
-            
-            // Clichés
             'please', 'thank you', 'hello', 'hi'
         ];
 
@@ -521,126 +516,49 @@
                     };
                 }
             }
-            
-            // Minimum text length check (at least 10 characters)
             if (text.trim().length < 10) {
                 return {
                     blocked: true,
                     reason: 'Observation text is too short. Please provide more detail.'
                 };
             }
-            
             return { blocked: false };
         }
 
         // ============================================================
-        // ===== 3. Core Knowledge of Sphere of Wisdom =====
-        // ============================================================
-        const SEPEHR_FULL_SYSTEM_PROMPT_EN = `
-=== Your Identity ===
-You are the "Senior Analyst of the Sphere of Wisdom". Your task is deep observation, structural analysis, and guiding cultural activists.
-
-=== Foundational Document (Your Knowledge Base) ===
-1. Definition: A theoretical and operational framework for moving from interpretation to observation and from judgment to distinction.
-2. Motto: "Seeing better, before judging better."
-3. Six Core Principles:
-   - Reality-based: Analyses must be based on objective phenomena.
-   - Observation before Judgment: Observe first, then analyze layers, then judge.
-   - Capacity-oriented: Start from hidden capacities, not just problems.
-   - Multi-sphere: Every phenomenon links Human, Knowledge, Governance, and Survival spheres.
-   - Human Dignity: The ultimate criterion for all distinctions.
-   - Discovering the Unseen: Revealing layers that are usually ignored.
-4. Four Clusters:
-   - human: Identity, mental health, education, poverty, traditional skills.
-   - knowledge: Scientific gap, localization, responsible innovation, knowledge monopoly.
-   - governance: Institutional justice, transparency, trust crisis, resource management.
-   - survival: Food/water security, ecological sustainability, resilience.
-
-=== Strict Rules for REJECT ===
-The following observations must be REJECTED immediately and without exception:
-1. ❌ Commercial and marketing content (sales, advertising, branding, business, products)
-2. ❌ Requests for practical guidance (how-to, step-by-step, method suggestions)
-3. ❌ Offensive, politically destructive, or racist content
-4. ❌ Requests for content creation (hashtags, text, images, videos)
-5. ❌ Anything not related to culture, society, humanity, knowledge, governance, or survival
-6. ❌ General questions without any actual observation
-
-=== Rules for APPROVE ===
-Only observations that:
-1. ✅ Describe a cultural, social, or human phenomenon (not ask questions)
-2. ✅ Include objective observation (not opinion or judgment)
-3. ✅ Are related to one of the four clusters
-4. ✅ Do not request guidance or practical action
-
-=== Scoring Rules ===
-- Score 1: Simple and superficial observation
-- Score 2: Observation with some depth
-- Score 3: Observation with initial analysis
-- Score 4: Observation with good analysis and capacity identification
-- Score 5: Observation with "indigenous solution", "replication capacity" and "analytical depth" (Only these go to Atlas of Emergence gallery)
-
-=== Technical Output Format (JSON) ===
-Your output must be exactly and ONLY a JSON object:
-{
-    "status": "approved" | "rejected",
-    "rejection_reason": "Short reason if rejected, otherwise null",
-    "cluster": "human" | "knowledge" | "governance" | "survival" | null,
-    "score_suggestion": number (1-5),
-    "analysis_note": "Deep analysis based on gap between capacity and actual manifestation",
-    "guide_individual": "Small documented individual action (only for approved observations)",
-    "guide_network": "Action for networking with peers (only for approved observations)",
-    "guide_policy": "Policy question or documentation for structural change (only for approved observations)"
-}
-
-=== Special Attention ===
-If the input is commercial, marketing, practical guidance request, or generic, set status to "rejected".
-`;
-
-        // ============================================================
-        // ===== 4. AI Function =====
+        // ===== 3. AI Function (Send to Server) =====
         // ============================================================
         async function smartAnalyzeObservation(text, language = 'en') {
-            const prompt = `
-            ${SEPEHR_FULL_SYSTEM_PROMPT_EN}
-            
-            ---
-            Current Input:
-            Observation Text: "${text}"
-            Requested Language: ${language === 'fa' ? 'Persian' : 'English'}
-            
-            Important: Return ONLY JSON. No additional explanation.
-            `;
-
             try {
-                const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
-                const result = await response.text();
+                const response = await fetch('/api/submit-request', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'ai-analyze',
+                        text: text,
+                        language: language
+                    })
+                });
                 
-                // Clean response (sometimes AI adds extra text)
-                let cleanedResult = result;
-                const jsonStart = result.indexOf('{');
-                const jsonEnd = result.lastIndexOf('}');
-                if (jsonStart !== -1 && jsonEnd !== -1) {
-                    cleanedResult = result.substring(jsonStart, jsonEnd + 1);
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.error || 'Analysis error');
                 }
                 
-                try {
-                    return JSON.parse(cleanedResult);
-                } catch (e) {
-                    console.error("AI did not return valid JSON:", cleanedResult);
-                    return { 
-                        status: 'error', 
-                        message: 'Invalid AI response format',
-                        raw: cleanedResult
-                    };
-                }
+                return result.analysis;
+                
             } catch (e) {
-                console.error("Connection Error:", e);
-                return { status: 'error', message: 'AI connection error' };
+                console.error("AI Analysis Error:", e);
+                return { 
+                    status: 'error', 
+                    message: 'Server connection error: ' + e.message 
+                };
             }
         }
 
         // ============================================================
-        // ===== 5. Final Submission Function =====
+        // ===== 4. Final Submission Function =====
         // ============================================================
         async function submitObservations() {
             const userCode = document.getElementById('userCode').value.trim();
@@ -653,7 +571,6 @@ If the input is commercial, marketing, practical guidance request, or generic, s
                 return;
             }
             
-            // Collect data
             boxes.forEach((box, index) => {
                 const text = box.querySelector('.obs-text').value.trim();
                 const selectedModule = box.querySelector('.box-module-btn.active');
@@ -688,19 +605,16 @@ If the input is commercial, marketing, practical guidance request, or generic, s
             aiResultDetail.classList.remove('active');
 
             try {
-                // ===== Step 1: Fast filter and AI analysis =====
                 const analyzedObservations = [];
                 
                 for (let i = 0; i < observations.length; i++) {
                     const obs = observations[i];
                     
-                    // Client-side fast filter
                     const filterResult = fastFilter(obs.text);
                     if (filterResult.blocked) {
                         throw new Error(`Observation #${obs.index} rejected: ${filterResult.reason}`);
                     }
                     
-                    // AI analysis
                     const aiResult = await smartAnalyzeObservation(obs.text, 'en');
 
                     if (aiResult.status === 'rejected') {
@@ -711,14 +625,12 @@ If the input is commercial, marketing, practical guidance request, or generic, s
                         throw new Error(`AI analysis failed for observation #${obs.index}. ${aiResult.message || 'Please try again.'}`);
                     }
                     
-                    // Store analysis
                     analyzedObservations.push({
                         ...obs,
                         aiAnalysis: aiResult
                     });
                 }
 
-                // ===== Step 2: Show analysis details to user =====
                 let aiDetailsHtml = '';
                 analyzedObservations.forEach((obs, idx) => {
                     const ai = obs.aiAnalysis;
@@ -746,7 +658,6 @@ If the input is commercial, marketing, practical guidance request, or generic, s
                 aiResultContent.innerHTML = aiDetailsHtml;
                 aiResultDetail.classList.add('active');
 
-                // ===== Step 3: Send to server =====
                 submitBtn.textContent = '⏳ Finalizing registration...';
 
                 const response = await fetch('/api/submit-request', {
@@ -776,12 +687,10 @@ If the input is commercial, marketing, practical guidance request, or generic, s
                 
                 submitBtn.textContent = '✅ Submitted';
                 
-                // Clear form
                 document.querySelectorAll('.obs-text').forEach(t => t.value = '');
                 document.querySelectorAll('.box-module-btn.active').forEach(b => b.classList.remove('active'));
                 updateAddButton();
                 
-                // Scroll to result
                 resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 
             } catch (error) {
@@ -793,25 +702,22 @@ If the input is commercial, marketing, practical guidance request, or generic, s
                 submitBtn.textContent = '📤 Try Again';
                 submitBtn.disabled = false;
                 
-                // Scroll to error
                 resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }
 
         // ============================================================
-        // ===== 6. Initialization =====
+        // ===== 5. Initialization =====
         // ============================================================
         document.addEventListener('DOMContentLoaded', function() {
             updateAddButton();
             
-            // Ensure add button stays updated
             const observer = new MutationObserver(updateAddButton);
             const container = document.getElementById('observationsContainer');
             if (container) {
                 observer.observe(container, { childList: true, subtree: true });
             }
             
-            // Keyboard guide
             console.log('📌 Sphere of Wisdom - Register Observations');
             console.log('🔑 Use keywords: #Education #Health #Technology #Culture');
         });
