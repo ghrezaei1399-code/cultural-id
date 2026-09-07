@@ -27,80 +27,60 @@ module.exports = async function handler(req, res) {
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
 
-  if (type === 'ai-analyze') {
-  try {
-    const isPersian = /[\u0600-\u06FF]/.test(text);
-    
-    const prompt = isPersian ? 
-`JSON for: "${text}"` :
-`JSON for: "${text}"`;
-
-    const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
-    const aiText = await response.text();
-    
-    // ===== بررسی پاسخ =====
-    console.log('AI Response:', aiText);
-    
-    let analysis;
-    try {
-      let jsonStr = aiText;
-      const s = aiText.indexOf('{');
-      const e = aiText.lastIndexOf('}');
-      if (s !== -1 && e !== -1) {
-        jsonStr = aiText.substring(s, e + 1);
-      }
-      analysis = JSON.parse(jsonStr);
-    } catch (e) {
-      // ===== اگر پاسخ JSON نبود، یک تحلیل پیش‌فرض برگردان =====
-      return res.status(200).json({ 
-        success: true, 
-        analysis: {
-          status: "approved",
-          rejection_reason: null,
-          cluster: "human",
-          score_suggestion: 3,
-          analysis_note: isPersian ? "تحلیل خودکار" : "Auto analysis",
-          guide_individual: isPersian ? "مشاهده خود را ثبت کنید." : "Register your observation.",
-          guide_network: isPersian ? "با دیگران به اشتراک بگذارید." : "Share with others.",
-          guide_policy: isPersian ? "در شبکه خود مطرح کنید." : "Raise in your network."
-        }
-      });
-    }
-    
-    return res.status(200).json({ success: true, analysis: analysis });
-    
-  } catch (error) {
-    console.error('AI Analysis Error:', error);
-    const isPersian = /[\u0600-\u06FF]/.test(text);
-    return res.status(200).json({ 
-      success: true, 
-      analysis: {
-        status: "approved",
-        rejection_reason: null,
-        cluster: "human",
-        score_suggestion: 3,
-        analysis_note: isPersian ? "تحلیل خودکار" : "Auto analysis",
-        guide_individual: isPersian ? "مشاهده خود را ثبت کنید." : "Register your observation.",
-        guide_network: isPersian ? "با دیگران به اشتراک بگذارید." : "Share with others.",
-        guide_policy: isPersian ? "در شبکه خود مطرح کنید." : "Raise in your network."
-      }
-    });
-  }
-}
+    if (type === 'ai-analyze') {
+      try {
+        const isPersian = /[\u0600-\u06FF]/.test(text);
         
-        return res.status(200).json({ 
-          success: true, 
-          analysis: {
-            status: analysis.status || "approved",
-            rejection_reason: analysis.rejection_reason || null,
-            cluster: analysis.cluster || "human",
-            score_suggestion: analysis.score_suggestion || 3,
-            analysis_note: analysis.analysis_note || (isPersian ? "تحلیل" : "Analysis"),
-            guide_individual: analysis.guide_individual || (isPersian ? "راهنمای فردی" : "Individual guide"),
-            guide_network: analysis.guide_network || (isPersian ? "راهنمای شبکه‌ای" : "Network guide"),
-            guide_policy: analysis.guide_policy || (isPersian ? "راهنمای سیاستی" : "Policy guide")
-          }
-        });
+        const prompt = isPersian ? 
+`متن: "${text}"
+
+یک JSON با این فیلدها برگردان:
+status: approved یا rejected
+cluster: human یا knowledge یا governance یا survival
+score: 1 تا 5
+analysis: تحلیل عمیق
+individual: راهنمای فردی
+network: راهنمای شبکه‌ای
+policy: راهنمای سیاستی
+
+فقط JSON.` :
+`Text: "${text}"
+
+Return JSON with:
+status: approved or rejected
+cluster: human or knowledge or governance or survival
+score: 1 to 5
+analysis: deep analysis
+individual: individual guide
+network: network guide
+policy: policy guide
+
+Only JSON.`;
+
+        const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
+        const aiText = await response.text();
+        
+        let jsonStr = aiText;
+        const s = aiText.indexOf('{');
+        const e = aiText.lastIndexOf('}');
+        if (s !== -1 && e !== -1) {
+          jsonStr = aiText.substring(s, e + 1);
+        }
+        
+        const analysis = JSON.parse(jsonStr);
+        
+        const result = {
+          status: analysis.status || "approved",
+          rejection_reason: analysis.rejection_reason || null,
+          cluster: analysis.cluster || "human",
+          score_suggestion: analysis.score || analysis.score_suggestion || 3,
+          analysis_note: analysis.analysis || analysis.analysis_note || (isPersian ? "تحلیل" : "Analysis"),
+          guide_individual: analysis.individual || analysis.guide_individual || (isPersian ? "راهنمای فردی" : "Individual guide"),
+          guide_network: analysis.network || analysis.guide_network || (isPersian ? "راهنمای شبکه‌ای" : "Network guide"),
+          guide_policy: analysis.policy || analysis.guide_policy || (isPersian ? "راهنمای سیاستی" : "Policy guide")
+        };
+        
+        return res.status(200).json({ success: true, analysis: result });
         
       } catch (error) {
         console.error('AI Analysis Error:', error);
@@ -121,7 +101,6 @@ module.exports = async function handler(req, res) {
       }
     }
 
-    // ===== بقیه کدها (observations, delete, connection) =====
     if (type === 'observations' && observations && observations.length > 0) {
       if (!cardCode) {
         return res.status(400).json({ error: 'کد کارت الزامی است' });
