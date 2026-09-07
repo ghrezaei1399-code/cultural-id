@@ -496,18 +496,13 @@
         // ===== ۲. کلمات ممنوعه (فیلتر سریع سمت کاربر) =====
         // ============================================================
         const FORBIDDEN_WORDS = [
-            // تجاری
             'فروش', 'خرید', 'قیمت', 'تخفیف', 'بازاریابی', 'تبلیغات', 
             'کسب و کار', 'برند', 'محصول', 'خدمات', 'سود', 'درآمد',
             'هشتگ', 'اینستاگرام', 'تلگرام', 'بازدید', 'فروشگاه',
             'راه اندازی', 'بیزینس', 'مارکتینگ', 'برندینگ', 'کفش',
             'لباس', 'موبایل', 'لپ تاپ', 'طلا', 'جواهر',
-            
-            // درخواست راهنمایی
             'چگونه', 'روش', 'آموزش', 'پیشنهاد', 'راهکار', 'راه حل',
             'بهترین', 'موثرترین', 'سریعترین', 'آسانترین', 'نحوه',
-            
-            // کلیشه‌ای
             'لطفاً', 'ممنون', 'سلام', 'درود'
         ];
 
@@ -521,137 +516,49 @@
                     };
                 }
             }
-            
-            // بررسی طول متن (حداقل ۱۰ کاراکتر)
             if (text.trim().length < 10) {
                 return {
                     blocked: true,
                     reason: 'متن مشاهده بسیار کوتاه است. لطفاً توضیح بیشتری بنویسید.'
                 };
             }
-            
             return { blocked: false };
         }
 
         // ============================================================
-        // ===== ۳. هسته کامل دانش سپهر خردمندی =====
+        // ===== ۳. تابع هوش مصنوعی (ارسال به سرور) =====
         // ============================================================
-        const SEPEHR_FULL_SYSTEM_PROMPT = `
-=== هویت تو ===
-تو "تحلیلگر ارشد سپهر خردمندی" هستی. وظیفه تو مشاهده عمیق، تحلیل ساختاری و راهنمایی کنشگران فرهنگی است.
-
-=== سند بنیادین سپهر خردمندی (دانش پایه تو) ===
-1. تعریف: چارچوبی نظری و عملیاتی برای گذار از تفسیر به مشاهده و از قضاوت به تمایز.
-2. شعار محوری: «بهتر دیدن، پیش از بهتر داوری کردن.»
-3. اصول ۶ گانه بنیادین:
-   - واقعیت‌محوری: تمام تحلیل‌ها باید بر پایه پدیده‌های عینی و واقعی باشند.
-   - مشاهده پیش از قضاوت: ابتدا مشاهده دقیق، سپس تحلیل لایه‌ها، و در نهایت داوری.
-   - ظرفیت‌محوری: شروع تحلیل از ظرفیت‌های مغفول و پنهان، نه فقط تمرکز بر مشکلات.
-   - چندسپهری: هر پدیده فرهنگی پیوندی میان سپهرهای انسان، دانش، حکمرانی و بقا دارد.
-   - کرامت انسانی: معیار نهایی و خط قرمز تمام تمایزگذاری‌ها و تحلیل‌ها.
-   - کشف نادیده‌ها: رسالت اصلی تو آشکار کردن لایه‌هایی است که معمولاً دیده نمی‌شوند.
-4. خوشه‌های چهارگانه:
-   - human (انسان): هویت، سلامت روان، آموزش، فقرزدایی، مهارت‌های سنتی.
-   - knowledge (دانش): شکاف علمی، بومی‌سازی فناوری، نوآوری مسئولانه، انحصار دانش.
-   - governance (حکمرانی): عدالت نهادی، شفافیت، بحران اعتماد، مشارکت مدنی، مدیریت منابع.
-   - survival (بقا): امنیت غذایی، بحران آب، پایداری اکولوژیک، تاب‌آوری محیط زیست.
-
-=== قوانین سخت‌گیرانه برای رد (REJECT) ===
-مشاهدات زیر باید فوراً و بدون استثنا REJECT شوند:
-1. ❌ محتوای تجاری و بازاریابی (فروش، تبلیغات، برندینگ، کسب‌وکار، محصولات)
-2. ❌ درخواست راهنمایی عملی (چگونه فلان کار را انجام دهم، آموزش گام‌به‌گام، پیشنهاد روش)
-3. ❌ محتوای سیاسیِ مخرب، توهین‌آمیز، نژادپرستانه
-4. ❌ درخواست تولید محتوا (هشتگ، متن، عکس، ویدئو)
-5. ❌ هر چیزی که به فرهنگ، جامعه، انسان، دانش، حکمرانی یا بقا مرتبط نباشد
-6. ❌ سوالات کلی و غیرتخصصی که در آن هیچ مشاهده‌ای وجود ندارد
-
-=== قوانین تأیید (APPROVE) ===
-فقط مشاهداتی تأیید می‌شوند که:
-1. ✅ یک پدیده فرهنگی، اجتماعی یا انسانی را **توصیف** کنند (نه سوال بپرسند)
-2. ✅ شامل **مشاهده عینی** باشند (نه نظر یا قضاوت شخصی)
-3. ✅ به یکی از خوشه‌های چهارگانه مرتبط باشند
-4. ✅ بدون درخواست راهنمایی یا اقدام عملی باشند
-
-=== قواعد امتیازدهی ===
-- امتیاز ۱: مشاهده ساده و سطحی
-- امتیاز ۲: مشاهده با کمی عمق
-- امتیاز ۳: مشاهده با تحلیل اولیه
-- امتیاز ۴: مشاهده با تحلیل خوب و ظرفیت‌شناسی
-- امتیاز ۵: مشاهده با "راه‌حل بومی"، "ظرفیت تکثیر" و "عمق تحلیلی" (فقط اینها به گالری اطلس ظهور می‌روند)
-
-=== دستورالعمل فنی خروجی (JSON) ===
-خروجی تو باید دقیقاً و فقط یک شیء JSON باشد:
-{
-    "status": "approved" | "rejected",
-    "rejection_reason": "اگر رد شد دلیل کوتاه را بنویس، در غیر این صورت null",
-    "cluster": "human" | "knowledge" | "governance" | "survival" | null,
-    "score_suggestion": number (1-5),
-    "analysis_note": "تحلیل عمیق مبتنی بر گسست میان ظرفیت و تجلی واقعی",
-    "guide_individual": "یک اقدام کوچک و مستند در سطح فردی (فقط برای مشاهدات تایید شده)",
-    "guide_network": "یک اقدام برای ارتباط با هم‌فرهنگان و شبکه‌سازی (فقط برای مشاهدات تایید شده)",
-    "guide_policy": "یک پرسش یا مستندسازی سیاستی برای تغییر ساختار (فقط برای مشاهدات تایید شده)"
-}
-
-=== توجه ویژه ===
-اگر محتوای ورودی تجاری، بازاریابی، درخواست راهنمایی عملی، یا کلی‌گویی باشد، حتماً status را "rejected" قرار بده.
-`;
-
-        // ============================================================
-        // ===== ۴. تابع هوش مصنوعی =====
-        // ============================================================
-     
         async function smartAnalyzeObservation(text, language = 'fa') {
-            const prompt = `
-            ${SEPEHR_FULL_SYSTEM_PROMPT}
-            
-            ---
-            ورودی فعلی:
-            متن مشاهده: "${text}"
-            زبان درخواستی: ${language === 'fa' ? 'فارسی' : 'English'}
-            
-            مهم: فقط JSON برگردان. هیچ توضیح اضافی ننویس.
-            `;
-
             try {
-                // استفاده از روش جایگزین برای رفع مشکل CORS
-                const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'text/plain'
-                    }
+                const response = await fetch('/api/submit-request', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'ai-analyze',
+                        text: text,
+                        language: language
+                    })
                 });
                 
+                const result = await response.json();
+                
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    throw new Error(result.error || 'خطا در تحلیل');
                 }
                 
-                const result = await response.text();
+                return result.analysis;
                 
-                // پاکسازی پاسخ (برخی مواقع هوش مصنوعی توضیح اضافی می‌دهد)
-                let cleanedResult = result;
-                const jsonStart = result.indexOf('{');
-                const jsonEnd = result.lastIndexOf('}');
-                if (jsonStart !== -1 && jsonEnd !== -1) {
-                    cleanedResult = result.substring(jsonStart, jsonEnd + 1);
-                }
-                
-                try {
-                    return JSON.parse(cleanedResult);
-                } catch (e) {
-                    console.error("AI did not return valid JSON:", cleanedResult);
-                    return { 
-                        status: 'error', 
-                        message: 'خطا در فرمت پاسخ هوش مصنوعی',
-                        raw: cleanedResult
-                    };
-                }
             } catch (e) {
-                console.error("Connection Error:", e);
-                return { status: 'error', message: 'خطا در ارتباط با سرور هوش مصنوعی: ' + e.message };
+                console.error("AI Analysis Error:", e);
+                return { 
+                    status: 'error', 
+                    message: 'خطا در ارتباط با سرور: ' + e.message 
+                };
             }
         }
+
         // ============================================================
-        // ===== ۵. تابع ثبت نهایی =====
+        // ===== ۴. تابع ثبت نهایی =====
         // ============================================================
         async function submitObservations() {
             const userCode = document.getElementById('userCode').value.trim();
@@ -664,7 +571,6 @@
                 return;
             }
             
-            // جمع‌آوری داده‌ها
             boxes.forEach((box, index) => {
                 const text = box.querySelector('.obs-text').value.trim();
                 const selectedModule = box.querySelector('.box-module-btn.active');
@@ -699,19 +605,16 @@
             aiResultDetail.classList.remove('active');
 
             try {
-                // ===== مرحله ۱: فیلتر سریع و تحلیل هوش مصنوعی =====
                 const analyzedObservations = [];
                 
                 for (let i = 0; i < observations.length; i++) {
                     const obs = observations[i];
                     
-                    // فیلتر سریع سمت کاربر
                     const filterResult = fastFilter(obs.text);
                     if (filterResult.blocked) {
                         throw new Error(`مشاهده شماره ${obs.index} رد شد: ${filterResult.reason}`);
                     }
                     
-                    // تحلیل هوش مصنوعی
                     const aiResult = await smartAnalyzeObservation(obs.text);
 
                     if (aiResult.status === 'rejected') {
@@ -722,14 +625,12 @@
                         throw new Error(`خطا در تحلیل هوشمند مشاهده شماره ${obs.index}. ${aiResult.message || 'لطفاً دوباره تلاش کنید.'}`);
                     }
                     
-                    // ذخیره تحلیل
                     analyzedObservations.push({
                         ...obs,
                         aiAnalysis: aiResult
                     });
                 }
 
-                // ===== مرحله ۲: نمایش جزئیات تحلیل برای کاربر =====
                 let aiDetailsHtml = '';
                 analyzedObservations.forEach((obs, idx) => {
                     const ai = obs.aiAnalysis;
@@ -757,7 +658,6 @@
                 aiResultContent.innerHTML = aiDetailsHtml;
                 aiResultDetail.classList.add('active');
 
-                // ===== مرحله ۳: ارسال به سرور =====
                 submitBtn.textContent = '⏳ در حال ثبت نهایی...';
 
                 const response = await fetch('/api/submit-request', {
@@ -787,12 +687,10 @@
                 
                 submitBtn.textContent = '✅ ثبت شد';
                 
-                // پاک کردن فرم
                 document.querySelectorAll('.obs-text').forEach(t => t.value = '');
                 document.querySelectorAll('.box-module-btn.active').forEach(b => b.classList.remove('active'));
                 updateAddButton();
                 
-                // اسکرول به نتیجه
                 resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 
             } catch (error) {
@@ -804,25 +702,22 @@
                 submitBtn.textContent = '📤 تلاش مجدد';
                 submitBtn.disabled = false;
                 
-                // اسکرول به خطا
                 resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }
 
         // ============================================================
-        // ===== ۶. مقداردهی اولیه =====
+        // ===== ۵. مقداردهی اولیه =====
         // ============================================================
         document.addEventListener('DOMContentLoaded', function() {
             updateAddButton();
             
-            // اطمینان از اینکه دکمه افزودن همیشه به‌روز باشد
             const observer = new MutationObserver(updateAddButton);
             const container = document.getElementById('observationsContainer');
             if (container) {
                 observer.observe(container, { childList: true, subtree: true });
             }
             
-            // راهنمای کیبورد
             console.log('📌 سپهر خردمندی - ثبت مشاهدات');
             console.log('🔑 از کلیدواژه‌های #آموزش #سلامت #فناوری #فرهنگ استفاده کنید.');
         });
