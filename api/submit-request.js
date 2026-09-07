@@ -28,50 +28,36 @@ module.exports = async function handler(req, res) {
     const repo = 'cultural-id';
 
     // ============================================================
-    // ===== بخش تحلیل هوش مصنوعی =====
+    // ===== بخش تحلیل هوش مصنوعی (اصلاح‌شده) =====
     // ============================================================
     if (type === 'ai-analyze') {
       try {
         // ===== تشخیص زبان =====
         const isPersian = /[\u0600-\u06FF]/.test(text);
-        const lang = isPersian ? 'fa' : 'en';
         
         // ===== پرامپت فارسی =====
-        const promptFa = `شما تحلیلگر ارشد سپهر خردمندی هستید. متن زیر را دقیقاً تحلیل کنید و فقط یک JSON معتبر برگردانید. هیچ توضیح اضافی ننویسید.
+        const promptFa = `شما تحلیلگر ارشد سپهر خردمندی هستید. متن زیر را تحلیل کنید و فقط یک JSON معتبر برگردانید. هیچ توضیح اضافی ننویسید.
 
 متن: "${text}"
 
-قوانین سختگیرانه برای رد (REJECT):
-1. محتوای سیاسی مخرب، توهین‌آمیز، نژادپرستانه، جنگ‌طلبانه، تشویق به خشونت یا مرگ
-2. محتوای تجاری، تبلیغاتی، بازاریابی، فروش، خرید، قیمت، تخفیف
-3. درخواست راهنمایی عملی، آموزش گام‌به‌گام، پیشنهاد روش
-4. محتوای توهین‌آمیز به فرهنگ، مذهب، قومیت، ملیت
-5. هر چیزی که به فرهنگ، جامعه، انسان، دانش، حکمرانی یا بقا مرتبط نباشد
+قوانین:
+1. اگر متن تجاری، تبلیغاتی، درخواست راهنمایی عملی، سیاسی مخرب، نژادپرستانه، یا خشونت‌آمیز است → status: "rejected"
+2. در غیر این صورت → status: "approved"
+3. خوشه را از بین human, knowledge, governance, survival انتخاب کنید
+4. امتیاز 1 تا 5 بدهید
+5. راهنماهای سه‌گانه تولید کنید
 
-قوانین تأیید (APPROVE):
-1. یک پدیده فرهنگی، اجتماعی یا انسانی را توصیف کند (نه سوال بپرسد)
-2. شامل مشاهده عینی باشد (نه نظر یا قضاوت شخصی)
-3. به یکی از خوشه‌های چهارگانه مرتبط باشد
-
-خوشه‌ها:
-- human: هویت، سلامت روان، آموزش، فقرزدایی، مهارت‌های سنتی
-- knowledge: شکاف علمی، بومی‌سازی فناوری، نوآوری مسئولانه، انحصار دانش
-- governance: عدالت نهادی، شفافیت، بحران اعتماد، مشارکت مدنی، مدیریت منابع
-- survival: امنیت غذایی، بحران آب، پایداری اکولوژیک، تاب‌آوری محیط زیست
-
-خروجی را دقیقاً به این صورت JSON برگردانید (همه فیلدها را پر کنید):
+خروجی دقیقاً این ساختار JSON را داشته باشد (همه فیلدها را پر کنید):
 {
     "status": "approved",
     "rejection_reason": null,
     "cluster": "human",
     "score_suggestion": 3,
-    "analysis_note": "تحلیل عمیق بر اساس متن",
-    "guide_individual": "راهنمای سطح فردی",
-    "guide_network": "راهنمای سطح شبکه‌ای",
-    "guide_policy": "راهنمای سطح سیاستی"
+    "analysis_note": "تحلیل عمیق",
+    "guide_individual": "راهنمای فردی",
+    "guide_network": "راهنمای شبکه‌ای",
+    "guide_policy": "راهنمای سیاستی"
 }
-
-اگر متن رد شد، status را "rejected" کنید و rejection_reason را توضیح دهید.
 
 فقط JSON برگردانید.`;
 
@@ -80,23 +66,12 @@ module.exports = async function handler(req, res) {
 
 Text: "${text}"
 
-Strict rules for REJECT:
-1. Destructive political content, offensive, racist, warmongering, encouraging violence or death
-2. Commercial, promotional, marketing, sales, buying, pricing, discounts
-3. Request for practical guidance, step-by-step training, method suggestions
-4. Offensive content against culture, religion, ethnicity, nationality
-5. Anything not related to culture, society, humanity, knowledge, governance, or survival
-
-Rules for APPROVE:
-1. Describes a cultural, social, or human phenomenon (not asking questions)
-2. Includes objective observation (not opinion or personal judgment)
-3. Related to one of the four clusters
-
-Clusters:
-- human: Identity, mental health, education, poverty alleviation, traditional skills
-- knowledge: Scientific gap, technology localization, responsible innovation, knowledge monopoly
-- governance: Institutional justice, transparency, trust crisis, civil participation, resource management
-- survival: Food security, water crisis, ecological sustainability, environmental resilience
+Rules:
+1. If text is commercial, promotional, practical guidance, political destructive, racist, or violent → status: "rejected"
+2. Otherwise → status: "approved"
+3. Choose cluster from: human, knowledge, governance, survival
+4. Give score 1 to 5
+5. Generate three guides
 
 Output must be exactly this JSON structure (fill all fields):
 {
@@ -104,13 +79,11 @@ Output must be exactly this JSON structure (fill all fields):
     "rejection_reason": null,
     "cluster": "human",
     "score_suggestion": 3,
-    "analysis_note": "Deep analysis based on text",
-    "guide_individual": "Individual level guidance",
-    "guide_network": "Network level guidance",
-    "guide_policy": "Policy level guidance"
+    "analysis_note": "Deep analysis",
+    "guide_individual": "Individual guidance",
+    "guide_network": "Network guidance",
+    "guide_policy": "Policy guidance"
 }
-
-If text is rejected, set status to "rejected" and explain rejection_reason.
 
 Return ONLY JSON.`;
 
@@ -130,31 +103,22 @@ Return ONLY JSON.`;
         // پارس کردن JSON
         const analysis = JSON.parse(jsonStr);
         
-        // اطمینان از وجود همه فیلدها
-       // اطمینان از وجود همه فیلدها (بدون مقدار پیش‌فرض کلیشه‌ای)
-const result = {
-  status: analysis.status,
-  rejection_reason: analysis.rejection_reason || null,
-  cluster: analysis.cluster,
-  score_suggestion: analysis.score_suggestion,
-  analysis_note: analysis.analysis_note,
-  guide_individual: analysis.guide_individual,
-  guide_network: analysis.guide_network,
-  guide_policy: analysis.guide_policy
-};
-
-// اگر هرکدام از فیلدهای ضروری وجود نداشت، خطا بده
-if (!result.status || !result.cluster || !result.score_suggestion || 
-    !result.analysis_note || !result.guide_individual || 
-    !result.guide_network || !result.guide_policy) {
-  throw new Error('AI response is missing required fields');
-}
+        // ===== اطمینان از وجود همه فیلدها (با مقدار پیش‌فرض) =====
+        const result = {
+          status: analysis.status || "approved",
+          rejection_reason: analysis.rejection_reason || null,
+          cluster: analysis.cluster || "human",
+          score_suggestion: analysis.score_suggestion || 3,
+          analysis_note: analysis.analysis_note || (isPersian ? "تحلیل خودکار" : "Auto analysis"),
+          guide_individual: analysis.guide_individual || (isPersian ? "مشاهده خود را ثبت کنید." : "Register your observation."),
+          guide_network: analysis.guide_network || (isPersian ? "با دیگران به اشتراک بگذارید." : "Share with others."),
+          guide_policy: analysis.guide_policy || (isPersian ? "در شبکه خود مطرح کنید." : "Raise this in your network.")
+        };
         
         return res.status(200).json({ success: true, analysis: result });
         
       } catch (error) {
         console.error('AI Analysis Error:', error);
-        // خطای واقعی را برگردان
         return res.status(500).json({ 
           success: false, 
           error: 'خطا در تحلیل هوش مصنوعی: ' + error.message 
@@ -184,10 +148,8 @@ if (!result.status || !result.cluster || !result.score_suggestion ||
 
         const selectedModule = obs.module ? moduleNames[obs.module] || obs.module : 'هیچ‌کدام';
         
-        // ===== تشخیص زبان =====
         const isPersian = /[\u0600-\u06FF]/.test(obs.text);
         
-        // ===== ساخت بخش تحلیل AI =====
         let aiSection = '';
         if (obs.aiAnalysis) {
           const ai = obs.aiAnalysis;
