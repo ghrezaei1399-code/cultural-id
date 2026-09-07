@@ -32,56 +32,40 @@ module.exports = async function handler(req, res) {
         const isPersian = /[\u0600-\u06FF]/.test(text);
         
         const prompt = isPersian ? 
-`شما تحلیلگر سپهر خردمندی هستید. یک مشاهده فرهنگی را تحلیل کنید و یک JSON کامل برگردانید.
+`شما یک تحلیلگر حرفه‌ای در "سپهر خردمندی" هستید. متن زیر یک مشاهده فرهنگی است. آن را تحلیل کنید و یک JSON با محتوای کامل بنویسید.
 
-متن مشاهده: "${text}"
+متن: "${text}"
 
-دستورالعمل:
-1. وضعیت: اگر متن تجاری، تبلیغاتی، سیاسی مخرب، نژادپرستانه، یا خشونت‌آمیز است → "rejected" | در غیر این صورت → "approved"
-2. rejection_reason: اگر rejected است، دلیل کوتاه | در غیر این صورت null
-3. خوشه: بر اساس محتوای متن از بین human, knowledge, governance, survival انتخاب کنید
-4. امتیاز: عدد 1 تا 5 (هرچه مشاهده عمیق‌تر و مهم‌تر باشد، امتیاز بالاتر)
-5. تحلیل: یک تحلیل عمیق بنویسید که گسست میان ظرفیت موجود و تجلی واقعی را نشان دهد، لایه‌های پنهان پدیده را آشکار کند و به یکی از سپهرهای چهارگانه مرتبط باشد
-6. راهنمای فردی: یک اقدام عملی که فرد در 24 ساعت آینده بتواند انجام دهد
-7. راهنمای شبکه‌ای: چگونه فرد می‌تواند با 3 تا 5 نفر دیگر هماهنگ شود
-8. راهنمای سیاستی: یک پرسش یا پیشنهاد برای تغییر ساختار
+دستورالعمل‌ها برای هر فیلد:
+- status: "approved" یا "rejected" (اگر متن تجاری، تبلیغاتی، سیاسی، نژادپرستانه یا خشونت‌آمیز است rejected)
+- rejection_reason: اگر rejected است دلیل بنویسید | اگر approved است null بگذارید
+- cluster: از بین human, knowledge, governance, survival یکی را انتخاب کنید
+- score_suggestion: عدد 1 تا 5 بر اساس عمق و اهمیت مشاهده
+- analysis_note: یک تحلیل عمیق و کامل بنویسید (حداقل 30 کلمه)
+- guide_individual: یک راهنمای عملی و مشخص برای فرد (حداقل 15 کلمه)
+- guide_network: چگونه با دیگران هماهنگ شود (حداقل 15 کلمه)  
+- guide_policy: یک پیشنهاد یا پرسش سیاستی (حداقل 15 کلمه)
 
-فقط JSON برگردانید.
-{
-  "status": "",
-  "rejection_reason": null,
-  "cluster": "",
-  "score_suggestion": 0,
-  "analysis_note": "",
-  "guide_individual": "",
-  "guide_network": "",
-  "guide_policy": ""
-}` :
-`You are Sphere of Wisdom analyst. Analyze a cultural observation and return a complete JSON.
+مهم: تمام فیلدها را با متن کامل و معنادار پر کنید. پاسخ‌ها باید خاص و بر اساس محتوای مشاهده باشند.
 
-Observation text: "${text}"
+فقط JSON برگردانید.` :
+`You are a professional analyst in "Sphere of Wisdom". Below is a cultural observation. Analyze it and write a complete JSON with full content.
 
-Instructions:
-1. Status: if text is commercial, promotional, political destructive, racist, or violent → "rejected" | otherwise → "approved"
-2. rejection_reason: if rejected, short reason | otherwise null
-3. Cluster: based on content choose from human, knowledge, governance, survival
-4. Score: number 1 to 5 (deeper and more important observation = higher score)
-5. Analysis: write a deep analysis that shows the gap between existing capacity and actual manifestation, reveals hidden layers of the phenomenon, and relates to one of the four spheres
-6. Individual guide: a practical action the individual can do in the next 24 hours
-7. Network guide: how the individual can coordinate with 3-5 other people
-8. Policy guide: a question or proposal for structural change
+Text: "${text}"
 
-Return ONLY JSON.
-{
-  "status": "",
-  "rejection_reason": null,
-  "cluster": "",
-  "score_suggestion": 0,
-  "analysis_note": "",
-  "guide_individual": "",
-  "guide_network": "",
-  "guide_policy": ""
-}`;
+Instructions for each field:
+- status: "approved" or "rejected" (if text is commercial, promotional, political, racist or violent → rejected)
+- rejection_reason: if rejected write reason | if approved put null
+- cluster: choose from human, knowledge, governance, survival
+- score_suggestion: number 1 to 5 based on depth and importance
+- analysis_note: write a deep and complete analysis (minimum 30 words)
+- guide_individual: a practical and specific guide for individual (minimum 15 words)
+- guide_network: how to coordinate with others (minimum 15 words)
+- guide_policy: a policy suggestion or question (minimum 15 words)
+
+Important: Fill all fields with complete and meaningful text. Responses must be specific and based on the observation content.
+
+Return ONLY JSON.`;
 
         const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
         const aiText = await response.text();
@@ -95,18 +79,20 @@ Return ONLY JSON.
         
         const analysis = JSON.parse(jsonStr);
         
-        const result = {
-          status: analysis.status || "approved",
-          rejection_reason: analysis.rejection_reason || null,
-          cluster: analysis.cluster || "human",
-          score_suggestion: analysis.score_suggestion || 3,
-          analysis_note: analysis.analysis_note || (isPersian ? "تحلیل" : "Analysis"),
-          guide_individual: analysis.guide_individual || (isPersian ? "راهنمای فردی" : "Individual guide"),
-          guide_network: analysis.guide_network || (isPersian ? "راهنمای شبکه‌ای" : "Network guide"),
-          guide_policy: analysis.guide_policy || (isPersian ? "راهنمای سیاستی" : "Policy guide")
-        };
-        
-        return res.status(200).json({ success: true, analysis: result });
+        // ===== استفاده مستقیم از پاسخ هوش مصنوعی بدون جایگزینی =====
+        return res.status(200).json({ 
+          success: true, 
+          analysis: {
+            status: analysis.status || "approved",
+            rejection_reason: analysis.rejection_reason || null,
+            cluster: analysis.cluster || "human",
+            score_suggestion: analysis.score_suggestion || 3,
+            analysis_note: analysis.analysis_note || (isPersian ? "تحلیل" : "Analysis"),
+            guide_individual: analysis.guide_individual || (isPersian ? "راهنمای فردی" : "Individual guide"),
+            guide_network: analysis.guide_network || (isPersian ? "راهنمای شبکه‌ای" : "Network guide"),
+            guide_policy: analysis.guide_policy || (isPersian ? "راهنمای سیاستی" : "Policy guide")
+          }
+        });
         
       } catch (error) {
         console.error('AI Analysis Error:', error);
@@ -118,7 +104,7 @@ Return ONLY JSON.
             rejection_reason: null,
             cluster: "human",
             score_suggestion: 3,
-            analysis_note: isPersian ? "تحلیل خودکار" : "Auto analysis",
+            analysis_note: isPersian ? "تحلیل خودکار (سرور هوش مصنوعی در دسترس نبود)" : "Auto analysis (AI server unavailable)",
             guide_individual: isPersian ? "مشاهده خود را ثبت کنید." : "Register your observation.",
             guide_network: isPersian ? "با دیگران به اشتراک بگذارید." : "Share with others.",
             guide_policy: isPersian ? "در شبکه خود مطرح کنید." : "Raise in your network."
@@ -127,6 +113,7 @@ Return ONLY JSON.
       }
     }
 
+    // ===== بقیه کدها (observations, delete, connection) بدون تغییر =====
     if (type === 'observations' && observations && observations.length > 0) {
       if (!cardCode) {
         return res.status(400).json({ error: 'کد کارت الزامی است' });
