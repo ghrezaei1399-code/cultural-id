@@ -27,10 +27,69 @@ module.exports = async function handler(req, res) {
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
 
-    // ===== اگر درخواست از نوع "observations" باشد =====
+    // ===== بخش ۱: ثبت مشاهدات (با تحلیل هوش مصنوعی) =====
     if (type === 'observations' && observations && observations.length > 0) {
       if (!cardCode) {
         return res.status(400).json({ error: 'کد کارت الزامی است' });
+      }
+
+      // ===== تحلیل هوش مصنوعی قبل از ثبت =====
+      const analyzedObservations = [];
+      const rejectedObservations = [];
+      
+      for (const obs of observations) {
+        if (!obs.text || obs.text.length < 10) {
+          rejectedObservations.push({ text: obs.text, reason: 'متن خیلی کوتاه است' });
+          continue;
+        }
+        
+        // ارسال به AI برای تحلیل
+        const prompt = `متن: "${obs.text}" را تحلیل کن. فقط JSON برگردان: {"status":"approved" یا "rejected","rejection_reason":"دلیل یا null","cluster":"human/knowledge/governance/survival یا null","score_suggestion":عدد 1-5,"analysis_note":"تحلیل","guide_individual":"راهنمای فردی","guide_network":"راهنمای شبکه‌ای","guide_policy":"راهنمای سیاستی"}`;
+        
+        try {
+          const aiResponse = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
+          const aiText = await aiResponse.text();
+          
+          let jsonStr = aiText;
+          const s = aiText.indexOf('{');
+          const e = aiText.lastIndexOf('}');
+          if (s !== -1 && e !== -1) jsonStr = aiText.substring(s, e + 1);
+          
+          const analysis = JSON.parse(jsonStr);
+          
+          // اگر رد شد، این مشاهده را ثبت نکن
+          if (analysis.status === 'rejected') {
+            rejectedObservations.push({ 
+              text: obs.text, 
+              reason: analysis.rejection_reason || 'با اصول سپهر خردمندی همخوانی ندارد' 
+            });
+            continue;
+          }
+          
+          analyzedObservations.push({
+            ...obs,
+            aiAnalysis: analysis
+          });
+        } catch (e) {
+          // اگر AI خطا داد، مشاهده را بدون تحلیل ثبت کن (اما با برچسب error)
+          analyzedObservations.push({
+            ...obs,
+            aiAnalysis: { 
+              status: 'error', 
+              message: 'خطا در تحلیل هوش مصنوعی: ' + e.message 
+            }
+          });
+        }
+      }
+
+      // اگر همه مشاهدات رد شدند
+      if (analyzedObservations.length === 0) {
+        const reasons = rejectedObservations.map(r => `• ${r.text.substring(0, 30)}... (${r.reason})`).join('\n');
+        return res.status(400).json({ 
+          error: 'هیچ مشاهده‌ای با اصول سپهر خردمندی همخوانی نداشت.',
+          details: reasons,
+          rejected: rejectedObservations
+        });
       }
 
       const moduleNames = {
@@ -40,12 +99,30 @@ module.exports = async function handler(req, res) {
       };
 
       const createdIssues = [];
-      for (const obs of observations) {
-        if (!obs.text || obs.text.length < 10) {
-          continue;
-        }
-
+      for (const obs of analyzedObservations) {
         const selectedModule = obs.module ? moduleNames[obs.module] || obs.module : 'هیچ‌کدام';
+        
+        // ساخت متن Issue با تحلیل AI
+        let aiSection = '';
+        if (obs.aiAnalysis && obs.aiAnalysis.status !== 'error') {
+          const ai = obs.aiAnalysis;
+          aiSection = `
+**🤖 تحلیل هوش مصنوعی:**
+- **وضعیت:** ${ai.status === 'approved' ? '✅ تایید شده' : '❌ رد شده'}
+- **خوشه:** ${ai.cluster || 'نامشخص'}
+- **امتیاز پیشنهادی:** ${ai.score_suggestion || '---'}
+- **تحلیل:** ${ai.analysis_note || '---'}
+
+**📋 بسته راهنمای اقدام عملی:**
+- **فردی:** ${ai.guide_individual || '---'}
+- **شبکه‌ای:** ${ai.guide_network || '---'}
+- **سیاستی:** ${ai.guide_policy || '---'}
+`;
+        } else if (obs.aiAnalysis) {
+          aiSection = `
+**⚠️ تحلیل هوش مصنوعی:** ${obs.aiAnalysis.message || 'خطا در تحلیل'}
+`;
+        }
 
         const issueTitle = `مشاهده خام: ${cardCode}`;
         const issueBody = `
@@ -57,6 +134,7 @@ ${obs.text}
 **ماژول انتخاب‌شده:**
 ${selectedModule}
 
+${aiSection}
 ---
 *این مشاهده توسط کاربر ثبت شده و در انتظار بررسی است.*
         `;
@@ -85,7 +163,8 @@ ${selectedModule}
           number: issueData.number,
           url: issueData.html_url,
           observation: obs.text.substring(0, 50) + '...',
-          module: selectedModule
+          module: selectedModule,
+          aiStatus: obs.aiAnalysis?.status || 'unknown'
         });
       }
 
@@ -94,23 +173,31 @@ ${selectedModule}
       }
 
       const trackingCodes = createdIssues.map(i => `#${i.number}`).join('، ');
+      
+      // اطلاعات مشاهدات رد شده (برای نمایش به کاربر)
+      const rejectedInfo = rejectedObservations.length > 0 ? {
+        count: rejectedObservations.length,
+        reasons: rejectedObservations.map(r => r.reason)
+      } : null;
+
       return res.status(200).json({
         success: true,
         trackingCode: trackingCodes,
         issues: createdIssues,
-        message: `${createdIssues.length} مشاهده با موفقیت ثبت شد.`
+        message: `${createdIssues.length} مشاهده با موفقیت ثبت شد.`,
+        rejected: rejectedInfo,
+        totalSubmitted: observations.length,
+        totalApproved: createdIssues.length,
+        totalRejected: rejectedObservations.length
       });
     }
 
-    // ================================================================
-    // ===== درخواست‌های حذف (delete) =====
-    // ================================================================
+    // ===== بخش ۲: درخواست حذف (delete) =====
     if (type === 'delete') {
       if (!cardCode) {
         return res.status(400).json({ error: 'کد کارت الزامی است' });
       }
 
-      // تولید کد پیگیری
       const trackingCode = `DEL-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
       const fileName = `delete-${Date.now()}-${Math.random().toString(36).substring(7)}.json`;
@@ -149,15 +236,12 @@ ${selectedModule}
       });
     }
 
-    // ================================================================
-    // ===== درخواست‌های ارتباط (connection) - پیدا کردن خودکار هم‌فکران =====
-    // ================================================================
+    // ===== بخش ۳: درخواست ارتباط (connection) =====
     if (type === 'connection') {
       if (!cardCode) {
         return res.status(400).json({ error: 'کد کارت الزامی است' });
       }
 
-      // ===== ۱. دریافت اطلاعات کاربر درخواست‌دهنده =====
       const userPath = `data/active/${cardCode}.json`;
       const userRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
         headers: { 'Authorization': `Bearer ${token}` }
@@ -173,7 +257,6 @@ ${selectedModule}
       const userDataRaw = await userRes.json();
       const userData = JSON.parse(Buffer.from(userDataRaw.content, 'base64').toString('utf8'));
 
-      // ===== ۲. بررسی وجود ایمیل =====
       if (!userData.communicationEmail || userData.communicationEmail.length < 5) {
         return res.status(400).json({ 
           error: 'برای استفاده از بخش ارتباط با هم‌فکران، ابتدا باید ایمیل خود را ثبت کنید.',
@@ -182,7 +265,6 @@ ${selectedModule}
         });
       }
 
-      // ===== ۳. دریافت لیست همه کاربران فعال =====
       const allUsersRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/active`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -206,7 +288,6 @@ ${selectedModule}
         }
       }
 
-      // ===== ۴. محاسبه تطابق ارزش‌ها =====
       const senderValues = userData.values || [];
       const senderPriorities = userData.priorities || [];
 
@@ -234,7 +315,6 @@ ${selectedModule}
         };
       });
 
-      // ===== ۵. فیلتر و مرتب‌سازی =====
       const MIN_MATCH_COUNT = 5;
       const MAX_RESULTS = 10;
 
@@ -243,10 +323,8 @@ ${selectedModule}
         .sort((a, b) => b.matchScore - a.matchScore)
         .slice(0, MAX_RESULTS);
 
-      // ===== ۶. تولید کد پیگیری =====
       const trackingCode = `CON-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
-      // ===== ۷. ذخیره درخواست =====
       const fileName = `connection-${Date.now()}-${Math.random().toString(36).substring(7)}.json`;
       const requestPath = `data/requests/${fileName}`;
 
@@ -280,7 +358,6 @@ ${selectedModule}
         })
       });
 
-      // ===== ۸. بازگشت نتیجه =====
       return res.status(200).json({
         success: true,
         trackingCode: trackingCode,
@@ -295,9 +372,7 @@ ${selectedModule}
       });
     }
 
-    // ================================================================
     // ===== درخواست نامشخص =====
-    // ================================================================
     return res.status(400).json({ error: 'نوع درخواست نامعتبر است.' });
 
   } catch (error) {
