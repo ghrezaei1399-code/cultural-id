@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Register Observations | Sphere of Wisdom</title>
     <style>
-        /* ===== Styles ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', 'Vazir', 'IRANSans', sans-serif;
@@ -418,9 +417,6 @@
     </div>
     
     <script>
-        // ============================================================
-        // ===== 1. Base Functions (Box Management) =====
-        // ============================================================
         function selectModule(btn, module) {
             const parent = btn.closest('.observation-box');
             parent.querySelectorAll('.box-module-btn').forEach(b => b.classList.remove('active'));
@@ -492,26 +488,13 @@
             }
         }
 
-        // ============================================================
-        // ===== 2. Forbidden Words (Client-side Fast Filter) =====
-        // ============================================================
         const FORBIDDEN_WORDS = [
-    // ===== Political & Violent Words =====
-    'war', 'violence', 'murder', 'kill', 'terror', 'bomb', 'explosion',
-    'racism', 'racist', 'racial', 'racial superiority',
-    'ethnic insult', 'religious insult', 'national insult',
-    'revolution', 'rebellion', 'overthrow', 'coup', 'sedition',
-    'enemy', 'hatred', 'hate', 'hostility', 'division',
-    
-    // ===== Commercial Words =====
-    'sell', 'buy', 'price', 'discount', 'marketing', 'advertising',
-    'branding', 'business', 'ecommerce', 'online store',
-    'hashtag', 'instagram', 'telegram',
-    
-    // ===== Guidance Request Words =====
-    'how to', 'method', 'guide', 'tutorial', 'suggestion', 'solution',
-    'best', 'effective', 'fastest', 'easiest', 'way to'
-];
+            'sell', 'buy', 'price', 'discount', 'marketing', 'advertising',
+            'branding', 'business', 'ecommerce', 'online store',
+            'hashtag', 'instagram', 'telegram',
+            'how to', 'method', 'guide', 'tutorial', 'suggestion', 'solution',
+            'best', 'effective', 'fastest', 'easiest', 'way to'
+        ];
 
         function fastFilter(text) {
             const lowerText = text.toLowerCase();
@@ -532,9 +515,6 @@
             return { blocked: false };
         }
 
-        // ============================================================
-        // ===== 3. AI Function (Send to Server) =====
-        // ============================================================
         async function smartAnalyzeObservation(text, language = 'en') {
             try {
                 const response = await fetch('/api/submit-request', {
@@ -564,9 +544,6 @@
             }
         }
 
-        // ============================================================
-        // ===== 4. Final Submission Function =====
-        // ============================================================
         async function submitObservations() {
             const userCode = document.getElementById('userCode').value.trim();
             const boxes = document.querySelectorAll('.observation-box');
@@ -713,20 +690,9 @@
             }
         }
 
-        // ============================================================
-        // ===== 5. Initialization =====
-        // ============================================================
         document.addEventListener('DOMContentLoaded', function() {
             updateAddButton();
-            
-            const observer = new MutationObserver(updateAddButton);
-            const container = document.getElementById('observationsContainer');
-            if (container) {
-                observer.observe(container, { childList: true, subtree: true });
-            }
-            
             console.log('📌 Sphere of Wisdom - Register Observations');
-            console.log('🔑 Use keywords: #Education #Health #Technology #Culture');
         });
     </script>
 </body>
