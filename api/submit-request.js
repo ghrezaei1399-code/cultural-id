@@ -131,16 +131,24 @@ Return ONLY JSON.`;
         const analysis = JSON.parse(jsonStr);
         
         // اطمینان از وجود همه فیلدها
-        const result = {
-          status: analysis.status || "approved",
-          rejection_reason: analysis.rejection_reason || null,
-          cluster: analysis.cluster || "human",
-          score_suggestion: analysis.score_suggestion || 3,
-          analysis_note: analysis.analysis_note || (isPersian ? "تحلیل مشاهده" : "Observation analysis"),
-          guide_individual: analysis.guide_individual || (isPersian ? "راهنمای فردی" : "Individual guidance"),
-          guide_network: analysis.guide_network || (isPersian ? "راهنمای شبکه‌ای" : "Network guidance"),
-          guide_policy: analysis.guide_policy || (isPersian ? "راهنمای سیاستی" : "Policy guidance")
-        };
+       // اطمینان از وجود همه فیلدها (بدون مقدار پیش‌فرض کلیشه‌ای)
+const result = {
+  status: analysis.status,
+  rejection_reason: analysis.rejection_reason || null,
+  cluster: analysis.cluster,
+  score_suggestion: analysis.score_suggestion,
+  analysis_note: analysis.analysis_note,
+  guide_individual: analysis.guide_individual,
+  guide_network: analysis.guide_network,
+  guide_policy: analysis.guide_policy
+};
+
+// اگر هرکدام از فیلدهای ضروری وجود نداشت، خطا بده
+if (!result.status || !result.cluster || !result.score_suggestion || 
+    !result.analysis_note || !result.guide_individual || 
+    !result.guide_network || !result.guide_policy) {
+  throw new Error('AI response is missing required fields');
+}
         
         return res.status(200).json({ success: true, analysis: result });
         
