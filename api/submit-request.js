@@ -27,44 +27,119 @@ module.exports = async function handler(req, res) {
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
 
+    // ============================================================
+    // بخش AI Analyze - با OpenRouter (Gemini)
+    // ============================================================
     if (type === 'ai-analyze') {
       try {
         const isPersian = /[\u0600-\u06FF]/.test(text);
         
-        const prompt = isPersian ? 
-`متن: "${text}"
+        // پرامپت سیستم بر اساس چارچوب سپهر خردمندی
+        const systemPrompt = isPersian ? 
+`شما یک تحلیلگر فرهنگی هوشمند هستید که بر اساس چارچوب نظری «سپهر خردمندی» عمل می‌کنید.
 
-یک JSON با این فیلدها برگردان:
-status: approved یا rejected
-cluster: human یا knowledge یا governance یا survival
-score: 1 تا 5
-analysis: تحلیل عمیق
-individual: راهنمای فردی
-network: راهنمای شبکه‌ای
-policy: راهنمای سیاستی
+**قوانین:**
+۱. فقط و فقط یک JSON معتبر برگردانید.
+۲. هیچ توضیح اضافی خارج از JSON ندهید.
 
-فقط JSON.` :
-`Text: "${text}"
+**خوشه‌ها (۴ خوشه اطلس ظهور):**
+- "human": انسان (مسائل فردی، روانشناختی، اجتماعی، خانواده)
+- "knowledge": دانش و فناوری (آموزش، علم، پژوهش، فناوری)
+- "governance": حکمرانی و تمدن (مدیریت، قانون، ساختارها)
+- "survival": بقا و آینده (معیشت، محیط زیست، منابع، امنیت)
 
-Return JSON with:
-status: approved or rejected
-cluster: human or knowledge or governance or survival
-score: 1 to 5
-analysis: deep analysis
-individual: individual guide
-network: network guide
-policy: policy guide
+**ساختار خروجی:**
+{
+  "status": "approved",
+  "cluster": "human",
+  "score": 3,
+  "analysis": "تحلیل عمیق در ۳ پاراگراف",
+  "individual": "راهنمای فردی عملی",
+  "network": "راهنمای شبکه‌ای",
+  "policy": "راهنمای سیاستی"
+}` :
+`You are a smart cultural analyst based on the "Sphere of Wisdom" theoretical framework.
 
-Only JSON.`;
+**Rules:**
+1. Return ONLY a valid JSON.
+2. No extra text outside JSON.
 
-        const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
-        const aiText = await response.text();
+**Clusters:**
+- "human": Human (individual, psychological, social, family)
+- "knowledge": Knowledge and Technology (education, science, research)
+- "governance": Governance and Civilization (management, law, structures)
+- "survival": Survival and Future (livelihood, environment, resources, security)
+
+**Output Structure:**
+{
+  "status": "approved",
+  "cluster": "human",
+  "score": 3,
+  "analysis": "Deep analysis in 3 paragraphs",
+  "individual": "Practical individual guide",
+  "network": "Network guide",
+  "policy": "Policy guide"
+}`;
+
+        const userPrompt = isPersian ?
+`مشاهده کاربر: "${text}"
+
+لطفاً این مشاهده را بر اساس چارچوب سپهر خردمندی تحلیل کنید و JSON خواسته شده را برگردانید.` :
+`User observation: "${text}"
+
+Please analyze this observation based on the Sphere of Wisdom framework and return the requested JSON.`;
+
+        // ============================================================
+        // درخواست به OpenRouter با مدل Gemini
+        // ============================================================
+        const openRouterKey = process.env.OPENROUTER_API_KEY;
         
-        let jsonStr = aiText;
-        const s = aiText.indexOf('{');
-        const e = aiText.lastIndexOf('}');
+        // اگر کلید OpenRouter وجود نداشت، از fallback استفاده کن
+        if (!openRouterKey) {
+          console.warn('OPENROUTER_API_KEY not found, using fallback');
+          return res.status(200).json({
+            success: true,
+            analysis: getFallbackAnalysis(text, isPersian)
+          });
+        }
+
+        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${openRouterKey}`,
+            'HTTP-Referer': process.env.SITE_URL || 'https://cultural-id.vercel.app',
+            'X-Title': process.env.SITE_NAME || 'Global Smart Cultural Identity',
+          },
+          body: JSON.stringify({
+            model: 'google/gemini-2.0-flash-exp:free',
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: userPrompt }
+            ],
+            temperature: 0.7,
+            max_tokens: 800,
+            response_format: { type: 'json_object' }
+          })
+        });
+
+        if (!response.ok) {
+          console.error('OpenRouter Error:', response.status);
+          return res.status(200).json({
+            success: true,
+            analysis: getFallbackAnalysis(text, isPersian)
+          });
+        }
+
+        const data = await response.json();
+        const content = data.choices?.[0]?.message?.content || '{}';
+        
+        // استخراج JSON
+        let jsonStr = content;
+        const s = content.indexOf('{');
+        const e = content.lastIndexOf('}');
         if (s !== -1 && e !== -1) {
-          jsonStr = aiText.substring(s, e + 1);
+          jsonStr = content.substring(s, e + 1);
         }
         
         const analysis = JSON.parse(jsonStr);
@@ -73,11 +148,11 @@ Only JSON.`;
           status: analysis.status || "approved",
           rejection_reason: analysis.rejection_reason || null,
           cluster: analysis.cluster || "human",
-          score_suggestion: analysis.score || analysis.score_suggestion || 3,
-          analysis_note: analysis.analysis || analysis.analysis_note || (isPersian ? "تحلیل" : "Analysis"),
-          guide_individual: analysis.individual || analysis.guide_individual || (isPersian ? "راهنمای فردی" : "Individual guide"),
-          guide_network: analysis.network || analysis.guide_network || (isPersian ? "راهنمای شبکه‌ای" : "Network guide"),
-          guide_policy: analysis.policy || analysis.guide_policy || (isPersian ? "راهنمای سیاستی" : "Policy guide")
+          score_suggestion: analysis.score || 3,
+          analysis_note: analysis.analysis || (isPersian ? "تحلیل" : "Analysis"),
+          guide_individual: analysis.individual || (isPersian ? "راهنمای فردی" : "Individual guide"),
+          guide_network: analysis.network || (isPersian ? "راهنمای شبکه‌ای" : "Network guide"),
+          guide_policy: analysis.policy || (isPersian ? "راهنمای سیاستی" : "Policy guide")
         };
         
         return res.status(200).json({ success: true, analysis: result });
@@ -85,23 +160,19 @@ Only JSON.`;
       } catch (error) {
         console.error('AI Analysis Error:', error);
         const isPersian = /[\u0600-\u06FF]/.test(text);
-        return res.status(200).json({ 
-          success: true, 
-          analysis: {
-            status: "approved",
-            rejection_reason: null,
-            cluster: "human",
-            score_suggestion: 3,
-            analysis_note: isPersian ? "تحلیل خودکار" : "Auto analysis",
-            guide_individual: isPersian ? "مشاهده خود را ثبت کنید." : "Register your observation.",
-            guide_network: isPersian ? "با دیگران به اشتراک بگذارید." : "Share with others.",
-            guide_policy: isPersian ? "در شبکه خود مطرح کنید." : "Raise in your network."
-          }
+        return res.status(200).json({
+          success: true,
+          analysis: getFallbackAnalysis(text, isPersian)
         });
       }
     }
 
+    // ============================================================
+    // بخش Observations (تغییر نکرده)
+    // ============================================================
     if (type === 'observations' && observations && observations.length > 0) {
+      // ... کد قبلی بدون تغییر ...
+      // (برای حفظ فایل، این بخش را کامل می‌نویسم)
       if (!cardCode) {
         return res.status(400).json({ error: 'کد کارت الزامی است' });
       }
@@ -202,6 +273,9 @@ ${aiSection}
       });
     }
 
+    // ============================================================
+    // بخش Delete (تغییر نکرده)
+    // ============================================================
     if (type === 'delete') {
       if (!cardCode) {
         return res.status(400).json({ error: 'Card code is required' });
@@ -245,6 +319,9 @@ ${aiSection}
       });
     }
 
+    // ============================================================
+    // بخش Connection (تغییر نکرده)
+    // ============================================================
     if (type === 'connection') {
       if (!cardCode) {
         return res.status(400).json({ error: 'Card code is required' });
@@ -387,3 +464,88 @@ ${aiSection}
     return res.status(500).json({ error: error.message });
   }
 };
+
+// ============================================================
+// تابع Fallback (زمانی که API کار نکرد)
+// ============================================================
+function getFallbackAnalysis(text, isPersian) {
+  // تشخیص خوشه با کلمات کلیدی
+  const keywords = {
+    human: ['احساس', 'دوست', 'خانواده', 'عشق', 'غم', 'شادی', 'تنهایی', 'روان', 'ذهن', 'هویت', 'ارزش', 'اخلاق', 'صلح', 'همدلی'],
+    knowledge: ['کتاب', 'آموزش', 'دانش', 'مدرسه', 'یادگیری', 'علم', 'پژوهش', 'تحقیق', 'کتابخانه', 'استاد', 'دانشجو', 'سواد', 'آگاهی'],
+    governance: ['قانون', 'مدیریت', 'سیاست', 'شهرداری', 'دولت', 'ساختار', 'سازمان', 'نظام', 'برنامه', 'تصمیم', 'مسئول', 'نظارت'],
+    survival: ['غذا', 'آب', 'مسکن', 'بهداشت', 'امنیت', 'پول', 'کار', 'معیشت', 'درمان', 'سلامت', 'ایمنی', 'خطر', 'بقا', 'نیاز']
+  };
+
+  let bestCluster = 'human';
+  let maxScore = 0;
+
+  for (const [cluster, words] of Object.entries(keywords)) {
+    let score = 0;
+    for (const word of words) {
+      if (text.includes(word)) score++;
+    }
+    if (score > maxScore) {
+      maxScore = score;
+      bestCluster = cluster;
+    }
+  }
+
+  const clusterNames = {
+    human: isPersian ? 'انسان' : 'Human',
+    knowledge: isPersian ? 'دانش و فناوری' : 'Knowledge',
+    governance: isPersian ? 'حکمرانی و تمدن' : 'Governance',
+    survival: isPersian ? 'بقا و آینده' : 'Survival'
+  };
+
+  const score = Math.min(5, Math.max(1, Math.floor(text.length / 50) + 2));
+
+  const templates = {
+    human: isPersian ? 
+      `مشاهده "${text}" در حوزه انسان قرار می‌گیرد. این موضوع بر کیفیت روابط انسانی تأثیر دارد و نیازمند همدلی و گفتگوی جمعی است.` :
+      `Observation "${text}" falls in the Human domain. This topic affects human relationships and requires empathy and collective dialogue.`,
+    knowledge: isPersian ?
+      `مشاهده "${text}" در حوزه دانش و فناوری قرار می‌گیرد و به شکاف‌های آموزشی یا علمی اشاره دارد.` :
+      `Observation "${text}" falls in the Knowledge domain and points to educational or scientific gaps.`,
+    governance: isPersian ?
+      `مشاهده "${text}" در حوزه حکمرانی قرار می‌گیرد و به ساختارها و نظام‌های مدیریتی مربوط می‌شود.` :
+      `Observation "${text}" falls in the Governance domain and relates to management structures and systems.`,
+    survival: isPersian ?
+      `مشاهده "${text}" در حوزه بقا و آینده قرار می‌گیرد و به نیازهای اساسی و معیشتی مربوط می‌شود.` :
+      `Observation "${text}" falls in the Survival domain and relates to basic needs and livelihood.`
+  };
+
+  const guides = {
+    human: {
+      individual: isPersian ? 'در ۲۴ ساعت آینده، با یکی از نزدیکان خود درباره این موضوع گفتگو کنید.' : 'In the next 24 hours, talk to someone close about this topic.',
+      network: isPersian ? 'با ۳ تا ۵ نفر از دوستان خود تماس بگیرید و راه‌حل‌های جمعی پیدا کنید.' : 'Contact 3-5 friends and find collective solutions.',
+      policy: isPersian ? 'یک پیشنهاد مکتوب برای بهبود روابط انسانی در جامعه خود تهیه کنید.' : 'Prepare a written proposal to improve human relations in your community.'
+    },
+    knowledge: {
+      individual: isPersian ? 'یک منبع معتبر درباره این موضوع پیدا کنید و در ۲۴ ساعت آینده مطالعه کنید.' : 'Find a reliable source on this topic and study it in the next 24 hours.',
+      network: isPersian ? 'یک گروه مطالعه با افراد آگاه تشکیل دهید.' : 'Form a study group with knowledgeable people.',
+      policy: isPersian ? 'یک پیشنهاد برای توسعه زیرساخت‌های دانشی تهیه کنید.' : 'Prepare a proposal to develop knowledge infrastructure.'
+    },
+    governance: {
+      individual: isPersian ? 'نقش خود را در ساختارهای موجود بررسی کنید و یک اقدام کوچک برای بهبود انجام دهید.' : 'Examine your role in existing structures and take a small improvement action.',
+      network: isPersian ? 'با افراد تأثیرگذار در این حوزه ارتباط بگیرید.' : 'Connect with influential people in this area.',
+      policy: isPersian ? 'یک پیشنهاد ساختاری برای بهبود نظام مدیریتی تهیه کنید.' : 'Prepare a structural proposal to improve the management system.'
+    },
+    survival: {
+      individual: isPersian ? 'نیازهای اساسی خود را بررسی کنید و یک برنامه عملی در ۲۴ ساعت آینده تهیه کنید.' : 'Assess your basic needs and prepare an action plan in the next 24 hours.',
+      network: isPersian ? 'با افراد در شرایط مشابه ارتباط بگیرید و یک شبکه حمایتی تشکیل دهید.' : 'Connect with people in similar situations and form a support network.',
+      policy: isPersian ? 'یک پیشنهاد برای بهبود زیرساخت‌های معیشتی تهیه کنید.' : 'Prepare a proposal to improve livelihood infrastructure.'
+    }
+  };
+
+  return {
+    status: "approved",
+    rejection_reason: null,
+    cluster: bestCluster,
+    score_suggestion: score,
+    analysis_note: templates[bestCluster] || templates.human,
+    guide_individual: guides[bestCluster].individual,
+    guide_network: guides[bestCluster].network,
+    guide_policy: guides[bestCluster].policy
+  };
+}
