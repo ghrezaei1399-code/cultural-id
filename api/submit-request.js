@@ -27,38 +27,61 @@ module.exports = async function handler(req, res) {
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
 
-    // ===== بخش تحلیل هوش مصنوعی =====
     if (type === 'ai-analyze') {
       try {
         const isPersian = /[\u0600-\u06FF]/.test(text);
         
         const prompt = isPersian ? 
-`متن: "${text}"
+`شما تحلیلگر سپهر خردمندی هستید. یک مشاهده فرهنگی را تحلیل کنید و یک JSON کامل برگردانید.
 
-شما تحلیلگر سپهر خردمندی هستید. وظایف:
-1. تشخیص رد یا تایید (قوانین: تجاری، تبلیغاتی، درخواست راهنمایی، سیاسی مخرب، نژادپرستانه، خشونت‌آمیز → rejected)
-2. تعیین خوشه: human, knowledge, governance, survival
-3. امتیاز 1 تا 5
-4. تحلیل عمیق (حداقل 30 کلمه)
-5. راهنمای فردی (اقدام عملی برای فرد)
-6. راهنمای شبکه‌ای (هماهنگی با دیگران)
-7. راهنمای سیاستی (پرسش یا پیشنهاد ساختاری)
+متن مشاهده: "${text}"
 
-فقط JSON برگردان:
-{"status":"","rejection_reason":null,"cluster":"","score_suggestion":0,"analysis_note":"","guide_individual":"","guide_network":"","guide_policy":""}` :
-`Text: "${text}"
+دستورالعمل:
+1. وضعیت: اگر متن تجاری، تبلیغاتی، سیاسی مخرب، نژادپرستانه، یا خشونت‌آمیز است → "rejected" | در غیر این صورت → "approved"
+2. rejection_reason: اگر rejected است، دلیل کوتاه | در غیر این صورت null
+3. خوشه: بر اساس محتوای متن از بین human, knowledge, governance, survival انتخاب کنید
+4. امتیاز: عدد 1 تا 5 (هرچه مشاهده عمیق‌تر و مهم‌تر باشد، امتیاز بالاتر)
+5. تحلیل: یک تحلیل عمیق بنویسید که گسست میان ظرفیت موجود و تجلی واقعی را نشان دهد، لایه‌های پنهان پدیده را آشکار کند و به یکی از سپهرهای چهارگانه مرتبط باشد
+6. راهنمای فردی: یک اقدام عملی که فرد در 24 ساعت آینده بتواند انجام دهد
+7. راهنمای شبکه‌ای: چگونه فرد می‌تواند با 3 تا 5 نفر دیگر هماهنگ شود
+8. راهنمای سیاستی: یک پرسش یا پیشنهاد برای تغییر ساختار
 
-You are Sphere of Wisdom analyst. Tasks:
-1. Detect reject or approve (rules: commercial, promotional, guidance request, political destructive, racist, violent → rejected)
-2. Determine cluster: human, knowledge, governance, survival
-3. Score 1 to 5
-4. Deep analysis (minimum 30 words)
-5. Individual guide (practical action for individual)
-6. Network guide (coordination with others)
-7. Policy guide (question or proposal for structural change)
+فقط JSON برگردانید.
+{
+  "status": "",
+  "rejection_reason": null,
+  "cluster": "",
+  "score_suggestion": 0,
+  "analysis_note": "",
+  "guide_individual": "",
+  "guide_network": "",
+  "guide_policy": ""
+}` :
+`You are Sphere of Wisdom analyst. Analyze a cultural observation and return a complete JSON.
 
-Return ONLY JSON:
-{"status":"","rejection_reason":null,"cluster":"","score_suggestion":0,"analysis_note":"","guide_individual":"","guide_network":"","guide_policy":""}`;
+Observation text: "${text}"
+
+Instructions:
+1. Status: if text is commercial, promotional, political destructive, racist, or violent → "rejected" | otherwise → "approved"
+2. rejection_reason: if rejected, short reason | otherwise null
+3. Cluster: based on content choose from human, knowledge, governance, survival
+4. Score: number 1 to 5 (deeper and more important observation = higher score)
+5. Analysis: write a deep analysis that shows the gap between existing capacity and actual manifestation, reveals hidden layers of the phenomenon, and relates to one of the four spheres
+6. Individual guide: a practical action the individual can do in the next 24 hours
+7. Network guide: how the individual can coordinate with 3-5 other people
+8. Policy guide: a question or proposal for structural change
+
+Return ONLY JSON.
+{
+  "status": "",
+  "rejection_reason": null,
+  "cluster": "",
+  "score_suggestion": 0,
+  "analysis_note": "",
+  "guide_individual": "",
+  "guide_network": "",
+  "guide_policy": ""
+}`;
 
         const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
         const aiText = await response.text();
@@ -68,20 +91,6 @@ Return ONLY JSON:
         const e = aiText.lastIndexOf('}');
         if (s !== -1 && e !== -1) {
           jsonStr = aiText.substring(s, e + 1);
-        } else {
-          return res.status(200).json({ 
-            success: true, 
-            analysis: {
-              status: "approved",
-              rejection_reason: null,
-              cluster: "human",
-              score_suggestion: 3,
-              analysis_note: isPersian ? "تحلیل خودکار" : "Auto analysis",
-              guide_individual: isPersian ? "مشاهده خود را ثبت کنید." : "Register your observation.",
-              guide_network: isPersian ? "با دیگران به اشتراک بگذارید." : "Share with others.",
-              guide_policy: isPersian ? "در شبکه خود مطرح کنید." : "Raise in your network."
-            }
-          });
         }
         
         const analysis = JSON.parse(jsonStr);
@@ -118,7 +127,6 @@ Return ONLY JSON:
       }
     }
 
-    // ===== بخش ثبت مشاهدات =====
     if (type === 'observations' && observations && observations.length > 0) {
       if (!cardCode) {
         return res.status(400).json({ error: 'کد کارت الزامی است' });
@@ -220,7 +228,6 @@ ${aiSection}
       });
     }
 
-    // ===== بخش درخواست حذف =====
     if (type === 'delete') {
       if (!cardCode) {
         return res.status(400).json({ error: 'Card code is required' });
@@ -264,7 +271,6 @@ ${aiSection}
       });
     }
 
-    // ===== بخش درخواست ارتباط =====
     if (type === 'connection') {
       if (!cardCode) {
         return res.status(400).json({ error: 'Card code is required' });
