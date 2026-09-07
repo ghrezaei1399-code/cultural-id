@@ -527,12 +527,12 @@
                         throw new Error(`مشاهده شماره ${obs.index} با اصول سپهر خردمندی همخوانی ندارد. دلیل: ${aiResult.rejection_reason || 'نامشخص'}`);
                     }
                     
-                    if (aiResult.status === 'error') {
-                        console.warn(`AI error for obs ${obs.index}, proceeding without AI analysis.`);
+                                      if (aiResult.status === 'error') {
+                        throw new Error(`خطا در تحلیل هوشمند مشاهده شماره ${obs.index}. لطفاً دوباره تلاش کنید.`);
                     } else {
                         // ذخیره تحلیل هوشمند در آبجکت مشاهده برای ارسال به سرور
                         obs.aiAnalysis = aiResult;
-                    }
+                    }  
                 }
 
                 // ۲. اگر همه چیز تایید شد، ارسال به سرور
