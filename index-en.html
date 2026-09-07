@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"/>
-    <title>کارت جهانی هویت هوشمند فرهنگی</title>
+    <title>Global Smart Cultural Identity Card</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', 'Vazir', 'IRANSans', sans-serif;
             min-height: 100vh;
             padding: 0.8rem;
             background: linear-gradient(135deg, #fdf6e3 0%, #e8f4f8 50%, #f5e6d3 100%);
@@ -19,8 +19,6 @@
             color: #f0e8d0;
         }
         .container { max-width: 900px; width: 100%; margin: 0 auto; }
-
-        /* ===== BANNER ===== */
         .global-call-banner {
             background: linear-gradient(135deg, #d4af37, #f9e79f, #d4af37);
             border-radius: 16px;
@@ -42,8 +40,6 @@
             flex-wrap: wrap;
         }
         .banner-icon { font-size: 1rem; }
-
-        /* ===== HEADER ===== */
         .hero-header {
             text-align: center;
             padding: 0.6rem 0.4rem;
@@ -54,7 +50,6 @@
             margin-bottom: 0.6rem;
         }
         body.dark .hero-header { background: rgba(74, 58, 40, 0.7); }
-
         .logo-row {
             display: flex;
             align-items: center;
@@ -74,7 +69,6 @@
             50% { transform: translateY(-4px); }
         }
         .logo-box img:hover { transform: scale(1.05); }
-        
         .site-title-wrap { text-align: center; flex: 1; min-width: 120px; }
         .site-title {
             font-size: 1.2rem;
@@ -91,8 +85,6 @@
         }
         .site-subtitle { font-size: 0.8rem; color: #6a5a3a; letter-spacing: 0.5px; margin-top: 0.1rem; }
         body.dark .site-subtitle { color: #c8b890; }
-
-        /* ===== LANGUAGE BAR ===== */
         .lang-bar {
             display: flex;
             justify-content: center;
@@ -122,8 +114,6 @@
             color: #2a1a0a;
             box-shadow: 0 2px 8px rgba(212, 175, 55, 0.2);
         }
-
-        /* ===== SLOGAN SCROLLER ===== */
         .slogan-scroller {
             overflow: hidden;
             background: rgba(212, 175, 55, 0.08);
@@ -142,8 +132,6 @@
         .slogan-track span { font-size: 0.65rem; font-weight: 600; color: #8a6d1f; }
         body.dark .slogan-track span { color: #f9e79f; }
         @keyframes scrollSlogan { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-
-        /* ===== THREE FEATURE MODULES ===== */
         .features-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -176,15 +164,12 @@
             border: 1px solid rgba(212, 175, 55, 0.1);
         }
         body.dark .feature-card .btn-feature { color: #f9e79f; }
-
         .feature-about { background: #dbeafe; }
         body.dark .feature-about { background: rgba(30, 60, 100, 0.3); }
         .feature-wisdom { background: #d1fae5; }
         body.dark .feature-wisdom { background: rgba(30, 80, 50, 0.3); }
         .feature-radio { background: #fce7f3; }
         body.dark .feature-radio { background: rgba(80, 40, 60, 0.3); }
-
-        /* ===== THREE INFO BOXES ===== */
         .info-boxes {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -203,7 +188,6 @@
         body.dark .box-blue { background: rgba(40, 60, 80, 0.5); }
         .box-green { background: rgba(220, 245, 220, 0.7); }
         body.dark .box-green { background: rgba(40, 70, 40, 0.5); }
-
         .box-title {
             font-size: 1rem;
             font-weight: 800;
@@ -220,19 +204,17 @@
         body.dark .box-blue .box-title { color: #85c1e9; }
         .box-green .box-title { color: #1e7a1e; }
         body.dark .box-green .box-title { color: #82e0aa; }
-
         .box ul { list-style: none; line-height: 1.4; }
         .box ul li {
             font-size: 0.85rem;
             color: #3a2a1a;
-            padding-right: 0.8rem;
+            padding-left: 0.8rem;
             position: relative;
         }
         body.dark .box ul li { color: #d0c8c0; }
-        .box-gold ul li::before { content: "✦"; color: #d4af37; position: absolute; right: 0; font-size: 0.5rem; }
-        .box-blue ul li::before { content: "◆"; color: #5dade2; position: absolute; right: 0; font-size: 0.5rem; }
-        .box-green ul li::before { content: "✓"; color: #27ae60; position: absolute; right: 0; font-size: 0.5rem; }
-
+        .box-gold ul li::before { content: "✦"; color: #d4af37; position: absolute; left: 0; font-size: 0.5rem; }
+        .box-blue ul li::before { content: "◆"; color: #5dade2; position: absolute; left: 0; font-size: 0.5rem; }
+        .box-green ul li::before { content: "✓"; color: #27ae60; position: absolute; left: 0; font-size: 0.5rem; }
         .principles {
             display: flex;
             flex-wrap: wrap;
@@ -250,8 +232,6 @@
             color: #2874a6;
         }
         body.dark .principles span { color: #85c1e9; }
-
-        /* ===== SAMPLE CARD ===== */
         .card-sample-wrapper {
             background: rgba(255, 255, 255, 0.3);
             border-radius: 16px;
@@ -263,7 +243,6 @@
         body.dark .card-sample-wrapper { background: rgba(0, 0, 0, 0.1); }
         .card-sample-wrapper .label { font-size: 0.65rem; color: #8a6d1f; font-weight: 700; }
         body.dark .card-sample-wrapper .label { color: #f9e79f; }
-
         .real-card-sample {
             max-width: 260px;
             margin: 0.4rem auto;
@@ -319,8 +298,6 @@
             0% { opacity: 0.5; filter: hue-rotate(0deg); }
             100% { opacity: 1; filter: hue-rotate(20deg); }
         }
-
-        /* ===== GOLDEN ROW ===== */
         .golden-row {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -332,7 +309,6 @@
             border: 1px solid rgba(212, 175, 55, 0.12);
         }
         body.dark .golden-row { background: rgba(74, 58, 40, 0.2); }
-
         .golden-btn {
             display: flex;
             flex-direction: column;
@@ -354,20 +330,15 @@
         .golden-btn .icon { font-size: 1.2rem; }
         .golden-btn .label { font-size: 0.8rem; }
         .golden-btn .desc { font-size: 0.8rem; opacity: 0.6; font-weight: 600; }
-
         .btn-register { background: linear-gradient(135deg, #d4af37, #f9e79f); color: #2a1a0a; }
         .btn-connect { background: linear-gradient(135deg, #27ae60, #82e0aa); color: #fff; }
         .btn-achievement { background: linear-gradient(135deg, #8a6d1f, #d4af37); color: #fff; }
         .btn-wisdom { background: linear-gradient(135deg, #2874a6, #5dade2); color: #fff; }
         .btn-atlas { background: linear-gradient(135deg, #6a3d9a, #d2b4de); color: #fff; }
-
         .btn-achievement-no-link, .btn-atlas-no-link { cursor: default; opacity: 0.7; }
         .btn-achievement-no-link:hover, .btn-atlas-no-link:hover { transform: none; box-shadow: none; }
-
         .cta-note { text-align: center; font-size: 0.5rem; color: #6a5a3a; margin: -0.3rem 0 0.5rem 0; font-weight: 600; }
         body.dark .cta-note { color: #c8b890; }
-
-        /* ===== GALLERIES ===== */
         .gallery-box {
             border-radius: 20px;
             padding: 0.8rem;
@@ -376,10 +347,8 @@
             background: rgba(255, 253, 245, 0.6);
         }
         body.dark .gallery-box { background: rgba(58, 47, 32, 0.4); }
-
         .atlas-box { border-color: #6a3d9a; background: rgba(245, 230, 240, 0.5); }
         body.dark .atlas-box { background: rgba(58, 42, 58, 0.3); }
-
         .gallery-header {
             display: flex;
             justify-content: space-between;
@@ -399,7 +368,6 @@
         body.dark .gallery-title { color: #f9e79f; }
         .atlas-box .gallery-title { color: #6a3d9a; }
         body.dark .atlas-box .gallery-title { color: #d2b4de; }
-
         .gallery-subtitle { font-size: 0.55rem; color: #888; font-weight: 600; }
         .filter-select {
             padding: 0.2rem 0.5rem;
@@ -413,7 +381,6 @@
             outline: none;
         }
         body.dark .filter-select { background: #2a2418; color: #f9e79f; border-color: #8a6d1f; }
-
         .achievements-list {
             display: flex;
             flex-direction: column;
@@ -428,7 +395,7 @@
             padding: 0.3rem 0.5rem;
             background: rgba(255, 255, 255, 0.5);
             border-radius: 10px;
-            border-right: 3px solid #d4af37;
+            border-left: 3px solid #d4af37;
             cursor: pointer;
             transition: 0.2s;
             flex-direction: column;
@@ -438,12 +405,9 @@
         body.dark .achievement-item { background: rgba(0, 0, 0, 0.15); }
         .achievement-item:hover { background: #fff; transform: translateX(-3px); }
         body.dark .achievement-item:hover { background: rgba(255, 255, 255, 0.05); }
-        
         .item-info h4 { font-size: 0.85rem; color: #2a1a0a; }
         body.dark .item-info h4 { color: #f0e8d0; }
         .item-meta { font-size: 0.5rem; color: #8a6d1f; font-weight: 600; }
-        
-        /* Feedback Buttons */
         .feedback-row {
             display: flex;
             gap: 0.3rem;
@@ -464,10 +428,7 @@
         .fb-success { color: #27ae60; border-color: #27ae60; }
         .fb-fix { color: #f39c12; border-color: #f39c12; }
         .fb-fail { color: #e74c3c; border-color: #e74c3c; }
-
         .empty-state { text-align: center; padding: 0.5rem; color: #888; font-size: 0.7rem; }
-
-        /* ===== MODAL ===== */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -497,7 +458,7 @@
         .modal-close {
             position: absolute;
             top: 0.5rem;
-            left: 0.5rem; /* RTL fix */
+            right: 0.5rem;
             background: rgba(0,0,0,0.4);
             color: #fff;
             width: 30px;
@@ -509,8 +470,6 @@
             z-index: 10;
         }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* ===== Responsive ===== */
         @media (max-width: 768px) {
             body { padding: 0.5rem; }
             .logo-box img { width: 70px; height: 70px; }
@@ -563,170 +522,160 @@
 <body>
 <div class="container">
 
-    <!-- ===== BANNER ===== -->
     <div class="global-call-banner">
-        <div class="banner-slogan"><span class="banner-icon">🌍</span>همکاران فرهنگی، برای حفظ میراث مشترکمان متحد شوید</div>
-        <div class="banner-slogan"><span class="banner-icon">⚠️</span>هر فرهنگ از دست رفته، تکه‌ای از روح بشریت است که برای همیشه ناپدید می‌شود</div>
+        <div class="banner-slogan"><span class="banner-icon">🌍</span>Cultural collaborators, unite to preserve our shared heritage</div>
+        <div class="banner-slogan"><span class="banner-icon">⚠️</span>Every lost culture is a piece of the human soul that disappears forever</div>
     </div>
 
-    <!-- ===== HEADER ===== -->
     <div class="hero-header">
         <div class="logo-row">
             <div class="logo-box"><img src="assets/logo-fa.png" alt="Persian Logo" /></div>
             <div class="site-title-wrap">
-                <div class="site-title">کارت جهانی هویت هوشمند فرهنگی</div>
-                <div class="site-subtitle">Global Smart Cultural Identity Card</div>
+                <div class="site-title">Global Smart Cultural Identity Card</div>
+                <div class="site-subtitle">کارت جهانی هویت هوشمند فرهنگی</div>
             </div>
             <div class="logo-box"><img src="assets/logo-en.png" alt="English Logo" /></div>
         </div>
         <div class="lang-bar">
-            <a href="#" class="active">🇮🇷 فارسی</a>
-            <a href="index-en.html">🇬🇧 English</a>
+            <a href="index.html">🇮🇷 فارسی</a>
+            <a href="#" class="active">🇬🇧 English</a>
         </div>
     </div>
 
-    <!-- ===== THREE FEATURE MODULES ===== -->
     <div class="features-grid">
-        <a href="about-fa.html" class="feature-card feature-about">
+        <a href="about-en.html" class="feature-card feature-about">
             <span class="icon">📖</span>
-            <h3>درباره کارت</h3>
-            <p>اهداف و فلسفه</p>
-            <span class="btn-feature">بیشتر →</span>
+            <h3>About Card</h3>
+            <p>Goals & Philosophy</p>
+            <span class="btn-feature">More →</span>
         </a>
-        <a href="about-fa.html#wisdom" class="feature-card feature-wisdom">
+        <a href="about-en.html#wisdom" class="feature-card feature-wisdom">
             <span class="icon">🧠</span>
-            <h3>سپهر خردمندی</h3>
-            <p>مشاهده و تحلیل</p>
-            <span class="btn-feature">ورود →</span>
+            <h3>Sphere of Wisdom</h3>
+            <p>Observation & Analysis</p>
+            <span class="btn-feature">Enter →</span>
         </a>
-        <a href="about-fa.html#radio-tv" class="feature-card feature-radio">
+        <a href="about-en.html#radio-tv" class="feature-card feature-radio">
             <span class="icon">📡</span>
-            <h3>رادیو و تلویزیون</h3>
-            <p>شبکه‌های فرهنگی</p>
-            <span class="btn-feature">ورود →</span>
+            <h3>Radio & TV</h3>
+            <p>Cultural Networks</p>
+            <span class="btn-feature">Enter →</span>
         </a>
     </div>
 
-    <!-- ===== SLOGAN SCROLLER ===== -->
     <div class="slogan-scroller">
         <div class="slogan-track">
-            <span>✦ فرهنگ ما، پیوند ما، آینده مشترک ما ✦</span>
-            <span>✦ هویت فرهنگی فراتر از مرزها ✦</span>
-            <span>✦ صلح، تنوع، وحدت ✦</span>
-            <span>✦ فرهنگ ما، پیوند ما، آینده مشترک ما ✦</span>
-            <span>✦ هویت فرهنگی فراتر از مرزها ✦</span>
-            <span>✦ صلح، تنوع، وحدت ✦</span>
+            <span>✦ Our culture, our bond, our shared future ✦</span>
+            <span>✦ Cultural identity beyond borders ✦</span>
+            <span>✦ Peace, diversity, unity ✦</span>
+            <span>✦ Our culture, our bond, our shared future ✦</span>
+            <span>✦ Cultural identity beyond borders ✦</span>
+            <span>✦ Peace, diversity, unity ✦</span>
         </div>
     </div>
 
-    <!-- ===== THREE INFO BOXES ===== -->
     <div class="info-boxes">
         <div class="box box-gold">
-            <div class="box-title">📋 مشخصات کارت</div>
+            <div class="box-title">📋 Card Specifications</div>
             <ul>
-                <li>هویت دیجیتال غیرمتمرکز</li>
-                <li>ثبت ۷ ارزش فرهنگی</li>
-                <li>کد یکتا</li>
-                <li>ارتباط با دیگران</li>
+                <li>Decentralized digital identity</li>
+                <li>Register 7 cultural values</li>
+                <li>Unique code</li>
+                <li>Connect with others</li>
             </ul>
         </div>
         <div class="box box-blue">
-            <div class="box-title">🎯 اهداف کارت</div>
+            <div class="box-title">🎯 Card Goals</div>
             <ul>
-                <li>شبکه مصلحان فرهنگی بدون مرز</li>
-                <li>محافظت از تنوع فرهنگی</li>
-                <li>ترویج صلح، حذف خشونت</li>
+                <li>Borderless network of cultural reformers</li>
+                <li>Protecting cultural diversity</li>
+                <li>Promoting peace, eliminating violence</li>
             </ul>
             <div class="principles">
-                <span>✧ غیرسیاسی</span><span>غیردولتی</span>
-                <span>غیرانتفاعی</span><span>✧ غیرمتمرکز</span>
+                <span>✧ Apolitical</span><span>Non-governmental</span>
+                <span>Non-profit</span><span>✧ Decentralized</span>
             </div>
         </div>
         <div class="box box-green">
-            <div class="box-title">✅ مزایای کارت</div>
+            <div class="box-title">✅ Card Benefits</div>
             <ul>
-                <li>عضویت در جنبش جهانی</li>
-                <li>دسترسی به هم‌فکران</li>
-                <li>ارتباط از کانال‌های دلخواه</li>
+                <li>Membership in a global movement</li>
+                <li>Access to like-minded people</li>
+                <li>Communication through preferred channels</li>
             </ul>
         </div>
     </div>
 
-    <!-- ===== SAMPLE CARD ===== -->
     <div class="card-sample-wrapper">
-        <div class="label">🪪 نمونه کارت صادر شده</div>
+        <div class="label">🪪 Sample Issued Card</div>
         <div class="real-card-sample">
             <div class="rc-logo-container"><img src="assets/logo-fa.png" alt="Logo" class="rc-logo" onerror="this.style.display='none'"></div>
-            <div class="rc-title">کارت جهانی هویت هوشمند فرهنگی</div>
+            <div class="rc-title">Global Smart Cultural Identity Card</div>
             <div class="rc-code-box"><div class="rc-code">CIM - 234 - 578 - SAMPLE</div></div>
             <div class="rc-values">
-                <span class="rc-tag">ارزش‌های بومی</span>
-                <span class="rc-tag">دانش شخصی</span>
-                <span class="rc-tag">همکاری جمعی</span>
-                <span class="rc-tag">تنوع فرهنگی</span>
+                <span class="rc-tag">Indigenous Values</span>
+                <span class="rc-tag">Personal Knowledge</span>
+                <span class="rc-tag">Collective Collaboration</span>
+                <span class="rc-tag">Cultural Diversity</span>
             </div>
             <div class="rc-hologram"><img src="assets/hologram.png" alt="Hologram" style="width:25px;height:25px;" onerror="this.style.display='none'"></div>
         </div>
     </div>
 
-    <!-- ===== GOLDEN ROW (5 modules) ===== -->
     <div class="golden-row">
-        <a href="register-fa.html" class="golden-btn btn-register">
+        <a href="register-en.html" class="golden-btn btn-register">
             <span class="icon">🪪</span>
-            <span class="label">دریافت کارت</span>
-            <span class="desc">ثبت‌نام</span>
+            <span class="label">Get Card</span>
+            <span class="desc">Register</span>
         </a>
-        <a href="request-fa.html?type=connection" class="golden-btn btn-connect">
+        <a href="request-en.html?type=connection" class="golden-btn btn-connect">
             <span class="icon">🤝</span>
-            <span class="label">ارتباط</span>
-            <span class="desc">هم‌فکران</span>
+            <span class="label">Connect</span>
+            <span class="desc">Like-minded</span>
         </a>
         <div class="golden-btn btn-achievement btn-achievement-no-link">
             <span class="icon">📤</span>
-            <span class="label">ثبت دستاوردها</span>
-            <span class="desc">(به زودی)</span>
+            <span class="label">Submit Achievements</span>
+            <span class="desc">(Soon)</span>
         </div>
-        <a href="observer-fa.html" class="golden-btn btn-wisdom">
+        <a href="observer-en.html" class="golden-btn btn-wisdom">
             <span class="icon">🧠</span>
-            <span class="label">با هم فکر کنیم</span>
-            <span class="desc">سپهر خردمندی</span>
+            <span class="label">Think Together</span>
+            <span class="desc">Sphere of Wisdom</span>
         </a>
         <div class="golden-btn btn-atlas btn-atlas-no-link">
             <span class="icon">🏛️</span>
-            <span class="label">اطلس ظهور</span>
-            <span class="desc">(به زودی)</span>
+            <span class="label">Atlas of Emergence</span>
+            <span class="desc">(Soon)</span>
         </div>
     </div>
-    <div class="cta-note">بدون اطلاعات شخصی • کاملاً ناشناس • ۲ دقیقه</div>
+    <div class="cta-note">No personal info • Completely anonymous • 2 minutes</div>
 
-    <!-- ===== GALLERY: Cultural Achievements of First 200 Members ===== -->
     <div class="gallery-box">
         <div class="gallery-header">
-            <div class="gallery-title">🏆 گالری دستاوردهای فرهنگی - ۲۰۰ عضو اول</div>
+            <div class="gallery-title">🏆 Cultural Achievements Gallery - First 200 Members</div>
             <select id="categoryFilter" class="filter-select" onchange="filterAchievements()">
-                <option value="all">همه</option>
-                <option value="science">مقالات</option>
-                <option value="art">هنری</option>
-                <option value="media">رسانه</option>
+                <option value="all">All</option>
+                <option value="science">Articles</option>
+                <option value="art">Art</option>
+                <option value="media">Media</option>
             </select>
         </div>
         <div id="achievementsListContainer" class="achievements-list">
-            <div class="empty-state">در حال بارگذاری...</div>
+            <div class="empty-state">Loading...</div>
         </div>
     </div>
 
-    <!-- ===== GALLERY: Names of Emergence ===== -->
     <div class="gallery-box atlas-box">
         <div class="gallery-header">
-            <div class="gallery-title">🏛️ گالری نام‌آوران ظهور</div>
-            <span class="gallery-subtitle">راه‌حل‌های فرهنگی برای مشکلات بومی</span>
+            <div class="gallery-title">🏛️ Names of Emergence Gallery</div>
+            <span class="gallery-subtitle">Cultural solutions for local problems</span>
         </div>
         <div id="atlasListContainer" class="achievements-list">
-            <div class="empty-state">هنوز راه‌حلی با امتیاز ۵ ثبت نشده است.</div>
+            <div class="empty-state">No solutions with score 5 registered yet.</div>
         </div>
     </div>
 
-    <!-- ===== MODAL ===== -->
     <div id="detailModal" class="modal-overlay" onclick="closeModal(event)">
         <div class="modal-content">
             <button class="modal-close" onclick="document.getElementById('detailModal').classList.remove('active')">✕</button>
@@ -734,22 +683,18 @@
             <div class="modal-body">
                 <h2 id="modalTitle" style="color:#8a6d1f; margin-bottom:0.5rem; font-size:1.1rem;"></h2>
                 <div id="modalDesc" style="line-height:1.6; color:#3a2a1a; font-size:0.85rem;"></div>
-                
-                <!-- بخش جدید: نمایش راهنما و بازخورد -->
                 <div id="modalGuide" style="margin-top:1rem; padding:0.8rem; background:rgba(212,175,55,0.1); border-radius:10px; display:none;">
-                    <h4 style="font-size:0.9rem; color:#8a6d1f; margin-bottom:0.5rem;">📋 راهنمای اقدام:</h4>
+                    <h4 style="font-size:0.9rem; color:#8a6d1f; margin-bottom:0.5rem;">📋 Action Guide:</h4>
                     <div id="guideContent" style="font-size:0.8rem;"></div>
                 </div>
-
                 <div id="modalFeedback" style="margin-top:1rem; display:none;">
-                    <h4 style="font-size:0.9rem; color:#6a3d9a; margin-bottom:0.5rem;">📊 گزارش اثربخشی:</h4>
+                    <h4 style="font-size:0.9rem; color:#6a3d9a; margin-bottom:0.5rem;">📊 Effectiveness Report:</h4>
                     <div class="feedback-row">
-                        <button class="fb-btn fb-success" onclick="submitFeedback('success')">✅ موفق بود</button>
-                        <button class="fb-btn fb-fix" onclick="submitFeedback('fix')">⚠️ نیاز به اصلاح</button>
-                        <button class="fb-btn fb-fail" onclick="submitFeedback('fail')">❌ شکست خورد</button>
+                        <button class="fb-btn fb-success" onclick="submitFeedback('success')">✅ Successful</button>
+                        <button class="fb-btn fb-fix" onclick="submitFeedback('fix')">⚠️ Needs Fix</button>
+                        <button class="fb-btn fb-fail" onclick="submitFeedback('fail')">❌ Failed</button>
                     </div>
                 </div>
-
                 <div id="modalMeta" style="margin-top:0.8rem; font-size:0.7rem; color:#888;"></div>
             </div>
         </div>
@@ -758,14 +703,15 @@
 </div>
 
 <script>
-// ===== ACHIEVEMENTS =====
 let allApproved = [];
+let allAtlasItems = [];
+let currentModalItem = null;
 
 async function loadAchievements() {
     const container = document.getElementById('achievementsListContainer');
     try {
         const res = await fetch('/api/get-users?t=' + new Date().getTime());
-        if (!res.ok) throw new Error('خطا در ارتباط با سرور');
+        if (!res.ok) throw new Error('Connection error');
         const data = await res.json();
         allApproved = [];
         if (data.users) {
@@ -782,7 +728,7 @@ async function loadAchievements() {
         renderAchievements(allApproved);
     } catch (e) {
         console.error(e);
-        container.innerHTML = '<div class="empty-state">خطا در دریافت داده‌ها.</div>';
+        container.innerHTML = '<div class="empty-state">Error loading data.</div>';
     }
 }
 
@@ -791,82 +737,71 @@ function renderAchievements(items) {
     const filter = document.getElementById('categoryFilter').value;
     let filtered = filter === 'all' ? items : items.filter(item => item.category === filter);
     if (filtered.length === 0) {
-        container.innerHTML = '<div class="empty-state">هنوز دستاورد تایید شده‌ای وجود ندارد.</div>';
+        container.innerHTML = '<div class="empty-state">No approved achievements yet.</div>';
         return;
     }
     container.innerHTML = filtered.map((item, index) => `
         <div class="achievement-item" onclick="openModal(${index})">
             <div class="item-info">
-                <h4>${item.title || 'بدون عنوان'}</h4>
-                <span class="item-meta">${item.category === 'science' ? '📄 مقاله' : item.category === 'art' ? '🎨 هنری' : '🎬 رسانه'}</span>
+                <h4>${item.title || 'Untitled'}</h4>
+                <span class="item-meta">${item.category === 'science' ? '📄 Article' : item.category === 'art' ? '🎨 Art' : '🎬 Media'}</span>
             </div>
-            <span style="font-size:0.9rem; color:#d4af37;">👁️ مشاهده</span>
+            <span style="font-size:0.9rem; color:#d4af37;">👁️ View</span>
         </div>
     `).join('');
 }
 
 function filterAchievements() { renderAchievements(allApproved); }
 
-// ===== ATLAS (SMART) =====
-let allAtlasItems = [];
-
 async function loadAtlas() {
     const container = document.getElementById('atlasListContainer');
     try {
         const res = await fetch('/api/get-connection-requests?type=observations');
-        if (!res.ok) throw new Error('خطا در دریافت اطلس');
+        if (!res.ok) throw new Error('Error loading atlas');
         const data = await res.json();
-        // اصلاح شرط فیلتر برای نمایش همه موارد امتیاز ۵
         allAtlasItems = (data.observations || []).filter(obs => obs.score == 5 && (obs.status === 'approved' || obs.status === 'gallery'));
         renderAtlas(allAtlasItems);
     } catch (e) {
         console.error(e);
-        container.innerHTML = '<div class="empty-state">خطا در دریافت اطلس.</div>';
+        container.innerHTML = '<div class="empty-state">Error loading atlas.</div>';
     }
 }
 
 function renderAtlas(items) {
     const container = document.getElementById('atlasListContainer');
     if (items.length === 0) {
-        container.innerHTML = '<div class="empty-state">هنوز راه‌حلی با امتیاز ۵ ثبت نشده است.</div>';
+        container.innerHTML = '<div class="empty-state">No score 5 solutions registered yet.</div>';
         return;
     }
     container.innerHTML = items.map((item, index) => `
         <div class="achievement-item" onclick="openAtlasModal(${index})">
             <div class="item-info">
-                <h4>${item.observation ? item.observation.substring(0, 50) + '...' : 'مشاهده'}</h4>
-                <span class="item-meta">⭐ امتیاز ${item.score} | 📂 ${item.analysis?.adminCluster || 'عمومی'}</span>
+                <h4>${item.observation ? item.observation.substring(0, 50) + '...' : 'Observation'}</h4>
+                <span class="item-meta">⭐ Score ${item.score} | 📂 ${item.analysis?.adminCluster || 'General'}</span>
             </div>
-            <span style="font-size:0.9rem; color:#6a3d9a;">🏛️ جزئیات</span>
+            <span style="font-size:0.9rem; color:#6a3d9a;">🏛️ Details</span>
         </div>
     `).join('');
 }
-
-// ===== MODALS & FEEDBACK =====
-let currentModalItem = null;
 
 function openModal(index) {
     const item = allApproved[index];
     if (!item) return;
     currentModalItem = item;
-    
-    document.getElementById('modalTitle').textContent = item.title || 'بدون عنوان';
-    let descText = item.description || 'توضیحی موجود نیست';
+    document.getElementById('modalTitle').textContent = item.title || 'Untitled';
+    let descText = item.description || 'No description available';
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     descText = descText.replace(urlRegex, url => `<a href="${url}" target="_blank" style="color:#2874a6; text-decoration:underline;">${url}</a>`);
     document.getElementById('modalDesc').innerHTML = descText;
-    document.getElementById('modalMeta').textContent = `ارسال شده توسط: ${item.owner}`;
-    
-    // Hide Atlas-specific sections
+    document.getElementById('modalMeta').textContent = `Submitted by: ${item.owner}`;
     document.getElementById('modalGuide').style.display = 'none';
     document.getElementById('modalFeedback').style.display = 'none';
-
     const mediaDiv = document.getElementById('modalMediaContainer');
     const imageUrl = item.fileUrl || item.fileData;
     if (imageUrl) {
-        mediaDiv.innerHTML = `<img src="${imageUrl}" class="modal-media" style="width:100%;max-height:250px;object-fit:contain;background:#1a1a1a;" onerror="this.outerHTML='<p style=\\'padding:1rem;text-align:center;color:#888;\\'>❌ تصویر قابل نمایش نیست</p>'"/>`;
+        mediaDiv.innerHTML = `<img src="${imageUrl}" class="modal-media" style="width:100%;max-height:250px;object-fit:contain;background:#1a1a1a;" onerror="this.outerHTML='<p style=\\'padding:1rem;text-align:center;color:#888;\\'>❌ Image not available</p>'"/>`;
     } else {
-        mediaDiv.innerHTML = '<p style="padding:1rem;text-align:center;color:#888;">📄 فایلی موجود نیست</p>';
+        mediaDiv.innerHTML = '<p style="padding:1rem;text-align:center;color:#888;">📄 No file attached</p>';
     }
     document.getElementById('detailModal').classList.add('active');
 }
@@ -875,43 +810,34 @@ function openAtlasModal(index) {
     const item = allAtlasItems[index];
     if (!item) return;
     currentModalItem = item;
-
-    document.getElementById('modalTitle').textContent = '🏛️ مشاهده از اطلس ظهور';
-    document.getElementById('modalDesc').innerHTML = item.observation || 'متن مشاهده موجود نیست';
-    document.getElementById('modalMeta').textContent = `⭐ امتیاز: ${item.score} | وضعیت: ${item.status === 'approved' ? '✅ تایید شده' : '⏳ در انتظار'}`;
-    
-    // Show Media if exists
+    document.getElementById('modalTitle').textContent = '🏛️ Atlas of Emergence Observation';
+    document.getElementById('modalDesc').innerHTML = item.observation || 'Observation text not available';
+    document.getElementById('modalMeta').textContent = `⭐ Score: ${item.score} | Status: ${item.status === 'approved' ? '✅ Approved' : '⏳ Pending'}`;
     const mediaDiv = document.getElementById('modalMediaContainer');
     if (item.fileUrl) {
-         mediaDiv.innerHTML = `<img src="${item.fileUrl}" class="modal-media" onerror="this.style.display='none'"/>`;
+        mediaDiv.innerHTML = `<img src="${item.fileUrl}" class="modal-media" onerror="this.style.display='none'"/>`;
     } else {
-         mediaDiv.innerHTML = '';
+        mediaDiv.innerHTML = '';
     }
-
-    // Show AI Guide if exists
     const guideBox = document.getElementById('modalGuide');
     const guideContent = document.getElementById('guideContent');
     if (item.analysis && item.analysis.guide) {
         guideBox.style.display = 'block';
         guideContent.innerHTML = `
-            <div style="margin-bottom:0.3rem;"><strong>📍 سطح فردی:</strong> ${item.analysis.guide.individual}</div>
-            <div style="margin-bottom:0.3rem;"><strong>🌐 سطح شبکه‌ای:</strong> ${item.analysis.guide.network}</div>
-            <div><strong>🏛️ سطح سیاستی:</strong> ${item.analysis.guide.policy}</div>
+            <div style="margin-bottom:0.3rem;"><strong>📍 Individual:</strong> ${item.analysis.guide.individual}</div>
+            <div style="margin-bottom:0.3rem;"><strong>🌐 Network:</strong> ${item.analysis.guide.network}</div>
+            <div><strong>🏛️ Policy:</strong> ${item.analysis.guide.policy}</div>
         `;
     } else {
         guideBox.style.display = 'none';
     }
-
-    // Show Feedback Buttons
     document.getElementById('modalFeedback').style.display = 'block';
-    
     document.getElementById('detailModal').classList.add('active');
 }
 
 async function submitFeedback(type) {
     if (!currentModalItem) return;
-    alert(`متشکریم! بازخورد شما (${type}) برای شبکه مصلحان ثبت شد.`);
-    // Here you would normally send this to /api/submit-feedback
+    alert(`Thank you! Your feedback (${type}) has been recorded for the reformer network.`);
 }
 
 function closeModal(e) {
@@ -920,13 +846,11 @@ function closeModal(e) {
     }
 }
 
-// ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
     loadAchievements();
     loadAtlas();
 });
 
-// Theme
 if (localStorage.getItem('theme') === 'dark') {
     document.body.classList.add('dark');
 }
