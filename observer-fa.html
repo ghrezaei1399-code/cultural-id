@@ -397,11 +397,54 @@
     </div>
     
     <script>
-        // ... (کدهای قبلی مثل updateAddButton, addObservationBox, selectModule, removeBox و ...) ...
-        // فرض بر این است که این توابع در بالای فایل وجود دارند و کاری به آنها نداریم.
+       // ===== توابع حیاتی =====
+function selectModule(btn, module) {
+    const parent = btn.closest('.observation-box');
+    parent.querySelectorAll('.box-module-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+}
 
-        // ===== ۱. هسته کامل دانش و دستورات سپهر خردمندی =====
-        const SEPEHR_FULL_SYSTEM_PROMPT = `
+function removeBox(btn) {
+    const box = btn.closest('.observation-box');
+    if (document.querySelectorAll('.observation-box').length > 1) {
+        box.remove();
+    } else {
+        alert('حداقل یک باکس مشاهده باید وجود داشته باشد.');
+    }
+}
+
+function addObservationBox() {
+    const container = document.getElementById('observationsContainer');
+    const count = container.children.length + 1;
+    if (count > 5) return alert('حداکثر ۵ مشاهده مجاز است.');
+    
+    const div = document.createElement('div');
+    div.className = 'observation-box';
+    div.innerHTML = `
+        <div class="box-header">
+            <span class="box-title">📝 مشاهده ${count}</span>
+            <button class="box-module-btn" onclick="removeBox(this)" style="color:#c0392b;border-color:rgba(200,50,50,0.3);"><span class="icon">✕</span> حذف</button>
+        </div>
+        <textarea placeholder="مشاهده خام خود را بنویسید..." class="obs-text"></textarea>
+        <div class="box-modules">
+            <button class="box-module-btn" onclick="selectModule(this, 'collaboration')"><span class="icon">🤝</span> همفکری با دیگران</button>
+            <button class="box-module-btn" onclick="selectModule(this, 'related')"><span class="icon">👁️</span> مشاهدات مرتبط دیگران</button>
+            <button class="box-module-btn" onclick="selectModule(this, 'referral')"><span class="icon">📤</span> ارجاع به ۵ همفرهنگ</button>
+        </div>`;
+    container.appendChild(div);
+}
+
+function updateAddButton() {
+    const btn = document.getElementById('addBoxBtn');
+    const count = document.querySelectorAll('.observation-box').length;
+    if (btn) {
+        btn.disabled = count >= 5;
+        btn.textContent = count >= 5 ? '❌ حداکثر ۵ مشاهده' : '➕ افزودن مشاهده جدید (حداکثر ۵)';
+    }
+}
+
+// ===== ۱. هسته کامل دانش و دستورات سپهر خردمندی (فقط یک بار) =====
+const SEPEHR_FULL_SYSTEM_PROMPT = `
 === هویت تو ===
 تو "تحلیلگر ارشد سپهر خردمندی" هستی. وظیفه تو مشاهده عمیق، تحلیل ساختاری و راهنمایی کنشگران فرهنگی است.
 
@@ -447,254 +490,165 @@
 }
 `;
 
-        // ===== ۲. تابع اجرایی هوش مصنوعی (قلب تپنده سیستم) =====
-        async function smartAnalyzeObservation(text, language = 'fa') {
-            const prompt = `
-            ${SEPEHR_FULL_SYSTEM_PROMPT}
-            
-            ---
-            ورودی فعلی:
-            متن مشاهده: "${text}"
-            زبان درخواستی: ${language === 'fa' ? 'فارسی' : 'English'}
-            `;
-
-            try {
-                const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
-                const result = await response.text();
-                
-                try {
-                    return JSON.parse(result);
-                } catch (e) {
-                    console.error("AI did not return valid JSON:", result);
-                    return { status: 'error', message: 'خطا در فرمت پاسخ هوش مصنوعی' };
-                }
-            } catch (e) {
-                console.error("Connection Error:", e);
-                return { status: 'error', message: 'خطا در ارتباط با سرور هوش مصنوعی' };
-            }
-        }
-
-        // ===== ۳. تابع ثبت نهایی با اتصال به هوش مصنوعی =====
-        async function submitObservations() {
-            const userCode = document.getElementById('userCode').value.trim();
-            const boxes = document.querySelectorAll('.observation-box');
-            const observations = [];
-            let hasError = false;
-            
-            if (!userCode) {
-                alert('لطفاً کد کارت هویت فرهنگی خود را وارد کنید.');
-                return;
-            }
-            
-            // جمع‌آوری داده‌ها
-            boxes.forEach((box, index) => {
-                const text = box.querySelector('.obs-text').value.trim();
-                const selectedModule = box.querySelector('.box-module-btn.active');
-                const moduleType = selectedModule ? selectedModule.dataset.module : null;
-                
-                if (!text) {
-                    alert(`لطفاً مشاهده ${index + 1} را پر کنید.`);
-                    hasError = true;
-                    return;
-                }
-                
-                observations.push({
-                    text: text,
-                    module: moduleType,
-                    index: index + 1
-                });
-            });
-            
-            if (hasError) return;
-
-            const submitBtn = document.getElementById('submitBtn');
-            const resultBox = document.getElementById('resultBox');
-            const resultTitle = document.getElementById('resultTitle');
-            const resultTracking = document.getElementById('resultTracking');
-            const resultError = document.getElementById('resultError');
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = '🤖 در حال تحلیل هوشمند...';
-            resultBox.style.display = 'none';
-
-            try {
-                // ۱. بررسی هوشمند تک‌تک مشاهدات قبل از ثبت نهایی
-                for (let i = 0; i < observations.length; i++) {
-                    const obs = observations[i];
-                    const aiResult = await smartAnalyzeObservation(obs.text);
-
-                    if (aiResult.status === 'rejected') {
-                        throw new Error(`مشاهده شماره ${obs.index} با اصول سپهر خردمندی همخوانی ندارد. دلیل: ${aiResult.rejection_reason || 'نامشخص'}`);
-                    }
-                    
-                                      if (aiResult.status === 'error') {
-                        throw new Error(`خطا در تحلیل هوشمند مشاهده شماره ${obs.index}. لطفاً دوباره تلاش کنید.`);
-                    } else {
-                        // ذخیره تحلیل هوشمند در آبجکت مشاهده برای ارسال به سرور
-                        obs.aiAnalysis = aiResult;
-                    }  
-                }
-
-                // ۲. اگر همه چیز تایید شد، ارسال به سرور
-                submitBtn.textContent = '⏳ در حال ثبت نهایی...';
-
-                const response = await fetch('/api/submit-request', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        type: 'observations',
-                        cardCode: userCode,
-                        observations: observations.map(o => ({
-                            text: o.text,
-                            module: o.module,
-                            aiAnalysis: o.aiAnalysis 
-                        }))
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (!response.ok) {
-                    throw new Error(result.error || 'خطا در ثبت مشاهدات');
-                }
-                
-                resultTitle.textContent = '✅ مشاهدات با موفقیت ثبت و تحلیل شد';
-                resultTracking.textContent = `🔗 شماره پیگیری: ${result.trackingCode}`;
-                resultError.style.display = 'none';
-                resultBox.style.display = 'block';
-                
-                submitBtn.textContent = '✅ ثبت شد';
-                
-                // پاک کردن فرم
-                document.querySelectorAll('.obs-text').forEach(t => t.value = '');
-                document.querySelectorAll('.box-module-btn.active').forEach(b => b.classList.remove('active'));
-                
-            } catch (error) {
-                console.error('Error:', error);
-                resultTitle.textContent = '❌ خطا در ثبت مشاهدات';
-                resultError.textContent = error.message;
-                resultError.style.display = 'block';
-                resultBox.style.display = 'block';
-                submitBtn.textContent = '📤 تلاش مجدد';
-                submitBtn.disabled = false;
-            }
-        }
-
-        // مقداردهی اولیه
-        if (typeof updateAddButton === 'function') {
-            updateAddButton();
-        }
-        // ===== توابع حیاتی که در فایل شما گم شده بودند =====
-function selectModule(btn, module) {
-    const parent = btn.closest('.observation-box');
-    parent.querySelectorAll('.box-module-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-}
-
-function removeBox(btn) {
-    const box = btn.closest('.observation-box');
-    if (document.querySelectorAll('.observation-box').length > 1) {
-        box.remove();
-    } else {
-        alert('حداقل یک باکس مشاهده باید وجود داشته باشد.');
-    }
-}
-
-function addObservationBox() {
-    const container = document.getElementById('observationsContainer');
-    const count = container.children.length + 1;
-    if (count > 5) return alert('حداکثر ۵ مشاهده مجاز است.');
+// ===== ۲. تابع اجرایی هوش مصنوعی (قلب تپنده سیستم) =====
+async function smartAnalyzeObservation(text, language = 'fa') {
+    const prompt = `
+    ${SEPEHR_FULL_SYSTEM_PROMPT}
     
-    const div = document.createElement('div');
-    div.className = 'observation-box';
-    div.innerHTML = `
-        <div class="box-header">
-            <span class="box-title">📝 مشاهده ${count}</span>
-            <button class="box-module-btn" onclick="removeBox(this)" style="color:#c0392b;border-color:rgba(200,50,50,0.3);"><span class="icon">✕</span> حذف</button>
-        </div>
-        <textarea placeholder="مشاهده خام خود را بنویسید..." class="obs-text"></textarea>
-        <div class="box-modules">
-            <button class="box-module-btn" onclick="selectModule(this, 'collaboration')"><span class="icon">🤝</span> همفکری با دیگران</button>
-            <button class="box-module-btn" onclick="selectModule(this, 'related')"><span class="icon">👁️</span> مشاهدات مرتبط دیگران</button>
-            <button class="box-module-btn" onclick="selectModule(this, 'referral')"><span class="icon">📤</span> ارجاع به ۵ همفرهنگ</button>
-        </div>`;
-    container.appendChild(div);
-}
+    ---
+    ورودی فعلی:
+    متن مشاهده: "${text}"
+    زبان درخواستی: ${language === 'fa' ? 'فارسی' : 'English'}
+    `;
 
-function updateAddButton() {
-    // این تابع اگر در فایل اصلی شما هست نیازی به تعریف مجدد نیست
-}
-
-// ===== هسته دانش سپهر خردمندی (همان که قبلاً دادم) =====
-const SEPEHR_FULL_SYSTEM_PROMPT = `
-تو تحلیلگر ارشد سپهر خردمندی هستی. اصول: واقعیت‌محوری، مشاهده پیش از قضاوت، ظرفیت‌محوری، چندسپهری، کرامت انسانی.
-خوشه‌ها: انسان، دانش، حکمرانی، بقا.
-قواعد: محتوای تجاری، توهین‌آمیز یا غیرفرهنگی را REJECT کن.
-خروجی فقط JSON: {"status": "approved"|"rejected", "rejection_reason": "...", "cluster": "...", "score_suggestion": 1-5, "analysis_note": "...", "guide_individual": "...", "guide_network": "...", "guide_policy": "..."}
-`;
-
-async function smartAnalyzeObservation(text) {
-    const prompt = `${SEPEHR_FULL_SYSTEM_PROMPT}\nمتن: "${text}"`;
     try {
         const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
         const result = await response.text();
-        return JSON.parse(result);
+        
+        try {
+            return JSON.parse(result);
+        } catch (e) {
+            console.error("AI did not return valid JSON:", result);
+            return { status: 'error', message: 'خطا در فرمت پاسخ هوش مصنوعی' };
+        }
     } catch (e) {
-        return { status: 'error', message: 'خطا در ارتباط با هوش مصنوعی' };
+        console.error("Connection Error:", e);
+        return { status: 'error', message: 'خطا در ارتباط با سرور هوش مصنوعی' };
     }
 }
 
-// ===== تابع ثبت نهایی با سیاست سخت‌گیرانه =====
+// ===== ۳. تابع ثبت نهایی با اتصال به هوش مصنوعی =====
 async function submitObservations() {
     const userCode = document.getElementById('userCode').value.trim();
     const boxes = document.querySelectorAll('.observation-box');
     const observations = [];
+    let hasError = false;
     
-    if (!userCode) return alert('کد کارت را وارد کنید.');
+    if (!userCode) {
+        alert('لطفاً کد کارت هویت فرهنگی خود را وارد کنید.');
+        return;
+    }
     
+    // جمع‌آوری داده‌ها
     boxes.forEach((box, index) => {
         const text = box.querySelector('.obs-text').value.trim();
-        const activeBtn = box.querySelector('.box-module-btn.active');
-        if (text) observations.push({ text, module: activeBtn ? activeBtn.dataset.module : null, index: index + 1 });
+        const selectedModule = box.querySelector('.box-module-btn.active');
+        const moduleType = selectedModule ? selectedModule.dataset.module : null;
+        
+        if (!text) {
+            alert(`لطفاً مشاهده ${index + 1} را پر کنید.`);
+            hasError = true;
+            return;
+        }
+        
+        observations.push({
+            text: text,
+            module: moduleType,
+            index: index + 1
+        });
     });
-
-    if (observations.length === 0) return alert('متنی ننوشته‌اید.');
+    
+    if (hasError) return;
 
     const submitBtn = document.getElementById('submitBtn');
     const resultBox = document.getElementById('resultBox');
+    const resultTitle = document.getElementById('resultTitle');
+    const resultTracking = document.getElementById('resultTracking');
+    const resultError = document.getElementById('resultError');
+
     submitBtn.disabled = true;
-    submitBtn.textContent = '🤖 در حال تحلیل...';
+    submitBtn.textContent = '🤖 در حال تحلیل هوشمند...';
     resultBox.style.display = 'none';
 
     try {
-        for (let obs of observations) {
+        // ۱. بررسی هوشمند تک‌تک مشاهدات قبل از ثبت نهایی
+        for (let i = 0; i < observations.length; i++) {
+            const obs = observations[i];
             const aiResult = await smartAnalyzeObservation(obs.text);
-            if (aiResult.status === 'rejected') throw new Error(`مشاهده ${obs.index} رد شد: ${aiResult.rejection_reason}`);
-            if (aiResult.status === 'error') throw new Error(`خطا در تحلیل هوشمند مشاهده ${obs.index}. لطفاً دوباره تلاش کنید.`);
-            obs.aiAnalysis = aiResult;
+
+            if (aiResult.status === 'rejected') {
+                throw new Error(`مشاهده شماره ${obs.index} با اصول سپهر خردمندی همخوانی ندارد. دلیل: ${aiResult.rejection_reason || 'نامشخص'}`);
+            }
+            
+            if (aiResult.status === 'error') {
+                throw new Error(`خطا در تحلیل هوشمند مشاهده شماره ${obs.index}. لطفاً دوباره تلاش کنید.`);
+            } else {
+                // ذخیره تحلیل هوشمند در آبجکت مشاهده برای ارسال به سرور
+                obs.aiAnalysis = aiResult;
+            }  
         }
+
+        // ۲. اگر همه چیز تایید شد، ارسال به سرور
+        submitBtn.textContent = '⏳ در حال ثبت نهایی...';
 
         const response = await fetch('/api/submit-request', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ type: 'observations', cardCode: userCode, observations })
+            body: JSON.stringify({
+                type: 'observations',
+                cardCode: userCode,
+                observations: observations.map(o => ({
+                    text: o.text,
+                    module: o.module,
+                    aiAnalysis: o.aiAnalysis 
+                }))
+            })
         });
         
         const result = await response.json();
-        if (!response.ok) throw new Error(result.error);
         
-        document.getElementById('resultTitle').textContent = '✅ ثبت موفق';
-        document.getElementById('resultTracking').textContent = `کد پیگیری: ${result.trackingCode}`;
+        if (!response.ok) {
+            throw new Error(result.error || 'خطا در ثبت مشاهدات');
+        }
+        
+        resultTitle.textContent = '✅ مشاهدات با موفقیت ثبت و تحلیل شد';
+        resultTracking.textContent = `🔗 شماره پیگیری: ${result.trackingCode}`;
+        resultError.style.display = 'none';
         resultBox.style.display = 'block';
+        
         submitBtn.textContent = '✅ ثبت شد';
+        
+        // پاک کردن فرم
+        document.querySelectorAll('.obs-text').forEach(t => t.value = '');
+        document.querySelectorAll('.box-module-btn.active').forEach(b => b.classList.remove('active'));
+        
+        // به‌روزرسانی دکمه افزودن
+        updateAddButton();
+        
     } catch (error) {
-        document.getElementById('resultTitle').textContent = '❌ خطا';
-        document.getElementById('resultError').textContent = error.message;
+        console.error('Error:', error);
+        resultTitle.textContent = '❌ خطا در ثبت مشاهدات';
+        resultError.textContent = error.message;
+        resultError.style.display = 'block';
         resultBox.style.display = 'block';
-        submitBtn.disabled = false;
         submitBtn.textContent = '📤 تلاش مجدد';
+        submitBtn.disabled = false;
     }
 }
+
+// ===== مقداردهی اولیه =====
+document.addEventListener('DOMContentLoaded', function() {
+    updateAddButton();
+    
+    // اطمینان از اینکه دکمه افزودن همیشه به‌روز باشد
+    document.querySelectorAll('.observation-box').forEach(box => {
+        const observer = new MutationObserver(updateAddButton);
+        observer.observe(box, { childList: true, subtree: true });
+    });
+});
+
+// ===== پشتیبانی از دکمه حذف در باکس اول =====
+// اطمینان از اینکه باکس اول قابل حذف نباشد (اختیاری)
+document.addEventListener('DOMContentLoaded', function() {
+    const firstBox = document.querySelector('.observation-box');
+    if (firstBox) {
+        const removeBtn = firstBox.querySelector('.box-module-btn[onclick*="removeBox"]');
+        if (removeBtn) {
+            // اجازه حذف باکس اول را می‌دهیم اما پیام می‌دهیم
+            // (کد قبلی در تابع removeBox این کار را انجام می‌دهد)
+        }
+    }
+});
     </script>
 </body>
 </html>
