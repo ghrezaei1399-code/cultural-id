@@ -542,6 +542,114 @@ You are the "Senior Analyst of the Sphere of Wisdom". Your task is deep observat
         if (typeof updateAddButton === 'function') {
             updateAddButton();
         }
+       // ===== Vital Helper Functions for English File =====
+function selectModule(btn, module) {
+    const parent = btn.closest('.observation-box');
+    parent.querySelectorAll('.box-module-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+}
+
+function removeBox(btn) {
+    const box = btn.closest('.observation-box');
+    if (document.querySelectorAll('.observation-box').length > 1) {
+        box.remove();
+    } else {
+        alert('At least one observation box is required.');
+    }
+}
+
+function addObservationBox() {
+    const container = document.getElementById('observationsContainer');
+    const count = container.children.length + 1;
+    if (count > 5) return alert('Maximum 5 observations allowed.');
+    
+    const div = document.createElement('div');
+    div.className = 'observation-box';
+    div.innerHTML = `
+        <div class="box-header">
+            <span class="box-title">📝 Observation ${count}</span>
+            <button class="box-module-btn" onclick="removeBox(this)" style="color:#c0392b;border-color:rgba(200,50,50,0.3);"><span class="icon">✕</span> Remove</button>
+        </div>
+        <textarea placeholder="Write your raw observation here..." class="obs-text"></textarea>
+        <div class="box-modules">
+            <button class="box-module-btn" onclick="selectModule(this, 'collaboration')"><span class="icon">🤝</span> Collaborate</button>
+            <button class="box-module-btn" onclick="selectModule(this, 'related')"><span class="icon">👁️</span> Related Views</button>
+            <button class="box-module-btn" onclick="selectModule(this, 'referral')"><span class="icon">📤</span> Refer to 5 Peers</button>
+        </div>`;
+    container.appendChild(div);
+}
+
+// ===== Sphere of Wisdom Core Knowledge (English Version) =====
+const SEPEHR_FULL_SYSTEM_PROMPT_EN = `
+You are the "Senior Analyst of the Sphere of Wisdom". 
+Principles: Reality-based, Observation before Judgment, Capacity-oriented, Multi-sphere, Human Dignity.
+Clusters: Human, Knowledge, Governance, Survival.
+Rules: REJECT any commercial, offensive, or non-cultural content.
+Output must be ONLY JSON: {"status": "approved"|"rejected", "rejection_reason": "...", "cluster": "...", "score_suggestion": 1-5, "analysis_note": "...", "guide_individual": "...", "guide_network": "...", "guide_policy": "..."}
+`;
+
+async function smartAnalyzeObservation(text) {
+    const prompt = `${SEPEHR_FULL_SYSTEM_PROMPT_EN}\nObservation Text: "${text}"`;
+    try {
+        const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
+        const result = await response.text();
+        return JSON.parse(result);
+    } catch (e) {
+        return { status: 'error', message: 'AI connection error' };
+    }
+}
+
+// ===== Final Submission with Strict Policy =====
+async function submitObservations() {
+    const userCode = document.getElementById('userCode').value.trim();
+    const boxes = document.querySelectorAll('.observation-box');
+    const observations = [];
+    
+    if (!userCode) return alert('Please enter your Cultural Identity Card Code.');
+    
+    boxes.forEach((box, index) => {
+        const text = box.querySelector('.obs-text').value.trim();
+        const activeBtn = box.querySelector('.box-module-btn.active');
+        if (text) observations.push({ text, module: activeBtn ? activeBtn.dataset.module : null, index: index + 1 });
+    });
+
+    if (observations.length === 0) return alert('No text entered.');
+
+    const submitBtn = document.getElementById('submitBtn');
+    const resultBox = document.getElementById('resultBox');
+    submitBtn.disabled = true;
+    submitBtn.textContent = '🤖 Analyzing...';
+    resultBox.style.display = 'none';
+
+    try {
+        for (let obs of observations) {
+            const aiResult = await smartAnalyzeObservation(obs.text);
+            if (aiResult.status === 'rejected') throw new Error(`Observation ${obs.index} rejected: ${aiResult.rejection_reason}`);
+            if (aiResult.status === 'error') throw new Error(`AI analysis failed for observation ${obs.index}. Please try again.`);
+            obs.aiAnalysis = aiResult;
+        }
+
+        const response = await fetch('/api/submit-request', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'observations', cardCode: userCode, observations })
+        });
+        
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error);
+        
+        document.getElementById('resultTitle').textContent = '✅ Successfully Registered';
+        document.getElementById('resultTracking').textContent = `Tracking Code: ${result.trackingCode}`;
+        resultBox.style.display = 'block';
+        submitBtn.textContent = '✅ Submitted';
+    } catch (error) {
+        document.getElementById('resultTitle').textContent = '❌ Error';
+        document.getElementById('resultError').textContent = error.message;
+        resultBox.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.textContent = '📤 Try Again';
+    }
+} 
     </script>
 </body>
 </html>
