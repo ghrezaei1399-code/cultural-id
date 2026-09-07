@@ -30,7 +30,21 @@ module.exports = async function handler(req, res) {
     // ===== بخش جدید: تحلیل هوش مصنوعی =====
     if (type === 'ai-analyze') {
       try {
-        const prompt = `متن: "${text}" را تحلیل کن. فقط JSON برگردان: {"status":"approved" یا "rejected","rejection_reason":"دلیل یا null","cluster":"human/knowledge/governance/survival یا null","score_suggestion":عدد 1-5,"analysis_note":"تحلیل","guide_individual":"راهنمای فردی","guide_network":"راهنمای شبکه‌ای","guide_policy":"راهنمای سیاستی"}`;
+       const prompt = `شما تحلیلگر سپهر خردمندی هستید. متن زیر را تحلیل کنید و فقط یک JSON معتبر برگردانید. هیچ توضیح اضافی ننویسید.
+
+متن: "${text}"
+
+خروجی دقیقاً این ساختار را داشته باشد:
+{
+    "status": "approved",
+    "rejection_reason": null,
+    "cluster": "human",
+    "score_suggestion": 4,
+    "analysis_note": "این یک مشاهده فرهنگی درباره کمبود فضای فرهنگی برای جوانان است",
+    "guide_individual": "یک فضای فرهنگی کوچک در محله ایجاد کنید",
+    "guide_network": "با ۳ هم‌فرهنگ برای راه‌اندازی برنامه گفتگو کنید",
+    "guide_policy": "از شهرداری بخواهید بودجه برای فضاهای فرهنگی اختصاص دهد"
+}`;
         
         const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
         const aiText = await response.text();
