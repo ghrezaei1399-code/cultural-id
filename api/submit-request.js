@@ -28,42 +28,35 @@ module.exports = async function handler(req, res) {
     const repo = 'cultural-id';
 
     // ============================================================
-    // ===== بخش تحلیل هوش مصنوعی (اصلاح‌شده نهایی با راهنمای عمیق) =====
+    // ===== بخش تحلیل هوش مصنوعی =====
     // ============================================================
     if (type === 'ai-analyze') {
       try {
-        // ===== تشخیص زبان =====
         const isPersian = /[\u0600-\u06FF]/.test(text);
         
-        // ===== پرامپت فارسی (با راهنمای دقیق) =====
         const promptFa = `متن: "${text}" را تحلیل کن. فقط JSON برگردان.
 
-JSON باید دقیقاً این شکلی باشد:
-{"status":"approved","rejection_reason":null,"cluster":"human","score_suggestion":3,"analysis_note":"تحلیل عمیق","guide_individual":"یک اقدام کوچک و عملی برای فرد","guide_network":"چگونه با ۳ تا ۵ نفر هماهنگ شود","guide_policy":"یک سوال یا پیشنهاد برای تغییر ساختار"}
-
 قوانین:
-- اگر متن تجاری، تبلیغاتی، یا درخواست راهنمایی عملی است → status: "rejected"
-- خوشه: human, knowledge, governance, survival
-- analysis_note: عمیق و مبتنی بر متن (حداقل ۲۰ کلمه)
-- guide_individual: دقیق، عملی و قابل انجام در ۲۴ ساعت (حداقل ۱۵ کلمه)
-- guide_network: دقیق، عملی و قابل انجام با دیگران (حداقل ۱۵ کلمه)
-- guide_policy: دقیق، عملی و ساختاری (حداقل ۱۵ کلمه)
+- status: "approved" یا "rejected"
+- cluster: human یا knowledge یا governance یا survival
+- score_suggestion: عدد 1 تا 5
+- analysis_note: تحلیل مبتنی بر متن
+- guide_individual: راهنمای عملی برای فرد
+- guide_network: راهنمای عملی برای شبکه
+- guide_policy: راهنمای عملی برای سیاست
 
 فقط JSON برگردان.`;
 
-        // ===== پرامپت انگلیسی (با راهنمای دقیق) =====
         const promptEn = `Analyze: "${text}". Return ONLY JSON.
 
-JSON must be exactly:
-{"status":"approved","rejection_reason":null,"cluster":"human","score_suggestion":3,"analysis_note":"Deep analysis","guide_individual":"A small practical action for individual","guide_network":"How to coordinate with 3-5 people","guide_policy":"A question or proposal for structural change"}
-
 Rules:
-- If commercial, promotional, or practical guidance request → status: "rejected"
-- Cluster: human, knowledge, governance, survival
-- analysis_note: deep and based on text (minimum 20 words)
-- guide_individual: specific, practical, doable in 24 hours (minimum 15 words)
-- guide_network: specific, practical, doable with others (minimum 15 words)
-- guide_policy: specific, practical, structural (minimum 15 words)
+- status: "approved" or "rejected"
+- cluster: human or knowledge or governance or survival
+- score_suggestion: number 1-5
+- analysis_note: analysis based on text
+- guide_individual: practical guide for individual
+- guide_network: practical guide for network
+- guide_policy: practical guide for policy
 
 Return ONLY JSON.`;
 
@@ -72,7 +65,6 @@ Return ONLY JSON.`;
         const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
         const aiText = await response.text();
         
-        // استخراج JSON
         let jsonStr = aiText;
         const s = aiText.indexOf('{');
         const e = aiText.lastIndexOf('}');
@@ -80,19 +72,17 @@ Return ONLY JSON.`;
           jsonStr = aiText.substring(s, e + 1);
         }
         
-        // پارس کردن JSON
         const analysis = JSON.parse(jsonStr);
         
-        // ===== اطمینان از وجود همه فیلدها =====
         const result = {
           status: analysis.status || "approved",
           rejection_reason: analysis.rejection_reason || null,
           cluster: analysis.cluster || "human",
           score_suggestion: analysis.score_suggestion || 3,
-          analysis_note: analysis.analysis_note || (isPersian ? "تحلیل عمیق" : "Deep analysis"),
-          guide_individual: analysis.guide_individual || (isPersian ? "یک اقدام کوچک و عملی برای فرد" : "A small practical action for individual"),
-          guide_network: analysis.guide_network || (isPersian ? "چگونه با ۳ تا ۵ نفر هماهنگ شود" : "How to coordinate with 3-5 people"),
-          guide_policy: analysis.guide_policy || (isPersian ? "یک سوال یا پیشنهاد برای تغییر ساختار" : "A question or proposal for structural change")
+          analysis_note: analysis.analysis_note || (isPersian ? "تحلیل" : "Analysis"),
+          guide_individual: analysis.guide_individual || (isPersian ? "راهنمای فردی" : "Individual guide"),
+          guide_network: analysis.guide_network || (isPersian ? "راهنمای شبکه‌ای" : "Network guide"),
+          guide_policy: analysis.guide_policy || (isPersian ? "راهنمای سیاستی" : "Policy guide")
         };
         
         return res.status(200).json({ success: true, analysis: result });
@@ -405,7 +395,6 @@ ${aiSection}
       });
     }
 
-    // ===== درخواست نامشخص =====
     return res.status(400).json({ error: 'Invalid request type.' });
 
   } catch (error) {
