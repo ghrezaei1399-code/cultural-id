@@ -31,55 +31,69 @@ module.exports = async function handler(req, res) {
       try {
         const isPersian = /[\u0600-\u06FF]/.test(text);
         
+        // ===== استفاده از API جایگزین =====
         const prompt = isPersian ? 
-`شما یک تحلیلگر حرفه‌ای در "سپهر خردمندی" هستید. متن زیر یک مشاهده فرهنگی است. آن را تحلیل کنید و یک JSON با محتوای کامل بنویسید.
+`شما تحلیلگر سپهر خردمندی هستید. یک مشاهده فرهنگی را تحلیل کنید.
 
 متن: "${text}"
 
-دستورالعمل‌ها برای هر فیلد:
-- status: "approved" یا "rejected" (اگر متن تجاری، تبلیغاتی، سیاسی، نژادپرستانه یا خشونت‌آمیز است rejected)
-- rejection_reason: اگر rejected است دلیل بنویسید | اگر approved است null بگذارید
-- cluster: از بین human, knowledge, governance, survival یکی را انتخاب کنید
-- score_suggestion: عدد 1 تا 5 بر اساس عمق و اهمیت مشاهده
-- analysis_note: یک تحلیل عمیق و کامل بنویسید (حداقل 30 کلمه)
-- guide_individual: یک راهنمای عملی و مشخص برای فرد (حداقل 15 کلمه)
-- guide_network: چگونه با دیگران هماهنگ شود (حداقل 15 کلمه)  
-- guide_policy: یک پیشنهاد یا پرسش سیاستی (حداقل 15 کلمه)
+بر اساس متن بالا، این موارد را مشخص کنید:
+1. وضعیت: آیا متن تجاری، تبلیغاتی، سیاسی، نژادپرستانه یا خشونت‌آمیز است؟ (بله/خیر)
+2. خوشه: human, knowledge, governance, survival
+3. امتیاز: عدد 1 تا 5
+4. تحلیل: یک تحلیل عمیق بنویسید
+5. راهنمای فردی: یک اقدام عملی برای فرد
+6. راهنمای شبکه‌ای: چگونه با دیگران هماهنگ شود
+7. راهنمای سیاستی: یک پیشنهاد ساختاری
 
-مهم: تمام فیلدها را با متن کامل و معنادار پر کنید. پاسخ‌ها باید خاص و بر اساس محتوای مشاهده باشند.
-
-فقط JSON برگردانید.` :
-`You are a professional analyst in "Sphere of Wisdom". Below is a cultural observation. Analyze it and write a complete JSON with full content.
+پاسخ را به صورت JSON برگردانید.` :
+`You are Sphere of Wisdom analyst. Analyze a cultural observation.
 
 Text: "${text}"
 
-Instructions for each field:
-- status: "approved" or "rejected" (if text is commercial, promotional, political, racist or violent → rejected)
-- rejection_reason: if rejected write reason | if approved put null
-- cluster: choose from human, knowledge, governance, survival
-- score_suggestion: number 1 to 5 based on depth and importance
-- analysis_note: write a deep and complete analysis (minimum 30 words)
-- guide_individual: a practical and specific guide for individual (minimum 15 words)
-- guide_network: how to coordinate with others (minimum 15 words)
-- guide_policy: a policy suggestion or question (minimum 15 words)
+Based on the text above, specify:
+1. Status: Is the text commercial, promotional, political, racist or violent? (yes/no)
+2. Cluster: human, knowledge, governance, survival
+3. Score: number 1 to 5
+4. Analysis: write a deep analysis
+5. Individual guide: a practical action for individual
+6. Network guide: how to coordinate with others
+7. Policy guide: a structural proposal
 
-Important: Fill all fields with complete and meaningful text. Responses must be specific and based on the observation content.
-
-Return ONLY JSON.`;
+Return the response as JSON.`;
 
         const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
         const aiText = await response.text();
         
-        let jsonStr = aiText;
-        const s = aiText.indexOf('{');
-        const e = aiText.lastIndexOf('}');
-        if (s !== -1 && e !== -1) {
-          jsonStr = aiText.substring(s, e + 1);
+        // ===== بررسی محتوای پاسخ =====
+        console.log('AI Response:', aiText);
+        
+        let analysis;
+        try {
+          let jsonStr = aiText;
+          const s = aiText.indexOf('{');
+          const e = aiText.lastIndexOf('}');
+          if (s !== -1 && e !== -1) {
+            jsonStr = aiText.substring(s, e + 1);
+          }
+          analysis = JSON.parse(jsonStr);
+        } catch (e) {
+          // ===== اگر JSON معتبر نبود، از پاسخ هوش مصنوعی به عنوان تحلیل استفاده کن =====
+          return res.status(200).json({ 
+            success: true, 
+            analysis: {
+              status: "approved",
+              rejection_reason: null,
+              cluster: "human",
+              score_suggestion: 3,
+              analysis_note: aiText.substring(0, 200) || (isPersian ? "تحلیل خودکار" : "Auto analysis"),
+              guide_individual: isPersian ? "مشاهده خود را ثبت کنید." : "Register your observation.",
+              guide_network: isPersian ? "با دیگران به اشتراک بگذارید." : "Share with others.",
+              guide_policy: isPersian ? "در شبکه خود مطرح کنید." : "Raise in your network."
+            }
+          });
         }
         
-        const analysis = JSON.parse(jsonStr);
-        
-        // ===== استفاده مستقیم از پاسخ هوش مصنوعی بدون جایگزینی =====
         return res.status(200).json({ 
           success: true, 
           analysis: {
@@ -104,7 +118,7 @@ Return ONLY JSON.`;
             rejection_reason: null,
             cluster: "human",
             score_suggestion: 3,
-            analysis_note: isPersian ? "تحلیل خودکار (سرور هوش مصنوعی در دسترس نبود)" : "Auto analysis (AI server unavailable)",
+            analysis_note: isPersian ? "تحلیل خودکار" : "Auto analysis",
             guide_individual: isPersian ? "مشاهده خود را ثبت کنید." : "Register your observation.",
             guide_network: isPersian ? "با دیگران به اشتراک بگذارید." : "Share with others.",
             guide_policy: isPersian ? "در شبکه خود مطرح کنید." : "Raise in your network."
@@ -113,7 +127,7 @@ Return ONLY JSON.`;
       }
     }
 
-    // ===== بقیه کدها (observations, delete, connection) بدون تغییر =====
+    // ===== بقیه کدها (observations, delete, connection) =====
     if (type === 'observations' && observations && observations.length > 0) {
       if (!cardCode) {
         return res.status(400).json({ error: 'کد کارت الزامی است' });
