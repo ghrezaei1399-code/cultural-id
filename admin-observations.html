@@ -559,7 +559,6 @@
             }
             
             container.innerHTML = filtered.map(obs => {
-                // تشخیص خوشه از تحلیل AI یا خودکار
                 let cluster = 'other';
                 let aiAnalysis = null;
                 
@@ -604,7 +603,6 @@
                 const analysis = obs.analysis || {};
                 const guide = analysis.guide || {};
                 
-                // نمایش تحلیل AI
                 let aiHtml = '';
                 if (aiAnalysis) {
                     aiHtml = `
@@ -783,7 +781,6 @@
             const obs = allObservations.find(o => o.number === parseInt(issueNumber));
             if (!obs) return;
             
-            // استفاده از خوشه تعیین شده توسط ادمین یا AI
             let cluster = 'other';
             if (obs.analysis && obs.analysis.adminCluster) {
                 cluster = obs.analysis.adminCluster;
@@ -922,7 +919,9 @@
             } catch (error) { alert('خطا: ' + error.message); }
         }
         
-        // ===== دستیار هوشمند ادمین =====
+        // ============================================================
+        // ===== دستیار هوشمند ادمین با OpenRouter =====
+        // ============================================================
         const SEPEHR_ADMIN_PROMPT = `
 === هویت تو ===
 تو "تحلیلگر ارشد سپهر خردمندی" هستی. وظیفه تو کمک به ادمین برای تحلیل عمیق مشاهدات است.
@@ -944,28 +943,79 @@
     "guide_individual": "بسته راهنما - سطح فردی (اقدام کوچک و مستند)",
     "guide_network": "بسته راهنما - سطح شبکه‌ای (ارتباط با هم‌فرهنگان)",
     "guide_policy": "بسته راهنما - سطح سیاستی (پرسشگری مستند)"
-}
-`;
+}`;
 
         async function generateAdminAnalysis(obsText) {
-            const prompt = `${SEPEHR_ADMIN_PROMPT}\n\nمشاهده: "${obsText}"`;
             try {
-                const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
-                const result = await response.text();
+                const isPersian = /[\u0600-\u06FF]/.test(obsText);
+                const systemPrompt = isPersian ? SEPEHR_ADMIN_PROMPT : `You are a senior analyst of the "Sphere of Wisdom" framework. Help the admin with deep analysis of observations.
+
+**Output Structure (JSON only):**
+{
+    "cluster": "human" | "knowledge" | "governance" | "survival",
+    "emergence": "Emergence Matrix (4 items)",
+    "layer": "Layers Matrix (individual, social, institutional, global)",
+    "connection": "Connections Matrix with other spheres",
+    "scale": "Scale Matrix (local, regional, global)",
+    "capacity": "Capacity Matrix (4 neglected capacities)",
+    "note": "Analytical note for admin (concise and deep)",
+    "guide_individual": "Guide - Individual level (small documented action)",
+    "guide_network": "Guide - Network level (connect with like-minded)",
+    "guide_policy": "Guide - Policy level (documented questioning)"
+}`;
+
+                const userPrompt = isPersian ?
+`مشاهده: "${obsText}"
+
+تحلیل بر اساس چارچوب سپهر خردمندی. فقط JSON برگردان.` :
+`Observation: "${obsText}"
+
+Analyze based on the Sphere of Wisdom framework. Return ONLY JSON.`;
+
+                const openRouterKey = process.env.OPENROUTER_API_KEY;
                 
-                let cleanedResult = result;
-                const jsonStart = result.indexOf('{');
-                const jsonEnd = result.lastIndexOf('}');
-                if (jsonStart !== -1 && jsonEnd !== -1) {
-                    cleanedResult = result.substring(jsonStart, jsonEnd + 1);
-                }
-                
-                try {
-                    return JSON.parse(cleanedResult);
-                } catch (e) {
-                    console.error("AI Admin analysis parse error:", cleanedResult);
+                // اگر کلید OpenRouter وجود نداشت یا در مرورگر هستیم، از fallback استفاده کن
+                if (!openRouterKey || typeof openRouterKey === 'undefined') {
+                    console.warn('OPENROUTER_API_KEY not found, using fallback');
                     return null;
                 }
+
+                const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${openRouterKey}`,
+                        'HTTP-Referer': window.location.origin || 'https://cultural-id.vercel.app',
+                        'X-Title': 'Global Smart Cultural Identity',
+                    },
+                    body: JSON.stringify({
+                        model: 'google/gemini-2.0-flash-exp:free',
+                        messages: [
+                            { role: 'system', content: systemPrompt },
+                            { role: 'user', content: userPrompt }
+                        ],
+                        temperature: 0.8,
+                        max_tokens: 1200,
+                        response_format: { type: 'json_object' }
+                    })
+                });
+
+                if (!response.ok) {
+                    console.error('OpenRouter Error:', response.status);
+                    return null;
+                }
+
+                const data = await response.json();
+                const content = data.choices?.[0]?.message?.content || '{}';
+                
+                let jsonStr = content;
+                const s = content.indexOf('{');
+                const e = content.lastIndexOf('}');
+                if (s !== -1 && e !== -1) {
+                    jsonStr = content.substring(s, e + 1);
+                }
+                
+                return JSON.parse(jsonStr);
             } catch (error) {
                 console.error("AI Admin Analysis Error:", error);
                 return null;
@@ -985,7 +1035,6 @@
             const analysis = await generateAdminAnalysis(obs.observation);
             
             if (analysis) {
-                // تنظیم خوشه
                 const clusterSelect = document.getElementById(`adminClusterSelect-${issueNumber}`);
                 if (clusterSelect && analysis.cluster) {
                     clusterSelect.value = analysis.cluster;
@@ -998,10 +1047,8 @@
                 document.getElementById(`capacity-${issueNumber}`).value = analysis.capacity || '';
                 document.getElementById(`adminNote-${issueNumber}`).value = analysis.note || '';
                 
-                // به‌روزرسانی کلیدواژه‌ها
                 updateKeywordsView(issueNumber, analysis.cluster || 'other');
                 
-                // ذخیره موقت راهنماها
                 window.tempGuides = {
                     individual: analysis.guide_individual,
                     network: analysis.guide_network,
@@ -1010,7 +1057,7 @@
 
                 alert('✅ تحلیل هوشمند آماده شد. لطفاً بررسی و ذخیره کنید.');
             } else {
-                alert('❌ خطا در دریافت تحلیل هوشمند.');
+                alert('❌ خطا در دریافت تحلیل هوشمند. لطفاً دوباره تلاش کنید.');
             }
 
             if(btn) {
