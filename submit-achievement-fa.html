@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>ثبت آثار نام‌آوران | سپهر خردمندی</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+            background: linear-gradient(-45deg, #e8f4f8, #fdf6e3, #f5e6d3, #e0f7fa);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #2a1a0a;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        body.dark { 
+            background: linear-gradient(-45deg, #0f3460, #1a1a2e, #16213e, #232526);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #f0e8d0; 
+        }
+        .container {
+            max-width: 750px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 48px;
+            padding: 3rem 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s ease;
+        }
+        body.dark .container { background: rgba(0, 0, 0, 0.45); border-color: rgba(255, 255, 255, 0.1); }
+        
+        h1 {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #8a6d1f;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+        }
+        body.dark h1 { color: #ffd700; }
+        
+        .subtitle {
+            text-align: center;
+            font-size: 1rem;
+            color: #6a5a3a;
+            opacity: 0.9;
+            margin-bottom: 2.5rem;
+            border-bottom: 2px dashed rgba(138, 109, 31, 0.2);
+            padding-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        body.dark .subtitle { color: #c8b890; }
+
+        .form-group { margin-bottom: 1.8rem; position: relative; }
+        .form-group label {
+            display: block;
+            font-weight: 800;
+            font-size: 0.95rem;
+            color: #4a3a2a;
+            margin-bottom: 0.6rem;
+        }
+        body.dark .form-group label { color: #e8d8c8; }
+        
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 1.2rem;
+            border-radius: 20px;
+            border: 2px solid transparent;
+            background: rgba(255, 255, 255, 0.7);
+            font-family: inherit;
+            font-size: 1rem;
+            color: #2a1a0a;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            outline: none;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.03);
+        }
+        body.dark .form-group input, body.dark .form-group textarea, body.dark .form-group select {
+            background: rgba(0, 0, 0, 0.35);
+            color: #f0e8d0;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            background: #fff;
+            border-color: #d4af37;
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.2);
+            transform: translateY(-3px);
+        }
+        body.dark .form-group input:focus { background: #1a1a2e; border-color: #ffd700; }
+
+        .upload-zone {
+            border: 3px dashed #d4af37;
+            border-radius: 30px;
+            padding: 3rem 1rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            background: rgba(255, 255, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        .upload-zone:hover { 
+            background: rgba(255, 255, 255, 0.8); 
+            border-color: #8a6d1f; 
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
+        }
+        body.dark .upload-zone { background: rgba(0,0,0,0.2); border-color: #ffd700; }
+        body.dark .upload-zone:hover { background: rgba(0,0,0,0.3); }
+        
+        .upload-zone .icon { font-size: 3rem; display: block; margin-bottom: 1rem; animation: floatIcon 3s ease-in-out infinite; }
+        @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        
+        .file-name { 
+            font-size: 1rem; 
+            color: #2874a6; 
+            margin-top: 1rem; 
+            display: block; 
+            font-weight: 800; 
+            background: rgba(40, 116, 166, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        body.dark .file-name { color: #85c1e9; background: rgba(133, 193, 233, 0.1); }
+
+        .btn-group { display: flex; gap: 1.2rem; margin-top: 2.5rem; flex-wrap: wrap; }
+        .btn {
+            flex: 1;
+            padding: 1.2rem 2rem;
+            border-radius: 60px;
+            font-weight: 900;
+            font-size: 1.1rem;
+            text-decoration: none;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            min-width: 150px;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #d4af37, #f9e79f);
+            color: #2a1a0a;
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+        }
+        .btn-primary:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 15px 35px rgba(212, 175, 55, 0.4); }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.6);
+            color: #6a5a3a;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+        }
+        .btn-secondary:hover { background: #fff; color: #8a6d1f; transform: translateY(-3px); }
+
+        .note {
+            text-align: center;
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin-top: 2.5rem;
+            color: #6a5a3a;
+            font-weight: 600;
+        }
+        
+        .theme-toggle {
+            position: fixed; top: 1.5rem; right: 1.5rem;
+            background: rgba(255, 255, 255, 0.7);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            font-size: 1.6rem; cursor: pointer;
+            padding: 0.6rem 1.2rem; border-radius: 60px;
+            transition: 0.4s; color: #8a6d1f;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+        .theme-toggle:hover { transform: rotate(30deg) scale(1.15); background: #fff; }
+        body.dark .theme-toggle { background: rgba(0,0,0,0.5); color: #ffd700; border-color: rgba(255,255,255,0.1); }
+
+        .status-msg {
+            padding: 1.5rem;
+            border-radius: 20px;
+            margin-top: 2rem;
+            text-align: center;
+            display: none;
+            font-weight: 800;
+            animation: fadeIn 0.5s ease;
+        }
+        .status-msg.success { background: rgba(50, 200, 50, 0.1); color: #0a5a0a; border: 2px solid rgba(50, 200, 50, 0.2); }
+        .status-msg.error { background: rgba(200, 50, 50, 0.1); color: #8a1a1a; border: 2px solid rgba(200, 50, 50, 0.2); }
+        body.dark .status-msg.success { color: #80b080; }
+        body.dark .status-msg.error { color: #f08080; }
+
+        .helper-text {
+            font-size: 0.9rem;
+            color: #6a5a3a;
+            margin-top: 1.5rem;
+            line-height: 1.8;
+            text-align: center;
+            background: rgba(255,255,255,0.5);
+            padding: 1.5rem;
+            border-radius: 20px;
+            border: 1px dashed rgba(212, 175, 55, 0.3);
+        }
+        body.dark .helper-text { color: #c8b890; background: rgba(0,0,0,0.2); }
+        .helper-text a { color: #2874a6; text-decoration: none; font-weight: 800; border-bottom: 2px solid rgba(40, 116, 166, 0.2); }
+        .helper-text a:hover { color: #d4af37; border-color: #d4af37; }
+
+        .hidden { display: none !important; }
+        .error-msg { color: #a00; margin-top: 1rem; font-size: 0.9rem; display: none; text-align: center; font-weight: 700; }
+        
+        .code-check-box {
+            background: rgba(255, 255, 255, 0.5);
+            padding: 2.5rem;
+            border-radius: 30px;
+            border: 2px dashed rgba(212, 175, 55, 0.3);
+            text-align: center;
+            margin-top: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+        body.dark .code-check-box { background: rgba(0,0,0,0.2); }
+        
+        .code-input {
+            width: 100%;
+            padding: 1.2rem;
+            border-radius: 16px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.8);
+            font-size: 1.3rem;
+            text-align: center;
+            letter-spacing: 3px;
+            margin-bottom: 1.5rem;
+            color: #2a1a0a;
+            font-family: monospace;
+            transition: 0.3s;
+            direction: ltr;
+        }
+        .code-input:focus { border-color: #d4af37; outline: none; background: #fff; }
+        body.dark .code-input { background: rgba(0,0,0,0.3); color: #f0e8d0; border-color: rgba(255,255,255,0.1); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" id="themeToggle">🌙</button>
+
+    <div class="container">
+        <!-- بخش ۱: بررسی کد عضویت -->
+        <div id="codeCheckSection">
+            <h1>🔐 احراز هویت نام‌آور</h1>
+            <div class="subtitle">برای ثبت آثار نام‌آوران، کد کارت خود را وارد کنید</div>
+            
+            <div class="code-check-box">
+                <input type="text" id="memberCode" class="code-input" placeholder="کد کارت (مثلاً: CIM-XXXX-XXXX-XXXX)" />
+                <button onclick="verifyCode()" class="btn btn-primary" style="width:100%">بررسی و ورود</button>
+                <div id="errorMsg" class="error-msg"></div>
+                
+                <div class="btn-group" style="margin-top: 1.5rem;">
+                    <a href="index.html" class="btn btn-secondary">🏠 بازگشت به خانه</a>
+                    <a href="register-fa.html" class="btn btn-secondary">📝 صفحه ثبت‌نام</a>
+                </div>
+            </div>
+            <div class="note">
+                این بخش برای همه اعضای تأییدشده باز است. پس از ثبت، اثر شما توسط ادمین بررسی می‌شود.
+            </div>
+        </div>
+
+        <!-- بخش ۲: فرم آپلود -->
+        <div id="uploadSection" class="hidden">
+            <h1>📤 ثبت آثار نام‌آوران</h1>
+            <div class="subtitle">مستندسازی دستاوردهای فرهنگی شما</div>
+
+            <div id="statusBox" class="status-msg"></div>
+
+            <div class="upload-zone" id="dropZone">
+                <span class="icon">📂</span>
+                <p style="font-weight:800; font-size:1.1rem;">فایل خود را اینجا بکشید یا کلیک کنید</p>
+                <p class="small" style="font-size:0.8rem; opacity:0.6; margin-top:0.5rem;">فرمت‌های مجاز: JPG, PNG, MP4 (بدون محدودیت حجم)</p>
+                <input type="file" id="fileInput" class="hidden" accept="image/*,video/*" />
+                <span id="fileName" class="file-name"></span>
+            </div>
+
+            <form id="uploadForm">
+                <div class="form-group">
+                    <label>عنوان اثر</label>
+                    <input type="text" id="title" placeholder="مثلاً: تشکیل شبکه محلی حفظ میراث شفاهی" required />
+                </div>
+
+                <div class="form-group">
+                    <label>توضیحات کامل</label>
+                    <textarea id="description" rows="5" placeholder="چه کاری انجام دادید؟ چه تغییری ایجاد شد؟ چه دستاوردی حاصل شد؟" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>دسته‌بندی</label>
+                    <select id="category">
+                        <option value="cultural">فرهنگی و اجتماعی</option>
+                        <option value="science">علمی و پژوهشی</option>
+                        <option value="art">هنری</option>
+                        <option value="media">رسانه و ویدئو</option>
+                        <option value="other">سایر</option>
+                    </select>
+                </div>
+
+                <div class="helper-text">
+                    💡 <strong>راهنمای ثبت:</strong> دستاورد شما باید مستند و قابل راستی‌آزمایی باشد. 
+                    پس از ثبت، اثر توسط ادمین بررسی و در صورت تأیید در گالری نام‌آوران نمایش داده می‌شود.
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">📤 ثبت و ارسال برای بررسی</button>
+                    <a href="index.html" class="btn btn-secondary">🏠 بازگشت به خانه</a>
+                    <a href="register-fa.html" class="btn btn-secondary">📝 صفحه ثبت‌نام</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Theme Logic
+        const toggle = document.getElementById('themeToggle');
+        const body = document.body;
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark'); 
+            if(toggle) toggle.textContent = '☀️';
+        }
+        if(toggle) {
+            toggle.addEventListener('click', () => {
+                body.classList.toggle('dark');
+                toggle.textContent = body.classList.contains('dark') ? '☀️' : '🌙';
+            });
+        }
+
+        // File Handling
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        if(dropZone && fileInput) {
+            dropZone.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', (e) => {
+                if(e.target.files[0]) {
+                    const nameDisplay = document.getElementById('fileName');
+                    if(nameDisplay) nameDisplay.textContent = "✅ " + e.target.files[0].name;
+                }
+            });
+        }
+
+        // ===== Verification Logic (بدون شرط رتبه) =====
+        async function verifyCode() {
+            const codeInput = document.getElementById('memberCode').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+            const verifyBtn = document.querySelector('#codeCheckSection .btn-primary');
+            
+            if (!codeInput) {
+                errorMsg.textContent = '❌ لطفاً کد کارت خود را وارد کنید.';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            verifyBtn.disabled = true;
+            verifyBtn.textContent = '⏳ در حال بررسی...';
+            errorMsg.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/get-users?t=' + new Date().getTime());
+                if (!response.ok) throw new Error('خطا در ارتباط با سرور');
+                
+                const data = await response.json();
+                const user = data.users.find(u => u.cardCode === codeInput);
+
+                if (!user) throw new Error('❌ کد کارت یافت نشد.');
+                if (user.status !== 'approved') throw new Error('❌ حساب کاربری شما هنوز تأیید نشده است.');
+                
+                // ===== حذف شرط رتبه =====
+                // دیگر نیازی به بررسی rank <= 200 نیست
+
+                document.getElementById('codeCheckSection').classList.add('hidden');
+                document.getElementById('uploadSection').classList.remove('hidden');
+                localStorage.setItem('verifiedCode', codeInput);
+
+            } catch (error) {
+                errorMsg.textContent = error.message;
+                errorMsg.style.display = 'block';
+            } finally {
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = 'بررسی و ورود';
+            }
+        }
+
+        // ===== Upload Logic =====
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('submitBtn');
+            const statusBox = document.getElementById('statusBox');
+            const file = fileInput.files[0];
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ در حال پردازش...';
+            if(statusBox) statusBox.style.display = 'none';
+
+            try {
+                let fileData = '';
+                let fileName = '';
+
+                if (file) {
+                    fileData = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.readAsDataURL(file);
+                    });
+                    fileName = file.name;
+                }
+
+                btn.textContent = '⏳ در حال ثبت اطلاعات...';
+                
+                const cardCode = localStorage.getItem('verifiedCode') || document.getElementById('memberCode').value;
+
+                const achievementData = {
+                    title: document.getElementById('title').value,
+                    description: document.getElementById('description').value,
+                    category: document.getElementById('category').value,
+                    fileData: fileData,
+                    fileName: fileName
+                };
+
+                const response = await fetch('/api/upload-achievement', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cardCode, achievement: achievementData })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'خطا در ثبت دستاورد');
+                }
+
+                if(statusBox) {
+                    statusBox.className = 'status-msg success';
+                    statusBox.textContent = '✅ دستاورد شما با موفقیت ثبت شد. کد پیگیری: ' + (result.trackingCode || '---');
+                    statusBox.style.display = 'block';
+                }
+                btn.textContent = '✅ ارسال شد';
+                
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 3000);
+
+            } catch (error) {
+                if(statusBox) {
+                    statusBox.className = 'status-msg error';
+                    statusBox.textContent = '❌ ' + error.message;
+                    statusBox.style.display = 'block';
+                }
+                btn.disabled = false;
+                btn.textContent = '📤 ارسال مجدد';
+            }
+        });
+    </script>
+</body>
+</html>
