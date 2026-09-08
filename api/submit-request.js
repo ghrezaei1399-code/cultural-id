@@ -28,30 +28,37 @@ module.exports = async function handler(req, res) {
     const repo = 'cultural-id';
 
     // ============================================================
-    // بخش AI Analyze - با پرامپت جدید و مؤثر
+    // بخش AI Analyze - با ۵ ماتریس سپهر خردمندی
     // ============================================================
     if (type === 'ai-analyze') {
       try {
         const isPersian = /[\u0600-\u06FF]/.test(text);
         
         // ============================================================
-        // پرامپت جدید و دقیق برای Gemini
+        // تغییر ۱: پرامپت جدید با ۵ ماتریس
         // ============================================================
         const systemPrompt = isPersian ? 
 `شما یک تحلیلگر فرهنگی بر اساس چارچوب "سپهر خردمندی" هستید.
 
-وظیفه شما: تحلیل عمیق یک مشاهده خام و تولید یک JSON با ۶ بخش.
+**وظیفه:** تحلیل عمیق مشاهده کاربر و تولید یک JSON با ۱۱ بخش.
 
-**قوانین سختگیرانه:**
+**قوانین:**
 ۱. فقط JSON برگردانید. هیچ توضیح اضافی.
-۲. تحلیل شما باید بر اساس متن کاربر باشد، نه کلیشه‌ها.
-۳. هر بخش باید حداقل ۱ پاراگراف (۵۰ کلمه) باشد.
+۲. تحلیل شما باید بر اساس متن کاربر باشد.
+۳. هر بخش باید کامل و دقیق باشد.
 
-**خوشه‌ها:**
-- human: مسائل فردی، روانشناختی، خانواده، روابط
-- knowledge: آموزش، علم، پژوهش، فناوری، کتاب
-- governance: مدیریت، قانون، سیاست، ساختار، نهادها
-- survival: معیشت، آب، غذا، مسکن، محیط زیست، امنیت
+**خوشه‌ها (۴ خوشه اطلس ظهور):**
+- human: انسان (مسائل فردی، روانشناختی، خانواده، روابط)
+- knowledge: دانش و فناوری (آموزش، علم، پژوهش، فناوری)
+- governance: حکمرانی و تمدن (مدیریت، قانون، ساختارها)
+- survival: بقا و آینده (معیشت، آب، غذا، محیط زیست، امنیت)
+
+**۵ ماتریس سپهر خردمندی:**
+۱. ماتریس ظهورها: چه چیزهایی در این پدیده ظاهر شده و دیده می‌شود؟
+۲. ماتریس لایه‌ها: چه لایه‌هایی از این پدیده وجود دارد (فردی، اجتماعی، ساختاری، تمدنی)؟
+۳. ماتریس ارتباطات: روابط میان سپهرهای درگیر چگونه است؟
+۴. ماتریس مقیاس: این پدیده در چه مقیاسی است (فردی، محلی، منطقه‌ای، جهانی)؟
+۵. ماتریس ظرفیت: چه ظرفیت‌هایی وجود دارد و کدام مغفول مانده است؟
 
 **امتیاز (۱ تا ۵):**
 بر اساس شدت، دامنه تأثیر، ارتباط با کرامت انسانی، و عمق مشاهده
@@ -64,22 +71,34 @@ module.exports = async function handler(req, res) {
   "analysis": "تحلیل عمیق و دقیق بر اساس متن کاربر در ۳ پاراگراف",
   "individual": "راهنمای عملی که کاربر در ۲۴ ساعت آینده انجام دهد",
   "network": "راهنمای هماهنگی با ۳ تا ۵ نفر دیگر",
-  "policy": "پیشنهاد یا سوال ساختاری برای تغییر"
+  "policy": "پیشنهاد یا سوال ساختاری برای تغییر",
+  "matrix_emergence": "تحلیل ماتریس ظهورها بر اساس متن کاربر",
+  "matrix_layers": "تحلیل ماتریس لایه‌ها بر اساس متن کاربر",
+  "matrix_connections": "تحلیل ماتریس ارتباطات بر اساس متن کاربر",
+  "matrix_scale": "تحلیل ماتریس مقیاس بر اساس متن کاربر",
+  "matrix_capacity": "تحلیل ماتریس ظرفیت بر اساس متن کاربر"
 }` :
 `You are a cultural analyst based on the "Sphere of Wisdom" framework.
 
-**Task:** Deep analysis of a raw observation, return a JSON with 6 fields.
+**Task:** Deep analysis of a raw observation, return a JSON with 11 fields.
 
 **Strict Rules:**
 1. Return ONLY JSON. No extra text.
-2. Your analysis must be based on the user's text, not clichés.
-3. Each field must be at least 1 paragraph (50 words).
+2. Your analysis must be based on the user's text.
+3. Each field must be complete and precise.
 
-**Clusters:**
-- human: Individual, psychological, family, relationships
-- knowledge: Education, science, research, technology, books
-- governance: Management, law, politics, structures, institutions
-- survival: Livelihood, water, food, housing, environment, security
+**Clusters (4 Atlas of Emergence clusters):**
+- human: Human (individual, psychological, family, relationships)
+- knowledge: Knowledge and Technology (education, science, research)
+- governance: Governance and Civilization (management, law, structures)
+- survival: Survival and Future (livelihood, water, food, environment, security)
+
+**5 Sphere of Wisdom Matrices:**
+1. Emergence Matrix: What has emerged and is visible in this phenomenon?
+2. Layers Matrix: What layers exist (individual, social, structural, civilizational)?
+3. Connections Matrix: How are the involved spheres connected?
+4. Scale Matrix: What is the scale (individual, local, regional, global)?
+5. Capacity Matrix: What capacities exist and which have been neglected?
 
 **Score (1 to 5):**
 Based on intensity, scope of impact, connection to human dignity, and depth of observation
@@ -92,16 +111,21 @@ Based on intensity, scope of impact, connection to human dignity, and depth of o
   "analysis": "Deep and precise analysis based on user text in 3 paragraphs",
   "individual": "Practical guide the user should do in the next 24 hours",
   "network": "Guide for coordinating with 3-5 other people",
-  "policy": "Structural suggestion or question for change"
+  "policy": "Structural suggestion or question for change",
+  "matrix_emergence": "Analysis of Emergence Matrix based on user text",
+  "matrix_layers": "Analysis of Layers Matrix based on user text",
+  "matrix_connections": "Analysis of Connections Matrix based on user text",
+  "matrix_scale": "Analysis of Scale Matrix based on user text",
+  "matrix_capacity": "Analysis of Capacity Matrix based on user text"
 }`;
 
         const userPrompt = isPersian ?
 `مشاهده کاربر: "${text}"
 
-تحلیل عمیق بر اساس چارچوب سپهر خردمندی. فقط JSON برگردان.` :
+تحلیل عمیق بر اساس چارچوب سپهر خردمندی با ۵ ماتریس. فقط JSON برگردان.` :
 `User observation: "${text}"
 
-Deep analysis based on the Sphere of Wisdom framework. Return ONLY JSON.`;
+Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ONLY JSON.`;
 
         // ============================================================
         // درخواست به OpenRouter
@@ -116,7 +140,7 @@ Deep analysis based on the Sphere of Wisdom framework. Return ONLY JSON.`;
           });
         }
 
-        console.log('Sending request to OpenRouter...');
+        console.log('Sending request to OpenRouter with 5 matrices...');
         
         const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
           method: 'POST',
@@ -133,7 +157,7 @@ Deep analysis based on the Sphere of Wisdom framework. Return ONLY JSON.`;
               { role: 'user', content: userPrompt }
             ],
             temperature: 0.8,
-            max_tokens: 800,
+            max_tokens: 1200,
             response_format: { type: 'json_object' }
           })
         });
@@ -149,7 +173,7 @@ Deep analysis based on the Sphere of Wisdom framework. Return ONLY JSON.`;
         }
 
         const data = await response.json();
-        console.log('OpenRouter Response received:', data.choices?.[0]?.message?.content?.substring(0, 100));
+        console.log('OpenRouter Response received.');
         
         const content = data.choices?.[0]?.message?.content || '{}';
         
@@ -163,7 +187,9 @@ Deep analysis based on the Sphere of Wisdom framework. Return ONLY JSON.`;
         
         const analysis = JSON.parse(jsonStr);
         
-        // اعتبارسنجی و تکمیل مقادیر
+        // ============================================================
+        // تغییر ۲: پردازش پاسخ با ۵ ماتریس
+        // ============================================================
         const result = {
           status: analysis.status || "approved",
           rejection_reason: analysis.rejection_reason || null,
@@ -172,7 +198,13 @@ Deep analysis based on the Sphere of Wisdom framework. Return ONLY JSON.`;
           analysis_note: analysis.analysis || (isPersian ? "تحلیل دقیق" : "Detailed analysis"),
           guide_individual: analysis.individual || (isPersian ? "راهنمای فردی" : "Individual guide"),
           guide_network: analysis.network || (isPersian ? "راهنمای شبکه‌ای" : "Network guide"),
-          guide_policy: analysis.policy || (isPersian ? "راهنمای سیاستی" : "Policy guide")
+          guide_policy: analysis.policy || (isPersian ? "راهنمای سیاستی" : "Policy guide"),
+          // ========== ۵ ماتریس ==========
+          matrix_emergence: analysis.matrix_emergence || (isPersian ? "تحلیل ماتریس ظهورها" : "Emergence Matrix Analysis"),
+          matrix_layers: analysis.matrix_layers || (isPersian ? "تحلیل ماتریس لایه‌ها" : "Layers Matrix Analysis"),
+          matrix_connections: analysis.matrix_connections || (isPersian ? "تحلیل ماتریس ارتباطات" : "Connections Matrix Analysis"),
+          matrix_scale: analysis.matrix_scale || (isPersian ? "تحلیل ماتریس مقیاس" : "Scale Matrix Analysis"),
+          matrix_capacity: analysis.matrix_capacity || (isPersian ? "تحلیل ماتریس ظرفیت" : "Capacity Matrix Analysis")
         };
         
         return res.status(200).json({ success: true, analysis: result });
@@ -232,6 +264,13 @@ Deep analysis based on the Sphere of Wisdom framework. Return ONLY JSON.`;
 - **Individual:** ${ai.guide_individual || '---'}
 - **Network:** ${ai.guide_network || '---'}
 - **Policy:** ${ai.guide_policy || '---'}
+
+**5 Matrices:**
+- **Emergence:** ${ai.matrix_emergence || '---'}
+- **Layers:** ${ai.matrix_layers || '---'}
+- **Connections:** ${ai.matrix_connections || '---'}
+- **Scale:** ${ai.matrix_scale || '---'}
+- **Capacity:** ${ai.matrix_capacity || '---'}
 `;
         }
 
@@ -484,15 +523,15 @@ ${aiSection}
 };
 
 // ============================================================
-// تابع Fallback (زمانی که API کار نکرد)
+// تابع Fallback با ۵ ماتریس
 // ============================================================
 function getFallbackAnalysis(text, isPersian) {
   // تشخیص خوشه با کلمات کلیدی
   const keywords = {
     human: ['احساس', 'دوست', 'خانواده', 'عشق', 'غم', 'شادی', 'تنهایی', 'روان', 'ذهن', 'هویت', 'ارزش', 'اخلاق', 'صلح', 'همدلی'],
-    knowledge: ['کتاب', 'آموزش', 'دانش', 'مدرسه', 'یادگیری', 'علم', 'پژوهش', 'تحقیق', 'کتابخانه', 'استاد', 'دانشجو', 'سواد', 'آگاهی'],
-    governance: ['قانون', 'مدیریت', 'سیاست', 'شهرداری', 'دولت', 'ساختار', 'سازمان', 'نظام', 'برنامه', 'تصمیم', 'مسئول', 'نظارت'],
-    survival: ['غذا', 'آب', 'مسکن', 'بهداشت', 'امنیت', 'پول', 'کار', 'معیشت', 'درمان', 'سلامت', 'ایمنی', 'خطر', 'بقا', 'نیاز']
+    knowledge: ['کتاب', 'آموزش', 'دانش', 'مدرسه', 'یادگیری', 'علم', 'پژوهش', 'تحقیق', 'کتابخانه', 'استاد', 'دانشجو', 'سواد', 'آگاهی', 'فناوری', 'هوش مصنوعی'],
+    governance: ['قانون', 'مدیریت', 'سیاست', 'شهرداری', 'دولت', 'ساختار', 'سازمان', 'نظام', 'برنامه', 'تصمیم', 'مسئول', 'نظارت', 'فساد'],
+    survival: ['غذا', 'آب', 'مسکن', 'بهداشت', 'امنیت', 'پول', 'کار', 'معیشت', 'درمان', 'سلامت', 'ایمنی', 'خطر', 'بقا', 'نیاز', 'محیط زیست']
   };
 
   let bestCluster = 'human';
@@ -556,6 +595,42 @@ function getFallbackAnalysis(text, isPersian) {
     }
   };
 
+  // ============================================================
+  // تغییر ۳: Fallback با ۵ ماتریس
+  // ============================================================
+  const matrixTemplates = {
+    human: {
+      emergence: isPersian ? 'ظهورهای قابل مشاهده در این پدیده شامل احساسات، روابط و تعاملات انسانی است.' : 'Visible emergences in this phenomenon include emotions, relationships, and human interactions.',
+      layers: isPersian ? 'لایه‌های فردی، اجتماعی و خانوادگی در این پدیده درگیر هستند.' : 'Individual, social, and family layers are involved in this phenomenon.',
+      connections: isPersian ? 'ارتباط میان سپهرهای انسانی، اجتماعی و فرهنگی در این پدیده مشهود است.' : 'Connections between human, social, and cultural spheres are evident in this phenomenon.',
+      scale: isPersian ? 'این پدیده در مقیاس فردی و محلی قابل مشاهده است.' : 'This phenomenon is observable at individual and local scale.',
+      capacity: isPersian ? 'ظرفیت‌های همدلی، گفتگو و مشارکت جمعی در این پدیده وجود دارد.' : 'Capacities for empathy, dialogue, and collective participation exist in this phenomenon.'
+    },
+    knowledge: {
+      emergence: isPersian ? 'ظهورهای قابل مشاهده شامل شکاف‌های دانشی، نیازهای آموزشی و نابرابری علمی است.' : 'Visible emergences include knowledge gaps, educational needs, and scientific inequality.',
+      layers: isPersian ? 'لایه‌های فردی، آموزشی و ساختاری در این پدیده درگیر هستند.' : 'Individual, educational, and structural layers are involved in this phenomenon.',
+      connections: isPersian ? 'ارتباط میان سپهرهای دانشی، فناوری و آموزشی در این پدیده مشهود است.' : 'Connections between knowledge, technology, and educational spheres are evident in this phenomenon.',
+      scale: isPersian ? 'این پدیده در مقیاس فردی، محلی و منطقه‌ای قابل مشاهده است.' : 'This phenomenon is observable at individual, local, and regional scale.',
+      capacity: isPersian ? 'ظرفیت‌های یادگیری، پژوهش و نوآوری در این پدیده وجود دارد.' : 'Capacities for learning, research, and innovation exist in this phenomenon.'
+    },
+    governance: {
+      emergence: isPersian ? 'ظهورهای قابل مشاهده شامل ناکارآمدی نهادی، بحران اعتماد و گسست‌های ساختاری است.' : 'Visible emergences include institutional inefficiency, trust crisis, and structural gaps.',
+      layers: isPersian ? 'لایه‌های ساختاری، نهادی و مدیریتی در این پدیده درگیر هستند.' : 'Structural, institutional, and management layers are involved in this phenomenon.',
+      connections: isPersian ? 'ارتباط میان سپهرهای حکمرانی، قانونی و اجتماعی در این پدیده مشهود است.' : 'Connections between governance, legal, and social spheres are evident in this phenomenon.',
+      scale: isPersian ? 'این پدیده در مقیاس محلی، منطقه‌ای و جهانی قابل مشاهده است.' : 'This phenomenon is observable at local, regional, and global scale.',
+      capacity: isPersian ? 'ظرفیت‌های مشارکت جمعی، شفافیت و پاسخگویی در این پدیده وجود دارد.' : 'Capacities for collective participation, transparency, and accountability exist in this phenomenon.'
+    },
+    survival: {
+      emergence: isPersian ? 'ظهورهای قابل مشاهده شامل بحران منابع، ناامنی معیشتی و تخریب محیط زیست است.' : 'Visible emergences include resource crises, livelihood insecurity, and environmental degradation.',
+      layers: isPersian ? 'لایه‌های فردی، اجتماعی، اقتصادی و زیست‌محیطی در این پدیده درگیر هستند.' : 'Individual, social, economic, and environmental layers are involved in this phenomenon.',
+      connections: isPersian ? 'ارتباط میان سپهرهای بقا، اقتصادی و زیست‌محیطی در این پدیده مشهود است.' : 'Connections between survival, economic, and environmental spheres are evident in this phenomenon.',
+      scale: isPersian ? 'این پدیده در مقیاس محلی، منطقه‌ای و جهانی قابل مشاهده است.' : 'This phenomenon is observable at local, regional, and global scale.',
+      capacity: isPersian ? 'ظرفیت‌های تاب‌آوری، همکاری جمعی و پایداری در این پدیده وجود دارد.' : 'Capacities for resilience, collective cooperation, and sustainability exist in this phenomenon.'
+    }
+  };
+
+  const matrix = matrixTemplates[bestCluster] || matrixTemplates.human;
+
   return {
     status: "approved",
     rejection_reason: null,
@@ -564,6 +639,12 @@ function getFallbackAnalysis(text, isPersian) {
     analysis_note: templates[bestCluster] || templates.human,
     guide_individual: guides[bestCluster].individual,
     guide_network: guides[bestCluster].network,
-    guide_policy: guides[bestCluster].policy
+    guide_policy: guides[bestCluster].policy,
+    // ========== ۵ ماتریس ==========
+    matrix_emergence: matrix.emergence,
+    matrix_layers: matrix.layers,
+    matrix_connections: matrix.connections,
+    matrix_scale: matrix.scale,
+    matrix_capacity: matrix.capacity
   };
 }
