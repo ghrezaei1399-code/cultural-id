@@ -27,7 +27,7 @@ module.exports = async function handler(req, res) {
     const userData = JSON.parse(Buffer.from(fileData.content, 'base64').toString('utf8'));
 
     // ۲. پیدا کردن دستاورد بر اساس fileName
-    const achIndex = userData.achievements ? userData.achievements.findIndex(a => a.fileName === fileName) : -1;
+   const achIndex = userData.achievements ? userData.achievements.findIndex(a => a.id === fileName) : -1;
 
     if (achIndex === -1) {
       return res.status(404).json({ error: 'دستاورد با این نام فایل یافت نشد' });
