@@ -222,7 +222,7 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
            aiAnalysis.cluster === 'survival' ? 'بقا و آینده' : 'نامشخص') :
           (aiAnalysis.cluster || 'Unknown');
         
-        const aiSection = `
+              const aiSection = `
 **🤖 AI Analysis:**
 - **Status:** ${statusLabel}
 - **Cluster:** ${clusterLabel}
@@ -240,19 +240,15 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
 - **Connections:** ${aiAnalysis.matrix_connections || '---'}
 - **Scale:** ${aiAnalysis.matrix_scale || '---'}
 - **Capacity:** ${aiAnalysis.matrix_capacity || '---'}
+
+**📌 Module Result:**
+${moduleResult ? `
+- **Type:** ${moduleResult.type === 'collaboration' ? 'همفکری' : moduleResult.type === 'related' ? 'مشاهدات مرتبط' : 'ارجاع به ۵ همفرهنگ'}
+- **Status:** ${moduleResult.status === 'completed' ? '✅ تکمیل شد' : '⏳ در انتظار'}
+${moduleResult.data && moduleResult.data.length > 0 ? `- **Results:** ${moduleResult.data.map(d => d.cardCode || d.text).join(', ')}` : ''}
+${moduleResult.analysis ? `- **Additional Analysis:** ${moduleResult.analysis}` : ''}
+` : '⏳ در حال پردازش...'}
 `;
-
-        const issueTitle = isPersian ? `مشاهده خام: ${cardCode}` : `Raw Observation: ${cardCode}`;
-        const issueBody = `
-**Card Code:** ${cardCode}
-
-**Observation:**
-${obs.text}
-
-**Selected Module:**
-${selectedModule}
-
-${aiSection}
 ---
 *This observation has been registered and is pending review.*
         `;
