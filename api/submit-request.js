@@ -28,73 +28,86 @@ module.exports = async function handler(req, res) {
     const repo = 'cultural-id';
 
     // ============================================================
-    // بخش AI Analyze - با OpenRouter (Gemini)
+    // بخش AI Analyze - با پرامپت جدید و مؤثر
     // ============================================================
     if (type === 'ai-analyze') {
       try {
         const isPersian = /[\u0600-\u06FF]/.test(text);
         
-        // پرامپت سیستم بر اساس چارچوب سپهر خردمندی
+        // ============================================================
+        // پرامپت جدید و دقیق برای Gemini
+        // ============================================================
         const systemPrompt = isPersian ? 
-`شما یک تحلیلگر فرهنگی هوشمند هستید که بر اساس چارچوب نظری «سپهر خردمندی» عمل می‌کنید.
+`شما یک تحلیلگر فرهنگی بر اساس چارچوب "سپهر خردمندی" هستید.
 
-**قوانین:**
-۱. فقط و فقط یک JSON معتبر برگردانید.
-۲. هیچ توضیح اضافی خارج از JSON ندهید.
+وظیفه شما: تحلیل عمیق یک مشاهده خام و تولید یک JSON با ۶ بخش.
 
-**خوشه‌ها (۴ خوشه اطلس ظهور):**
-- "human": انسان (مسائل فردی، روانشناختی، اجتماعی، خانواده)
-- "knowledge": دانش و فناوری (آموزش، علم، پژوهش، فناوری)
-- "governance": حکمرانی و تمدن (مدیریت، قانون، ساختارها)
-- "survival": بقا و آینده (معیشت، محیط زیست، منابع، امنیت)
+**قوانین سختگیرانه:**
+۱. فقط JSON برگردانید. هیچ توضیح اضافی.
+۲. تحلیل شما باید بر اساس متن کاربر باشد، نه کلیشه‌ها.
+۳. هر بخش باید حداقل ۱ پاراگراف (۵۰ کلمه) باشد.
 
-**ساختار خروجی:**
+**خوشه‌ها:**
+- human: مسائل فردی، روانشناختی، خانواده، روابط
+- knowledge: آموزش، علم، پژوهش، فناوری، کتاب
+- governance: مدیریت، قانون، سیاست، ساختار، نهادها
+- survival: معیشت، آب، غذا، مسکن، محیط زیست، امنیت
+
+**امتیاز (۱ تا ۵):**
+بر اساس شدت، دامنه تأثیر، ارتباط با کرامت انسانی، و عمق مشاهده
+
+**ساختار خروجی (فقط این JSON را برگردانید):**
 {
   "status": "approved",
   "cluster": "human",
   "score": 3,
-  "analysis": "تحلیل عمیق در ۳ پاراگراف",
-  "individual": "راهنمای فردی عملی",
-  "network": "راهنمای شبکه‌ای",
-  "policy": "راهنمای سیاستی"
+  "analysis": "تحلیل عمیق و دقیق بر اساس متن کاربر در ۳ پاراگراف",
+  "individual": "راهنمای عملی که کاربر در ۲۴ ساعت آینده انجام دهد",
+  "network": "راهنمای هماهنگی با ۳ تا ۵ نفر دیگر",
+  "policy": "پیشنهاد یا سوال ساختاری برای تغییر"
 }` :
-`You are a smart cultural analyst based on the "Sphere of Wisdom" theoretical framework.
+`You are a cultural analyst based on the "Sphere of Wisdom" framework.
 
-**Rules:**
-1. Return ONLY a valid JSON.
-2. No extra text outside JSON.
+**Task:** Deep analysis of a raw observation, return a JSON with 6 fields.
+
+**Strict Rules:**
+1. Return ONLY JSON. No extra text.
+2. Your analysis must be based on the user's text, not clichés.
+3. Each field must be at least 1 paragraph (50 words).
 
 **Clusters:**
-- "human": Human (individual, psychological, social, family)
-- "knowledge": Knowledge and Technology (education, science, research)
-- "governance": Governance and Civilization (management, law, structures)
-- "survival": Survival and Future (livelihood, environment, resources, security)
+- human: Individual, psychological, family, relationships
+- knowledge: Education, science, research, technology, books
+- governance: Management, law, politics, structures, institutions
+- survival: Livelihood, water, food, housing, environment, security
 
-**Output Structure:**
+**Score (1 to 5):**
+Based on intensity, scope of impact, connection to human dignity, and depth of observation
+
+**Output Structure (return ONLY this JSON):**
 {
   "status": "approved",
   "cluster": "human",
   "score": 3,
-  "analysis": "Deep analysis in 3 paragraphs",
-  "individual": "Practical individual guide",
-  "network": "Network guide",
-  "policy": "Policy guide"
+  "analysis": "Deep and precise analysis based on user text in 3 paragraphs",
+  "individual": "Practical guide the user should do in the next 24 hours",
+  "network": "Guide for coordinating with 3-5 other people",
+  "policy": "Structural suggestion or question for change"
 }`;
 
         const userPrompt = isPersian ?
 `مشاهده کاربر: "${text}"
 
-لطفاً این مشاهده را بر اساس چارچوب سپهر خردمندی تحلیل کنید و JSON خواسته شده را برگردانید.` :
+تحلیل عمیق بر اساس چارچوب سپهر خردمندی. فقط JSON برگردان.` :
 `User observation: "${text}"
 
-Please analyze this observation based on the Sphere of Wisdom framework and return the requested JSON.`;
+Deep analysis based on the Sphere of Wisdom framework. Return ONLY JSON.`;
 
         // ============================================================
-        // درخواست به OpenRouter با مدل Gemini
+        // درخواست به OpenRouter
         // ============================================================
         const openRouterKey = process.env.OPENROUTER_API_KEY;
         
-        // اگر کلید OpenRouter وجود نداشت، از fallback استفاده کن
         if (!openRouterKey) {
           console.warn('OPENROUTER_API_KEY not found, using fallback');
           return res.status(200).json({
@@ -103,6 +116,8 @@ Please analyze this observation based on the Sphere of Wisdom framework and retu
           });
         }
 
+        console.log('Sending request to OpenRouter...');
+        
         const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
           method: 'POST',
           headers: {
@@ -117,7 +132,7 @@ Please analyze this observation based on the Sphere of Wisdom framework and retu
               { role: 'system', content: systemPrompt },
               { role: 'user', content: userPrompt }
             ],
-            temperature: 0.7,
+            temperature: 0.8,
             max_tokens: 800,
             response_format: { type: 'json_object' }
           })
@@ -125,6 +140,8 @@ Please analyze this observation based on the Sphere of Wisdom framework and retu
 
         if (!response.ok) {
           console.error('OpenRouter Error:', response.status);
+          const errorText = await response.text();
+          console.error('OpenRouter Response:', errorText);
           return res.status(200).json({
             success: true,
             analysis: getFallbackAnalysis(text, isPersian)
@@ -132,6 +149,8 @@ Please analyze this observation based on the Sphere of Wisdom framework and retu
         }
 
         const data = await response.json();
+        console.log('OpenRouter Response received:', data.choices?.[0]?.message?.content?.substring(0, 100));
+        
         const content = data.choices?.[0]?.message?.content || '{}';
         
         // استخراج JSON
@@ -144,12 +163,13 @@ Please analyze this observation based on the Sphere of Wisdom framework and retu
         
         const analysis = JSON.parse(jsonStr);
         
+        // اعتبارسنجی و تکمیل مقادیر
         const result = {
           status: analysis.status || "approved",
           rejection_reason: analysis.rejection_reason || null,
           cluster: analysis.cluster || "human",
-          score_suggestion: analysis.score || 3,
-          analysis_note: analysis.analysis || (isPersian ? "تحلیل" : "Analysis"),
+          score_suggestion: typeof analysis.score === 'number' ? analysis.score : 3,
+          analysis_note: analysis.analysis || (isPersian ? "تحلیل دقیق" : "Detailed analysis"),
           guide_individual: analysis.individual || (isPersian ? "راهنمای فردی" : "Individual guide"),
           guide_network: analysis.network || (isPersian ? "راهنمای شبکه‌ای" : "Network guide"),
           guide_policy: analysis.policy || (isPersian ? "راهنمای سیاستی" : "Policy guide")
@@ -171,8 +191,6 @@ Please analyze this observation based on the Sphere of Wisdom framework and retu
     // بخش Observations (تغییر نکرده)
     // ============================================================
     if (type === 'observations' && observations && observations.length > 0) {
-      // ... کد قبلی بدون تغییر ...
-      // (برای حفظ فایل، این بخش را کامل می‌نویسم)
       if (!cardCode) {
         return res.status(400).json({ error: 'کد کارت الزامی است' });
       }
