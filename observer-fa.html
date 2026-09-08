@@ -415,7 +415,6 @@
             🔒 مشاهدات شما به‌صورت ناشناس و با رعایت کامل حریم خصوصی ثبت می‌شود.
         </div>
     </div>
-    
     <script>
         function selectModule(btn, module) {
             const parent = btn.closest('.observation-box');
@@ -524,13 +523,7 @@
         // ============================================================
         // ===== تابع تحلیل هوش مصنوعی - اصلاح شده =====
         // ============================================================
-        // این تابع دیگر مستقیماً به text.pollinations.ai درخواست نمی‌دهد.
-        // همه چیز از طریق submit-request.js انجام می‌شود.
-        // این تابع فقط برای نمایش نتایجی که از سرور آمده استفاده می‌شود.
-        // ============================================================
         async function smartAnalyzeObservation(text, language = 'fa') {
-            // این تابع دیگر استفاده نمی‌شود. فقط برای سازگاری با کد قدیمی نگه داشته شده است.
-            // تمام تحلیل‌ها از طریق submit-request.js انجام می‌شود.
             console.warn('smartAnalyzeObservation is deprecated. All analysis is now done server-side.');
             return {
                 status: 'error',
@@ -583,10 +576,6 @@
             aiResultDetail.classList.remove('active');
 
             try {
-                // ============================================================
-                // فقط فیلتر سریع انجام می‌شود (بدون درخواست به هوش مصنوعی)
-                // هوش مصنوعی در submit-request.js اجرا می‌شود
-                // ============================================================
                 const analyzedObservations = [];
                 
                 for (let i = 0; i < observations.length; i++) {
@@ -597,18 +586,14 @@
                         throw new Error(`مشاهده شماره ${obs.index} رد شد: ${filterResult.reason}`);
                     }
                     
-                    // فقط داده‌های خام را آماده می‌کنیم، بدون تحلیل در مرورگر
                     analyzedObservations.push({
                         ...obs,
-                        aiAnalysis: null // سرور تحلیل را انجام می‌دهد
+                        aiAnalysis: null
                     });
                 }
 
                 submitBtn.textContent = '⏳ در حال ثبت نهایی...';
 
-                // ============================================================
-                // ارسال به سرور - سرور هوش مصنوعی را اجرا می‌کند
-                // ============================================================
                 const response = await fetch('/api/submit-request', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -618,7 +603,6 @@
                         observations: analyzedObservations.map(o => ({
                             text: o.text,
                             module: o.module
-                            // aiAnalysis را نمی‌فرستیم تا سرور آن را تولید کند
                         }))
                     })
                 });
@@ -630,7 +614,7 @@
                 }
                 
                 // ============================================================
-                // نمایش نتایج دریافتی از سرور
+                // نمایش نتایج دریافتی از سرور با ۵ ماتریس
                 // ============================================================
                 let aiDetailsHtml = '';
                 if (result.issues && result.issues.length > 0) {
@@ -660,6 +644,11 @@
                                     ${ai.guide_individual ? `<div style="font-size:0.75rem; color:#2874a6; margin-top:0.2rem;">📍 ${ai.guide_individual}</div>` : ''}
                                     ${ai.guide_network ? `<div style="font-size:0.75rem; color:#27ae60; margin-top:0.2rem;">🌐 ${ai.guide_network}</div>` : ''}
                                     ${ai.guide_policy ? `<div style="font-size:0.75rem; color:#8a6d1f; margin-top:0.2rem;">🏛️ ${ai.guide_policy}</div>` : ''}
+                                    ${ai.matrix_emergence ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 ظهورها: ${ai.matrix_emergence}</div>` : ''}
+                                    ${ai.matrix_layers ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 لایه‌ها: ${ai.matrix_layers}</div>` : ''}
+                                    ${ai.matrix_connections ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 ارتباطات: ${ai.matrix_connections}</div>` : ''}
+                                    ${ai.matrix_scale ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 مقیاس: ${ai.matrix_scale}</div>` : ''}
+                                    ${ai.matrix_capacity ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 ظرفیت: ${ai.matrix_capacity}</div>` : ''}
                                 </div>
                             `;
                         }
