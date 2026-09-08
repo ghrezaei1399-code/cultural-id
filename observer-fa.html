@@ -2,7 +2,7 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"/>
     <title>ثبت مشاهدات | مجتمع هم‌اندیشی سپهر خردمندی</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -488,30 +488,19 @@
             }
         }
 
-       const FORBIDDEN_WORDS = [
-    // ===== خشونت، جنگ، مرگ =====
-    'جنگ', 'خشونت', 'قتل', 'کشتار', 'ترور', 'بمب', 'انفجار',
-    'مرگ', 'آدم کشی', 'جنایت', 'خونریزی', 'تجاوز',
-    
-    // ===== نژادپرستی و تبعیض =====
-    'نژادپرست', 'نژادپرستی', 'برتری نژادی', 'تبعیض نژادی',
-    'کشتن', 'اعدام', 'سلاخی',
-    
-    // ===== استعمار، بهره‌کشی، غارت =====
-    'استعمار', 'بهره کشی', 'استثمار', 'غارت', 'چپاول', 'تاراج',
-    'دزدی', 'سرقت', 'کلاه برداری', 'اختلاس', 'رشوه', 'رانت',
-    
-    // ===== مواد مخدر، مشروبات الکلی =====
-    'مواد مخدر', 'شیشه', 'هروئین', 'کوکائین', 'ماریجوانا', 'گل',
-    'تریاک', 'حشیش', 'اکستازی', 'مشروبات الکلی', 'الکل', 'شراب',
-    'عرق', 'ودکا', 'ویسکی', 'ابزار استعمال', 'پیپ', 'سرنگ',
-    
-    // ===== مسائل جنسی =====
-    'سکس', 'تن فروشی', 'روسپی', 'روابط نامشروع', 'پورن', 'مستجن',
-    
-    // ===== جنگ‌افزارها =====
-    'تفنگ', 'کلاش', 'اسلحه', 'موشک', 'تانک', 'جنگنده', 'بمب‌افکن'
-];
+        const FORBIDDEN_WORDS = [
+            'جنگ', 'خشونت', 'قتل', 'کشتار', 'ترور', 'بمب', 'انفجار',
+            'مرگ', 'آدم کشی', 'جنایت', 'خونریزی', 'تجاوز',
+            'نژادپرست', 'نژادپرستی', 'برتری نژادی', 'تبعیض نژادی',
+            'کشتن', 'اعدام', 'سلاخی',
+            'استعمار', 'بهره کشی', 'استثمار', 'غارت', 'چپاول', 'تاراج',
+            'دزدی', 'سرقت', 'کلاه برداری', 'اختلاس', 'رشوه', 'رانت',
+            'مواد مخدر', 'شیشه', 'هروئین', 'کوکائین', 'ماریجوانا', 'گل',
+            'تریاک', 'حشیش', 'اکستازی', 'مشروبات الکلی', 'الکل', 'شراب',
+            'عرق', 'ودکا', 'ویسکی', 'ابزار استعمال', 'پیپ', 'سرنگ',
+            'سکس', 'تن فروشی', 'روسپی', 'روابط نامشروع', 'پورن', 'مستجن',
+            'تفنگ', 'کلاش', 'اسلحه', 'موشک', 'تانک', 'جنگنده', 'بمب‌افکن'
+        ];
 
         function fastFilter(text) {
             const lowerText = text.toLowerCase();
@@ -532,65 +521,23 @@
             return { blocked: false };
         }
 
-async function smartAnalyzeObservation(text, language = 'fa') {
-    try {
-        const prompt = language === 'fa' ? 
-`متن: "${text}"
-
-یک JSON با این فیلدها برگردان. تمام فیلدها را پر کن. هیچ فیلدی را خالی نگذار.
-status: approved یا rejected
-cluster: human یا knowledge یا governance یا survival
-score: عدد 1 تا 5
-analysis: یک تحلیل عمیق و کامل (حداقل 20 کلمه)
-individual: یک راهنمای عملی برای فرد (حداقل 15 کلمه)
-network: یک راهنمای عملی برای شبکه (حداقل 15 کلمه)
-policy: یک راهنمای عملی برای سیاست (حداقل 15 کلمه)
-
-فقط JSON برگردان.` :
-`Text: "${text}"
-
-Return JSON with all fields filled. Do not leave any field empty.
-status: approved or rejected
-cluster: human or knowledge or governance or survival
-score: number 1 to 5
-analysis: deep and complete analysis (minimum 20 words)
-individual: practical guide for individual (minimum 15 words)
-network: practical guide for network (minimum 15 words)
-policy: practical guide for policy (minimum 15 words)
-
-Return ONLY JSON.`;
-
-        const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
-        const aiText = await response.text();
-        
-        let jsonStr = aiText;
-        const s = aiText.indexOf('{');
-        const e = aiText.lastIndexOf('}');
-        if (s !== -1 && e !== -1) {
-            jsonStr = aiText.substring(s, e + 1);
+        // ============================================================
+        // ===== تابع تحلیل هوش مصنوعی - اصلاح شده =====
+        // ============================================================
+        // این تابع دیگر مستقیماً به text.pollinations.ai درخواست نمی‌دهد.
+        // همه چیز از طریق submit-request.js انجام می‌شود.
+        // این تابع فقط برای نمایش نتایجی که از سرور آمده استفاده می‌شود.
+        // ============================================================
+        async function smartAnalyzeObservation(text, language = 'fa') {
+            // این تابع دیگر استفاده نمی‌شود. فقط برای سازگاری با کد قدیمی نگه داشته شده است.
+            // تمام تحلیل‌ها از طریق submit-request.js انجام می‌شود.
+            console.warn('smartAnalyzeObservation is deprecated. All analysis is now done server-side.');
+            return {
+                status: 'error',
+                message: 'تحلیل در سمت سرور انجام می‌شود. لطفاً دوباره تلاش کنید.'
+            };
         }
-        
-        const analysis = JSON.parse(jsonStr);
-        
-        return {
-            status: analysis.status || "approved",
-            rejection_reason: analysis.rejection_reason || null,
-            cluster: analysis.cluster || "human",
-            score_suggestion: analysis.score || analysis.score_suggestion || 3,
-            analysis_note: analysis.analysis || analysis.analysis_note || (language === 'fa' ? "تحلیل" : "Analysis"),
-            guide_individual: analysis.individual || analysis.guide_individual || (language === 'fa' ? "راهنمای فردی" : "Individual guide"),
-            guide_network: analysis.network || analysis.guide_network || (language === 'fa' ? "راهنمای شبکه‌ای" : "Network guide"),
-            guide_policy: analysis.policy || analysis.guide_policy || (language === 'fa' ? "راهنمای سیاستی" : "Policy guide")
-        };
-        
-    } catch (e) {
-        console.error("AI Analysis Error:", e);
-        return { 
-            status: 'error', 
-            message: 'خطا در ارتباط با سرور: ' + e.message 
-        };
-    }
-}
+
         async function submitObservations() {
             const userCode = document.getElementById('userCode').value.trim();
             const boxes = document.querySelectorAll('.observation-box');
@@ -636,6 +583,10 @@ Return ONLY JSON.`;
             aiResultDetail.classList.remove('active');
 
             try {
+                // ============================================================
+                // فقط فیلتر سریع انجام می‌شود (بدون درخواست به هوش مصنوعی)
+                // هوش مصنوعی در submit-request.js اجرا می‌شود
+                // ============================================================
                 const analyzedObservations = [];
                 
                 for (let i = 0; i < observations.length; i++) {
@@ -646,51 +597,18 @@ Return ONLY JSON.`;
                         throw new Error(`مشاهده شماره ${obs.index} رد شد: ${filterResult.reason}`);
                     }
                     
-                    const aiResult = await smartAnalyzeObservation(obs.text);
-
-                    if (aiResult.status === 'rejected') {
-                        throw new Error(`مشاهده شماره ${obs.index} با اصول سپهر خردمندی همخوانی ندارد. دلیل: ${aiResult.rejection_reason || 'نامشخص'}`);
-                    }
-                    
-                    if (aiResult.status === 'error') {
-                        throw new Error(`خطا در تحلیل هوشمند مشاهده شماره ${obs.index}. ${aiResult.message || 'لطفاً دوباره تلاش کنید.'}`);
-                    }
-                    
+                    // فقط داده‌های خام را آماده می‌کنیم، بدون تحلیل در مرورگر
                     analyzedObservations.push({
                         ...obs,
-                        aiAnalysis: aiResult
+                        aiAnalysis: null // سرور تحلیل را انجام می‌دهد
                     });
                 }
 
-                let aiDetailsHtml = '';
-                analyzedObservations.forEach((obs, idx) => {
-                    const ai = obs.aiAnalysis;
-                    aiDetailsHtml += `
-                        <div style="border-bottom:1px solid rgba(212,175,55,0.1); padding:0.8rem 0;">
-                            <strong>مشاهده ${idx + 1}:</strong>
-                            <div style="font-size:0.85rem; margin-top:0.3rem;">
-                                <span style="display:inline-block; background:rgba(212,175,55,0.1); padding:0.1rem 0.5rem; border-radius:12px; font-size:0.7rem;">
-                                    📂 ${ai.cluster || 'نامشخص'}
-                                </span>
-                                <span style="display:inline-block; background:rgba(39,174,96,0.1); padding:0.1rem 0.5rem; border-radius:12px; font-size:0.7rem;">
-                                    ⭐ امتیاز پیشنهادی: ${ai.score_suggestion || '?'}
-                                </span>
-                            </div>
-                            <div style="font-size:0.8rem; color:#4a3a2a; margin-top:0.3rem;">
-                                <strong>تحلیل:</strong> ${ai.analysis_note || '---'}
-                            </div>
-                            ${ai.guide_individual ? `<div style="font-size:0.75rem; color:#2874a6; margin-top:0.2rem;">📍 ${ai.guide_individual}</div>` : ''}
-                            ${ai.guide_network ? `<div style="font-size:0.75rem; color:#27ae60; margin-top:0.2rem;">🌐 ${ai.guide_network}</div>` : ''}
-                            ${ai.guide_policy ? `<div style="font-size:0.75rem; color:#8a6d1f; margin-top:0.2rem;">🏛️ ${ai.guide_policy}</div>` : ''}
-                        </div>
-                    `;
-                });
-                
-                aiResultContent.innerHTML = aiDetailsHtml;
-                aiResultDetail.classList.add('active');
-
                 submitBtn.textContent = '⏳ در حال ثبت نهایی...';
 
+                // ============================================================
+                // ارسال به سرور - سرور هوش مصنوعی را اجرا می‌کند
+                // ============================================================
                 const response = await fetch('/api/submit-request', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -699,8 +617,8 @@ Return ONLY JSON.`;
                         cardCode: userCode,
                         observations: analyzedObservations.map(o => ({
                             text: o.text,
-                            module: o.module,
-                            aiAnalysis: o.aiAnalysis
+                            module: o.module
+                            // aiAnalysis را نمی‌فرستیم تا سرور آن را تولید کند
                         }))
                     })
                 });
@@ -709,6 +627,48 @@ Return ONLY JSON.`;
                 
                 if (!response.ok) {
                     throw new Error(result.error || 'خطا در ثبت مشاهدات');
+                }
+                
+                // ============================================================
+                // نمایش نتایج دریافتی از سرور
+                // ============================================================
+                let aiDetailsHtml = '';
+                if (result.issues && result.issues.length > 0) {
+                    result.issues.forEach((issue, idx) => {
+                        const ai = issue.aiAnalysis;
+                        if (ai) {
+                            const clusterNames = {
+                                'human': 'انسان',
+                                'knowledge': 'دانش و فناوری',
+                                'governance': 'حکمرانی و تمدن',
+                                'survival': 'بقا و آینده'
+                            };
+                            aiDetailsHtml += `
+                                <div style="border-bottom:1px solid rgba(212,175,55,0.1); padding:0.8rem 0;">
+                                    <strong>مشاهده ${idx + 1}:</strong>
+                                    <div style="font-size:0.85rem; margin-top:0.3rem;">
+                                        <span style="display:inline-block; background:rgba(212,175,55,0.1); padding:0.1rem 0.5rem; border-radius:12px; font-size:0.7rem;">
+                                            📂 ${clusterNames[ai.cluster] || ai.cluster || 'نامشخص'}
+                                        </span>
+                                        <span style="display:inline-block; background:rgba(39,174,96,0.1); padding:0.1rem 0.5rem; border-radius:12px; font-size:0.7rem;">
+                                            ⭐ امتیاز پیشنهادی: ${ai.score_suggestion || '?'}
+                                        </span>
+                                    </div>
+                                    <div style="font-size:0.8rem; color:#4a3a2a; margin-top:0.3rem;">
+                                        <strong>تحلیل:</strong> ${ai.analysis_note || '---'}
+                                    </div>
+                                    ${ai.guide_individual ? `<div style="font-size:0.75rem; color:#2874a6; margin-top:0.2rem;">📍 ${ai.guide_individual}</div>` : ''}
+                                    ${ai.guide_network ? `<div style="font-size:0.75rem; color:#27ae60; margin-top:0.2rem;">🌐 ${ai.guide_network}</div>` : ''}
+                                    ${ai.guide_policy ? `<div style="font-size:0.75rem; color:#8a6d1f; margin-top:0.2rem;">🏛️ ${ai.guide_policy}</div>` : ''}
+                                </div>
+                            `;
+                        }
+                    });
+                }
+                
+                if (aiDetailsHtml) {
+                    aiResultContent.innerHTML = aiDetailsHtml;
+                    aiResultDetail.classList.add('active');
                 }
                 
                 resultTitle.textContent = '✅ مشاهدات با موفقیت ثبت و تحلیل شد';
