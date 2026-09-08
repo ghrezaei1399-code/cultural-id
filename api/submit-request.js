@@ -56,13 +56,11 @@ module.exports = async function handler(req, res) {
         // ============================================================
         let aiAnalysis = null;
         
-        // اگر از قبل تحلیل وجود نداشت، از هوش مصنوعی بگیر
         if (!obs.aiAnalysis) {
           try {
             const openRouterKey = process.env.OPENROUTER_API_KEY;
             
             if (openRouterKey) {
-              // پرامپت سیستم بر اساس سپهر خردمندی
               const systemPrompt = isPersian ? 
 `شما یک تحلیلگر فرهنگی بر اساس چارچوب "سپهر خردمندی" هستید.
 
@@ -206,9 +204,86 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
           aiAnalysis = obs.aiAnalysis;
         }
 
-        // اگر هوش مصنوعی کار نکرد، از تحلیل ساده استفاده کن
         if (!aiAnalysis) {
           aiAnalysis = getFallbackAnalysis(obs.text, isPersian);
+        }
+
+        // ============================================================
+        // پردازش ماژول انتخاب‌شده
+        // ============================================================
+        let moduleResult = null;
+        if (obs.module && obs.module !== 'none' && obs.module !== 'هیچ‌کدام') {
+          try {
+            const allUsersRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/active`, {
+              headers: { 'Authorization': `Bearer ${token}` }
+            });
+            
+            if (allUsersRes.ok) {
+              const files = await allUsersRes.json();
+              let allUsers = [];
+              
+              for (const file of files) {
+                if (file.name.endsWith('.json') && file.name !== `${cardCode}.json`) {
+                  try {
+                    const fRes = await fetch(file.download_url);
+                    const uData = await fRes.json();
+                    if (uData.status === 'approved') {
+                      allUsers.push(uData);
+                    }
+                  } catch (e) { continue; }
+                }
+              }
+              
+              moduleResult = { type: obs.module, status: 'completed', data: [] };
+              
+              if (obs.module === 'collaboration') {
+                const senderValues = aiAnalysis.values || [];
+                const matchedUsers = allUsers.filter(user => {
+                  const userValues = user.values || [];
+                  const common = senderValues.filter(v => userValues.includes(v));
+                  return common.length >= 5;
+                });
+                moduleResult.data = matchedUsers.slice(0, 5).map(u => u.cardCode);
+                if (matchedUsers.length > 0) {
+                  const userList = matchedUsers.slice(0, 5).map(u => u.cardCode).join('، ');
+                  moduleResult.analysis = `کاربران هم‌فکر (${userList}) می‌توانند در این زمینه همکاری کنند.`;
+                }
+              } else if (obs.module === 'related') {
+                const allIssuesRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues?labels=observation`, {
+                  headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (allIssuesRes.ok) {
+                  const issues = await allIssuesRes.json();
+                  const similar = issues.filter(issue => 
+                    issue.body && issue.body.includes(obs.text.substring(0, 20))
+                  );
+                  moduleResult.data = similar.slice(0, 5).map(i => `#${i.number}`);
+                  if (similar.length > 0) {
+                    moduleResult.analysis = `${similar.length} مشاهده مرتبط با این موضوع وجود دارد.`;
+                  }
+                }
+              } else if (obs.module === 'referral') {
+                const senderValues = aiAnalysis.values || [];
+                const scoredUsers = allUsers.map(user => {
+                  const userValues = user.values || [];
+                  const common = senderValues.filter(v => userValues.includes(v));
+                  return { ...user, matchCount: common.length };
+                });
+                const referrals = scoredUsers
+                  .filter(u => u.matchCount >= 5)
+                  .sort((a, b) => b.matchCount - a.matchCount)
+                  .slice(0, 5);
+                moduleResult.data = referrals.map(u => u.cardCode);
+                if (referrals.length > 0) {
+                  const userList = referrals.map(u => u.cardCode).join('، ');
+                  moduleResult.analysis = `۵ همفرهنگ (${userList}) برای ارجاع انتخاب شدند.`;
+                }
+              }
+            }
+          } catch (moduleError) {
+            console.error('Module processing failed:', moduleError);
+            moduleResult = { type: obs.module, status: 'error', data: [] };
+          }
         }
 
         // ============================================================
@@ -222,7 +297,7 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
            aiAnalysis.cluster === 'survival' ? 'بقا و آینده' : 'نامشخص') :
           (aiAnalysis.cluster || 'Unknown');
         
-              const aiSection = `
+        const aiSection = `
 **🤖 AI Analysis:**
 - **Status:** ${statusLabel}
 - **Cluster:** ${clusterLabel}
@@ -240,15 +315,26 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
 - **Connections:** ${aiAnalysis.matrix_connections || '---'}
 - **Scale:** ${aiAnalysis.matrix_scale || '---'}
 - **Capacity:** ${aiAnalysis.matrix_capacity || '---'}
+`;
 
+        const issueTitle = isPersian ? `مشاهده خام: ${cardCode}` : `Raw Observation: ${cardCode}`;
+        const issueBody = `
+**Card Code:** ${cardCode}
+
+**Observation:**
+${obs.text}
+
+**Selected Module:**
+${selectedModule}
+
+${aiSection}
+${moduleResult && moduleResult.data && moduleResult.data.length > 0 ? `
 **📌 Module Result:**
-${moduleResult ? `
 - **Type:** ${moduleResult.type === 'collaboration' ? 'همفکری' : moduleResult.type === 'related' ? 'مشاهدات مرتبط' : 'ارجاع به ۵ همفرهنگ'}
 - **Status:** ${moduleResult.status === 'completed' ? '✅ تکمیل شد' : '⏳ در انتظار'}
-${moduleResult.data && moduleResult.data.length > 0 ? `- **Results:** ${moduleResult.data.map(d => d.cardCode || d.text).join(', ')}` : ''}
+- **Results:** ${moduleResult.data.join(', ')}
 ${moduleResult.analysis ? `- **Additional Analysis:** ${moduleResult.analysis}` : ''}
-` : '⏳ در حال پردازش...'}
-`;
+` : ''}
 ---
 *This observation has been registered and is pending review.*
         `;
@@ -278,7 +364,8 @@ ${moduleResult.analysis ? `- **Additional Analysis:** ${moduleResult.analysis}` 
           url: issueData.html_url,
           observation: obs.text.substring(0, 50) + '...',
           module: selectedModule,
-          aiAnalysis: aiAnalysis
+          aiAnalysis: aiAnalysis,
+          moduleResult: moduleResult
         });
       }
 
@@ -479,9 +566,6 @@ ${moduleResult.analysis ? `- **Additional Analysis:** ${moduleResult.analysis}` 
       });
     }
 
-    // ============================================================
-    // نوع درخواست نامعتبر
-    // ============================================================
     return res.status(400).json({ error: 'Invalid request type.' });
 
   } catch (error) {
