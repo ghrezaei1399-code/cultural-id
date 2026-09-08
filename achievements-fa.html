@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>گالری نام‌آوران | کارت جهانی هویت هوشمند فرهنگی</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            padding: 1.5rem 1rem;
+            background: linear-gradient(135deg, #fdf6e3 0%, #e8f4f8 50%, #f5e6d3 100%);
+            color: #2a1a0a;
+        }
+        body.dark {
+            background: linear-gradient(135deg, #3a2f20 0%, #2a2418 50%, #4a3a28 100%);
+            color: #f0e8d0;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .page-title {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #8a6d1f;
+            text-align: center;
+            margin-bottom: 0.2rem;
+        }
+        body.dark .page-title { color: #f9e79f; }
+        .page-subtitle {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #6a5a3a;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(212,175,55,0.15);
+            padding-bottom: 1rem;
+        }
+        body.dark .page-subtitle { color: #c8b890; }
+        
+        .stats-bar {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 0.5rem 1.5rem;
+            background: rgba(255,255,255,0.3);
+            border-radius: 12px;
+            border: 1px solid rgba(212,175,55,0.15);
+        }
+        body.dark .stat-item { background: rgba(0,0,0,0.1); }
+        .stat-item .number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #8a6d1f;
+            display: block;
+        }
+        body.dark .stat-item .number { color: #f9e79f; }
+        .stat-item .label {
+            font-size: 0.7rem;
+            color: #6a5a3a;
+        }
+        body.dark .stat-item .label { color: #c8b890; }
+        
+        .filter-bar {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+        }
+        .filter-btn {
+            padding: 0.4rem 1.2rem;
+            border-radius: 30px;
+            border: 1px solid rgba(212,175,55,0.15);
+            background: rgba(255,255,255,0.03);
+            color: #0a0a1a;
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        body.dark .filter-btn { color: #f0e8d0; }
+        .filter-btn:hover { background: rgba(212,175,55,0.05); }
+        .filter-btn.active {
+            background: rgba(212,175,55,0.12);
+            border-color: #d4af37;
+        }
+        body.dark .filter-btn.active { background: rgba(212,175,55,0.08); }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .ach-card {
+            background: rgba(255,255,255,0.6);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(212,175,55,0.2);
+            transition: 0.3s;
+            position: relative;
+        }
+        body.dark .ach-card { background: rgba(0,0,0,0.15); border-color: rgba(212,175,55,0.1); }
+        .ach-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(212,175,55,0.12);
+        }
+        body.dark .ach-card:hover { box-shadow: 0 8px 30px rgba(212,175,55,0.05); }
+        
+        .ach-media {
+            height: 200px;
+            background: rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        body.dark .ach-media { background: rgba(0,0,0,0.1); }
+        .ach-media img, .ach-media video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .ach-media .no-media {
+            font-size: 3rem;
+            color: #888;
+        }
+        
+        .ach-content { padding: 1.5rem; }
+        .ach-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #2a1a0a;
+            margin-bottom: 0.5rem;
+        }
+        body.dark .ach-title { color: #f0e8e0; }
+        .ach-desc {
+            font-size: 0.85rem;
+            color: #4a3a2a;
+            line-height: 1.6;
+            margin-bottom: 0.8rem;
+        }
+        body.dark .ach-desc { color: #d0c0b0; }
+        .ach-meta {
+            font-size: 0.7rem;
+            color: #888;
+            margin-bottom: 0.5rem;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.15rem 0.6rem;
+            border-radius: 30px;
+            font-size: 0.65rem;
+            font-weight: 700;
+        }
+        .badge-approved { background: rgba(50,200,50,0.15); color: #0a6a0a; }
+        .badge-pending { background: rgba(255,200,50,0.15); color: #8a7a0a; }
+        .badge-rejected { background: rgba(200,50,50,0.15); color: #6a1a1a; }
+        .badge-golden { background: rgba(212,175,55,0.2); color: #8a6d1f; }
+        .badge-silver { background: rgba(192,192,192,0.2); color: #4a4a5a; }
+        .badge-bronze { background: rgba(205,127,50,0.2); color: #6a4a0a; }
+        
+        .category-tag {
+            display: inline-block;
+            padding: 0.15rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            background: rgba(40,116,166,0.1);
+            color: #2874a6;
+            border: 1px solid rgba(40,116,166,0.15);
+        }
+        body.dark .category-tag { color: #85c1e9; background: rgba(40,116,166,0.05); }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #888;
+            grid-column: 1 / -1;
+        }
+        
+        .back-row { display: flex; justify-content: center; margin-top: 2rem; gap: 1rem; flex-wrap: wrap; }
+        .btn-back {
+            padding: 0.7rem 2rem;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-decoration: none;
+            background: rgba(255,255,255,0.3);
+            color: #0a0a1a;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s;
+        }
+        body.dark .btn-back { color: #f0e8d0; background: rgba(0,0,0,0.1); }
+        .btn-back:hover { background: rgba(255,255,255,0.5); transform: translateY(-2px); }
+        body.dark .btn-back:hover { background: rgba(255,255,255,0.05); }
+        
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .gallery-grid { grid-template-columns: 1fr; }
+            .stats-bar { gap: 0.8rem; }
+            .stat-item { padding: 0.3rem 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="page-title">🏆 گالری نام‌آوران</h1>
+        <div class="page-subtitle">دستاوردهای فرهنگی تأییدشده • سفیران فرهنگی جهان</div>
+        
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="number" id="totalCount">۰</span>
+                <span class="label">کل دستاوردها</span>
+            </div>
+            <div class="stat-item">
+                <span class="number" id="goldenCount">۰</span>
+                <span class="label">نشان طلایی</span>
+            </div>
+        </div>
+        
+        <div class="filter-bar">
+            <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">📋 همه</button>
+            <button class="filter-btn" data-filter="art" onclick="setFilter('art')">🎨 هنری</button>
+            <button class="filter-btn" data-filter="science" onclick="setFilter('science')">📄 علمی</button>
+            <button class="filter-btn" data-filter="cultural" onclick="setFilter('cultural')">🌍 فرهنگی</button>
+            <button class="filter-btn" data-filter="media" onclick="setFilter('media')">🎬 رسانه</button>
+        </div>
+        
+        <div id="galleryGrid" class="gallery-grid">
+            <div class="empty-state">در حال بارگذاری...</div>
+        </div>
+        
+        <div class="back-row">
+            <a href="index.html" class="btn-back">↩ بازگشت به صفحه اصلی</a>
+        </div>
+    </div>
+    
+    <script>
+        let allAchievements = [];
+        let currentFilter = 'all';
+        
+        const categoryLabels = {
+            'art': '🎨 هنری',
+            'science': '📄 علمی',
+            'cultural': '🌍 فرهنگی',
+            'media': '🎬 رسانه',
+            'other': '📌 سایر'
+        };
+        
+        const badgeLabels = {
+            'golden': '🌟 طلایی',
+            'silver': '🥈 نقره‌ای',
+            'bronze': '🥉 برنزی'
+        };
+        
+        async function loadGallery() {
+            try {
+                const response = await fetch('/api/get-users?t=' + new Date().getTime());
+                if (!response.ok) throw new Error('خطا در دریافت اطلاعات');
+                
+                const data = await response.json();
+                const users = data.users || [];
+                
+                allAchievements = [];
+                users.forEach(user => {
+                    if (user.achievements && Array.isArray(user.achievements)) {
+                        user.achievements.forEach(ach => {
+                            if (ach.status === 'approved') {
+                                allAchievements.push({
+                                    ...ach,
+                                    ownerCode: user.cardCode,
+                                    ownerRank: user.rank || 0,
+                                    ownerBadge: user.badge || 'bronze'
+                                });
+                            }
+                        });
+                    }
+                });
+                
+                updateStats();
+                renderGallery();
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('galleryGrid').innerHTML = 
+                    `<div class="empty-state" style="color:red;">خطا: ${error.message}</div>`;
+            }
+        }
+        
+        function updateStats() {
+            const total = allAchievements.length;
+            const golden = allAchievements.filter(a => a.ownerBadge === 'golden').length;
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('goldenCount').textContent = golden;
+        }
+        
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === filter);
+            });
+            renderGallery();
+        }
+        
+        function renderGallery() {
+            const container = document.getElementById('galleryGrid');
+            
+            let filtered = allAchievements;
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(a => a.category === currentFilter);
+            }
+            
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="empty-state">هیچ دستاوردی در این دسته‌بندی یافت نشد.</div>`;
+                return;
+            }
+            
+            container.innerHTML = filtered.map(ach => {
+                let mediaHtml = '';
+                if (ach.fileUrl) {
+                    const ext = ach.fileName ? ach.fileName.split('.').pop().toLowerCase() : '';
+                    if (['mp4', 'webm', 'ogg', 'mov'].includes(ext)) {
+                        mediaHtml = `<video controls src="${ach.fileUrl}"></video>`;
+                    } else {
+                        mediaHtml = `<img src="${ach.fileUrl}" alt="${ach.title}" onerror="this.parentElement.innerHTML='<span class=\\'no-media\\'>📄</span>'" />`;
+                    }
+                } else if (ach.fileData) {
+                    mediaHtml = `<img src="${ach.fileData}" alt="${ach.title}" />`;
+                } else {
+                    mediaHtml = `<span class="no-media">📄</span>`;
+                }
+                
+                const badgeClass = ach.ownerBadge === 'golden' ? 'badge-golden' : 
+                                   ach.ownerBadge === 'silver' ? 'badge-silver' : 'badge-bronze';
+                const badgeLabel = badgeLabels[ach.ownerBadge] || '🥉 برنزی';
+                
+                return `
+                    <div class="ach-card">
+                        <div class="ach-media">${mediaHtml}</div>
+                        <div class="ach-content">
+                            <div class="ach-title">${ach.title || 'بدون عنوان'}</div>
+                            <div class="ach-desc">${ach.description || 'توضیحاتی ثبت نشده است.'}</div>
+                            <div class="ach-meta">
+                                <span class="badge ${badgeClass}">${badgeLabel}</span>
+                                <span class="category-tag">${categoryLabels[ach.category] || '📌 سایر'}</span>
+                                <br>
+                                <span style="font-size:0.65rem; color:#888;">${ach.ownerCode} • رتبه ${ach.ownerRank}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        loadGallery();
+        setInterval(loadGallery, 60000);
+    </script>
+</body>
+</html>
