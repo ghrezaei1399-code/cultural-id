@@ -58,7 +58,7 @@ module.exports = async function handler(req, res) {
           const trimmedLine = line.trim();
           
           if (trimmedLine.includes('**Card Code:**')) {
-            const match = trimmedLine.match(/\\*\\*Card Code:\\*\\*\\s*(.+)/);
+          const match = trimmedLine.match(/\*\*Card Code:\*\*\s*(.+)/);
             if (match) cardCode = match[1].trim();
             continue;
           }
