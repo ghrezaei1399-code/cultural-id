@@ -617,26 +617,18 @@
                     `;
                 }
                 
-                let actionButtons = '';
-                if (isPending) {
-                    actionButtons = `
-                        <div class="obs-actions">
-                            <button class="btn-small btn-approve" onclick="approveObservation('${obs.number}')">✅ تایید</button>
-                            <button class="btn-small btn-reject" onclick="rejectObservation('${obs.number}')">❌ رد</button>
-                            <button class="btn-small btn-module" onclick="toggleAnalysis('${obs.number}')">📊 تحلیل ۵ سطحی</button>
-                            <button class="btn-small btn-ai" onclick="autoFillAnalysis('${obs.number}')">🤖 تحلیل هوشمند</button>
-                        </div>
-                    `;
-                } else if (isApproved || isScore5) {
-                    actionButtons = `
-                        <div class="obs-actions">
-                            <button class="btn-small btn-module" onclick="toggleAnalysis('${obs.number}')">📊 ویرایش تحلیل</button>
-                            <button class="btn-small btn-ai" onclick="autoFillAnalysis('${obs.number}')">🤖 تحلیل هوشمند</button>
-                            ${isScore5 ? `<button class="btn-small btn-approve" onclick="submitToGallery('${obs.number}')" style="background:rgba(212,175,55,0.2);color:#8a6d1f;">⭐ ارسال به گالری</button>` : ''}
-                            <button class="btn-small btn-cluster" onclick="generateGuide('${obs.number}')">📋 تولید بسته راهنما</button>
-                        </div>
-                    `;
-                }
+                let asPending) {
+                 let actionButtons = '';
+if (isPending) {
+    actionButtons = `
+        <div class="obs-actions">
+            <button class="btn-small btn-approve" onclick="approveObservation('${obs.number}', 'atlas')">✅ تایید برای اطلس ظهور</button>
+            <button class="btn-small btn-approve" onclick="approveObservation('${obs.number}', 'gallery')">✅ تایید برای گالری نام‌آوران</button>
+            <button class="btn-small btn-approve" onclick="approveObservation('${obs.number}', 'achievements')">✅ تایید برای ثبت آثار</button>
+            <button class="btn-small btn-reject" onclick="rejectObservation('${obs.number}')">❌ رد</button>
+        </div>
+    `;
+}
                 
                 const analysisBox = `
                     <div class="analysis-box" id="analysis-${obs.number}">
@@ -732,7 +724,7 @@ const matricesHtml = `
                         </div>
                         ${moduleHtml}
                         ${aiHtml}
-                                               ${obs.matrix_emergence || obs.matrix_layers || obs.matrix_connections || obs.matrix_scale || obs.matrix_capacity ? `
+  ${obs.matrix_emergence || obs.matrix_layers || obs.matrix_connections || obs.matrix_scale || obs.matrix_capacity ? `
 <div style="margin-top:0.8rem; padding:0.5rem; background:rgba(212,175,55,0.05); border-radius:8px; border-right:2px solid #d4af37;">
     <div style="font-weight:800; color:#8a6d1f; font-size:0.8rem; margin-bottom:0.3rem;">📊 ماتریس‌های سپهر خردمندی</div>
     ${obs.matrix_emergence ? `<div style="font-size:0.75rem; color:#4a3a2a; padding:0.2rem 0;"><strong>ظهورها:</strong> ${obs.matrix_emergence}</div>` : ''}
@@ -856,20 +848,25 @@ const matricesHtml = `
             alert(`📋 بسته راهنما برای خوشه "${clusterLabel}" تولید شد.`);
         }
         
-        async function approveObservation(issueNumber) {
-            if (!confirm('آیا از تایید این مشاهده اطمینان دارید؟')) return;
-            try {
-                const response = await fetch('/api/approve-connection', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ issueNumber, action: 'approve_all', type: 'observation' })
-                });
-                const result = await response.json();
-                if (!response.ok) throw new Error(result.error || 'خطا در تایید');
-                alert(result.message);
-                loadObservations();
-            } catch (error) { alert('خطا: ' + error.message); }
-        }
+        async function approveObservation(issueNumber, target) {
+    const targetNames = {
+        'atlas': 'اطلس ظهور',
+        'gallery': 'گالری نام‌آوران',
+        'achievements': 'ثبت آثار نام‌آوران'
+    };
+    if (!confirm(`آیا از تایید این مشاهده برای ${targetNames[target]} اطمینان دارید؟`)) return;
+    try {
+        const response = await fetch('/api/approve-connection', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ issueNumber, action: 'approve_all', type: 'observation', target })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || 'خطا در تایید');
+        alert(`✅ مشاهده برای ${targetNames[target]} تایید شد.`);
+        loadObservations();
+    } catch (error) { alert('خطا: ' + error.message); }
+}
         
         async function rejectObservation(issueNumber) {
             if (!confirm('آیا از رد این مشاهده اطمینان دارید؟')) return;
