@@ -415,7 +415,8 @@
             🔒 Your observations are registered anonymously with full privacy protection.
         </div>
     </div>
-   <script>
+    
+    <script>
         function selectModule(btn, module) {
             const parent = btn.closest('.observation-box');
             parent.querySelectorAll('.box-module-btn').forEach(b => b.classList.remove('active'));
@@ -503,8 +504,12 @@
 
         function fastFilter(text) {
             const lowerText = text.toLowerCase();
+            // Check for forbidden words as whole words only
             for (const keyword of FORBIDDEN_WORDS) {
-                if (lowerText.includes(keyword)) {
+                const lowerKeyword = keyword.toLowerCase();
+                // Use regex for whole word matching
+                const regex = new RegExp('\\b' + lowerKeyword + '\\b', 'i');
+                if (regex.test(lowerText)) {
                     return {
                         blocked: true,
                         reason: `Text contains forbidden word "${keyword}". Please register a cultural observation.`
@@ -690,6 +695,6 @@
             updateAddButton();
             console.log('📌 Sphere of Wisdom - Register Observations');
         });
-    </script> 
+    </script>
 </body>
 </html>
