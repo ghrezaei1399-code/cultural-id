@@ -705,7 +705,17 @@
                         <div class="guide-item"><strong>🏛️ سطح سیاستی:</strong> ${guide.policy || 'توصیه‌ای ثبت نشده است.'}</div>
                     </div>
                 `;
-                
+                // ===== تولید HTML برای ۵ ماتریس =====
+const matricesHtml = `
+    <div style="margin-top:0.8rem; padding:0.5rem; background:rgba(212,175,55,0.05); border-radius:8px;">
+        <div style="font-weight:800; color:#8a6d1f; font-size:0.85rem; margin-bottom:0.5rem;">📊 ماتریس‌های سپهر خردمندی</div>
+        ${obs.matrix_emergence ? `<div style="margin-bottom:0.5rem; padding:0.3rem; background:rgba(255,255,255,0.3); border-radius:6px; border-right:3px solid #d4af37;"><div style="font-weight:700; color:#2874a6; font-size:0.8rem;">۱. ماتریس ظهورها</div><div style="font-size:0.85rem; color:#3a2a1a;">${obs.matrix_emergence}</div></div>` : ''}
+        ${obs.matrix_layers ? `<div style="margin-bottom:0.5rem; padding:0.3rem; background:rgba(255,255,255,0.3); border-radius:6px; border-right:3px solid #d4af37;"><div style="font-weight:700; color:#2874a6; font-size:0.8rem;">۲. ماتریس لایه‌ها</div><div style="font-size:0.85rem; color:#3a2a1a;">${obs.matrix_layers}</div></div>` : ''}
+        ${obs.matrix_connections ? `<div style="margin-bottom:0.5rem; padding:0.3rem; background:rgba(255,255,255,0.3); border-radius:6px; border-right:3px solid #d4af37;"><div style="font-weight:700; color:#2874a6; font-size:0.8rem;">۳. ماتریس ارتباطات</div><div style="font-size:0.85rem; color:#3a2a1a;">${obs.matrix_connections}</div></div>` : ''}
+        ${obs.matrix_scale ? `<div style="margin-bottom:0.5rem; padding:0.3rem; background:rgba(255,255,255,0.3); border-radius:6px; border-right:3px solid #d4af37;"><div style="font-weight:700; color:#2874a6; font-size:0.8rem;">۴. ماتریس مقیاس</div><div style="font-size:0.85rem; color:#3a2a1a;">${obs.matrix_scale}</div></div>` : ''}
+        ${obs.matrix_capacity ? `<div style="margin-bottom:0.5rem; padding:0.3rem; background:rgba(255,255,255,0.3); border-radius:6px; border-right:3px solid #d4af37;"><div style="font-weight:700; color:#2874a6; font-size:0.8rem;">۵. ماتریس ظرفیت</div><div style="font-size:0.85rem; color:#3a2a1a;">${obs.matrix_capacity}</div></div>` : ''}
+    </div>
+`;
                 return `
                     <div class="${cardClass}" id="card-${obs.number}">
                         <div class="obs-header">
@@ -722,6 +732,7 @@
                         </div>
                         ${moduleHtml}
                         ${aiHtml}
+                        ${matricesHtml}
                         ${actionButtons}
                         ${analysisBox}
                         ${guideBox}
