@@ -58,7 +58,7 @@ module.exports = async function handler(req, res) {
           const trimmedLine = line.trim();
           
           if (trimmedLine.includes('**Card Code:**')) {
-          const match = trimmedLine.match(/\*\*Card Code:\*\*\s*(.+)/);
+            const match = trimmedLine.match(/\*\*Card Code:\*\*\s*(.+)/);
             if (match) cardCode = match[1].trim();
             continue;
           }
@@ -69,14 +69,14 @@ module.exports = async function handler(req, res) {
           }
           
           if (trimmedLine.includes('**Selected Module:**')) {
-            const match = trimmedLine.match(/\\*\\*Selected Module:\\*\\*\\s*(.+)/);
+            const match = trimmedLine.match(/\*\*Selected Module:\*\*\s*(.+)/);
             if (match) module = match[1].trim();
             continue;
           }
           
           // ===== استخراج AI Analysis =====
           if (trimmedLine.includes('**Cluster:**')) {
-            const match = trimmedLine.match(/\\*\\*Cluster:\\*\\*\\s*(.+)/);
+            const match = trimmedLine.match(/\*\*Cluster:\*\*\s*(.+)/);
             if (match) {
               const clusterText = match[1].trim();
               if (clusterText.includes('Human') || clusterText.includes('انسان')) cluster = 'human';
@@ -88,13 +88,13 @@ module.exports = async function handler(req, res) {
           }
           
           if (trimmedLine.includes('**Suggested Score:**')) {
-            const match = trimmedLine.match(/\\d+/);
+            const match = trimmedLine.match(/\d+/);
             if (match) score = parseInt(match[0]);
             continue;
           }
           
           if (trimmedLine.includes('**Analysis:**')) {
-            const match = trimmedLine.match(/\\*\\*Analysis:\\*\\*\\s*(.+)/);
+            const match = trimmedLine.match(/\*\*Analysis:\*\*\s*(.+)/);
             if (match) {
               const analysisText = match[1].trim();
               if (analysisText !== '---' && analysisText !== 'تحلیل' && analysisText !== 'Analysis') {
@@ -106,35 +106,35 @@ module.exports = async function handler(req, res) {
           
           // ===== استخراج ۵ ماتریس =====
           if (trimmedLine.includes('**Emergence:**')) {
-            const match = trimmedLine.match(/\\*\\*Emergence:\\*\\*\\s*(.+)/);
+            const match = trimmedLine.match(/\*\*Emergence:\*\*\s*(.+)/);
             if (match) matrix_emergence = match[1].trim();
             if (matrix_emergence === '---') matrix_emergence = '';
             continue;
           }
           
           if (trimmedLine.includes('**Layers:**')) {
-            const match = trimmedLine.match(/\\*\\*Layers:\\*\\*\\s*(.+)/);
+            const match = trimmedLine.match(/\*\*Layers:\*\*\s*(.+)/);
             if (match) matrix_layers = match[1].trim();
             if (matrix_layers === '---') matrix_layers = '';
             continue;
           }
           
           if (trimmedLine.includes('**Connections:**')) {
-            const match = trimmedLine.match(/\\*\\*Connections:\\*\\*\\s*(.+)/);
+            const match = trimmedLine.match(/\*\*Connections:\*\*\s*(.+)/);
             if (match) matrix_connections = match[1].trim();
             if (matrix_connections === '---') matrix_connections = '';
             continue;
           }
           
           if (trimmedLine.includes('**Scale:**')) {
-            const match = trimmedLine.match(/\\*\\*Scale:\\*\\*\\s*(.+)/);
+            const match = trimmedLine.match(/\*\*Scale:\*\*\s*(.+)/);
             if (match) matrix_scale = match[1].trim();
             if (matrix_scale === '---') matrix_scale = '';
             continue;
           }
           
           if (trimmedLine.includes('**Capacity:**')) {
-            const match = trimmedLine.match(/\\*\\*Capacity:\\*\\*\\s*(.+)/);
+            const match = trimmedLine.match(/\*\*Capacity:\*\*\s*(.+)/);
             if (match) matrix_capacity = match[1].trim();
             if (matrix_capacity === '---') matrix_capacity = '';
             continue;
