@@ -28,16 +28,42 @@ module.exports = async function handler(req, res) {
     const repo = 'cultural-id';
 
     // ============================================================
-    // بخش AI Analyze - با ۵ ماتریس سپهر خردمندی
+    // بخش Observations - با هوش مصنوعی OpenRouter
     // ============================================================
-    if (type === 'ai-analyze') {
-      try {
-        const isPersian = /[\u0600-\u06FF]/.test(text);
+    if (type === 'observations' && observations && observations.length > 0) {
+      if (!cardCode) {
+        return res.status(400).json({ error: 'کد کارت الزامی است' });
+      }
+
+      const moduleNames = {
+        'collaboration': 'همفکری با دیگران',
+        'related': 'مشاهدات مرتبط دیگران',
+        'referral': 'ارجاع به ۵ همفرهنگ'
+      };
+
+      const createdIssues = [];
+      
+      for (const obs of observations) {
+        if (!obs.text || obs.text.length < 10) {
+          continue;
+        }
+
+        const selectedModule = obs.module ? moduleNames[obs.module] || obs.module : 'هیچ‌کدام';
+        const isPersian = /[\u0600-\u06FF]/.test(obs.text);
         
         // ============================================================
-        // تغییر ۱: پرامپت جدید با ۵ ماتریس
+        // تحلیل هوش مصنوعی با OpenRouter (Gemini)
         // ============================================================
-        const systemPrompt = isPersian ? 
+        let aiAnalysis = null;
+        
+        // اگر از قبل تحلیل وجود نداشت، از هوش مصنوعی بگیر
+        if (!obs.aiAnalysis) {
+          try {
+            const openRouterKey = process.env.OPENROUTER_API_KEY;
+            
+            if (openRouterKey) {
+              // پرامپت سیستم بر اساس سپهر خردمندی
+              const systemPrompt = isPersian ? 
 `شما یک تحلیلگر فرهنگی بر اساس چارچوب "سپهر خردمندی" هستید.
 
 **وظیفه:** تحلیل عمیق مشاهده کاربر و تولید یک JSON با ۱۱ بخش.
@@ -59,9 +85,6 @@ module.exports = async function handler(req, res) {
 ۳. ماتریس ارتباطات: روابط میان سپهرهای درگیر چگونه است؟
 ۴. ماتریس مقیاس: این پدیده در چه مقیاسی است (فردی، محلی، منطقه‌ای، جهانی)؟
 ۵. ماتریس ظرفیت: چه ظرفیت‌هایی وجود دارد و کدام مغفول مانده است؟
-
-**امتیاز (۱ تا ۵):**
-بر اساس شدت، دامنه تأثیر، ارتباط با کرامت انسانی، و عمق مشاهده
 
 **ساختار خروجی (فقط این JSON را برگردانید):**
 {
@@ -100,9 +123,6 @@ module.exports = async function handler(req, res) {
 4. Scale Matrix: What is the scale (individual, local, regional, global)?
 5. Capacity Matrix: What capacities exist and which have been neglected?
 
-**Score (1 to 5):**
-Based on intensity, scope of impact, connection to human dignity, and depth of observation
-
 **Output Structure (return ONLY this JSON):**
 {
   "status": "approved",
@@ -119,160 +139,108 @@ Based on intensity, scope of impact, connection to human dignity, and depth of o
   "matrix_capacity": "Analysis of Capacity Matrix based on user text"
 }`;
 
-        const userPrompt = isPersian ?
-`مشاهده کاربر: "${text}"
+              const userPrompt = isPersian ?
+`مشاهده کاربر: "${obs.text}"
 
 تحلیل عمیق بر اساس چارچوب سپهر خردمندی با ۵ ماتریس. فقط JSON برگردان.` :
-`User observation: "${text}"
+`User observation: "${obs.text}"
 
 Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ONLY JSON.`;
 
-        // ============================================================
-        // درخواست به OpenRouter
-        // ============================================================
-        const openRouterKey = process.env.OPENROUTER_API_KEY;
-        
-        if (!openRouterKey) {
-          console.warn('OPENROUTER_API_KEY not found, using fallback');
-          return res.status(200).json({
-            success: true,
-            analysis: getFallbackAnalysis(text, isPersian)
-          });
+              const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${openRouterKey}`,
+                  'HTTP-Referer': process.env.SITE_URL || 'https://cultural-id.vercel.app',
+                  'X-Title': process.env.SITE_NAME || 'Global Smart Cultural Identity',
+                },
+                body: JSON.stringify({
+                  model: 'google/gemini-2.0-flash-exp:free',
+                  messages: [
+                    { role: 'system', content: systemPrompt },
+                    { role: 'user', content: userPrompt }
+                  ],
+                  temperature: 0.8,
+                  max_tokens: 1200,
+                  response_format: { type: 'json_object' }
+                })
+              });
+
+              if (response.ok) {
+                const data = await response.json();
+                const content = data.choices?.[0]?.message?.content || '{}';
+                
+                let jsonStr = content;
+                const s = content.indexOf('{');
+                const e = content.lastIndexOf('}');
+                if (s !== -1 && e !== -1) {
+                  jsonStr = content.substring(s, e + 1);
+                }
+                
+                const analysis = JSON.parse(jsonStr);
+                
+                aiAnalysis = {
+                  status: analysis.status || "approved",
+                  rejection_reason: analysis.rejection_reason || null,
+                  cluster: analysis.cluster || "human",
+                  score_suggestion: typeof analysis.score === 'number' ? analysis.score : 3,
+                  analysis_note: analysis.analysis || (isPersian ? "تحلیل دقیق" : "Detailed analysis"),
+                  guide_individual: analysis.individual || (isPersian ? "راهنمای فردی" : "Individual guide"),
+                  guide_network: analysis.network || (isPersian ? "راهنمای شبکه‌ای" : "Network guide"),
+                  guide_policy: analysis.policy || (isPersian ? "راهنمای سیاستی" : "Policy guide"),
+                  matrix_emergence: analysis.matrix_emergence || (isPersian ? "تحلیل ماتریس ظهورها" : "Emergence Matrix Analysis"),
+                  matrix_layers: analysis.matrix_layers || (isPersian ? "تحلیل ماتریس لایه‌ها" : "Layers Matrix Analysis"),
+                  matrix_connections: analysis.matrix_connections || (isPersian ? "تحلیل ماتریس ارتباطات" : "Connections Matrix Analysis"),
+                  matrix_scale: analysis.matrix_scale || (isPersian ? "تحلیل ماتریس مقیاس" : "Scale Matrix Analysis"),
+                  matrix_capacity: analysis.matrix_capacity || (isPersian ? "تحلیل ماتریس ظرفیت" : "Capacity Matrix Analysis")
+                };
+              } else {
+                console.error('OpenRouter Error:', response.status);
+              }
+            }
+          } catch (aiError) {
+            console.error('AI Analysis Error:', aiError);
+          }
+        } else {
+          aiAnalysis = obs.aiAnalysis;
         }
 
-        console.log('Sending request to OpenRouter with 5 matrices...');
-        
-        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${openRouterKey}`,
-            'HTTP-Referer': process.env.SITE_URL || 'https://cultural-id.vercel.app',
-            'X-Title': process.env.SITE_NAME || 'Global Smart Cultural Identity',
-          },
-          body: JSON.stringify({
-            model: 'google/gemini-2.0-flash-exp:free',
-            messages: [
-              { role: 'system', content: systemPrompt },
-              { role: 'user', content: userPrompt }
-            ],
-            temperature: 0.8,
-            max_tokens: 1200,
-            response_format: { type: 'json_object' }
-          })
-        });
-
-        if (!response.ok) {
-          console.error('OpenRouter Error:', response.status);
-          const errorText = await response.text();
-          console.error('OpenRouter Response:', errorText);
-          return res.status(200).json({
-            success: true,
-            analysis: getFallbackAnalysis(text, isPersian)
-          });
+        // اگر هوش مصنوعی کار نکرد، از تحلیل ساده استفاده کن
+        if (!aiAnalysis) {
+          aiAnalysis = getFallbackAnalysis(obs.text, isPersian);
         }
 
-        const data = await response.json();
-        console.log('OpenRouter Response received.');
-        
-        const content = data.choices?.[0]?.message?.content || '{}';
-        
-        // استخراج JSON
-        let jsonStr = content;
-        const s = content.indexOf('{');
-        const e = content.lastIndexOf('}');
-        if (s !== -1 && e !== -1) {
-          jsonStr = content.substring(s, e + 1);
-        }
-        
-        const analysis = JSON.parse(jsonStr);
-        
         // ============================================================
-        // تغییر ۲: پردازش پاسخ با ۵ ماتریس
+        // ساخت بخش AI برای نمایش در Issue
         // ============================================================
-        const result = {
-          status: analysis.status || "approved",
-          rejection_reason: analysis.rejection_reason || null,
-          cluster: analysis.cluster || "human",
-          score_suggestion: typeof analysis.score === 'number' ? analysis.score : 3,
-          analysis_note: analysis.analysis || (isPersian ? "تحلیل دقیق" : "Detailed analysis"),
-          guide_individual: analysis.individual || (isPersian ? "راهنمای فردی" : "Individual guide"),
-          guide_network: analysis.network || (isPersian ? "راهنمای شبکه‌ای" : "Network guide"),
-          guide_policy: analysis.policy || (isPersian ? "راهنمای سیاستی" : "Policy guide"),
-          // ========== ۵ ماتریس ==========
-          matrix_emergence: analysis.matrix_emergence || (isPersian ? "تحلیل ماتریس ظهورها" : "Emergence Matrix Analysis"),
-          matrix_layers: analysis.matrix_layers || (isPersian ? "تحلیل ماتریس لایه‌ها" : "Layers Matrix Analysis"),
-          matrix_connections: analysis.matrix_connections || (isPersian ? "تحلیل ماتریس ارتباطات" : "Connections Matrix Analysis"),
-          matrix_scale: analysis.matrix_scale || (isPersian ? "تحلیل ماتریس مقیاس" : "Scale Matrix Analysis"),
-          matrix_capacity: analysis.matrix_capacity || (isPersian ? "تحلیل ماتریس ظرفیت" : "Capacity Matrix Analysis")
-        };
+        const statusLabel = aiAnalysis.status === 'approved' ? '✅ تایید شده' : '❌ رد شده';
+        const clusterLabel = isPersian ? 
+          (aiAnalysis.cluster === 'human' ? 'انسان' : 
+           aiAnalysis.cluster === 'knowledge' ? 'دانش و فناوری' : 
+           aiAnalysis.cluster === 'governance' ? 'حکمرانی و تمدن' : 
+           aiAnalysis.cluster === 'survival' ? 'بقا و آینده' : 'نامشخص') :
+          (aiAnalysis.cluster || 'Unknown');
         
-        return res.status(200).json({ success: true, analysis: result });
-        
-      } catch (error) {
-        console.error('AI Analysis Error:', error);
-        const isPersian = /[\u0600-\u06FF]/.test(text);
-        return res.status(200).json({
-          success: true,
-          analysis: getFallbackAnalysis(text, isPersian)
-        });
-      }
-    }
-
-    // ============================================================
-    // بخش Observations (تغییر نکرده)
-    // ============================================================
-    if (type === 'observations' && observations && observations.length > 0) {
-      if (!cardCode) {
-        return res.status(400).json({ error: 'کد کارت الزامی است' });
-      }
-
-      const moduleNames = {
-        'collaboration': 'همفکری با دیگران',
-        'related': 'مشاهدات مرتبط دیگران',
-        'referral': 'ارجاع به ۵ همفرهنگ'
-      };
-
-      const createdIssues = [];
-      for (const obs of observations) {
-        if (!obs.text || obs.text.length < 10) {
-          continue;
-        }
-
-        const selectedModule = obs.module ? moduleNames[obs.module] || obs.module : 'هیچ‌کدام';
-        const isPersian = /[\u0600-\u06FF]/.test(obs.text);
-        
-        let aiSection = '';
-        if (obs.aiAnalysis) {
-          const ai = obs.aiAnalysis;
-          const statusLabel = ai.status === 'approved' ? '✅ تایید شده' : '❌ رد شده';
-          const clusterLabel = isPersian ? 
-            (ai.cluster === 'human' ? 'انسان' : 
-             ai.cluster === 'knowledge' ? 'دانش و فناوری' : 
-             ai.cluster === 'governance' ? 'حکمرانی و تمدن' : 
-             ai.cluster === 'survival' ? 'بقا و آینده' : 'نامشخص') :
-            (ai.cluster || 'Unknown');
-          
-          aiSection = `
+        const aiSection = `
 **🤖 AI Analysis:**
 - **Status:** ${statusLabel}
 - **Cluster:** ${clusterLabel}
-- **Suggested Score:** ${ai.score_suggestion || '---'}
-- **Analysis:** ${ai.analysis_note || '---'}
+- **Suggested Score:** ${aiAnalysis.score_suggestion || '---'}
+- **Analysis:** ${aiAnalysis.analysis_note || '---'}
 
 **Action Guide:**
-- **Individual:** ${ai.guide_individual || '---'}
-- **Network:** ${ai.guide_network || '---'}
-- **Policy:** ${ai.guide_policy || '---'}
+- **Individual:** ${aiAnalysis.guide_individual || '---'}
+- **Network:** ${aiAnalysis.guide_network || '---'}
+- **Policy:** ${aiAnalysis.guide_policy || '---'}
 
 **5 Matrices:**
-- **Emergence:** ${ai.matrix_emergence || '---'}
-- **Layers:** ${ai.matrix_layers || '---'}
-- **Connections:** ${ai.matrix_connections || '---'}
-- **Scale:** ${ai.matrix_scale || '---'}
-- **Capacity:** ${ai.matrix_capacity || '---'}
+- **Emergence:** ${aiAnalysis.matrix_emergence || '---'}
+- **Layers:** ${aiAnalysis.matrix_layers || '---'}
+- **Connections:** ${aiAnalysis.matrix_connections || '---'}
+- **Scale:** ${aiAnalysis.matrix_scale || '---'}
+- **Capacity:** ${aiAnalysis.matrix_capacity || '---'}
 `;
-        }
 
         const issueTitle = isPersian ? `مشاهده خام: ${cardCode}` : `Raw Observation: ${cardCode}`;
         const issueBody = `
@@ -313,7 +281,8 @@ ${aiSection}
           number: issueData.number,
           url: issueData.html_url,
           observation: obs.text.substring(0, 50) + '...',
-          module: selectedModule
+          module: selectedModule,
+          aiAnalysis: aiAnalysis
         });
       }
 
@@ -331,7 +300,7 @@ ${aiSection}
     }
 
     // ============================================================
-    // بخش Delete (تغییر نکرده)
+    // بخش Delete (کاملاً بدون تغییر)
     // ============================================================
     if (type === 'delete') {
       if (!cardCode) {
@@ -377,7 +346,7 @@ ${aiSection}
     }
 
     // ============================================================
-    // بخش Connection (تغییر نکرده)
+    // بخش Connection (کاملاً بدون تغییر)
     // ============================================================
     if (type === 'connection') {
       if (!cardCode) {
@@ -514,6 +483,9 @@ ${aiSection}
       });
     }
 
+    // ============================================================
+    // نوع درخواست نامعتبر
+    // ============================================================
     return res.status(400).json({ error: 'Invalid request type.' });
 
   } catch (error) {
@@ -523,10 +495,9 @@ ${aiSection}
 };
 
 // ============================================================
-// تابع Fallback با ۵ ماتریس
+// تابع Fallback (زمانی که هوش مصنوعی کار نکرد)
 // ============================================================
 function getFallbackAnalysis(text, isPersian) {
-  // تشخیص خوشه با کلمات کلیدی
   const keywords = {
     human: ['احساس', 'دوست', 'خانواده', 'عشق', 'غم', 'شادی', 'تنهایی', 'روان', 'ذهن', 'هویت', 'ارزش', 'اخلاق', 'صلح', 'همدلی'],
     knowledge: ['کتاب', 'آموزش', 'دانش', 'مدرسه', 'یادگیری', 'علم', 'پژوهش', 'تحقیق', 'کتابخانه', 'استاد', 'دانشجو', 'سواد', 'آگاهی', 'فناوری', 'هوش مصنوعی'],
@@ -595,9 +566,6 @@ function getFallbackAnalysis(text, isPersian) {
     }
   };
 
-  // ============================================================
-  // تغییر ۳: Fallback با ۵ ماتریس
-  // ============================================================
   const matrixTemplates = {
     human: {
       emergence: isPersian ? 'ظهورهای قابل مشاهده در این پدیده شامل احساسات، روابط و تعاملات انسانی است.' : 'Visible emergences in this phenomenon include emotions, relationships, and human interactions.',
@@ -640,7 +608,6 @@ function getFallbackAnalysis(text, isPersian) {
     guide_individual: guides[bestCluster].individual,
     guide_network: guides[bestCluster].network,
     guide_policy: guides[bestCluster].policy,
-    // ========== ۵ ماتریس ==========
     matrix_emergence: matrix.emergence,
     matrix_layers: matrix.layers,
     matrix_connections: matrix.connections,
