@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Submit Emergence Achievement | Sphere of Wisdom</title>
+    <title>Submit Achievement | Sphere of Wisdom</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -248,4 +248,218 @@
             transition: 0.3s;
             direction: ltr;
         }
-        .code-input:focus { border-color: #d4af37; outline: none; background: #fff;
+        .code-input:focus { border-color: #d4af37; outline: none; background: #fff; }
+        body.dark .code-input { background: rgba(0,0,0,0.3); color: #f0e8d0; border-color: rgba(255,255,255,0.1); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" id="themeToggle">🌙</button>
+
+    <div class="container">
+        <div id="codeCheckSection">
+            <h1>🔐 Identity Verification</h1>
+            <div class="subtitle">Enter your card code to submit your achievement</div>
+            
+            <div class="code-check-box">
+                <input type="text" id="memberCode" class="code-input" placeholder="Card Code (e.g., CIM-XXXX-XXXX-XXXX)" />
+                <button onclick="verifyCode()" class="btn btn-primary" style="width:100%">Verify & Enter</button>
+                <div id="errorMsg" class="error-msg"></div>
+                
+                <div class="btn-group" style="margin-top: 1.5rem;">
+                    <a href="index-en.html" class="btn btn-secondary">🏠 Back to Home</a>
+                    <a href="register-en.html" class="btn btn-secondary">📝 Register</a>
+                </div>
+            </div>
+            <div class="note">
+                This section is open to all approved members. Your submission will be reviewed by the admin.
+            </div>
+        </div>
+
+        <div id="uploadSection" class="hidden">
+            <h1>📤 Submit Your Achievement</h1>
+            <div class="subtitle">Document your cultural achievements</div>
+
+            <div id="statusBox" class="status-msg"></div>
+
+            <div class="upload-zone" id="dropZone">
+                <span class="icon">📂</span>
+                <p style="font-weight:800; font-size:1.1rem;">Drag & drop your file here or click to select</p>
+                <p class="small" style="font-size:0.8rem; opacity:0.6; margin-top:0.5rem;">Allowed: JPG, PNG, MP4 (No size limit)</p>
+                <input type="file" id="fileInput" class="hidden" accept="image/*,video/*" />
+                <span id="fileName" class="file-name"></span>
+            </div>
+
+            <form id="uploadForm">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="title" placeholder="e.g., Formed a local network to preserve oral heritage" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Full Description</label>
+                    <textarea id="description" rows="5" placeholder="What did you do? What changed? What was achieved?" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="category">
+                        <option value="cultural">Cultural & Social</option>
+                        <option value="science">Science & Research</option>
+                        <option value="art">Art</option>
+                        <option value="media">Media & Video</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="helper-text">
+                    💡 <strong>Guideline:</strong> Your achievement must be documented and verifiable. 
+                    After submission, it will be reviewed by the admin and displayed in the Achievements Gallery if approved.
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">📤 Submit for Review</button>
+                    <a href="index-en.html" class="btn btn-secondary">🏠 Back to Home</a>
+                    <a href="register-en.html" class="btn btn-secondary">📝 Register</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const toggle = document.getElementById('themeToggle');
+        const body = document.body;
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark'); 
+            if(toggle) toggle.textContent = '☀️';
+        }
+        if(toggle) {
+            toggle.addEventListener('click', () => {
+                body.classList.toggle('dark');
+                toggle.textContent = body.classList.contains('dark') ? '☀️' : '🌙';
+            });
+        }
+
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        if(dropZone && fileInput) {
+            dropZone.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', (e) => {
+                if(e.target.files[0]) {
+                    const nameDisplay = document.getElementById('fileName');
+                    if(nameDisplay) nameDisplay.textContent = "✅ " + e.target.files[0].name;
+                }
+            });
+        }
+
+        async function verifyCode() {
+            const codeInput = document.getElementById('memberCode').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+            const verifyBtn = document.querySelector('#codeCheckSection .btn-primary');
+            
+            if (!codeInput) {
+                errorMsg.textContent = '❌ Please enter your card code.';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            verifyBtn.disabled = true;
+            verifyBtn.textContent = '⏳ Checking...';
+            errorMsg.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/get-users?t=' + new Date().getTime());
+                if (!response.ok) throw new Error('Server connection error');
+                
+                const data = await response.json();
+                const user = data.users.find(u => u.cardCode === codeInput);
+
+                if (!user) throw new Error('❌ Card code not found.');
+                if (user.status !== 'approved') throw new Error('❌ Your account has not been approved yet.');
+
+                document.getElementById('codeCheckSection').classList.add('hidden');
+                document.getElementById('uploadSection').classList.remove('hidden');
+                localStorage.setItem('verifiedCode', codeInput);
+
+            } catch (error) {
+                errorMsg.textContent = error.message;
+                errorMsg.style.display = 'block';
+            } finally {
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = 'Verify & Enter';
+            }
+        }
+
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('submitBtn');
+            const statusBox = document.getElementById('statusBox');
+            const file = fileInput.files[0];
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ Processing...';
+            if(statusBox) statusBox.style.display = 'none';
+
+            try {
+                let fileData = '';
+                let fileName = '';
+
+                if (file) {
+                    fileData = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.readAsDataURL(file);
+                    });
+                    fileName = file.name;
+                }
+
+                btn.textContent = '⏳ Submitting...';
+                
+                const cardCode = localStorage.getItem('verifiedCode') || document.getElementById('memberCode').value;
+
+                const achievementData = {
+                    title: document.getElementById('title').value,
+                    description: document.getElementById('description').value,
+                    category: document.getElementById('category').value,
+                    fileData: fileData,
+                    fileName: fileName
+                };
+
+                const response = await fetch('/api/upload-achievement', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cardCode, achievement: achievementData })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'Submission failed');
+                }
+
+                if(statusBox) {
+                    statusBox.className = 'status-msg success';
+                    statusBox.textContent = '✅ Achievement submitted successfully. Tracking Code: ' + (result.trackingCode || '---');
+                    statusBox.style.display = 'block';
+                }
+                btn.textContent = '✅ Submitted';
+                
+                setTimeout(() => {
+                    window.location.href = 'index-en.html';
+                }, 3000);
+
+            } catch (error) {
+                if(statusBox) {
+                    statusBox.className = 'status-msg error';
+                    statusBox.textContent = '❌ ' + error.message;
+                    statusBox.style.display = 'block';
+                }
+                btn.disabled = false;
+                btn.textContent = '📤 Try Again';
+            }
+        });
+    </script>
+</body>
+</html>
