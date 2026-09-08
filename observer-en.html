@@ -488,30 +488,19 @@
             }
         }
 
-       const FORBIDDEN_WORDS = [
-    // ===== Violence, War, Death =====
-    'war', 'violence', 'murder', 'kill', 'killing', 'terror', 'bomb', 'explosion',
-    'death', 'homicide', 'crime', 'bloodshed', 'rape', 'massacre',
-    
-    // ===== Racism and Discrimination =====
-    'racist', 'racism', 'racial superiority', 'racial discrimination',
-    'execute', 'execution', 'slaughter',
-    
-    // ===== Colonialism, Exploitation, Plunder =====
-    'colonialism', 'exploitation', 'plunder', 'loot', 'pillage',
-    'theft', 'robbery', 'fraud', 'embezzlement', 'bribe', 'rent seeking',
-    
-    // ===== Drugs and Alcohol =====
-    'drugs', 'heroin', 'cocaine', 'marijuana', 'weed', 'opium',
-    'hashish', 'ecstasy', 'alcohol', 'liquor', 'wine',
-    'vodka', 'whiskey', 'pipe', 'syringe', 'crack',
-    
-    // ===== Sexual Issues =====
-    'sex', 'prostitution', 'porn', 'pornography', 'obscene',
-    
-    // ===== Weapons =====
-    'gun', 'rifle', 'weapon', 'missile', 'tank', 'fighter jet', 'bomber'
-];
+        const FORBIDDEN_WORDS = [
+            'war', 'violence', 'murder', 'kill', 'killing', 'terror', 'bomb', 'explosion',
+            'death', 'homicide', 'crime', 'bloodshed', 'rape', 'massacre',
+            'racist', 'racism', 'racial superiority', 'racial discrimination',
+            'execute', 'execution', 'slaughter',
+            'colonialism', 'exploitation', 'plunder', 'loot', 'pillage',
+            'theft', 'robbery', 'fraud', 'embezzlement', 'bribe', 'rent seeking',
+            'drugs', 'heroin', 'cocaine', 'marijuana', 'weed', 'opium',
+            'hashish', 'ecstasy', 'alcohol', 'liquor', 'wine',
+            'vodka', 'whiskey', 'pipe', 'syringe', 'crack',
+            'sex', 'prostitution', 'porn', 'pornography', 'obscene',
+            'gun', 'rifle', 'weapon', 'missile', 'tank', 'fighter jet', 'bomber'
+        ];
 
         function fastFilter(text) {
             const lowerText = text.toLowerCase();
@@ -532,66 +521,20 @@
             return { blocked: false };
         }
 
-       async function smartAnalyzeObservation(text, language = 'fa') {
-    try {
-        // ===== استفاده مستقیم از هوش مصنوعی در مرورگر =====
-        const prompt = language === 'fa' ? 
-`متن: "${text}"
-
-یک JSON با این فیلدها برگردان:
-status: approved یا rejected
-cluster: human یا knowledge یا governance یا survival
-score: 1 تا 5
-analysis: تحلیل عمیق
-individual: راهنمای فردی
-network: راهنمای شبکه‌ای
-policy: راهنمای سیاستی
-
-فقط JSON.` :
-`Text: "${text}"
-
-Return JSON with:
-status: approved or rejected
-cluster: human or knowledge or governance or survival
-score: 1 to 5
-analysis: deep analysis
-individual: individual guide
-network: network guide
-policy: policy guide
-
-Only JSON.`;
-
-        const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
-        const aiText = await response.text();
-        
-        let jsonStr = aiText;
-        const s = aiText.indexOf('{');
-        const e = aiText.lastIndexOf('}');
-        if (s !== -1 && e !== -1) {
-            jsonStr = aiText.substring(s, e + 1);
+        // ============================================================
+        // ===== AI Analysis Function - Modified =====
+        // ============================================================
+        // This function no longer makes direct requests to text.pollinations.ai.
+        // All analysis is now handled server-side through submit-request.js.
+        // This function is kept only for compatibility with existing code.
+        // ============================================================
+        async function smartAnalyzeObservation(text, language = 'en') {
+            console.warn('smartAnalyzeObservation is deprecated. All analysis is now done server-side.');
+            return {
+                status: 'error',
+                message: 'Analysis is performed server-side. Please try again.'
+            };
         }
-        
-        const analysis = JSON.parse(jsonStr);
-        
-        return {
-            status: analysis.status || "approved",
-            rejection_reason: analysis.rejection_reason || null,
-            cluster: analysis.cluster || "human",
-            score_suggestion: analysis.score || analysis.score_suggestion || 3,
-            analysis_note: analysis.analysis || analysis.analysis_note || (language === 'fa' ? "تحلیل" : "Analysis"),
-            guide_individual: analysis.individual || analysis.guide_individual || (language === 'fa' ? "راهنمای فردی" : "Individual guide"),
-            guide_network: analysis.network || analysis.guide_network || (language === 'fa' ? "راهنمای شبکه‌ای" : "Network guide"),
-            guide_policy: analysis.policy || analysis.guide_policy || (language === 'fa' ? "راهنمای سیاستی" : "Policy guide")
-        };
-        
-    } catch (e) {
-        console.error("AI Analysis Error:", e);
-        return { 
-            status: 'error', 
-            message: 'خطا در ارتباط با سرور: ' + e.message 
-        };
-    }
-}
 
         async function submitObservations() {
             const userCode = document.getElementById('userCode').value.trim();
@@ -638,6 +581,10 @@ Only JSON.`;
             aiResultDetail.classList.remove('active');
 
             try {
+                // ============================================================
+                // Only quick filter is applied (no direct AI request)
+                // AI is executed in submit-request.js
+                // ============================================================
                 const analyzedObservations = [];
                 
                 for (let i = 0; i < observations.length; i++) {
@@ -648,51 +595,18 @@ Only JSON.`;
                         throw new Error(`Observation #${obs.index} rejected: ${filterResult.reason}`);
                     }
                     
-                    const aiResult = await smartAnalyzeObservation(obs.text, 'en');
-
-                    if (aiResult.status === 'rejected') {
-                        throw new Error(`Observation #${obs.index} does not align with Sphere of Wisdom principles. Reason: ${aiResult.rejection_reason || 'Unspecified'}`);
-                    }
-                    
-                    if (aiResult.status === 'error') {
-                        throw new Error(`AI analysis failed for observation #${obs.index}. ${aiResult.message || 'Please try again.'}`);
-                    }
-                    
+                    // Only prepare raw data, no browser-side analysis
                     analyzedObservations.push({
                         ...obs,
-                        aiAnalysis: aiResult
+                        aiAnalysis: null // Server will perform the analysis
                     });
                 }
 
-                let aiDetailsHtml = '';
-                analyzedObservations.forEach((obs, idx) => {
-                    const ai = obs.aiAnalysis;
-                    aiDetailsHtml += `
-                        <div style="border-bottom:1px solid rgba(212,175,55,0.1); padding:0.8rem 0;">
-                            <strong>Observation ${idx + 1}:</strong>
-                            <div style="font-size:0.85rem; margin-top:0.3rem;">
-                                <span style="display:inline-block; background:rgba(212,175,55,0.1); padding:0.1rem 0.5rem; border-radius:12px; font-size:0.7rem;">
-                                    📂 ${ai.cluster || 'Unknown'}
-                                </span>
-                                <span style="display:inline-block; background:rgba(39,174,96,0.1); padding:0.1rem 0.5rem; border-radius:12px; font-size:0.7rem;">
-                                    ⭐ Suggested Score: ${ai.score_suggestion || '?'}
-                                </span>
-                            </div>
-                            <div style="font-size:0.8rem; color:#4a3a2a; margin-top:0.3rem;">
-                                <strong>Analysis:</strong> ${ai.analysis_note || '---'}
-                            </div>
-                            ${ai.guide_individual ? `<div style="font-size:0.75rem; color:#2874a6; margin-top:0.2rem;">📍 ${ai.guide_individual}</div>` : ''}
-                            ${ai.guide_network ? `<div style="font-size:0.75rem; color:#27ae60; margin-top:0.2rem;">🌐 ${ai.guide_network}</div>` : ''}
-                            ${ai.guide_policy ? `<div style="font-size:0.75rem; color:#8a6d1f; margin-top:0.2rem;">🏛️ ${ai.guide_policy}</div>` : ''}
-                        </div>
-                    `;
-                });
-                
-                aiResultContent.innerHTML = aiDetailsHtml;
-                aiResultDetail.classList.add('active');
-
                 submitBtn.textContent = '⏳ Finalizing registration...';
 
+                // ============================================================
+                // Send to server - server runs the AI
+                // ============================================================
                 const response = await fetch('/api/submit-request', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -701,8 +615,8 @@ Only JSON.`;
                         cardCode: userCode,
                         observations: analyzedObservations.map(o => ({
                             text: o.text,
-                            module: o.module,
-                            aiAnalysis: o.aiAnalysis
+                            module: o.module
+                            // aiAnalysis is not sent so server generates it
                         }))
                     })
                 });
@@ -711,6 +625,48 @@ Only JSON.`;
                 
                 if (!response.ok) {
                     throw new Error(result.error || 'Registration error');
+                }
+                
+                // ============================================================
+                // Display results received from server
+                // ============================================================
+                let aiDetailsHtml = '';
+                if (result.issues && result.issues.length > 0) {
+                    result.issues.forEach((issue, idx) => {
+                        const ai = issue.aiAnalysis;
+                        if (ai) {
+                            const clusterNames = {
+                                'human': 'Human',
+                                'knowledge': 'Knowledge & Technology',
+                                'governance': 'Governance & Civilization',
+                                'survival': 'Survival & Future'
+                            };
+                            aiDetailsHtml += `
+                                <div style="border-bottom:1px solid rgba(212,175,55,0.1); padding:0.8rem 0;">
+                                    <strong>Observation ${idx + 1}:</strong>
+                                    <div style="font-size:0.85rem; margin-top:0.3rem;">
+                                        <span style="display:inline-block; background:rgba(212,175,55,0.1); padding:0.1rem 0.5rem; border-radius:12px; font-size:0.7rem;">
+                                            📂 ${clusterNames[ai.cluster] || ai.cluster || 'Unknown'}
+                                        </span>
+                                        <span style="display:inline-block; background:rgba(39,174,96,0.1); padding:0.1rem 0.5rem; border-radius:12px; font-size:0.7rem;">
+                                            ⭐ Suggested Score: ${ai.score_suggestion || '?'}
+                                        </span>
+                                    </div>
+                                    <div style="font-size:0.8rem; color:#4a3a2a; margin-top:0.3rem;">
+                                        <strong>Analysis:</strong> ${ai.analysis_note || '---'}
+                                    </div>
+                                    ${ai.guide_individual ? `<div style="font-size:0.75rem; color:#2874a6; margin-top:0.2rem;">📍 ${ai.guide_individual}</div>` : ''}
+                                    ${ai.guide_network ? `<div style="font-size:0.75rem; color:#27ae60; margin-top:0.2rem;">🌐 ${ai.guide_network}</div>` : ''}
+                                    ${ai.guide_policy ? `<div style="font-size:0.75rem; color:#8a6d1f; margin-top:0.2rem;">🏛️ ${ai.guide_policy}</div>` : ''}
+                                </div>
+                            `;
+                        }
+                    });
+                }
+                
+                if (aiDetailsHtml) {
+                    aiResultContent.innerHTML = aiDetailsHtml;
+                    aiResultDetail.classList.add('active');
                 }
                 
                 resultTitle.textContent = '✅ Observations Registered & Analyzed';
