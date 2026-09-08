@@ -415,8 +415,7 @@
             🔒 Your observations are registered anonymously with full privacy protection.
         </div>
     </div>
-    
-    <script>
+   <script>
         function selectModule(btn, module) {
             const parent = btn.closest('.observation-box');
             parent.querySelectorAll('.box-module-btn').forEach(b => b.classList.remove('active'));
@@ -524,10 +523,6 @@
         // ============================================================
         // ===== AI Analysis Function - Modified =====
         // ============================================================
-        // This function no longer makes direct requests to text.pollinations.ai.
-        // All analysis is now handled server-side through submit-request.js.
-        // This function is kept only for compatibility with existing code.
-        // ============================================================
         async function smartAnalyzeObservation(text, language = 'en') {
             console.warn('smartAnalyzeObservation is deprecated. All analysis is now done server-side.');
             return {
@@ -581,10 +576,6 @@
             aiResultDetail.classList.remove('active');
 
             try {
-                // ============================================================
-                // Only quick filter is applied (no direct AI request)
-                // AI is executed in submit-request.js
-                // ============================================================
                 const analyzedObservations = [];
                 
                 for (let i = 0; i < observations.length; i++) {
@@ -595,18 +586,14 @@
                         throw new Error(`Observation #${obs.index} rejected: ${filterResult.reason}`);
                     }
                     
-                    // Only prepare raw data, no browser-side analysis
                     analyzedObservations.push({
                         ...obs,
-                        aiAnalysis: null // Server will perform the analysis
+                        aiAnalysis: null
                     });
                 }
 
                 submitBtn.textContent = '⏳ Finalizing registration...';
 
-                // ============================================================
-                // Send to server - server runs the AI
-                // ============================================================
                 const response = await fetch('/api/submit-request', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -616,7 +603,6 @@
                         observations: analyzedObservations.map(o => ({
                             text: o.text,
                             module: o.module
-                            // aiAnalysis is not sent so server generates it
                         }))
                     })
                 });
@@ -628,7 +614,7 @@
                 }
                 
                 // ============================================================
-                // Display results received from server
+                // Display results from server with 5 matrices
                 // ============================================================
                 let aiDetailsHtml = '';
                 if (result.issues && result.issues.length > 0) {
@@ -658,6 +644,11 @@
                                     ${ai.guide_individual ? `<div style="font-size:0.75rem; color:#2874a6; margin-top:0.2rem;">📍 ${ai.guide_individual}</div>` : ''}
                                     ${ai.guide_network ? `<div style="font-size:0.75rem; color:#27ae60; margin-top:0.2rem;">🌐 ${ai.guide_network}</div>` : ''}
                                     ${ai.guide_policy ? `<div style="font-size:0.75rem; color:#8a6d1f; margin-top:0.2rem;">🏛️ ${ai.guide_policy}</div>` : ''}
+                                    ${ai.matrix_emergence ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 Emergence: ${ai.matrix_emergence}</div>` : ''}
+                                    ${ai.matrix_layers ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 Layers: ${ai.matrix_layers}</div>` : ''}
+                                    ${ai.matrix_connections ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 Connections: ${ai.matrix_connections}</div>` : ''}
+                                    ${ai.matrix_scale ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 Scale: ${ai.matrix_scale}</div>` : ''}
+                                    ${ai.matrix_capacity ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 Capacity: ${ai.matrix_capacity}</div>` : ''}
                                 </div>
                             `;
                         }
@@ -699,6 +690,6 @@
             updateAddButton();
             console.log('📌 Sphere of Wisdom - Register Observations');
         });
-    </script>
+    </script> 
 </body>
 </html>
