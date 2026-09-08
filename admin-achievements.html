@@ -503,7 +503,7 @@
                 };
 
                 const actionButtons = ach.status === 'pending' ? `
-                    <button class="btn-small btn-approve" onclick="updateStatus('${ach.ownerCode}', '${ach.fileName}', 'approved')">${t('approveBtn')}</button>
+                    <button class="btn-small btn-approve" onclick="updateStatus('${ach.ownerCode}', '${ach.id}', 'approved')">${t('approveBtn')}</button>
                     <button class="btn-small btn-reject" onclick="updateStatus('${ach.ownerCode}', '${ach.fileName}', 'rejected')">${t('rejectBtn')}</button>
                 ` : '';
 
