@@ -733,6 +733,17 @@ const matricesHtml = `
                         ${moduleHtml}
                         ${aiHtml}
                         ${matricesHtml}
+                        // ===== نمایش ۵ ماتریس =====
+${obs.matrix_emergence || obs.matrix_layers || obs.matrix_connections || obs.matrix_scale || obs.matrix_capacity ? `
+<div style="margin-top:0.8rem; padding:0.5rem; background:rgba(212,175,55,0.05); border-radius:8px; border-right:2px solid #d4af37;">
+    <div style="font-weight:800; color:#8a6d1f; font-size:0.8rem; margin-bottom:0.3rem;">📊 ماتریس‌های سپهر خردمندی</div>
+    ${obs.matrix_emergence ? `<div style="font-size:0.75rem; color:#4a3a2a; padding:0.2rem 0;"><strong>ظهورها:</strong> ${obs.matrix_emergence}</div>` : ''}
+    ${obs.matrix_layers ? `<div style="font-size:0.75rem; color:#4a3a2a; padding:0.2rem 0;"><strong>لایه‌ها:</strong> ${obs.matrix_layers}</div>` : ''}
+    ${obs.matrix_connections ? `<div style="font-size:0.75rem; color:#4a3a2a; padding:0.2rem 0;"><strong>ارتباطات:</strong> ${obs.matrix_connections}</div>` : ''}
+    ${obs.matrix_scale ? `<div style="font-size:0.75rem; color:#4a3a2a; padding:0.2rem 0;"><strong>مقیاس:</strong> ${obs.matrix_scale}</div>` : ''}
+    ${obs.matrix_capacity ? `<div style="font-size:0.75rem; color:#4a3a2a; padding:0.2rem 0;"><strong>ظرفیت:</strong> ${obs.matrix_capacity}</div>` : ''}
+</div>
+` : ''}
                         ${actionButtons}
                         ${analysisBox}
                         ${guideBox}
