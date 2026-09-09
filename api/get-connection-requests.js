@@ -9,14 +9,144 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: 'Token is not configured' });
   }
 
-  const { type } = req.query;
+  const { type, issueNumber } = req.query;
   const owner = 'ghrezaei1399-code';
   const repo = 'cultural-id';
 
   try {
+    // ===== دریافت پاسخ‌های هم‌فرهنگ برای یک Issue خاص =====
+    if (type === 'peer-responses' && issueNumber) {
+      const commentsRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/comments`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+
+      if (!commentsRes.ok) {
+        throw new Error('خطا در دریافت کامنت‌ها از گیت‌هاب');
+      }
+
+      const comments = await commentsRes.json();
+      const peerResponses = [];
+
+      for (const comment of comments) {
+        const body = comment.body || '';
+        if (body.includes('**📝 پاسخ هم‌فرهنگ**') || body.includes('**Peer Response**')) {
+          const peerMatch = body.match(/\*\*هم‌فرهنگ:\*\*\s*(.+)/) || body.match(/\*\*Peer:\*\*\s*(.+)/);
+          const resultMatch = body.match(/\*\*نتیجه:\*\*\s*(.+)/) || body.match(/\*\*Result:\*\*\s*(.+)/);
+          const responseMatch = body.match(/\*\*پاسخ:\*\*\s*(.+)/) || body.match(/\*\*Response:\*\*\s*(.+)/);
+          
+          if (peerMatch && responseMatch) {
+            peerResponses.push({
+              peerCode: peerMatch[1].trim(),
+              result: resultMatch ? resultMatch[1].trim() : 'success',
+              response: responseMatch[1].trim(),
+              timestamp: comment.created_at,
+              commentId: comment.id
+            });
+          }
+        }
+      }
+
+      return res.status(200).json({ 
+        issueNumber: parseInt(issueNumber),
+        peerResponses: peerResponses,
+        count: peerResponses.length
+      });
+    }
+
+    // ===== دریافت نتیجه ماژول برای یک Issue خاص =====
+    if (type === 'module-result' && issueNumber) {
+      const issueRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+
+      if (!issueRes.ok) {
+        throw new Error('خطا در دریافت اطلاعات Issue');
+      }
+
+      const issue = await issueRes.json();
+      const body = issue.body || '';
+      const labels = issue.labels.map(l => l.name);
+      
+      // استخراج وضعیت ماژول از لیبل‌ها
+      let moduleStatus = 'pending';
+      for (const label of labels) {
+        if (label.startsWith('module-')) {
+          moduleStatus = label.replace('module-', '');
+          break;
+        }
+      }
+
+      // استخراج اطلاعات ماژول از متن Issue
+      let moduleType = '';
+      let moduleData = [];
+      let moduleAnalysis = '';
+      let modulePeers = [];
+
+      const bodyLines = body.split('\n');
+      let inModuleSection = false;
+
+      for (const line of bodyLines) {
+        const trimmedLine = line.trim();
+        
+        if (trimmedLine.includes('**📌 Module Result:**') || trimmedLine.includes('**Module Result:**')) {
+          inModuleSection = true;
+          continue;
+        }
+
+        if (inModuleSection) {
+          if (trimmedLine.includes('**Type:**')) {
+            const match = trimmedLine.match(/\*\*Type:\*\*\s*(.+)/);
+            if (match) moduleType = match[1].trim();
+            continue;
+          }
+          if (trimmedLine.includes('**Status:**')) {
+            // قبلاً از لیبل استخراج شده
+            continue;
+          }
+          if (trimmedLine.includes('**Results:**')) {
+            const match = trimmedLine.match(/\*\*Results:\*\*\s*(.+)/);
+            if (match) {
+              moduleData = match[1].trim().split(',').map(s => s.trim()).filter(s => s && s !== '---');
+            }
+            continue;
+          }
+          if (trimmedLine.includes('**Analysis:**')) {
+            const match = trimmedLine.match(/\*\*Analysis:\*\*\s*(.+)/);
+            if (match) moduleAnalysis = match[1].trim();
+            continue;
+          }
+          if (trimmedLine.includes('**Peers:**')) {
+            const match = trimmedLine.match(/\*\*Peers:\*\*\s*(.+)/);
+            if (match) {
+              modulePeers = match[1].trim().split(',').map(s => s.trim()).filter(s => s && s !== '---');
+            }
+            continue;
+          }
+          if (trimmedLine.includes('---')) {
+            inModuleSection = false;
+          }
+        }
+      }
+
+      return res.status(200).json({
+        issueNumber: parseInt(issueNumber),
+        moduleStatus: moduleStatus,
+        moduleType: moduleType,
+        moduleData: moduleData,
+        moduleAnalysis: moduleAnalysis,
+        modulePeers: modulePeers
+      });
+    }
+
     // ===== دریافت مشاهدات (Observations) =====
     if (type === 'observations') {
-      const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues?labels=observation`, {
+      const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues?labels=observation&state=all`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/vnd.github.v3+json'
@@ -43,9 +173,19 @@ module.exports = async function handler(req, res) {
         let matrix_scale = '';
         let matrix_capacity = '';
         
+        // استخراج وضعیت از لیبل‌ها
         if (labels.includes('approved')) status = 'approved';
         else if (labels.includes('rejected')) status = 'rejected';
         else if (labels.includes('score-5')) score = 5;
+        
+        // استخراج وضعیت ماژول از لیبل‌ها
+        let moduleStatus = 'pending';
+        for (const label of labels) {
+          if (label.startsWith('module-')) {
+            moduleStatus = label.replace('module-', '');
+            break;
+          }
+        }
         
         // استخراج اطلاعات از متن Issue
         const bodyLines = issue.body.split('\n');
@@ -53,6 +193,11 @@ module.exports = async function handler(req, res) {
         let cardCode = '';
         let module = '';
         let inObservation = false;
+        let moduleType = '';
+        let moduleData = [];
+        let moduleAnalysisText = '';
+        let modulePeers = [];
+        let inModuleSection = false;
         
         for (const line of bodyLines) {
           const trimmedLine = line.trim();
@@ -93,7 +238,7 @@ module.exports = async function handler(req, res) {
             continue;
           }
           
-          if (trimmedLine.includes('**Analysis:**')) {
+          if (trimmedLine.includes('**Analysis:**') && !trimmedLine.includes('Module')) {
             const match = trimmedLine.match(/\*\*Analysis:\*\*\s*(.+)/);
             if (match) {
               const analysisText = match[1].trim();
@@ -140,11 +285,47 @@ module.exports = async function handler(req, res) {
             continue;
           }
           
+          // ===== استخراج Module Result =====
+          if (trimmedLine.includes('**📌 Module Result:**') || trimmedLine.includes('**Module Result:**')) {
+            inModuleSection = true;
+            continue;
+          }
+
+          if (inModuleSection) {
+            if (trimmedLine.includes('**Type:**')) {
+              const match = trimmedLine.match(/\*\*Type:\*\*\s*(.+)/);
+              if (match) moduleType = match[1].trim();
+              continue;
+            }
+            if (trimmedLine.includes('**Results:**')) {
+              const match = trimmedLine.match(/\*\*Results:\*\*\s*(.+)/);
+              if (match) {
+                moduleData = match[1].trim().split(',').map(s => s.trim()).filter(s => s && s !== '---');
+              }
+              continue;
+            }
+            if (trimmedLine.includes('**Analysis:**')) {
+              const match = trimmedLine.match(/\*\*Analysis:\*\*\s*(.+)/);
+              if (match) moduleAnalysisText = match[1].trim();
+              continue;
+            }
+            if (trimmedLine.includes('**Peers:**')) {
+              const match = trimmedLine.match(/\*\*Peers:\*\*\s*(.+)/);
+              if (match) {
+                modulePeers = match[1].trim().split(',').map(s => s.trim()).filter(s => s && s !== '---');
+              }
+              continue;
+            }
+            if (trimmedLine.includes('---')) {
+              inModuleSection = false;
+            }
+          }
+          
           // جمع‌آوری متن مشاهده
           if (inObservation && trimmedLine && !trimmedLine.includes('---') && !trimmedLine.includes('**')) {
             observationText += trimmedLine + ' ';
           }
-          if (line.includes('---')) break;
+          if (line.includes('---') && !inModuleSection) break;
         }
         
         observationText = observationText.trim() || issue.body.substring(0, 200);
@@ -164,6 +345,12 @@ module.exports = async function handler(req, res) {
           matrix_connections: matrix_connections,
           matrix_scale: matrix_scale,
           matrix_capacity: matrix_capacity,
+          // ===== اطلاعات ماژول =====
+          moduleStatus: moduleStatus,
+          moduleType: moduleType,
+          moduleData: moduleData,
+          moduleAnalysis: moduleAnalysisText,
+          modulePeers: modulePeers,
           createdAt: issue.created_at,
           issueUrl: issue.html_url
         });
