@@ -269,7 +269,7 @@
                 allAtlasItems = (atlasData.observations || [])
                     .filter(obs => obs.score === 5 && obs.status === 'approved');
 
-                // 2. Get Notable Achievements (emergence)
+                // 2. Get Notable Achievements (emergence) - NO SCORE CONDITION
                 const usersRes = await fetch('/api/get-users?t=' + new Date().getTime());
                 const usersData = await usersRes.json();
                 if (!usersRes.ok) throw new Error(usersData.error || 'Error loading users');
@@ -280,6 +280,7 @@
                         if (user.achievements && Array.isArray(user.achievements)) {
                             user.achievements.forEach(ach => {
                                 // Only emergence achievements that are approved
+                                // NO SCORE CONDITION
                                 if (ach.section === 'emergence' && ach.status === 'approved') {
                                     allAchievements.push({
                                         ...ach,
