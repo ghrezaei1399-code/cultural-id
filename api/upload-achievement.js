@@ -51,7 +51,8 @@ module.exports = async function handler(req, res) {
       createdAt: new Date().toISOString(),
       fileName: fileName || null,
       fileData: fileData || null,
-      fileUrl: null
+      fileUrl: null,
+      section: achievement.section || 'identity-card'
     };
 
     // ===== اگر فایل آپلود شده، آن را در گیت‌هاب ذخیره کن =====
