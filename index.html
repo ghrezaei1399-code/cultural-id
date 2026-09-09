@@ -433,7 +433,48 @@
         .item-info h4 { font-size: 0.85rem; color: #2a1a0a; }
         body.dark .item-info h4 { color: #f0e8d0; }
         .item-meta { font-size: 0.5rem; color: #8a6d1f; font-weight: 600; }
-        
+
+        .module-status-badge {
+            display: inline-block;
+            padding: 0.1rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.55rem;
+            font-weight: 700;
+            margin-top: 0.2rem;
+        }
+        .module-status-badge.success {
+            background: rgba(39,174,96,0.15);
+            color: #1a6a3a;
+        }
+        .module-status-badge.revision {
+            background: rgba(243,156,18,0.15);
+            color: #8a5a0a;
+        }
+        .module-status-badge.failed {
+            background: rgba(231,76,60,0.15);
+            color: #6a1a1a;
+        }
+        .module-status-badge.pending {
+            background: rgba(241,196,15,0.15);
+            color: #b7950b;
+        }
+        .module-status-badge.no_peers {
+            background: rgba(149,165,166,0.15);
+            color: #5a6a6a;
+        }
+        body.dark .module-status-badge.success { color: #82e0aa; }
+        body.dark .module-status-badge.revision { color: #f5b041; }
+        body.dark .module-status-badge.failed { color: #f1948a; }
+        body.dark .module-status-badge.pending { color: #f9e79f; }
+        body.dark .module-status-badge.no_peers { color: #aab7b8; }
+
+        .module-type-label {
+            font-size: 0.55rem;
+            color: #6a3d9a;
+            font-weight: 600;
+        }
+        body.dark .module-type-label { color: #d2b4de; }
+
         .feedback-row {
             display: flex;
             gap: 0.3rem;
@@ -663,20 +704,20 @@
             <span class="desc">هم‌فکران</span>
         </a>
         <a href="submit-achievement-fa.html" class="golden-btn btn-achievement">
-    <span class="icon">📤</span>
-    <span class="label">ثبت آثار نام‌آوران</span>
-    <span class="desc">ارسال دستاورد</span>
-</a>
+            <span class="icon">📤</span>
+            <span class="label">ثبت آثار نام‌آوران</span>
+            <span class="desc">ارسال دستاورد</span>
+        </a>
         <a href="observer-fa.html" class="golden-btn btn-wisdom">
             <span class="icon">🧠</span>
             <span class="label">هم‌اندیشی</span>
             <span class="desc">سپهر خردمندی</span>
         </a>
-       <a href="atlas-gallery.fa.html" class="golden-btn btn-atlas">
-    <span class="icon">🏛️</span>
-    <span class="label">اطلس ظهور</span>
-    <span class="desc">راه‌حل‌های فرهنگی</span>
-</a>
+        <a href="atlas-gallery.fa.html" class="golden-btn btn-atlas">
+            <span class="icon">🏛️</span>
+            <span class="label">اطلس ظهور</span>
+            <span class="desc">راه‌حل‌های فرهنگی</span>
+        </a>
     </div>
     <div class="cta-note">بدون اطلاعات شخصی • کاملاً ناشناس • ۲ دقیقه</div>
 
@@ -712,6 +753,16 @@
             <div class="modal-body">
                 <h2 id="modalTitle" style="color:#8a6d1f; margin-bottom:0.5rem; font-size:1.1rem;"></h2>
                 <div id="modalDesc" style="line-height:1.6; color:#3a2a1a; font-size:0.85rem;"></div>
+                
+                <!-- ===== بخش ماژول ===== -->
+                <div id="modalModule" style="margin-top:0.8rem; padding:0.6rem; background:rgba(106,61,154,0.06); border-radius:10px; border-right:3px solid #6a3d9a; display:none;">
+                    <div style="font-size:0.75rem; font-weight:700; color:#6a3d9a; margin-bottom:0.3rem;">📌 ماژول انتخاب‌شده:</div>
+                    <div id="modalModuleType" style="font-size:0.85rem; color:#2a1a0a;"></div>
+                    <div id="modalModuleStatus" style="font-size:0.75rem; margin-top:0.3rem;"></div>
+                    <div id="modalModuleData" style="font-size:0.75rem; color:#4a3a2a; margin-top:0.3rem;"></div>
+                    <div id="modalModuleAnalysis" style="font-size:0.75rem; color:#4a3a2a; margin-top:0.3rem; font-style:italic;"></div>
+                </div>
+
                 <div id="modalGuide" style="margin-top:1rem; padding:0.8rem; background:rgba(212,175,55,0.1); border-radius:10px; display:none;">
                     <h4 style="font-size:0.9rem; color:#8a6d1f; margin-bottom:0.5rem;">📋 راهنمای اقدام:</h4>
                     <div id="guideContent" style="font-size:0.8rem;"></div>
@@ -788,7 +839,7 @@ async function loadAtlas() {
         const res = await fetch('/api/get-connection-requests?type=observations&t=' + new Date().getTime());
         if (!res.ok) throw new Error('خطا در دریافت اطلاعات');
         const data = await res.json();
-       allAtlasItems = (data.observations || []).filter(obs => obs.status === 'approved');
+        allAtlasItems = (data.observations || []).filter(obs => obs.status === 'approved');
         renderAtlas(allAtlasItems);
     } catch (e) {
         console.error(e);
@@ -802,15 +853,45 @@ function renderAtlas(items) {
         container.innerHTML = '<div class="empty-state">هنوز راه‌حلی با امتیاز ۵ ثبت نشده است.</div>';
         return;
     }
-    container.innerHTML = items.map((item, index) => `
-        <div class="achievement-item" onclick="openAtlasModal(${index})">
-            <div class="item-info">
-                <h4>${item.observation ? item.observation.substring(0, 50) + '...' : 'مشاهده'}</h4>
-                <span class="item-meta">⭐ امتیاز ${item.score}</span>
+    container.innerHTML = items.map((item, index) => {
+        // نمایش وضعیت ماژول در کارت
+        const moduleStatus = item.moduleStatus || 'pending';
+        const moduleType = item.moduleType || '';
+        
+        const statusLabels = {
+            'success': '✅ موفق',
+            'revision': '⚠️ نیاز به اصلاح',
+            'failed': '❌ شکست',
+            'pending': '⏳ در انتظار',
+            'no_peers': '⚠️ هم‌فرهنگی یافت نشد',
+            'no_related': '⚠️ مشاهده مرتبط یافت نشد'
+        };
+        const statusText = statusLabels[moduleStatus] || moduleStatus;
+        const statusClass = moduleStatus === 'success' ? 'success' :
+                           moduleStatus === 'revision' ? 'revision' :
+                           moduleStatus === 'failed' ? 'failed' :
+                           moduleStatus === 'pending' ? 'pending' :
+                           'no_peers';
+        
+        const moduleNames = {
+            'collaboration': '🤝 همفکری',
+            'related': '👁️ مشاهدات مرتبط',
+            'referral': '📤 ارجاع به ۵ همفرهنگ'
+        };
+        const moduleDisplay = moduleNames[moduleType] || moduleType || '';
+        
+        return `
+            <div class="achievement-item" onclick="openAtlasModal(${index})">
+                <div class="item-info">
+                    <h4>${item.observation ? item.observation.substring(0, 50) + '...' : 'مشاهده'}</h4>
+                    <span class="item-meta">⭐ امتیاز ${item.score || '---'}</span>
+                    ${moduleDisplay ? `<span class="module-type-label">${moduleDisplay}</span>` : ''}
+                    <span class="module-status-badge ${statusClass}">${statusText}</span>
+                </div>
+                <span style="font-size:0.9rem; color:#6a3d9a;">🏛️</span>
             </div>
-            <span style="font-size:0.9rem; color:#6a3d9a;">🏛️</span>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 function openModal(index) {
@@ -825,6 +906,7 @@ function openModal(index) {
     document.getElementById('modalMeta').textContent = `ارسال کننده: ${item.owner}`;
     document.getElementById('modalGuide').style.display = 'none';
     document.getElementById('modalFeedback').style.display = 'none';
+    document.getElementById('modalModule').style.display = 'none';
     const mediaDiv = document.getElementById('modalMediaContainer');
     const imageUrl = item.fileUrl || item.fileData;
     if (imageUrl) {
@@ -841,13 +923,53 @@ function openAtlasModal(index) {
     currentModalItem = item;
     document.getElementById('modalTitle').textContent = '🏛️ مشاهده از اطلس ظهور';
     document.getElementById('modalDesc').innerHTML = item.observation || 'متن مشاهده موجود نیست';
-    document.getElementById('modalMeta').textContent = `⭐ امتیاز: ${item.score} | وضعیت: ${item.status === 'approved' ? '✅ تأیید شده' : '⏳ در انتظار'}`;
+    document.getElementById('modalMeta').textContent = `⭐ امتیاز: ${item.score || '---'} | وضعیت: ${item.status === 'approved' ? '✅ تأیید شده' : '⏳ در انتظار'}`;
     const mediaDiv = document.getElementById('modalMediaContainer');
     if (item.fileUrl) {
         mediaDiv.innerHTML = `<img src="${item.fileUrl}" class="modal-media" onerror="this.style.display='none'"/>`;
     } else {
         mediaDiv.innerHTML = '';
     }
+    
+    // ===== نمایش اطلاعات ماژول =====
+    const moduleDiv = document.getElementById('modalModule');
+    const moduleType = item.moduleType || '';
+    const moduleStatus = item.moduleStatus || 'pending';
+    const moduleData = item.moduleData || [];
+    const moduleAnalysis = item.moduleAnalysis || '';
+    
+    const moduleNames = {
+        'collaboration': '🤝 همفکری با دیگران',
+        'related': '👁️ مشاهدات مرتبط دیگران',
+        'referral': '📤 ارجاع به ۵ همفرهنگ'
+    };
+    const moduleDisplay = moduleNames[moduleType] || moduleType || 'هیچ‌کدام';
+    
+    const statusLabels = {
+        'success': '✅ موفق',
+        'revision': '⚠️ نیاز به اصلاح',
+        'failed': '❌ شکست',
+        'pending': '⏳ در انتظار',
+        'no_peers': '⚠️ هم‌فرهنگی یافت نشد',
+        'no_related': '⚠️ مشاهده مرتبط یافت نشد'
+    };
+    const statusText = statusLabels[moduleStatus] || moduleStatus;
+    const statusClass = moduleStatus === 'success' ? 'success' :
+                       moduleStatus === 'revision' ? 'revision' :
+                       moduleStatus === 'failed' ? 'failed' :
+                       moduleStatus === 'pending' ? 'pending' :
+                       'no_peers';
+    
+    if (moduleType) {
+        moduleDiv.style.display = 'block';
+        document.getElementById('modalModuleType').textContent = moduleDisplay;
+        document.getElementById('modalModuleStatus').innerHTML = `<span class="module-status-badge ${statusClass}">${statusText}</span>`;
+        document.getElementById('modalModuleData').textContent = moduleData.length > 0 ? `نتایج: ${moduleData.join(', ')}` : '';
+        document.getElementById('modalModuleAnalysis').textContent = moduleAnalysis || '';
+    } else {
+        moduleDiv.style.display = 'none';
+    }
+    
     const guideBox = document.getElementById('modalGuide');
     const guideContent = document.getElementById('guideContent');
     if (item.analysis && item.analysis.guide) {
