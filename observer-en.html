@@ -320,6 +320,71 @@
         }
         body.dark .ai-result-detail .detail-title { color: #85c1e9; }
         
+        /* ===== Module Status Section (New) ===== */
+        .module-status-box {
+            margin-top: 1rem;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            background: rgba(212,175,55,0.06);
+            border: 1px solid rgba(212,175,55,0.12);
+        }
+        body.dark .module-status-box { background: rgba(212,175,55,0.03); }
+        .module-status-box .module-label {
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: #8a6d1f;
+        }
+        body.dark .module-status-box .module-label { color: #f9e79f; }
+        .module-status-box .module-status {
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 8px;
+            display: inline-block;
+        }
+        .module-status.pending {
+            background: rgba(241,196,15,0.15);
+            color: #b7950b;
+        }
+        .module-status.success {
+            background: rgba(39,174,96,0.15);
+            color: #1a6a3a;
+        }
+        .module-status.revision {
+            background: rgba(243,156,18,0.15);
+            color: #8a5a0a;
+        }
+        .module-status.failed {
+            background: rgba(231,76,60,0.15);
+            color: #6a1a1a;
+        }
+        .module-status.no_peers {
+            background: rgba(149,165,166,0.15);
+            color: #5a6a6a;
+        }
+        body.dark .module-status.pending { color: #f9e79f; }
+        body.dark .module-status.success { color: #82e0aa; }
+        body.dark .module-status.revision { color: #f5b041; }
+        body.dark .module-status.failed { color: #f1948a; }
+        body.dark .module-status.no_peers { color: #aab7b8; }
+
+        /* ===== Tracking Link ===== */
+        .tracking-link {
+            display: inline-block;
+            margin-top: 0.8rem;
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            background: rgba(40,116,166,0.1);
+            color: #2874a6;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border: 1px solid rgba(40,116,166,0.15);
+            transition: 0.3s;
+        }
+        body.dark .tracking-link { color: #85c1e9; background: rgba(40,116,166,0.05); }
+        .tracking-link:hover { background: rgba(40,116,166,0.15); transform: translateY(-2px); }
+        
         @media (max-width: 768px) {
             .container { padding: 1rem; }
             .actions { flex-direction: column; }
@@ -417,6 +482,9 @@
     </div>
     
     <script>
+        // ============================================================
+        // Module & Box Management Functions
+        // ============================================================
         function selectModule(btn, module) {
             const parent = btn.closest('.observation-box');
             parent.querySelectorAll('.box-module-btn').forEach(b => b.classList.remove('active'));
@@ -488,6 +556,9 @@
             }
         }
 
+        // ============================================================
+        // Forbidden Words (Unchanged)
+        // ============================================================
         const FORBIDDEN_WORDS = [
             'war', 'violence', 'murder', 'kill', 'killing', 'terror', 'bomb', 'explosion',
             'death', 'homicide', 'crime', 'bloodshed', 'rape', 'massacre',
@@ -504,10 +575,8 @@
 
         function fastFilter(text) {
             const lowerText = text.toLowerCase();
-            // Check for forbidden words as whole words only
             for (const keyword of FORBIDDEN_WORDS) {
                 const lowerKeyword = keyword.toLowerCase();
-                // Use regex for whole word matching
                 const regex = new RegExp('\\b' + lowerKeyword + '\\b', 'i');
                 if (regex.test(lowerText)) {
                     return {
@@ -526,16 +595,8 @@
         }
 
         // ============================================================
-        // ===== AI Analysis Function - Modified =====
+        // Main Submit Function (Modified)
         // ============================================================
-        async function smartAnalyzeObservation(text, language = 'en') {
-            console.warn('smartAnalyzeObservation is deprecated. All analysis is now done server-side.');
-            return {
-                status: 'error',
-                message: 'Analysis is performed server-side. Please try again.'
-            };
-        }
-
         async function submitObservations() {
             const userCode = document.getElementById('userCode').value.trim();
             const boxes = document.querySelectorAll('.observation-box');
@@ -581,20 +642,13 @@
             aiResultDetail.classList.remove('active');
 
             try {
-                const analyzedObservations = [];
-                
+                // Filter forbidden words
                 for (let i = 0; i < observations.length; i++) {
                     const obs = observations[i];
-                    
                     const filterResult = fastFilter(obs.text);
                     if (filterResult.blocked) {
                         throw new Error(`Observation #${obs.index} rejected: ${filterResult.reason}`);
                     }
-                    
-                    analyzedObservations.push({
-                        ...obs,
-                        aiAnalysis: null
-                    });
                 }
 
                 submitBtn.textContent = '⏳ Finalizing registration...';
@@ -605,7 +659,7 @@
                     body: JSON.stringify({
                         type: 'observations',
                         cardCode: userCode,
-                        observations: analyzedObservations.map(o => ({
+                        observations: observations.map(o => ({
                             text: o.text,
                             module: o.module
                         }))
@@ -619,12 +673,33 @@
                 }
                 
                 // ============================================================
-                // Display results from server with 5 matrices
+                // Display results with 5 matrices + module status
                 // ============================================================
                 let aiDetailsHtml = '';
                 if (result.issues && result.issues.length > 0) {
                     result.issues.forEach((issue, idx) => {
                         const ai = issue.aiAnalysis;
+                        const moduleStatus = issue.moduleStatus || 'pending';
+                        const moduleMessage = issue.moduleMessage || '';
+                        
+                        const moduleStatusLabels = {
+                            'pending': '⏳ Awaiting peer responses',
+                            'completed': '✅ Completed',
+                            'no_peers': '⚠️ No peers found',
+                            'no_related': '⚠️ No related observations found',
+                            'error': '❌ Processing error',
+                            'success': '✅ Successful',
+                            'revision': '⚠️ Needs revision',
+                            'failed': '❌ Failed'
+                        };
+                        const statusText = moduleStatusLabels[moduleStatus] || moduleStatus;
+                        
+                        const statusClass = moduleStatus === 'success' ? 'success' :
+                                           moduleStatus === 'revision' ? 'revision' :
+                                           moduleStatus === 'failed' ? 'failed' :
+                                           moduleStatus === 'no_peers' || moduleStatus === 'no_related' ? 'no_peers' :
+                                           'pending';
+                        
                         if (ai) {
                             const clusterNames = {
                                 'human': 'Human',
@@ -632,6 +707,14 @@
                                 'governance': 'Governance & Civilization',
                                 'survival': 'Survival & Future'
                             };
+                            
+                            const moduleNames = {
+                                'collaboration': '🤝 Collaborate',
+                                'related': '👁️ Related Views',
+                                'referral': '📤 Refer to 5 Peers'
+                            };
+                            const moduleDisplay = moduleNames[issue.module] || issue.module || 'None';
+                            
                             aiDetailsHtml += `
                                 <div style="border-bottom:1px solid rgba(212,175,55,0.1); padding:0.8rem 0;">
                                     <strong>Observation ${idx + 1}:</strong>
@@ -655,6 +738,11 @@
                                     ${ai.matrix_scale ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 Scale: ${ai.matrix_scale}</div>` : ''}
                                     ${ai.matrix_capacity ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 Capacity: ${ai.matrix_capacity}</div>` : ''}
                                 </div>
+                                <div class="module-status-box">
+                                    <div class="module-label">📌 Selected Module: ${moduleDisplay}</div>
+                                    <div class="module-status ${statusClass}">${statusText}</div>
+                                    ${moduleMessage ? `<div style="font-size:0.8rem; color:#4a3a2a; margin-top:0.3rem;">${moduleMessage}</div>` : ''}
+                                </div>
                             `;
                         }
                     });
@@ -665,8 +753,13 @@
                     aiResultDetail.classList.add('active');
                 }
                 
+                // ===== Show tracking code with link =====
+                const trackingCode = result.trackingCode || '---';
+                const trackingLink = trackingCode !== '---' ? 
+                    `<a href="track-observation.html?code=${encodeURIComponent(trackingCode)}" class="tracking-link">🔍 Track Observation Status</a>` : '';
+                
                 resultTitle.textContent = '✅ Observations Registered & Analyzed';
-                resultTracking.textContent = `🔗 Tracking Code: ${result.trackingCode || '---'}`;
+                resultTracking.innerHTML = `🔗 Tracking Code: ${trackingCode}<br>${trackingLink}`;
                 resultError.style.display = 'none';
                 resultBox.style.display = 'block';
                 
