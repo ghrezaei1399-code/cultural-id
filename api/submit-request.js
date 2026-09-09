@@ -1124,4 +1124,52 @@ async function peer_finalAnalysisWithResponses(issueNumber, responses, token, ow
   } else {
     return 'revision';
   }
+ // ============================================================
+// تابع ارسال ایمیل واقعی به هم‌فرهنگ‌ها با Resend
+// ============================================================
+async function peer_sendEmails(peers, subject, bodyHtml) {
+    const RESEND_API_KEY = process.env.RESEND_API_KEY;
+    const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@resend.dev';
+    
+    if (!RESEND_API_KEY) {
+        console.warn('RESEND_API_KEY not set. Emails will not be sent.');
+        return { success: false, message: 'Email service not configured', results: [] };
+    }
+
+    const results = [];
+    for (const peer of peers) {
+        if (!peer.email || peer.email.length < 5) {
+            results.push({ peer: peer.cardCode, success: false, message: 'No email address' });
+            continue;
+        }
+
+        try {
+            const response = await fetch('https://api.resend.com/emails', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${RESEND_API_KEY}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    from: FROM_EMAIL,
+                    to: [peer.email],
+                    subject: subject,
+                    html: bodyHtml
+                })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                results.push({ peer: peer.cardCode, success: true, email: peer.email, id: data.id });
+            } else {
+                const error = await response.text();
+                results.push({ peer: peer.cardCode, success: false, message: error });
+            }
+        } catch (error) {
+            results.push({ peer: peer.cardCode, success: false, message: error.message });
+        }
+    }
+
+    return { success: true, results: results };
 }
+  }
