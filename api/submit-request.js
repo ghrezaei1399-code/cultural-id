@@ -58,7 +58,7 @@ module.exports = async function handler(req, res) {
         
         if (!obs.aiAnalysis) {
           try {
-            const openRouterKey = process.env.OPENROUTER_API_KEY;
+           const openRouterKey = process.env.OPENROUTER_API_KEY || process.env.GH_TOKEN;
             
             if (openRouterKey) {
               const systemPrompt = isPersian ? 
