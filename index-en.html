@@ -788,7 +788,7 @@ async function loadAtlas() {
         const res = await fetch('/api/get-connection-requests?type=observations&t=' + new Date().getTime());
         if (!res.ok) throw new Error('Error loading atlas');
         const data = await res.json();
-        allAtlasItems = (data.observations || []).filter(obs => obs.score === 5 && obs.status === 'approved');
+        allAtlasItems = (data.observations || []).filter(obs => obs.status === 'approved');
         renderAtlas(allAtlasItems);
     } catch (e) {
         console.error(e);
