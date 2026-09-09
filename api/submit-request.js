@@ -212,6 +212,10 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
         // پردازش ماژول انتخاب‌شده
         // ============================================================
         let moduleResult = null;
+        let peerInvites = null;
+        let moduleStatus = 'pending';
+        let moduleMessage = '';
+
         if (obs.module && obs.module !== 'none' && obs.module !== 'هیچ‌کدام') {
           try {
             const allUsersRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/active`, {
@@ -234,19 +238,37 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
                 }
               }
               
-              moduleResult = { type: obs.module, status: 'completed', data: [] };
+              moduleResult = { type: obs.module, status: 'pending', data: [], analysis: '' };
               
               if (obs.module === 'collaboration') {
                 const senderValues = aiAnalysis.values || [];
                 const matchedUsers = allUsers.filter(user => {
                   const userValues = user.values || [];
                   const common = senderValues.filter(v => userValues.includes(v));
-                  return common.length >= 5;
+                  return common.length >= 3;
                 });
-                moduleResult.data = matchedUsers.slice(0, 5).map(u => u.cardCode);
-                if (matchedUsers.length > 0) {
-                  const userList = matchedUsers.slice(0, 5).map(u => u.cardCode).join('، ');
-                  moduleResult.analysis = `کاربران هم‌فکر (${userList}) می‌توانند در این زمینه همکاری کنند.`;
+                const selected = matchedUsers.slice(0, 5);
+                moduleResult.data = selected.map(u => u.cardCode);
+                moduleResult.peers = selected.map(u => ({ cardCode: u.cardCode, email: u.communicationEmail }));
+                if (selected.length > 0) {
+                  moduleResult.analysis = `همفکری با ${selected.length} نفر از هم‌فرهنگان آغاز شد.`;
+                  moduleMessage = `همفکری با ${selected.length} نفر از هم‌فرهنگان آغاز شد.`;
+                  moduleStatus = 'pending';
+                  // ارسال دعوتنامه به هم‌فرهنگ‌ها
+                  peerInvites = await peer_sendInvites({
+                    observation: obs.text,
+                    observerCode: cardCode,
+                    peers: selected.map(u => ({ cardCode: u.cardCode, email: u.communicationEmail })),
+                    issueNumber: null, // بعداً پس از ایجاد Issue پر می‌شود
+                    isPersian: isPersian,
+                    token: token,
+                    owner: owner,
+                    repo: repo
+                  });
+                } else {
+                  moduleResult.analysis = 'هیچ هم‌فرهنگی با اولویت‌های مشترک یافت نشد.';
+                  moduleMessage = 'هیچ هم‌فرهنگی با اولویت‌های مشترک یافت نشد.';
+                  moduleStatus = 'no_peers';
                 }
               } else if (obs.module === 'related') {
                 const allIssuesRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues?labels=observation`, {
@@ -260,6 +282,12 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
                   moduleResult.data = similar.slice(0, 5).map(i => `#${i.number}`);
                   if (similar.length > 0) {
                     moduleResult.analysis = `${similar.length} مشاهده مرتبط با این موضوع وجود دارد.`;
+                    moduleMessage = `${similar.length} مشاهده مرتبط با این موضوع وجود دارد.`;
+                    moduleStatus = 'completed';
+                  } else {
+                    moduleResult.analysis = 'هیچ مشاهده مرتبطی یافت نشد.';
+                    moduleMessage = 'هیچ مشاهده مرتبطی یافت نشد.';
+                    moduleStatus = 'no_related';
                   }
                 }
               } else if (obs.module === 'referral') {
@@ -270,19 +298,38 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
                   return { ...user, matchCount: common.length };
                 });
                 const referrals = scoredUsers
-                  .filter(u => u.matchCount >= 5)
+                  .filter(u => u.matchCount >= 3)
                   .sort((a, b) => b.matchCount - a.matchCount)
                   .slice(0, 5);
                 moduleResult.data = referrals.map(u => u.cardCode);
+                moduleResult.peers = referrals.map(u => ({ cardCode: u.cardCode, email: u.communicationEmail }));
                 if (referrals.length > 0) {
-                  const userList = referrals.map(u => u.cardCode).join('، ');
-                  moduleResult.analysis = `۵ همفرهنگ (${userList}) برای ارجاع انتخاب شدند.`;
+                  moduleResult.analysis = `۵ همفرهنگ (${referrals.map(u => u.cardCode).join('، ')}) برای ارجاع انتخاب شدند.`;
+                  moduleMessage = `۵ همفرهنگ برای ارجاع انتخاب شدند.`;
+                  moduleStatus = 'pending';
+                  // ارسال دعوتنامه به ۵ همفرهنگ
+                  peerInvites = await peer_sendInvites({
+                    observation: obs.text,
+                    observerCode: cardCode,
+                    peers: referrals.map(u => ({ cardCode: u.cardCode, email: u.communicationEmail })),
+                    issueNumber: null,
+                    isPersian: isPersian,
+                    token: token,
+                    owner: owner,
+                    repo: repo
+                  });
+                } else {
+                  moduleResult.analysis = 'هیچ هم‌فرهنگی برای ارجاع یافت نشد.';
+                  moduleMessage = 'هیچ هم‌فرهنگی برای ارجاع یافت نشد.';
+                  moduleStatus = 'no_peers';
                 }
               }
             }
           } catch (moduleError) {
             console.error('Module processing failed:', moduleError);
-            moduleResult = { type: obs.module, status: 'error', data: [] };
+            moduleResult = { type: obs.module, status: 'error', data: [], analysis: 'خطا در پردازش ماژول' };
+            moduleMessage = 'خطا در پردازش ماژول';
+            moduleStatus = 'error';
           }
         }
 
@@ -297,6 +344,14 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
            aiAnalysis.cluster === 'survival' ? 'بقا و آینده' : 'نامشخص') :
           (aiAnalysis.cluster || 'Unknown');
         
+        const moduleStatusLabels = {
+          'pending': '⏳ در انتظار پاسخ هم‌فرهنگ‌ها',
+          'completed': '✅ تکمیل شد',
+          'no_peers': '⚠️ هم‌فرهنگی یافت نشد',
+          'no_related': '⚠️ مشاهده مرتبط یافت نشد',
+          'error': '❌ خطا در پردازش'
+        };
+
         const aiSection = `
 **🤖 AI Analysis:**
 - **Status:** ${statusLabel}
@@ -317,6 +372,27 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
 - **Capacity:** ${aiAnalysis.matrix_capacity || '---'}
 `;
 
+        // ============================================================
+        // ساخت بخش Module Result
+        // ============================================================
+        let moduleSection = '';
+        if (moduleResult) {
+          const statusText = moduleStatusLabels[moduleResult.status] || moduleResult.status;
+          const typeNames = {
+            'collaboration': isPersian ? 'همفکری با دیگران' : 'Collaboration',
+            'related': isPersian ? 'مشاهدات مرتبط دیگران' : 'Related Observations',
+            'referral': isPersian ? 'ارجاع به ۵ همفرهنگ' : 'Referral to 5 Peers'
+          };
+          moduleSection = `
+**📌 Module Result:**
+- **Type:** ${typeNames[moduleResult.type] || moduleResult.type}
+- **Status:** ${statusText}
+- **Results:** ${moduleResult.data && moduleResult.data.length > 0 ? moduleResult.data.join(', ') : '---'}
+${moduleResult.analysis ? `- **Analysis:** ${moduleResult.analysis}` : ''}
+${moduleResult.peers && moduleResult.peers.length > 0 ? `- **Peers:** ${moduleResult.peers.map(p => p.cardCode).join(', ')}` : ''}
+`;
+        }
+
         const issueTitle = isPersian ? `مشاهده خام: ${cardCode}` : `Raw Observation: ${cardCode}`;
         const issueBody = `
 **Card Code:** ${cardCode}
@@ -328,15 +404,12 @@ ${obs.text}
 ${selectedModule}
 
 ${aiSection}
-${moduleResult && moduleResult.data && moduleResult.data.length > 0 ? `
-**📌 Module Result:**
-- **Type:** ${moduleResult.type === 'collaboration' ? 'همفکری' : moduleResult.type === 'related' ? 'مشاهدات مرتبط' : 'ارجاع به ۵ همفرهنگ'}
-- **Status:** ${moduleResult.status === 'completed' ? '✅ تکمیل شد' : '⏳ در انتظار'}
-- **Results:** ${moduleResult.data.join(', ')}
-${moduleResult.analysis ? `- **Additional Analysis:** ${moduleResult.analysis}` : ''}
-` : ''}
+${moduleSection}
 ---
 *This observation has been registered and is pending review.*
+
+**Module Status:** ${moduleStatus}
+**Tracking Code:** Will be assigned after issue creation.
         `;
 
         const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues`, {
@@ -349,7 +422,7 @@ ${moduleResult.analysis ? `- **Additional Analysis:** ${moduleResult.analysis}` 
           body: JSON.stringify({
             title: issueTitle,
             body: issueBody,
-            labels: ['observation', 'pending-review']
+            labels: ['observation', 'pending-review', `module-${moduleStatus}`]
           })
         });
 
@@ -359,11 +432,39 @@ ${moduleResult.analysis ? `- **Additional Analysis:** ${moduleResult.analysis}` 
         }
 
         const issueData = await response.json();
+
+        // ============================================================
+        // اگر ماژول نیاز به ارجاع به هم‌فرهنگ‌ها دارد، دعوتنامه ارسال کن
+        // ============================================================
+        if (moduleResult && moduleResult.peers && moduleResult.peers.length > 0 && 
+            (obs.module === 'collaboration' || obs.module === 'referral')) {
+          // به‌روزرسانی Issue با لینک ثبت پاسخ
+          const trackingCode = `OBS-${issueData.number}`;
+          const peerLink = `${process.env.SITE_URL || 'https://cultural-id.vercel.app'}/peer-response.html?code=${trackingCode}&issue=${issueData.number}`;
+          
+          // ارسال دعوتنامه به هم‌فرهنگ‌ها
+          await peer_sendInvites({
+            observation: obs.text,
+            observerCode: cardCode,
+            peers: moduleResult.peers,
+            issueNumber: issueData.number,
+            trackingCode: trackingCode,
+            peerLink: peerLink,
+            isPersian: isPersian,
+            token: token,
+            owner: owner,
+            repo: repo
+          });
+        }
+
         createdIssues.push({
           number: issueData.number,
           url: issueData.html_url,
+          trackingCode: `OBS-${issueData.number}`,
           observation: obs.text.substring(0, 50) + '...',
           module: selectedModule,
+          moduleStatus: moduleStatus,
+          moduleMessage: moduleMessage,
           aiAnalysis: aiAnalysis,
           moduleResult: moduleResult
         });
@@ -373,7 +474,7 @@ ${moduleResult.analysis ? `- **Additional Analysis:** ${moduleResult.analysis}` 
         return res.status(400).json({ error: 'No valid observations were registered.' });
       }
 
-      const trackingCodes = createdIssues.map(i => `#${i.number}`).join(', ');
+      const trackingCodes = createdIssues.map(i => i.trackingCode).join(', ');
       return res.status(200).json({
         success: true,
         trackingCode: trackingCodes,
@@ -566,6 +667,140 @@ ${moduleResult.analysis ? `- **Additional Analysis:** ${moduleResult.analysis}` 
       });
     }
 
+    // ============================================================
+    // بخش جدید: دریافت پاسخ هم‌فرهنگ (Peer Response)
+    // ============================================================
+    if (type === 'peer-response') {
+      const { issueNumber, peerCode, response, result, trackingCode } = parsedBody;
+      
+      if (!issueNumber || !peerCode || !response) {
+        return res.status(400).json({ error: 'اطلاعات ناقص است (issueNumber, peerCode, response الزامی است)' });
+      }
+
+      // ذخیره پاسخ به عنوان کامنت در Issue
+      const resultLabels = {
+        'success': '✅ موفق',
+        'revision': '⚠️ نیاز به اصلاح',
+        'failed': '❌ شکست'
+      };
+
+      const commentBody = `
+**📝 پاسخ هم‌فرهنگ**
+
+- **هم‌فرهنگ:** ${peerCode}
+- **نتیجه:** ${resultLabels[result] || result || 'نظر'}
+- **پاسخ:** ${response}
+- **زمان:** ${new Date().toISOString()}
+
+---
+*این پاسخ به صورت خودکار ثبت شده است.*
+      `;
+
+      const commentRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/comments`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/vnd.github.v3+json'
+        },
+        body: JSON.stringify({ body: commentBody })
+      });
+
+      if (!commentRes.ok) {
+        const errorData = await commentRes.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Error adding comment to issue');
+      }
+
+      const commentData = await commentRes.json();
+
+      // ذخیره پاسخ در فایل JSON برای دسترسی سریع‌تر
+      const responseFileName = `peer-response-${issueNumber}-${peerCode}-${Date.now()}.json`;
+      const responsePath = `data/peer-responses/${responseFileName}`;
+      
+      const responseData = {
+        issueNumber: issueNumber,
+        trackingCode: trackingCode || `OBS-${issueNumber}`,
+        peerCode: peerCode,
+        response: response,
+        result: result || 'success',
+        timestamp: new Date().toISOString(),
+        commentId: commentData.id
+      };
+
+      const responseContent = Buffer.from(JSON.stringify(responseData, null, 2), 'utf8').toString('base64');
+
+      await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${responsePath}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: `Peer response from ${peerCode} for issue #${issueNumber}`,
+          content: responseContent,
+          branch: 'main'
+        })
+      });
+
+      // بررسی اینکه آیا همه پاسخ‌ها دریافت شده‌اند
+      const allResponses = await peer_getAllResponses(issueNumber, token, owner, repo);
+      const peerCount = await peer_getPeerCount(issueNumber, token, owner, repo);
+      
+      let moduleStatus = 'pending';
+      let moduleResult = 'pending';
+      
+      if (allResponses.length >= peerCount) {
+        // همه پاسخ‌ها دریافت شده‌اند
+        moduleStatus = 'completed';
+        // تحلیل نهایی با پاسخ‌ها
+        moduleResult = await peer_finalAnalysisWithResponses(issueNumber, allResponses, token, owner, repo);
+        
+        // به‌روزرسانی Issue با نتیجه نهایی
+        const resultComment = `
+**📊 نتیجه نهایی ماژول ارجاع**
+
+- **تعداد پاسخ‌ها:** ${allResponses.length}/${peerCount}
+- **نتیجه نهایی:** ${moduleResult === 'success' ? '✅ موفق' : moduleResult === 'revision' ? '⚠️ نیاز به اصلاح' : '❌ شکست'}
+- **تحلیل:** ${moduleResult === 'success' ? 'هم‌فرهنگ‌ها این مشاهده را موفق ارزیابی کردند.' : moduleResult === 'revision' ? 'هم‌فرهنگ‌ها نیاز به اصلاح را پیشنهاد کردند.' : 'هم‌فرهنگ‌ها این مشاهده را ناموفق ارزیابی کردند.'}
+
+---
+*این تحلیل توسط هوش مصنوعی بر اساس پاسخ‌های هم‌فرهنگ‌ها تولید شده است.*
+        `;
+        
+        await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/comments`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/vnd.github.v3+json'
+          },
+          body: JSON.stringify({ body: resultComment })
+        });
+
+        // به‌روزرسانی لیبل Issue
+        await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/labels`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/vnd.github.v3+json'
+          },
+          body: JSON.stringify({
+            labels: ['observation', 'pending-review', `module-${moduleResult}`]
+          })
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: 'پاسخ شما با موفقیت ثبت شد.',
+        issueNumber: issueNumber,
+        peerCode: peerCode,
+        allResponsesReceived: allResponses.length >= peerCount,
+        moduleResult: moduleResult
+      });
+    }
+
     return res.status(400).json({ error: 'Invalid request type.' });
 
   } catch (error) {
@@ -694,4 +929,199 @@ function getFallbackAnalysis(text, isPersian) {
     matrix_scale: matrix.scale,
     matrix_capacity: matrix.capacity
   };
+}
+
+// ============================================================
+// توابع جدید برای سیستم ارجاع به هم‌فرهنگ‌ها
+// ============================================================
+
+// ۱. ارسال دعوتنامه به هم‌فرهنگ‌ها
+async function peer_sendInvites({ observation, observerCode, peers, issueNumber, trackingCode, peerLink, isPersian, token, owner, repo }) {
+  if (!peers || peers.length === 0) {
+    return { success: false, message: 'هیچ هم‌فرهنگی برای ارسال دعوتنامه وجود ندارد' };
+  }
+
+  const siteUrl = process.env.SITE_URL || 'https://cultural-id.vercel.app';
+  const link = peerLink || `${siteUrl}/peer-response.html?issue=${issueNumber}&observer=${observerCode}`;
+  const tracking = trackingCode || `OBS-${issueNumber}`;
+
+  const subject = isPersian ? 'دعوت به همفکری در سپهر خردمندی' : 'Invitation to Collaborate in Sphere of Wisdom';
+  const bodyTemplate = isPersian ? `
+سلام هم‌فرهنگ گرامی،
+
+شما به عنوان یکی از هم‌فرهنگان برای مشاهده‌ی زیر انتخاب شده‌اید:
+
+**مشاهده‌گر:** ${observerCode}
+**متن مشاهده:** 
+${observation}
+
+**لطفاً با کلیک روی لینک زیر، پاسخ خود را ثبت کنید:**
+${link}
+
+**کد رهگیری:** ${tracking}
+
+با سپاس از همکاری شما
+تیم سپهر خردمندی
+` : `
+Dear Peer,
+
+You have been selected as a peer for the following observation:
+
+**Observer:** ${observerCode}
+**Observation:**
+${observation}
+
+**Please click the link below to submit your response:**
+${link}
+
+**Tracking Code:** ${tracking}
+
+Thank you for your cooperation
+Sphere of Wisdom Team
+`;
+
+  // ذخیره دعوتنامه‌ها در Issue به عنوان کامنت
+  if (issueNumber) {
+    const inviteComment = `
+**📨 دعوتنامه ارسال شد به:**
+${peers.map(p => `- ${p.cardCode} (${p.email || 'بدون ایمیل'})`).join('\n')}
+
+**لینک ثبت پاسخ:** ${link}
+**کد رهگیری:** ${tracking}
+**زمان ارسال:** ${new Date().toISOString()}
+    `;
+    
+    await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/comments`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/vnd.github.v3+json'
+      },
+      body: JSON.stringify({ body: inviteComment })
+    });
+  }
+
+  // در آینده: ارسال ایمیل واقعی از طریق سرویس ایمیل
+  // برای حال حاضر، فقط در Issue ثبت می‌شود
+
+  return {
+    success: true,
+    message: `دعوتنامه برای ${peers.length} هم‌فرهنگ ارسال شد`,
+    peers: peers.map(p => p.cardCode),
+    link: link,
+    trackingCode: tracking
+  };
+}
+
+// ۲. دریافت تمام پاسخ‌های یک Issue
+async function peer_getAllResponses(issueNumber, token, owner, repo) {
+  try {
+    const commentsRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/comments`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+
+    if (!commentsRes.ok) {
+      return [];
+    }
+
+    const comments = await commentsRes.json();
+    const responses = [];
+
+    for (const comment of comments) {
+      const body = comment.body || '';
+      if (body.includes('**📝 پاسخ هم‌فرهنگ**') || body.includes('**Peer Response**')) {
+        // استخراج اطلاعات از کامنت
+        const peerMatch = body.match(/\*\*هم‌فرهنگ:\*\*\s*(.+)/) || body.match(/\*\*Peer:\*\*\s*(.+)/);
+        const resultMatch = body.match(/\*\*نتیجه:\*\*\s*(.+)/) || body.match(/\*\*Result:\*\*\s*(.+)/);
+        const responseMatch = body.match(/\*\*پاسخ:\*\*\s*(.+)/) || body.match(/\*\*Response:\*\*\s*(.+)/);
+        
+        if (peerMatch && responseMatch) {
+          responses.push({
+            peerCode: peerMatch[1].trim(),
+            result: resultMatch ? resultMatch[1].trim() : 'success',
+            response: responseMatch[1].trim(),
+            timestamp: comment.created_at,
+            commentId: comment.id
+          });
+        }
+      }
+    }
+
+    return responses;
+  } catch (error) {
+    console.error('Error getting peer responses:', error);
+    return [];
+  }
+}
+
+// ۳. دریافت تعداد هم‌فرهنگ‌های ارجاع شده
+async function peer_getPeerCount(issueNumber, token, owner, repo) {
+  try {
+    const issueRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+
+    if (!issueRes.ok) {
+      return 0;
+    }
+
+    const issue = await issueRes.json();
+    const body = issue.body || '';
+    
+    // استخراج تعداد هم‌فرهنگ‌ها از Issue
+    const peersMatch = body.match(/\*\*Peers:\*\*\s*(.+)/) || body.match(/\*\*هم‌فرهنگ‌ها:\*\*\s*(.+)/);
+    if (peersMatch) {
+      const peers = peersMatch[1].split(',').map(p => p.trim());
+      return peers.length;
+    }
+
+    // اگر در Issue نبود، از فایل peer-responses بخوان
+    const responses = await peer_getAllResponses(issueNumber, token, owner, repo);
+    return responses.length > 0 ? responses.length : 5; // پیش‌فرض ۵
+  } catch (error) {
+    console.error('Error getting peer count:', error);
+    return 5;
+  }
+}
+
+// ۴. تحلیل نهایی با پاسخ‌های هم‌فرهنگ‌ها
+async function peer_finalAnalysisWithResponses(issueNumber, responses, token, owner, repo) {
+  if (!responses || responses.length === 0) {
+    return 'pending';
+  }
+
+  // محاسبه نتیجه بر اساس پاسخ‌ها
+  let successCount = 0;
+  let revisionCount = 0;
+  let failedCount = 0;
+
+  for (const r of responses) {
+    const result = r.result || 'success';
+    if (result.includes('موفق') || result.includes('success') || result === 'success') {
+      successCount++;
+    } else if (result.includes('اصلاح') || result.includes('revision') || result === 'revision') {
+      revisionCount++;
+    } else if (result.includes('شکست') || result.includes('failed') || result === 'failed') {
+      failedCount++;
+    }
+  }
+
+  // تعیین نتیجه نهایی
+  const total = responses.length;
+  if (total === 0) return 'pending';
+  
+  if (successCount >= total * 0.6) {
+    return 'success';
+  } else if (failedCount >= total * 0.6) {
+    return 'failed';
+  } else {
+    return 'revision';
+  }
 }
