@@ -269,7 +269,7 @@
                 allAtlasItems = (atlasData.observations || [])
                     .filter(obs => obs.score === 5 && obs.status === 'approved');
 
-                // ۲. دریافت دستاوردهای نام‌آوران (emergence)
+                // ۲. دریافت دستاوردهای نام‌آوران (emergence) - بدون شرط امتیاز
                 const usersRes = await fetch('/api/get-users?t=' + new Date().getTime());
                 const usersData = await usersRes.json();
                 if (!usersRes.ok) throw new Error(usersData.error || 'خطا در دریافت کاربران');
@@ -280,6 +280,7 @@
                         if (user.achievements && Array.isArray(user.achievements)) {
                             user.achievements.forEach(ach => {
                                 // فقط دستاوردهای نام‌آوران (emergence) که تأیید شده‌اند
+                                // بدون شرط امتیاز
                                 if (ach.section === 'emergence' && ach.status === 'approved') {
                                     allAchievements.push({
                                         ...ach,
@@ -320,7 +321,6 @@
         function renderGallery() {
             const grid = document.getElementById('galleryGrid');
 
-            // ===== ترکیب مشاهدات اطلس و دستاوردهای نام‌آوران =====
             const atlasItems = allAtlasItems.map(obs => ({
                 type: 'atlas',
                 id: obs.number,
@@ -348,7 +348,6 @@
                 section: ach.section || 'emergence'
             }));
 
-            // ===== فیلتر =====
             let items = [];
             if (currentFilter === 'all') {
                 items = [...atlasItems, ...achievementItems];
@@ -358,7 +357,6 @@
                 items = achievementItems;
             }
 
-            // ===== مرتب‌سازی بر اساس تاریخ (جدیدترین اول) =====
             items = items.sort((a, b) => {
                 return new Date(b.date) - new Date(a.date);
             });
@@ -368,7 +366,6 @@
                 return;
             }
 
-            // ===== رندر آیتم‌ها =====
             grid.innerHTML = items.map(item => {
                 const isAtlas = item.type === 'atlas';
                 const isAchievement = item.type === 'achievement';
@@ -407,7 +404,6 @@
             }).join('');
         }
 
-        // ===== بارگذاری اولیه =====
         loadData();
         setInterval(loadData, 30000);
     </script>
