@@ -320,6 +320,71 @@
         }
         body.dark .ai-result-detail .detail-title { color: #85c1e9; }
         
+        /* ===== بخش جدید: نمایش وضعیت ماژول ===== */
+        .module-status-box {
+            margin-top: 1rem;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            background: rgba(212,175,55,0.06);
+            border: 1px solid rgba(212,175,55,0.12);
+        }
+        body.dark .module-status-box { background: rgba(212,175,55,0.03); }
+        .module-status-box .module-label {
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: #8a6d1f;
+        }
+        body.dark .module-status-box .module-label { color: #f9e79f; }
+        .module-status-box .module-status {
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 8px;
+            display: inline-block;
+        }
+        .module-status.pending {
+            background: rgba(241,196,15,0.15);
+            color: #b7950b;
+        }
+        .module-status.success {
+            background: rgba(39,174,96,0.15);
+            color: #1a6a3a;
+        }
+        .module-status.revision {
+            background: rgba(243,156,18,0.15);
+            color: #8a5a0a;
+        }
+        .module-status.failed {
+            background: rgba(231,76,60,0.15);
+            color: #6a1a1a;
+        }
+        .module-status.no_peers {
+            background: rgba(149,165,166,0.15);
+            color: #5a6a6a;
+        }
+        body.dark .module-status.pending { color: #f9e79f; }
+        body.dark .module-status.success { color: #82e0aa; }
+        body.dark .module-status.revision { color: #f5b041; }
+        body.dark .module-status.failed { color: #f1948a; }
+        body.dark .module-status.no_peers { color: #aab7b8; }
+
+        /* ===== بخش پیگیری ===== */
+        .tracking-link {
+            display: inline-block;
+            margin-top: 0.8rem;
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            background: rgba(40,116,166,0.1);
+            color: #2874a6;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border: 1px solid rgba(40,116,166,0.15);
+            transition: 0.3s;
+        }
+        body.dark .tracking-link { color: #85c1e9; background: rgba(40,116,166,0.05); }
+        .tracking-link:hover { background: rgba(40,116,166,0.15); transform: translateY(-2px); }
+        
         @media (max-width: 768px) {
             .container { padding: 1rem; }
             .actions { flex-direction: column; }
@@ -417,6 +482,9 @@
     </div>
     
     <script>
+        // ============================================================
+        // توابع مدیریت ماژول‌ها و باکس‌ها (بدون تغییر)
+        // ============================================================
         function selectModule(btn, module) {
             const parent = btn.closest('.observation-box');
             parent.querySelectorAll('.box-module-btn').forEach(b => b.classList.remove('active'));
@@ -488,6 +556,9 @@
             }
         }
 
+        // ============================================================
+        // کلمات ممنوعه (بدون تغییر)
+        // ============================================================
         const FORBIDDEN_WORDS = [
             'جنگ', 'خشونت', 'قتل', 'کشتار', 'ترور', 'بمب', 'انفجار',
             'مرگ', 'آدم کشی', 'جنایت', 'خونریزی', 'تجاوز',
@@ -504,10 +575,8 @@
 
         function fastFilter(text) {
             const lowerText = text.toLowerCase();
-            // بررسی کلمات ممنوعه به صورت کامل و جدا
             for (const keyword of FORBIDDEN_WORDS) {
                 const lowerKeyword = keyword.toLowerCase();
-                // استفاده از regex برای تشخیص کلمه کامل
                 const regex = new RegExp('\\b' + lowerKeyword + '\\b', 'i');
                 if (regex.test(lowerText)) {
                     return {
@@ -526,16 +595,8 @@
         }
 
         // ============================================================
-        // ===== تابع تحلیل هوش مصنوعی - اصلاح شده =====
+        // ===== تابع اصلی ثبت مشاهدات (اصلاح شده) =====
         // ============================================================
-        async function smartAnalyzeObservation(text, language = 'fa') {
-            console.warn('smartAnalyzeObservation is deprecated. All analysis is now done server-side.');
-            return {
-                status: 'error',
-                message: 'تحلیل در سمت سرور انجام می‌شود. لطفاً دوباره تلاش کنید.'
-            };
-        }
-
         async function submitObservations() {
             const userCode = document.getElementById('userCode').value.trim();
             const boxes = document.querySelectorAll('.observation-box');
@@ -581,20 +642,13 @@
             aiResultDetail.classList.remove('active');
 
             try {
-                const analyzedObservations = [];
-                
+                // فیلتر کلمات ممنوعه
                 for (let i = 0; i < observations.length; i++) {
                     const obs = observations[i];
-                    
                     const filterResult = fastFilter(obs.text);
                     if (filterResult.blocked) {
                         throw new Error(`مشاهده شماره ${obs.index} رد شد: ${filterResult.reason}`);
                     }
-                    
-                    analyzedObservations.push({
-                        ...obs,
-                        aiAnalysis: null
-                    });
                 }
 
                 submitBtn.textContent = '⏳ در حال ثبت نهایی...';
@@ -605,7 +659,7 @@
                     body: JSON.stringify({
                         type: 'observations',
                         cardCode: userCode,
-                        observations: analyzedObservations.map(o => ({
+                        observations: observations.map(o => ({
                             text: o.text,
                             module: o.module
                         }))
@@ -619,12 +673,35 @@
                 }
                 
                 // ============================================================
-                // نمایش نتایج دریافتی از سرور با ۵ ماتریس
+                // نمایش نتایج دریافتی از سرور با ۵ ماتریس و وضعیت ماژول
                 // ============================================================
                 let aiDetailsHtml = '';
                 if (result.issues && result.issues.length > 0) {
                     result.issues.forEach((issue, idx) => {
                         const ai = issue.aiAnalysis;
+                        const moduleStatus = issue.moduleStatus || 'pending';
+                        const moduleMessage = issue.moduleMessage || '';
+                        
+                        // ترجمه وضعیت ماژول
+                        const moduleStatusLabels = {
+                            'pending': '⏳ در انتظار پاسخ هم‌فرهنگ‌ها',
+                            'completed': '✅ تکمیل شد',
+                            'no_peers': '⚠️ هم‌فرهنگی یافت نشد',
+                            'no_related': '⚠️ مشاهده مرتبط یافت نشد',
+                            'error': '❌ خطا در پردازش',
+                            'success': '✅ موفق',
+                            'revision': '⚠️ نیاز به اصلاح',
+                            'failed': '❌ شکست'
+                        };
+                        const statusText = moduleStatusLabels[moduleStatus] || moduleStatus;
+                        
+                        // کلاس CSS برای وضعیت
+                        const statusClass = moduleStatus === 'success' ? 'success' :
+                                           moduleStatus === 'revision' ? 'revision' :
+                                           moduleStatus === 'failed' ? 'failed' :
+                                           moduleStatus === 'no_peers' || moduleStatus === 'no_related' ? 'no_peers' :
+                                           'pending';
+                        
                         if (ai) {
                             const clusterNames = {
                                 'human': 'انسان',
@@ -632,6 +709,15 @@
                                 'governance': 'حکمرانی و تمدن',
                                 'survival': 'بقا و آینده'
                             };
+                            
+                            // ===== نمایش ماژول انتخاب‌شده و وضعیت آن =====
+                            const moduleNames = {
+                                'collaboration': '🤝 همفکری با دیگران',
+                                'related': '👁️ مشاهدات مرتبط دیگران',
+                                'referral': '📤 ارجاع به ۵ همفرهنگ'
+                            };
+                            const moduleDisplay = moduleNames[issue.module] || issue.module || 'هیچ‌کدام';
+                            
                             aiDetailsHtml += `
                                 <div style="border-bottom:1px solid rgba(212,175,55,0.1); padding:0.8rem 0;">
                                     <strong>مشاهده ${idx + 1}:</strong>
@@ -655,6 +741,11 @@
                                     ${ai.matrix_scale ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 مقیاس: ${ai.matrix_scale}</div>` : ''}
                                     ${ai.matrix_capacity ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 ظرفیت: ${ai.matrix_capacity}</div>` : ''}
                                 </div>
+                                <div class="module-status-box">
+                                    <div class="module-label">📌 ماژول انتخاب‌شده: ${moduleDisplay}</div>
+                                    <div class="module-status ${statusClass}">${statusText}</div>
+                                    ${moduleMessage ? `<div style="font-size:0.8rem; color:#4a3a2a; margin-top:0.3rem;">${moduleMessage}</div>` : ''}
+                                </div>
                             `;
                         }
                     });
@@ -665,8 +756,13 @@
                     aiResultDetail.classList.add('active');
                 }
                 
+                // ===== نمایش کد رهگیری با لینک پیگیری =====
+                const trackingCode = result.trackingCode || '---';
+                const trackingLink = trackingCode !== '---' ? 
+                    `<a href="track-observation.html?code=${encodeURIComponent(trackingCode)}" class="tracking-link">🔍 پیگیری وضعیت مشاهده</a>` : '';
+                
                 resultTitle.textContent = '✅ مشاهدات با موفقیت ثبت و تحلیل شد';
-                resultTracking.textContent = `🔗 شماره پیگیری: ${result.trackingCode || '---'}`;
+                resultTracking.innerHTML = `🔗 شماره پیگیری: ${trackingCode}<br>${trackingLink}`;
                 resultError.style.display = 'none';
                 resultBox.style.display = 'block';
                 
