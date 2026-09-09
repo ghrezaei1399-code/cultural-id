@@ -199,6 +199,88 @@
         }
         body.dark .module-result-box .item { background: rgba(0,0,0,0.05); }
         
+        /* ===== وضعیت ماژول ===== */
+        .module-status-badge {
+            display: inline-block;
+            padding: 0.1rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin: 0.2rem 0;
+        }
+        .module-status-badge.success {
+            background: rgba(39,174,96,0.15);
+            color: #1a6a3a;
+        }
+        .module-status-badge.revision {
+            background: rgba(243,156,18,0.15);
+            color: #8a5a0a;
+        }
+        .module-status-badge.failed {
+            background: rgba(231,76,60,0.15);
+            color: #6a1a1a;
+        }
+        .module-status-badge.pending {
+            background: rgba(241,196,15,0.15);
+            color: #b7950b;
+        }
+        .module-status-badge.no_peers {
+            background: rgba(149,165,166,0.15);
+            color: #5a6a6a;
+        }
+        body.dark .module-status-badge.success { color: #82e0aa; }
+        body.dark .module-status-badge.revision { color: #f5b041; }
+        body.dark .module-status-badge.failed { color: #f1948a; }
+        body.dark .module-status-badge.pending { color: #f9e79f; }
+        body.dark .module-status-badge.no_peers { color: #aab7b8; }
+
+        /* ===== پاسخ‌های هم‌فرهنگ ===== */
+        .peer-responses-box {
+            margin-top: 0.8rem;
+            padding: 0.8rem;
+            background: rgba(106,61,154,0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(106,61,154,0.12);
+        }
+        body.dark .peer-responses-box { background: rgba(106,61,154,0.02); }
+        .peer-response-item {
+            padding: 0.3rem 0.5rem;
+            border-bottom: 1px solid rgba(0,0,0,0.03);
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+        body.dark .peer-response-item { border-bottom-color: rgba(255,255,255,0.03); }
+        .peer-response-item .peer-code {
+            font-weight: 700;
+            color: #8a6d1f;
+        }
+        body.dark .peer-response-item .peer-code { color: #f9e79f; }
+        .peer-response-item .peer-result {
+            padding: 0.1rem 0.4rem;
+            border-radius: 8px;
+            font-size: 0.6rem;
+            font-weight: 700;
+        }
+        .peer-response-item .peer-result.success {
+            background: rgba(39,174,96,0.15);
+            color: #1a6a3a;
+        }
+        .peer-response-item .peer-result.revision {
+            background: rgba(243,156,18,0.15);
+            color: #8a5a0a;
+        }
+        .peer-response-item .peer-result.failed {
+            background: rgba(231,76,60,0.15);
+            color: #6a1a1a;
+        }
+        body.dark .peer-response-item .peer-result.success { color: #82e0aa; }
+        body.dark .peer-response-item .peer-result.revision { color: #f5b041; }
+        body.dark .peer-response-item .peer-result.failed { color: #f1948a; }
+
         .guide-box {
             margin-top: 1rem;
             padding: 1rem;
@@ -279,8 +361,8 @@
         
         <div class="track-box">
             <div class="form-group">
-                <label for="trackingCode">کد پیگیری (شماره Issue)</label>
-                <input type="text" id="trackingCode" placeholder="مثلاً: 5" />
+                <label for="trackingCode">کد پیگیری (شماره Issue یا کد OBS-xxx)</label>
+                <input type="text" id="trackingCode" placeholder="مثلاً: 5 یا OBS-5" />
             </div>
             
             <div class="actions">
@@ -294,8 +376,28 @@
             <div class="status-title" id="statusTitle">در حال بررسی</div>
             <div id="observationDisplay" class="observation-text"></div>
             <div id="modulesDisplay" class="modules-display"></div>
+            
+            <!-- ===== وضعیت ماژول ===== -->
+            <div id="moduleStatusDisplay" style="margin-top:0.8rem;"></div>
+            
+            <!-- ===== پاسخ‌های هم‌فرهنگ ===== -->
+            <div id="peerResponsesContainer" style="margin-top:0.8rem;"></div>
+            
             <div id="moduleResultBox" class="module-result-box" style="display:none;"></div>
-            <div id="guideContainer" class="guide-box" style="display:none;"></div>
+            <div id="guideContainer" class="guide-box" style="display:none;">
+                <div class="level">
+                    <span class="level-label">📍 سطح فردی</span>
+                    <span class="level-text" id="levelIndividual">---</span>
+                </div>
+                <div class="level">
+                    <span class="level-label">🌐 سطح شبکه‌ای</span>
+                    <span class="level-text" id="levelNetwork">---</span>
+                </div>
+                <div class="level">
+                    <span class="level-label">🏛️ سطح سیاستی</span>
+                    <span class="level-text" id="levelPolicy">---</span>
+                </div>
+            </div>
             <div id="errorMsg" class="error-msg" style="display:none;"></div>
         </div>
         
@@ -305,13 +407,65 @@
         </div>
         
         <div class="note">
-            🔒 کد پیگیری همان شماره Issue در گیت‌هاب است که پس از ثبت مشاهده دریافت کردید.
+            🔒 کد پیگیری همان شماره Issue یا کد OBS-xxx است که پس از ثبت مشاهده دریافت کردید.
         </div>
     </div>
     
     <script>
+        // ============================================================
+        // تنظیمات و متغیرها
+        // ============================================================
+        const moduleStatusLabels = {
+            'success': '✅ موفق',
+            'revision': '⚠️ نیاز به اصلاح',
+            'failed': '❌ شکست',
+            'pending': '⏳ در انتظار',
+            'no_peers': '⚠️ هم‌فرهنگی یافت نشد',
+            'no_related': '⚠️ مشاهده مرتبط یافت نشد',
+            'completed': '✅ تکمیل شد',
+            'error': '❌ خطا'
+        };
+        
+        const moduleStatusClass = {
+            'success': 'success',
+            'revision': 'revision',
+            'failed': 'failed',
+            'pending': 'pending',
+            'no_peers': 'no_peers',
+            'no_related': 'no_peers',
+            'completed': 'success',
+            'error': 'failed'
+        };
+        
+        const moduleNames = {
+            'collaboration': '🤝 همفکری با دیگران',
+            'related': '👁️ مشاهدات مرتبط دیگران',
+            'referral': '📤 ارجاع به ۵ همفرهنگ'
+        };
+        
+        const resultLabels = {
+            'success': '✅ موفق',
+            'revision': '⚠️ اصلاح',
+            'failed': '❌ شکست'
+        };
+
+        // ============================================================
+        // دریافت کد از Query String
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            const params = new URLSearchParams(window.location.search);
+            const code = params.get('code');
+            if (code) {
+                document.getElementById('trackingCode').value = code;
+                document.getElementById('trackBtn').click();
+            }
+        });
+
+        // ============================================================
+        // تابع بررسی
+        // ============================================================
         document.getElementById('trackBtn').addEventListener('click', async function() {
-            const trackingCode = document.getElementById('trackingCode').value.trim();
+            let trackingCode = document.getElementById('trackingCode').value.trim();
             const resultBox = document.getElementById('resultBox');
             const statusIcon = document.getElementById('statusIcon');
             const statusTitle = document.getElementById('statusTitle');
@@ -320,22 +474,31 @@
             const moduleResultBox = document.getElementById('moduleResultBox');
             const guideContainer = document.getElementById('guideContainer');
             const errorMsg = document.getElementById('errorMsg');
+            const moduleStatusDisplay = document.getElementById('moduleStatusDisplay');
+            const peerResponsesContainer = document.getElementById('peerResponsesContainer');
             
             if (!trackingCode) {
                 alert('لطفاً کد پیگیری را وارد کنید.');
                 return;
             }
             
+            // پشتیبانی از کد OBS-5 یا شماره ساده
+            if (trackingCode.startsWith('OBS-')) {
+                trackingCode = trackingCode.replace('OBS-', '');
+            }
+            
             // Reset
             resultBox.className = 'result-box';
             resultBox.style.display = 'none';
-            if (modulesDisplay) modulesDisplay.style.display = 'none';
-            if (moduleResultBox) moduleResultBox.style.display = 'none';
-            if (guideContainer) guideContainer.style.display = 'none';
-            if (errorMsg) errorMsg.style.display = 'none';
+            modulesDisplay.style.display = 'none';
+            moduleResultBox.style.display = 'none';
+            guideContainer.style.display = 'none';
+            errorMsg.style.display = 'none';
+            moduleStatusDisplay.innerHTML = '';
+            peerResponsesContainer.innerHTML = '';
             
             try {
-                const response = await fetch(`/api/get-request-by-tracking?type=observation&trackingCode=${trackingCode}`);
+                const response = await fetch(`/api/get-request-by-tracking?type=observation&trackingCode=${trackingCode}&t=${Date.now()}`);
                 const result = await response.json();
                 
                 if (!response.ok) {
@@ -344,12 +507,13 @@
                 
                 resultBox.style.display = 'block';
                 
+                // ===== نمایش وضعیت اصلی =====
                 if (result.status === 'pending') {
                     resultBox.className = 'result-box pending';
                     statusIcon.textContent = '⏳';
                     statusTitle.textContent = 'در انتظار بررسی';
                     observationDisplay.textContent = result.observation || 'مشاهده‌ی شما در صف بررسی است.';
-                    if (guideContainer) guideContainer.style.display = 'none';
+                    guideContainer.style.display = 'none';
                 } else if (result.status === 'approved') {
                     resultBox.className = 'result-box approved';
                     statusIcon.textContent = '✅';
@@ -357,15 +521,72 @@
                     observationDisplay.textContent = result.observation || 'مشاهده‌ی شما تأیید شد.';
                     
                     // نمایش ماژول‌ها
-                    if (result.modules && result.modules.length > 0 && modulesDisplay) {
+                    if (result.modules && result.modules.length > 0) {
                         modulesDisplay.innerHTML = result.modules.map(mod => 
                             `<span class="module-tag">${mod}</span>`
                         ).join('');
                         modulesDisplay.style.display = 'flex';
                     }
                     
-                    // ===== نمایش نتیجه ماژول =====
-                    if (result.moduleResult && moduleResultBox) {
+                    // ===== نمایش وضعیت ماژول =====
+                    if (result.moduleType || result.moduleStatus) {
+                        const moduleDisplay = moduleNames[result.moduleType] || result.moduleType || '';
+                        const statusText = moduleStatusLabels[result.moduleStatus] || result.moduleStatus || 'pending';
+                        const statusClass = moduleStatusClass[result.moduleStatus] || 'pending';
+                        
+                        let html = `
+                            <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; padding:0.5rem; background:rgba(106,61,154,0.04); border-radius:8px;">
+                                <span style="font-weight:700; color:#6a3d9a; font-size:0.85rem;">📌 ماژول:</span>
+                                <span style="font-weight:700; color:#2a1a0a; font-size:0.85rem;">${moduleDisplay || 'هیچ‌کدام'}</span>
+                                ${moduleDisplay ? `<span class="module-status-badge ${statusClass}">${statusText}</span>` : ''}
+                            </div>
+                        `;
+                        
+                        // نمایش نتایج ماژول
+                        if (result.moduleData && result.moduleData.length > 0) {
+                            html += `
+                                <div style="margin-top:0.5rem; padding:0.5rem; background:rgba(255,255,255,0.3); border-radius:8px; font-size:0.8rem;">
+                                    <strong>نتایج:</strong> ${result.moduleData.join('، ')}
+                                </div>
+                            `;
+                        }
+                        
+                        if (result.moduleAnalysis) {
+                            html += `
+                                <div style="margin-top:0.3rem; padding:0.5rem; background:rgba(255,255,255,0.2); border-radius:8px; font-size:0.8rem; font-style:italic; color:#4a3a2a;">
+                                    ${result.moduleAnalysis}
+                                </div>
+                            `;
+                        }
+                        
+                        moduleStatusDisplay.innerHTML = html;
+                    }
+                    
+                    // ===== نمایش پاسخ‌های هم‌فرهنگ =====
+                    if (result.peerResponses && result.peerResponses.length > 0) {
+                        let html = `
+                            <div class="peer-responses-box">
+                                <div style="font-weight:700; font-size:0.8rem; color:#6a3d9a; margin-bottom:0.3rem;">📨 پاسخ‌های هم‌فرهنگ‌ها (${result.peerResponses.length})</div>
+                                ${result.peerResponses.map(p => `
+                                    <div class="peer-response-item">
+                                        <span class="peer-code">${p.peerCode}</span>
+                                        <span class="peer-result ${p.result}">${resultLabels[p.result] || p.result}</span>
+                                        <span style="font-size:0.65rem; color:#888;">${p.response ? p.response.substring(0, 30) + (p.response.length > 30 ? '...' : '') : ''}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                        peerResponsesContainer.innerHTML = html;
+                    } else if (result.moduleType === 'referral' || result.moduleType === 'collaboration') {
+                        peerResponsesContainer.innerHTML = `
+                            <div class="peer-responses-box" style="background:rgba(255,200,50,0.04); border-color:rgba(255,200,50,0.12);">
+                                <div style="font-size:0.8rem; color:#8a7a0a;">⏳ هنوز پاسخی از هم‌فرهنگ‌ها دریافت نشده است.</div>
+                            </div>
+                        `;
+                    }
+                    
+                    // ===== نمایش نتیجه ماژول (قدیمی) =====
+                    if (result.moduleResult) {
                         moduleResultBox.style.display = 'block';
                         let html = '<div class="title">📊 نتیجه ماژول انتخاب‌شده</div>';
                         
@@ -384,8 +605,8 @@
                         moduleResultBox.innerHTML = html;
                     }
                     
-                    // نمایش بسته راهنما
-                    if (result.guide && guideContainer) {
+                    // ===== نمایش بسته راهنما =====
+                    if (result.guide) {
                         const levelIndividual = document.getElementById('levelIndividual');
                         const levelNetwork = document.getElementById('levelNetwork');
                         const levelPolicy = document.getElementById('levelPolicy');
@@ -399,7 +620,7 @@
                     statusIcon.textContent = '❌';
                     statusTitle.textContent = 'رد شده';
                     observationDisplay.textContent = result.observation || 'مشاهده‌ی شما رد شد.';
-                    if (guideContainer) guideContainer.style.display = 'none';
+                    guideContainer.style.display = 'none';
                 }
                 
             } catch (error) {
@@ -409,11 +630,9 @@
                 statusIcon.textContent = '❌';
                 statusTitle.textContent = 'خطا';
                 observationDisplay.textContent = '';
-                if (guideContainer) guideContainer.style.display = 'none';
-                if (errorMsg) {
-                    errorMsg.textContent = error.message || 'مشاهده‌ای با این کد پیدا نشد.';
-                    errorMsg.style.display = 'block';
-                }
+                guideContainer.style.display = 'none';
+                errorMsg.textContent = error.message || 'مشاهده‌ای با این کد پیدا نشد.';
+                errorMsg.style.display = 'block';
             }
         });
     </script>
