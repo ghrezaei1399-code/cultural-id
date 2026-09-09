@@ -154,7 +154,7 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
                   'X-Title': process.env.SITE_NAME || 'Global Smart Cultural Identity',
                 },
                 body: JSON.stringify({
-                  model: 'google/gemini-2.0-flash-exp:free',
+                  model: 'xiaomi/mimo-v2-flash:free',
                   messages: [
                     { role: 'system', content: systemPrompt },
                     { role: 'user', content: userPrompt }
