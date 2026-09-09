@@ -259,7 +259,7 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
                     observation: obs.text,
                     observerCode: cardCode,
                     peers: selected.map(u => ({ cardCode: u.cardCode, email: u.communicationEmail })),
-                    issueNumber: null, // بعداً پس از ایجاد Issue پر می‌شود
+                    issueNumber: null,
                     isPersian: isPersian,
                     token: token,
                     owner: owner,
@@ -438,11 +438,9 @@ ${moduleSection}
         // ============================================================
         if (moduleResult && moduleResult.peers && moduleResult.peers.length > 0 && 
             (obs.module === 'collaboration' || obs.module === 'referral')) {
-          // به‌روزرسانی Issue با لینک ثبت پاسخ
           const trackingCode = `OBS-${issueData.number}`;
           const peerLink = `${process.env.SITE_URL || 'https://cultural-id.vercel.app'}/peer-response.html?code=${trackingCode}&issue=${issueData.number}`;
           
-          // ارسال دعوتنامه به هم‌فرهنگ‌ها
           await peer_sendInvites({
             observation: obs.text,
             observerCode: cardCode,
@@ -677,7 +675,6 @@ ${moduleSection}
         return res.status(400).json({ error: 'اطلاعات ناقص است (issueNumber, peerCode, response الزامی است)' });
       }
 
-      // ذخیره پاسخ به عنوان کامنت در Issue
       const resultLabels = {
         'success': '✅ موفق',
         'revision': '⚠️ نیاز به اصلاح',
@@ -713,7 +710,6 @@ ${moduleSection}
 
       const commentData = await commentRes.json();
 
-      // ذخیره پاسخ در فایل JSON برای دسترسی سریع‌تر
       const responseFileName = `peer-response-${issueNumber}-${peerCode}-${Date.now()}.json`;
       const responsePath = `data/peer-responses/${responseFileName}`;
       
@@ -742,7 +738,6 @@ ${moduleSection}
         })
       });
 
-      // بررسی اینکه آیا همه پاسخ‌ها دریافت شده‌اند
       const allResponses = await peer_getAllResponses(issueNumber, token, owner, repo);
       const peerCount = await peer_getPeerCount(issueNumber, token, owner, repo);
       
@@ -750,12 +745,9 @@ ${moduleSection}
       let moduleResult = 'pending';
       
       if (allResponses.length >= peerCount) {
-        // همه پاسخ‌ها دریافت شده‌اند
         moduleStatus = 'completed';
-        // تحلیل نهایی با پاسخ‌ها
         moduleResult = await peer_finalAnalysisWithResponses(issueNumber, allResponses, token, owner, repo);
         
-        // به‌روزرسانی Issue با نتیجه نهایی
         const resultComment = `
 **📊 نتیجه نهایی ماژول ارجاع**
 
@@ -777,7 +769,6 @@ ${moduleSection}
           body: JSON.stringify({ body: resultComment })
         });
 
-        // به‌روزرسانی لیبل Issue
         await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/labels`, {
           method: 'PUT',
           headers: {
@@ -935,7 +926,7 @@ function getFallbackAnalysis(text, isPersian) {
 // توابع جدید برای سیستم ارجاع به هم‌فرهنگ‌ها
 // ============================================================
 
-// ۱. ارسال دعوتنامه به هم‌فرهنگ‌ها
+// ۱. ارسال دعوتنامه به هم‌فرهنگ‌ها (با ایمیل + GitHub)
 async function peer_sendInvites({ observation, observerCode, peers, issueNumber, trackingCode, peerLink, isPersian, token, owner, repo }) {
   if (!peers || peers.length === 0) {
     return { success: false, message: 'هیچ هم‌فرهنگی برای ارسال دعوتنامه وجود ندارد' };
@@ -945,42 +936,9 @@ async function peer_sendInvites({ observation, observerCode, peers, issueNumber,
   const link = peerLink || `${siteUrl}/peer-response.html?issue=${issueNumber}&observer=${observerCode}`;
   const tracking = trackingCode || `OBS-${issueNumber}`;
 
-  const subject = isPersian ? 'دعوت به همفکری در سپهر خردمندی' : 'Invitation to Collaborate in Sphere of Wisdom';
-  const bodyTemplate = isPersian ? `
-سلام هم‌فرهنگ گرامی،
-
-شما به عنوان یکی از هم‌فرهنگان برای مشاهده‌ی زیر انتخاب شده‌اید:
-
-**مشاهده‌گر:** ${observerCode}
-**متن مشاهده:** 
-${observation}
-
-**لطفاً با کلیک روی لینک زیر، پاسخ خود را ثبت کنید:**
-${link}
-
-**کد رهگیری:** ${tracking}
-
-با سپاس از همکاری شما
-تیم سپهر خردمندی
-` : `
-Dear Peer,
-
-You have been selected as a peer for the following observation:
-
-**Observer:** ${observerCode}
-**Observation:**
-${observation}
-
-**Please click the link below to submit your response:**
-${link}
-
-**Tracking Code:** ${tracking}
-
-Thank you for your cooperation
-Sphere of Wisdom Team
-`;
-
-  // ذخیره دعوتنامه‌ها در Issue به عنوان کامنت
+  // ============================================================
+  // ۱. ثبت در GitHub Issue به عنوان کامنت
+  // ============================================================
   if (issueNumber) {
     const inviteComment = `
 **📨 دعوتنامه ارسال شد به:**
@@ -1002,15 +960,112 @@ ${peers.map(p => `- ${p.cardCode} (${p.email || 'بدون ایمیل'})`).join('
     });
   }
 
-  // در آینده: ارسال ایمیل واقعی از طریق سرویس ایمیل
-  // برای حال حاضر، فقط در Issue ثبت می‌شود
+  // ============================================================
+  // ۲. ارسال ایمیل واقعی با Resend
+  // ============================================================
+  const RESEND_API_KEY = process.env.RESEND_API_KEY;
+  const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@resend.dev';
+
+  let emailResults = [];
+
+  if (RESEND_API_KEY) {
+    const subject = isPersian ? 'دعوت به همفکری در سپهر خردمندی' : 'Invitation to Collaborate in Sphere of Wisdom';
+    
+    const bodyHtml = isPersian ? `
+      <!DOCTYPE html>
+      <html dir="rtl" lang="fa">
+      <head><meta charset="UTF-8"><title>دعوت به همفکری</title></head>
+      <body style="font-family: Vazir, IRANSans, sans-serif; line-height: 1.8; padding: 20px; max-width: 600px; margin: 0 auto; direction: rtl;">
+        <div style="background: #fdf6e3; border-radius: 16px; padding: 24px; border: 2px solid #d4af37;">
+          <h1 style="color: #8a6d1f; text-align: center;">🧠 سپهر خردمندی</h1>
+          <p style="font-size: 18px; font-weight: bold; text-align: center;">دعوت به همفکری</p>
+          <hr style="border: 1px solid #d4af37; opacity: 0.3;">
+          <p><strong>مشاهده‌گر:</strong> ${observerCode}</p>
+          <p><strong>متن مشاهده:</strong></p>
+          <div style="background: #fff; padding: 12px; border-radius: 8px; border-right: 3px solid #d4af37; margin: 8px 0;">
+            ${observation}
+          </div>
+          <p><strong>کد رهگیری:</strong> ${tracking}</p>
+          <div style="text-align: center; margin: 20px 0;">
+            <a href="${link}" style="background: #d4af37; color: #2a1a0a; padding: 12px 30px; text-decoration: none; border-radius: 30px; font-weight: bold; display: inline-block;">📝 ثبت پاسخ</a>
+          </div>
+          <hr style="border: 1px solid #d4af37; opacity: 0.3;">
+          <p style="text-align: center; font-size: 14px; color: #6a5a3a;">این پیام به صورت خودکار ارسال شده است. لطفاً به آن پاسخ ندهید.</p>
+        </div>
+      </body>
+      </html>
+    ` : `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head><meta charset="UTF-8"><title>Invitation to Collaborate</title></head>
+      <body style="font-family: 'Segoe UI', sans-serif; line-height: 1.8; padding: 20px; max-width: 600px; margin: 0 auto;">
+        <div style="background: #fdf6e3; border-radius: 16px; padding: 24px; border: 2px solid #d4af37;">
+          <h1 style="color: #8a6d1f; text-align: center;">🧠 Sphere of Wisdom</h1>
+          <p style="font-size: 18px; font-weight: bold; text-align: center;">Invitation to Collaborate</p>
+          <hr style="border: 1px solid #d4af37; opacity: 0.3;">
+          <p><strong>Observer:</strong> ${observerCode}</p>
+          <p><strong>Observation:</strong></p>
+          <div style="background: #fff; padding: 12px; border-radius: 8px; border-left: 3px solid #d4af37; margin: 8px 0;">
+            ${observation}
+          </div>
+          <p><strong>Tracking Code:</strong> ${tracking}</p>
+          <div style="text-align: center; margin: 20px 0;">
+            <a href="${link}" style="background: #d4af37; color: #2a1a0a; padding: 12px 30px; text-decoration: none; border-radius: 30px; font-weight: bold; display: inline-block;">📝 Submit Response</a>
+          </div>
+          <hr style="border: 1px solid #d4af37; opacity: 0.3;">
+          <p style="text-align: center; font-size: 14px; color: #6a5a3a;">This message was sent automatically. Please do not reply.</p>
+        </div>
+      </body>
+      </html>
+    `;
+
+    for (const peer of peers) {
+      if (!peer.email || peer.email.length < 5) {
+        emailResults.push({ peer: peer.cardCode, success: false, message: 'No email address' });
+        continue;
+      }
+
+      try {
+        const response = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${RESEND_API_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            from: FROM_EMAIL,
+            to: [peer.email],
+            subject: subject,
+            html: bodyHtml
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          emailResults.push({ peer: peer.cardCode, success: true, email: peer.email, id: data.id });
+        } else {
+          const error = await response.text();
+          emailResults.push({ peer: peer.cardCode, success: false, message: error });
+        }
+      } catch (error) {
+        emailResults.push({ peer: peer.cardCode, success: false, message: error.message });
+      }
+    }
+  } else {
+    emailResults = peers.map(p => ({ 
+      peer: p.cardCode, 
+      success: false, 
+      message: 'RESEND_API_KEY not configured. Email not sent.' 
+    }));
+  }
 
   return {
-    success: true,
-    message: `دعوتنامه برای ${peers.length} هم‌فرهنگ ارسال شد`,
-    peers: peers.map(p => p.cardCode),
+    success: emailResults.some(r => r.success),
+    message: `${emailResults.filter(r => r.success).length} از ${emailResults.length} ایمیل با موفقیت ارسال شد.`,
+    results: emailResults,
     link: link,
-    trackingCode: tracking
+    trackingCode: tracking,
+    issueNumber: issueNumber
   };
 }
 
@@ -1034,7 +1089,6 @@ async function peer_getAllResponses(issueNumber, token, owner, repo) {
     for (const comment of comments) {
       const body = comment.body || '';
       if (body.includes('**📝 پاسخ هم‌فرهنگ**') || body.includes('**Peer Response**')) {
-        // استخراج اطلاعات از کامنت
         const peerMatch = body.match(/\*\*هم‌فرهنگ:\*\*\s*(.+)/) || body.match(/\*\*Peer:\*\*\s*(.+)/);
         const resultMatch = body.match(/\*\*نتیجه:\*\*\s*(.+)/) || body.match(/\*\*Result:\*\*\s*(.+)/);
         const responseMatch = body.match(/\*\*پاسخ:\*\*\s*(.+)/) || body.match(/\*\*Response:\*\*\s*(.+)/);
@@ -1075,16 +1129,14 @@ async function peer_getPeerCount(issueNumber, token, owner, repo) {
     const issue = await issueRes.json();
     const body = issue.body || '';
     
-    // استخراج تعداد هم‌فرهنگ‌ها از Issue
     const peersMatch = body.match(/\*\*Peers:\*\*\s*(.+)/) || body.match(/\*\*هم‌فرهنگ‌ها:\*\*\s*(.+)/);
     if (peersMatch) {
       const peers = peersMatch[1].split(',').map(p => p.trim());
       return peers.length;
     }
 
-    // اگر در Issue نبود، از فایل peer-responses بخوان
     const responses = await peer_getAllResponses(issueNumber, token, owner, repo);
-    return responses.length > 0 ? responses.length : 5; // پیش‌فرض ۵
+    return responses.length > 0 ? responses.length : 5;
   } catch (error) {
     console.error('Error getting peer count:', error);
     return 5;
@@ -1097,7 +1149,6 @@ async function peer_finalAnalysisWithResponses(issueNumber, responses, token, ow
     return 'pending';
   }
 
-  // محاسبه نتیجه بر اساس پاسخ‌ها
   let successCount = 0;
   let revisionCount = 0;
   let failedCount = 0;
@@ -1113,7 +1164,6 @@ async function peer_finalAnalysisWithResponses(issueNumber, responses, token, ow
     }
   }
 
-  // تعیین نتیجه نهایی
   const total = responses.length;
   if (total === 0) return 'pending';
   
@@ -1124,52 +1174,4 @@ async function peer_finalAnalysisWithResponses(issueNumber, responses, token, ow
   } else {
     return 'revision';
   }
- // ============================================================
-// تابع ارسال ایمیل واقعی به هم‌فرهنگ‌ها با Resend
-// ============================================================
-async function peer_sendEmails(peers, subject, bodyHtml) {
-    const RESEND_API_KEY = process.env.RESEND_API_KEY;
-    const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@resend.dev';
-    
-    if (!RESEND_API_KEY) {
-        console.warn('RESEND_API_KEY not set. Emails will not be sent.');
-        return { success: false, message: 'Email service not configured', results: [] };
-    }
-
-    const results = [];
-    for (const peer of peers) {
-        if (!peer.email || peer.email.length < 5) {
-            results.push({ peer: peer.cardCode, success: false, message: 'No email address' });
-            continue;
-        }
-
-        try {
-            const response = await fetch('https://api.resend.com/emails', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${RESEND_API_KEY}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    from: FROM_EMAIL,
-                    to: [peer.email],
-                    subject: subject,
-                    html: bodyHtml
-                })
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                results.push({ peer: peer.cardCode, success: true, email: peer.email, id: data.id });
-            } else {
-                const error = await response.text();
-                results.push({ peer: peer.cardCode, success: false, message: error });
-            }
-        } catch (error) {
-            results.push({ peer: peer.cardCode, success: false, message: error.message });
-        }
-    }
-
-    return { success: true, results: results };
 }
-  }
