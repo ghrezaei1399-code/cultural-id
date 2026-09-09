@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Peer Response | Sphere of Wisdom</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', 'Vazir', 'IRANSans', sans-serif;
+            min-height: 100vh;
+            padding: 1.5rem 1rem;
+            background: linear-gradient(135deg, #fdf6e3 0%, #e8f4f8 50%, #f5e6d3 100%);
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        body.dark {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #f0e8d0;
+        }
+        .container {
+            max-width: 720px;
+            width: 100%;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 2rem;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.12);
+            border: 1px solid rgba(212,175,55,0.12);
+        }
+        body.dark .container {
+            background: rgba(20,20,40,0.92);
+            border-color: rgba(212,175,55,0.08);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid rgba(212,175,55,0.15);
+            padding-bottom: 1rem;
+        }
+        .header .logo { font-size: 2.5rem; }
+        .header h1 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #8a6d1f;
+            margin-top: 0.2rem;
+        }
+        body.dark .header h1 { color: #f9e79f; }
+        .header p {
+            font-size: 0.85rem;
+            color: #6a5a3a;
+            margin-top: 0.2rem;
+        }
+        body.dark .header p { color: #c8b890; }
+
+        .lang-bar {
+            display: flex;
+            justify-content: center;
+            gap: 0.3rem;
+            margin-bottom: 1.2rem;
+        }
+        .lang-btn {
+            padding: 0.2rem 1rem;
+            border-radius: 20px;
+            border: 1px solid rgba(212,175,55,0.2);
+            background: transparent;
+            font-weight: 700;
+            font-size: 0.75rem;
+            cursor: pointer;
+            color: #6a5a3a;
+            transition: 0.3s;
+        }
+        body.dark .lang-btn { color: #c8b890; }
+        .lang-btn.active {
+            background: rgba(212,175,55,0.15);
+            border-color: #d4af37;
+            color: #8a6d1f;
+        }
+        body.dark .lang-btn.active {
+            background: rgba(212,175,55,0.1);
+            color: #f9e79f;
+        }
+
+        .info-box {
+            background: rgba(212,175,55,0.06);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #d4af37;
+        }
+        body.dark .info-box { background: rgba(212,175,55,0.04); }
+        .info-box .label { font-size: 0.7rem; color: #8a6d1f; font-weight: 700; }
+        body.dark .info-box .label { color: #f9e79f; }
+        .info-box .value {
+            font-size: 0.95rem;
+            color: #2a1a0a;
+            margin-top: 0.2rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        body.dark .info-box .value { color: #f0e8d0; }
+        .info-box .meta {
+            font-size: 0.7rem;
+            color: #888;
+            margin-top: 0.3rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #2a1a0a;
+            margin-bottom: 0.3rem;
+        }
+        body.dark .form-group label { color: #f0e8d0; }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 12px;
+            border: 2px solid rgba(212,175,55,0.15);
+            background: rgba(255,255,255,0.5);
+            font-family: inherit;
+            font-size: 0.9rem;
+            resize: vertical;
+            min-height: 100px;
+            transition: 0.3s;
+            color: #2a1a0a;
+        }
+        body.dark .form-group textarea {
+            background: rgba(0,0,0,0.15);
+            color: #f0e8d0;
+            border-color: rgba(212,175,55,0.08);
+        }
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.1);
+        }
+
+        .result-buttons {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+            margin-top: 0.3rem;
+        }
+        .result-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 0.7rem 1rem;
+            border-radius: 12px;
+            border: 2px solid rgba(0,0,0,0.08);
+            background: rgba(255,255,255,0.5);
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            color: #2a1a0a;
+        }
+        body.dark .result-btn {
+            background: rgba(0,0,0,0.15);
+            color: #f0e8d0;
+            border-color: rgba(255,255,255,0.05);
+        }
+        .result-btn:hover { transform: translateY(-2px); }
+        .result-btn.success {
+            border-color: #27ae60;
+            color: #27ae60;
+        }
+        .result-btn.success.selected {
+            background: #27ae60;
+            color: #fff;
+            border-color: #27ae60;
+        }
+        .result-btn.revision {
+            border-color: #f39c12;
+            color: #f39c12;
+        }
+        .result-btn.revision.selected {
+            background: #f39c12;
+            color: #fff;
+            border-color: #f39c12;
+        }
+        .result-btn.failed {
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+        .result-btn.failed.selected {
+            background: #e74c3c;
+            color: #fff;
+            border-color: #e74c3c;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 0.9rem;
+            border-radius: 16px;
+            border: none;
+            background: linear-gradient(135deg, #d4af37, #f9e79f);
+            color: #2a1a0a;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 0.5rem;
+        }
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212,175,55,0.25); }
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .message-box {
+            margin-top: 1rem;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            display: none;
+            font-weight: 700;
+            text-align: center;
+        }
+        .message-box.success {
+            display: block;
+            background: rgba(39,174,96,0.12);
+            color: #1a6a3a;
+            border: 1px solid #27ae60;
+        }
+        body.dark .message-box.success {
+            background: rgba(39,174,96,0.08);
+            color: #82e0aa;
+        }
+        .message-box.error {
+            display: block;
+            background: rgba(231,76,60,0.12);
+            color: #6a1a1a;
+            border: 1px solid #e74c3c;
+        }
+        body.dark .message-box.error {
+            background: rgba(231,76,60,0.08);
+            color: #f1948a;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 1.2rem;
+        }
+        .back-link a {
+            color: #8a6d1f;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+        body.dark .back-link a { color: #f9e79f; }
+        .back-link a:hover { text-decoration: underline; }
+
+        .loading {
+            text-align: center;
+            padding: 1.5rem;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(212,175,55,0.1);
+            border-top: 3px solid #d4af37;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 0.5rem;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        @media (max-width: 600px) {
+            .container { padding: 1.2rem; }
+            .result-btn { min-width: 80px; font-size: 0.75rem; padding: 0.5rem 0.7rem; }
+            .header h1 { font-size: 1.1rem; }
+            .info-box .value { font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="app">
+    <div class="header">
+        <div class="logo">🧠</div>
+        <h1 id="pageTitle">Peer Response</h1>
+        <p id="pageSubtitle">Share your feedback on this observation</p>
+    </div>
+
+    <div class="lang-bar">
+        <button class="lang-btn" onclick="setLang('fa')">🇮🇷 فارسی</button>
+        <button class="lang-btn active" onclick="setLang('en')">🇬🇧 English</button>
+    </div>
+
+    <div id="loadingState" class="loading">
+        <div class="spinner"></div>
+        <p id="loadingText">Loading information...</p>
+    </div>
+
+    <div id="contentState" style="display:none;">
+        <div class="info-box">
+            <div class="label" id="lblObservation">📝 Observation</div>
+            <div class="value" id="observationText">...</div>
+            <div class="meta" id="observationMeta">Tracking: --- | Observer: ---</div>
+        </div>
+
+        <div class="form-group">
+            <label id="lblResponse">💬 Your Response (Optional)</label>
+            <textarea id="responseText" placeholder="Write your feedback..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label id="lblResult">📊 Result</label>
+            <div class="result-buttons">
+                <button class="result-btn success" data-value="success" onclick="selectResult('success')">
+                    ✅ <span id="lblSuccess">Success</span>
+                </button>
+                <button class="result-btn revision" data-value="revision" onclick="selectResult('revision')">
+                    ⚠️ <span id="lblRevision">Needs Revision</span>
+                </button>
+                <button class="result-btn failed" data-value="failed" onclick="selectResult('failed')">
+                    ❌ <span id="lblFailed">Failed</span>
+                </button>
+            </div>
+        </div>
+
+        <button class="submit-btn" id="submitBtn" onclick="submitResponse()">
+            📤 <span id="lblSubmit">Submit Response</span>
+        </button>
+
+        <div id="messageBox" class="message-box"></div>
+
+        <div class="back-link">
+            <a href="index-en.html" id="lblBack">↩ Back to Home</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ============================================================
+    // Variables & Settings
+    // ============================================================
+    let currentLang = 'en';
+    let selectedResult = null;
+    let issueData = null;
+    let issueNumber = null;
+    let trackingCode = null;
+    let observerCode = null;
+
+    const translations = {
+        fa: {
+            pageTitle: 'ثبت پاسخ هم‌فرهنگ',
+            pageSubtitle: 'نظر خود را درباره این مشاهده ثبت کنید',
+            loadingText: 'در حال دریافت اطلاعات...',
+            lblObservation: '📝 مشاهده',
+            lblResponse: '💬 پاسخ شما (اختیاری)',
+            lblResult: '📊 نتیجه',
+            lblSuccess: 'موفق بود',
+            lblRevision: 'نیاز به اصلاح',
+            lblFailed: 'شکست خورد',
+            lblSubmit: 'ارسال پاسخ',
+            lblBack: '↩ بازگشت به صفحه اصلی',
+            successMsg: '✅ پاسخ شما با موفقیت ثبت شد. متشکریم!',
+            errorMsg: '❌ خطا در ثبت پاسخ. لطفاً دوباره تلاش کنید.',
+            noResult: 'لطفاً یکی از گزینه‌های نتیجه را انتخاب کنید.',
+            meta: 'کد رهگیری: {tracking} | مشاهده‌گر: {observer}',
+            submitSuccess: 'پاسخ شما با موفقیت ثبت شد!',
+            submitError: 'خطا در ثبت پاسخ. لطفاً دوباره تلاش کنید.'
+        },
+        en: {
+            pageTitle: 'Peer Response',
+            pageSubtitle: 'Share your feedback on this observation',
+            loadingText: 'Loading information...',
+            lblObservation: '📝 Observation',
+            lblResponse: '💬 Your Response (Optional)',
+            lblResult: '📊 Result',
+            lblSuccess: 'Success',
+            lblRevision: 'Needs Revision',
+            lblFailed: 'Failed',
+            lblSubmit: 'Submit Response',
+            lblBack: '↩ Back to Home',
+            successMsg: '✅ Your response has been recorded. Thank you!',
+            errorMsg: '❌ Error submitting response. Please try again.',
+            noResult: 'Please select a result option.',
+            meta: 'Tracking: {tracking} | Observer: {observer}',
+            submitSuccess: 'Your response has been recorded!',
+            submitError: 'Error submitting response. Please try again.'
+        }
+    };
+
+    function t(key, params) {
+        let text = translations[currentLang] && translations[currentLang][key] ? translations[currentLang][key] : key;
+        if (params) {
+            for (const [k, v] of Object.entries(params)) {
+                text = text.replace(`{${k}}`, v);
+            }
+        }
+        return text;
+    }
+
+    // ============================================================
+    // Language Setting
+    // ============================================================
+    function setLang(lang) {
+        currentLang = lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+        
+        document.getElementById('pageTitle').textContent = t('pageTitle');
+        document.getElementById('pageSubtitle').textContent = t('pageSubtitle');
+        document.getElementById('loadingText').textContent = t('loadingText');
+        document.getElementById('lblObservation').textContent = t('lblObservation');
+        document.getElementById('lblResponse').textContent = t('lblResponse');
+        document.getElementById('lblResult').textContent = t('lblResult');
+        document.getElementById('lblSuccess').textContent = t('lblSuccess');
+        document.getElementById('lblRevision').textContent = t('lblRevision');
+        document.getElementById('lblFailed').textContent = t('lblFailed');
+        document.getElementById('lblSubmit').textContent = t('lblSubmit');
+        document.getElementById('lblBack').textContent = t('lblBack');
+        
+        if (issueData) {
+            document.getElementById('observationMeta').textContent = t('meta', {
+                tracking: trackingCode || '---',
+                observer: observerCode || '---'
+            });
+        }
+    }
+
+    // ============================================================
+    // Result Selection
+    // ============================================================
+    function selectResult(value) {
+        selectedResult = value;
+        document.querySelectorAll('.result-btn').forEach(b => b.classList.remove('selected'));
+        document.querySelector(`.result-btn[data-value="${value}"]`).classList.add('selected');
+    }
+
+    // ============================================================
+    // Get Query Parameters
+    // ============================================================
+    function getQueryParams() {
+        const params = new URLSearchParams(window.location.search);
+        issueNumber = params.get('issue') || params.get('issueNumber');
+        trackingCode = params.get('code') || params.get('trackingCode') || `OBS-${issueNumber}`;
+        observerCode = params.get('observer') || params.get('cardCode') || '---';
+    }
+
+    // ============================================================
+    // Load Observation Data
+    // ============================================================
+    async function loadObservation() {
+        if (!issueNumber) {
+            showMessage('error', 'Invalid issue number. Please use the link from your email.');
+            return;
+        }
+
+        try {
+            const res = await fetch(`/api/get-request-by-tracking?trackingCode=${issueNumber}&type=observation&t=${Date.now()}`);
+            if (!res.ok) {
+                throw new Error('Error loading data');
+            }
+            const data = await res.json();
+            issueData = data;
+            
+            document.getElementById('observationText').textContent = data.observation || 'Observation text not available';
+            document.getElementById('observationMeta').textContent = t('meta', {
+                tracking: trackingCode || `OBS-${issueNumber}`,
+                observer: data.cardCode || observerCode || '---'
+            });
+
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('contentState').style.display = 'block';
+
+        } catch (error) {
+            console.error('Error loading observation:', error);
+            showMessage('error', 'Error loading observation data. Please try again.');
+            document.getElementById('loadingState').style.display = 'none';
+        }
+    }
+
+    // ============================================================
+    // Show Message
+    // ============================================================
+    function showMessage(type, text) {
+        const box = document.getElementById('messageBox');
+        box.className = 'message-box ' + type;
+        box.textContent = text;
+        box.style.display = 'block';
+    }
+
+    function hideMessage() {
+        const box = document.getElementById('messageBox');
+        box.className = 'message-box';
+        box.style.display = 'none';
+    }
+
+    // ============================================================
+    // Submit Response
+    // ============================================================
+    async function submitResponse() {
+        hideMessage();
+
+        if (!selectedResult) {
+            showMessage('error', t('noResult'));
+            return;
+        }
+
+        const responseText = document.getElementById('responseText').value.trim() || 'No comment';
+
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.textContent = '⏳ Submitting...';
+
+        try {
+            const payload = {
+                type: 'peer-response',
+                issueNumber: parseInt(issueNumber),
+                peerCode: 'GUEST-' + Date.now().toString(36).toUpperCase(),
+                response: responseText,
+                result: selectedResult,
+                trackingCode: trackingCode
+            };
+
+            const res = await fetch('/api/submit-request', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await res.json();
+
+            if (res.ok && data.success) {
+                showMessage('success', t('successMsg'));
+                document.getElementById('responseText').value = '';
+                document.querySelectorAll('.result-btn').forEach(b => b.classList.remove('selected'));
+                selectedResult = null;
+            } else {
+                showMessage('error', data.error || t('errorMsg'));
+            }
+
+        } catch (error) {
+            console.error('Submit error:', error);
+            showMessage('error', t('submitError'));
+        }
+
+        btn.disabled = false;
+        btn.innerHTML = '📤 <span id="lblSubmit">' + t('lblSubmit') + '</span>';
+    }
+
+    // ============================================================
+    // Initial Load
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', function() {
+        getQueryParams();
+        
+        if (!issueNumber) {
+            document.getElementById('loadingState').style.display = 'none';
+            showMessage('error', 'Invalid link. Please use the link from your email.');
+            return;
+        }
+
+        loadObservation();
+    });
+</script>
+
+</body>
+</html>
