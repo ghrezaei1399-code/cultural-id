@@ -339,19 +339,20 @@
                 correctLevel : QRCode.CorrectLevel.H
             });
 
-            fetch(`/api/get-user?code=${encodeURIComponent(code)}`)
+                        fetch(`/api/get-user?code=${encodeURIComponent(code)}`)
                 .then(res => res.json())
                 .then(data => {
                     const displayElement = document.getElementById('cardCodeDisplay');
-                    if (data.user && data.user.displayCode) {
-                        displayElement.textContent = data.user.displayCode;
+                    // نمایش مستقیم کد بدون هیچ تغییری (بدون فاصله اضافی)
+                    if (data.user && data.user.cardCode) {
+                        displayElement.textContent = data.user.cardCode;
                     } else {
-                        displayElement.textContent = code.replace(/-/g, ' - ');
+                        displayElement.textContent = code;
                     }
                 })
                 .catch(err => {
                     console.error('Error:', err);
-                    document.getElementById('cardCodeDisplay').textContent = code.replace(/-/g, ' - ');
+                    document.getElementById('cardCodeDisplay').textContent = code;
                 });
 
             document.getElementById('saveBtn').addEventListener('click', async function() {
