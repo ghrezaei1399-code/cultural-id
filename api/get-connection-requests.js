@@ -73,7 +73,6 @@ module.exports = async function handler(req, res) {
       const body = issue.body || '';
       const labels = issue.labels.map(l => l.name);
       
-      // استخراج وضعیت ماژول از لیبل‌ها
       let moduleStatus = 'pending';
       for (const label of labels) {
         if (label.startsWith('module-')) {
@@ -82,7 +81,6 @@ module.exports = async function handler(req, res) {
         }
       }
 
-      // استخراج اطلاعات ماژول از متن Issue
       let moduleType = '';
       let moduleData = [];
       let moduleAnalysis = '';
@@ -106,7 +104,6 @@ module.exports = async function handler(req, res) {
             continue;
           }
           if (trimmedLine.includes('**Status:**')) {
-            // قبلاً از لیبل استخراج شده
             continue;
           }
           if (trimmedLine.includes('**Results:**')) {
@@ -173,12 +170,10 @@ module.exports = async function handler(req, res) {
         let matrix_scale = '';
         let matrix_capacity = '';
         
-        // استخراج وضعیت از لیبل‌ها
         if (labels.includes('approved')) status = 'approved';
         else if (labels.includes('rejected')) status = 'rejected';
         else if (labels.includes('score-5')) score = 5;
         
-        // استخراج وضعیت ماژول از لیبل‌ها
         let moduleStatus = 'pending';
         for (const label of labels) {
           if (label.startsWith('module-')) {
@@ -187,7 +182,6 @@ module.exports = async function handler(req, res) {
           }
         }
         
-        // استخراج اطلاعات از متن Issue
         const bodyLines = issue.body.split('\n');
         let observationText = '';
         let cardCode = '';
@@ -219,7 +213,6 @@ module.exports = async function handler(req, res) {
             continue;
           }
           
-          // ===== استخراج AI Analysis =====
           if (trimmedLine.includes('**Cluster:**')) {
             const match = trimmedLine.match(/\*\*Cluster:\*\*\s*(.+)/);
             if (match) {
@@ -249,7 +242,6 @@ module.exports = async function handler(req, res) {
             continue;
           }
           
-          // ===== استخراج ۵ ماتریس =====
           if (trimmedLine.includes('**Emergence:**')) {
             const match = trimmedLine.match(/\*\*Emergence:\*\*\s*(.+)/);
             if (match) matrix_emergence = match[1].trim();
@@ -285,7 +277,6 @@ module.exports = async function handler(req, res) {
             continue;
           }
           
-          // ===== استخراج Module Result =====
           if (trimmedLine.includes('**📌 Module Result:**') || trimmedLine.includes('**Module Result:**')) {
             inModuleSection = true;
             continue;
@@ -321,7 +312,6 @@ module.exports = async function handler(req, res) {
             }
           }
           
-          // جمع‌آوری متن مشاهده
           if (inObservation && trimmedLine && !trimmedLine.includes('---') && !trimmedLine.includes('**')) {
             observationText += trimmedLine + ' ';
           }
@@ -339,13 +329,11 @@ module.exports = async function handler(req, res) {
           score: score,
           cluster: cluster,
           analysis: analysis,
-          // ===== ۵ ماتریس =====
           matrix_emergence: matrix_emergence,
           matrix_layers: matrix_layers,
           matrix_connections: matrix_connections,
           matrix_scale: matrix_scale,
           matrix_capacity: matrix_capacity,
-          // ===== اطلاعات ماژول =====
           moduleStatus: moduleStatus,
           moduleType: moduleType,
           moduleData: moduleData,
@@ -357,9 +345,9 @@ module.exports = async function handler(req, res) {
       }
 
       return res.status(200).json({ observations });
+    }
 
-    // ===== دریافت درخواست‌های ارتباط =====
-          // ===== دریافت درخواست‌های دستاورد (Achievements) =====
+    // ===== دریافت درخواست‌های دستاورد (Achievements) =====
     if (type === 'achievements') {
       const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/requests`, {
         headers: {
@@ -413,59 +401,59 @@ module.exports = async function handler(req, res) {
 
       return res.status(200).json({ achievements });
     }
-    } else {
-      const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/requests`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/vnd.github.v3+json'
-        }
-      });
 
-      if (!response.ok) {
-        throw new Error('خطا در دریافت درخواست‌ها از گیت‌هاب');
+    // ===== دریافت درخواست‌های ارتباط =====
+    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/requests`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json'
       }
+    });
 
-      const files = await response.json();
-      const requests = [];
-
-      for (const file of files) {
-        if (!file.name.endsWith('.json') || file.name === 'index.json') continue;
-        
-        try {
-          const fileRes = await fetch(file.url, {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Accept': 'application/vnd.github.v3+json'
-            }
-          });
-          
-          if (!fileRes.ok) continue;
-          
-          const fileData = await fileRes.json();
-          const jsonString = Buffer.from(fileData.content, 'base64').toString('utf8');
-          const requestData = JSON.parse(jsonString);
-          
-          if (requestData.type === 'connection' || requestData.type === 'connection_request') {
-            requests.push({
-              fileName: file.name,
-              senderCode: requestData.senderCode || requestData.cardCode || '---',
-              status: requestData.status || 'pending',
-              reason: requestData.reason || requestData.description || '',
-              senderEmail: requestData.senderEmail || '',
-              connections: requestData.connections || [],
-              connectionDetails: requestData.connectionDetails || [],
-              totalFound: requestData.totalFound || 0,
-              createdAt: requestData.createdAt || requestData.requestDate || new Date().toISOString()
-            });
-          }
-        } catch (e) {
-          console.error('Error reading request file:', file.name, e);
-          continue;
-        }
-      }
-
-      return res.status(200).json({ requests });
+    if (!response.ok) {
+      throw new Error('خطا در دریافت درخواست‌ها از گیت‌هاب');
     }
+
+    const files = await response.json();
+    const requests = [];
+
+    for (const file of files) {
+      if (!file.name.endsWith('.json') || file.name === 'index.json') continue;
+      
+      try {
+        const fileRes = await fetch(file.url, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+        
+        if (!fileRes.ok) continue;
+        
+        const fileData = await fileRes.json();
+        const jsonString = Buffer.from(fileData.content, 'base64').toString('utf8');
+        const requestData = JSON.parse(jsonString);
+        
+        if (requestData.type === 'connection' || requestData.type === 'connection_request') {
+          requests.push({
+            fileName: file.name,
+            senderCode: requestData.senderCode || requestData.cardCode || '---',
+            status: requestData.status || 'pending',
+            reason: requestData.reason || requestData.description || '',
+            senderEmail: requestData.senderEmail || '',
+            connections: requestData.connections || [],
+            connectionDetails: requestData.connectionDetails || [],
+            totalFound: requestData.totalFound || 0,
+            createdAt: requestData.createdAt || requestData.requestDate || new Date().toISOString()
+          });
+        }
+      } catch (e) {
+        console.error('Error reading request file:', file.name, e);
+        continue;
+      }
+    }
+
+    return res.status(200).json({ requests });
 
   } catch (error) {
     console.error('Get Connection Requests Error:', error);
