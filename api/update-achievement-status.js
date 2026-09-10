@@ -192,7 +192,7 @@ module.exports = async function handler(req, res) {
       });
 
       // به‌روزرسانی وضعیت در فایل کاربر
-      const userPath = `data/active/${targetData.senderCode}.json`;
+     const userPath = `data/active/${targetData.senderCode || targetData.cardCode}.json`;
       const userRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
