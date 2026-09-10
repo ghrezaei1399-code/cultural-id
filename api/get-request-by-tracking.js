@@ -18,6 +18,71 @@ module.exports = async function handler(req, res) {
   const repo = 'cultural-id';
 
   // ===== اگر درخواست از نوع مشاهده (observation) باشد =====
+    // ===== اگر درخواست از نوع دستاورد (achievement) باشد =====
+  if (type === 'achievement') {
+    try {
+      const listResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/requests`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+
+      if (!listResponse.ok) {
+        return res.status(404).json({ error: 'درخواستی با این کد پیدا نشد' });
+      }
+
+      const files = await listResponse.json();
+      
+      if (!Array.isArray(files)) {
+        return res.status(500).json({ error: 'خطا در ساختار فایل‌های درخواست' });
+      }
+
+      for (const file of files) {
+        if (!file.name || !file.name.startsWith('achievement-') || !file.name.endsWith('.json')) continue;
+        
+        try {
+          const fileRes = await fetch(file.url, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Accept': 'application/vnd.github.v3+json'
+            }
+          });
+          
+          if (!fileRes.ok) continue;
+          
+          const fileData = await fileRes.json();
+          const jsonString = Buffer.from(fileData.content, 'base64').toString('utf8');
+          const requestData = JSON.parse(jsonString);
+          
+          if (requestData.trackingCode === trackingCode) {
+            return res.status(200).json({
+              request: {
+                status: requestData.status || 'pending',
+                trackingCode: requestData.trackingCode,
+                title: requestData.title,
+                description: requestData.description,
+                category: requestData.category,
+                fileUrl: requestData.fileUrl,
+                createdAt: requestData.createdAt,
+                approvedAt: requestData.approvedAt || null,
+                rejectedAt: requestData.rejectedAt || null
+              }
+            });
+          }
+        } catch (e) {
+          console.error('Error reading request file:', file.name, e);
+          continue;
+        }
+      }
+
+      return res.status(404).json({ error: 'درخواستی با این کد پیدا نشد' });
+
+    } catch (error) {
+      console.error('Get Achievement Error:', error);
+      return res.status(500).json({ error: error.message });
+    }
+  }
   if (type === 'observation') {
     try {
       const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${trackingCode}`, {
