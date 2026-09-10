@@ -5,7 +5,8 @@ module.exports = async function handler(req, res) {
   const token = process.env.GH_TOKEN;
   if (!token) return res.status(500).json({ error: 'Token is not configured' });
 
-    let body = '';
+  // ===== دریافت و پارس بدنه درخواست =====
+  let body = '';
   for await (const chunk of req) {
     body += chunk;
   }
@@ -15,7 +16,7 @@ module.exports = async function handler(req, res) {
   } catch (e) {
     return res.status(400).json({ error: 'Invalid JSON in request body' });
   }
-  
+
   const { cardCode, fileName, status, type, issueNumber, trackingCode } = parsedBody;
   
   const owner = 'ghrezaei1399-code';
