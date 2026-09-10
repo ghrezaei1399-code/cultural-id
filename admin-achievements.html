@@ -276,7 +276,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- ===== نوار بالا ===== -->
         <div class="top-bar">
             <a href="admin.html" class="back-link" id="backLink">↩ بازگشت به داشبورد</a>
             <div class="lang-group">
@@ -286,11 +285,9 @@
             <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
         </div>
 
-        <!-- ===== عنوان ===== -->
         <h1 class="page-title" id="pageTitle">🏆 مدیریت دستاوردها</h1>
         <div class="page-subtitle" id="pageSubtitle">مشاهده، بررسی و تأیید دستاوردهای فرهنگی ارسالی</div>
 
-        <!-- ===== آمار کوچک ===== -->
         <div class="stats-mini">
             <div class="stat-mini">
                 <span class="number" id="totalAch">۰</span>
@@ -310,7 +307,6 @@
             </div>
         </div>
 
-        <!-- ===== فیلتر ===== -->
         <div class="filter-bar">
             <button class="filter-btn active" data-filter="all" onclick="setFilter('all')" id="filterAll">📋 همه</button>
             <button class="filter-btn" data-filter="pending" onclick="setFilter('pending')" id="filterPending">⏳ در انتظار</button>
@@ -318,19 +314,16 @@
             <button class="filter-btn" data-filter="rejected" onclick="setFilter('rejected')" id="filterRejected">❌ رد شده</button>
         </div>
 
-        <!-- ===== گالری ===== -->
         <div id="achievementsGrid" class="achievements-grid">
             <div class="empty-state" id="loadingAchievements">در حال بارگذاری...</div>
         </div>
     </div>
 
     <script>
-        // ===== متغیرها =====
         let allAchievements = [];
         let currentFilter = 'all';
         let currentLang = 'fa';
 
-        // ===== دیکشنری کامل ترجمه =====
         const translations = {
             fa: {
                 backLink: '↩ بازگشت به داشبورد',
@@ -352,7 +345,7 @@
                 approveBtn: '✅ تایید',
                 rejectBtn: '❌ رد',
                 sender: 'ارسال کننده: ',
-                rank: 'رتبه: '
+                trackingCode: 'کد رهگیری: '
             },
             en: {
                 backLink: '↩ Back to Dashboard',
@@ -374,7 +367,7 @@
                 approveBtn: '✅ Approve',
                 rejectBtn: '❌ Reject',
                 sender: 'Submitted by: ',
-                rank: 'Rank: '
+                trackingCode: 'Tracking: '
             }
         };
 
@@ -382,7 +375,6 @@
             return translations[currentLang] && translations[currentLang][key] ? translations[currentLang][key] : key;
         }
 
-        // ===== تغییر زبان =====
         function setLanguage(lang) {
             currentLang = lang;
             document.getElementById('langFa').className = 'lang-btn' + (lang === 'fa' ? ' active' : '');
@@ -401,7 +393,6 @@
             document.getElementById('filterRejected').textContent = t('filterRejected');
         }
 
-        // ===== تم =====
         function toggleTheme() {
             document.body.classList.toggle('dark');
             const btn = document.getElementById('themeToggle');
@@ -413,27 +404,13 @@
             document.getElementById('themeToggle').textContent = '☀️';
         }
 
-        // ===== بارگذاری =====
         async function loadAchievements() {
             try {
-                const response = await fetch('/api/get-users?t=' + new Date().getTime());
+                const response = await fetch('/api/get-connection-requests?type=achievements&t=' + new Date().getTime());
                 if (!response.ok) throw new Error('خطا در دریافت اطلاعات');
                 
                 const data = await response.json();
-                const users = data.users || [];
-                
-                allAchievements = [];
-                users.forEach(user => {
-                    if (user.achievements) {
-                        user.achievements.forEach(ach => {
-                            allAchievements.push({
-                                ...ach,
-                                ownerCode: user.cardCode,
-                                ownerRank: user.rank
-                            });
-                        });
-                    }
-                });
+                allAchievements = data.achievements || [];
 
                 updateStats();
                 renderAchievements();
@@ -445,7 +422,6 @@
             }
         }
 
-        // ===== آمار =====
         function updateStats() {
             const total = allAchievements.length;
             const pending = allAchievements.filter(a => a.status === 'pending').length;
@@ -458,7 +434,6 @@
             document.getElementById('rejectedAch').textContent = rejected;
         }
 
-        // ===== فیلتر =====
         function setFilter(filter) {
             currentFilter = filter;
             document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -467,7 +442,6 @@
             renderAchievements();
         }
 
-        // ===== رندر =====
         function renderAchievements() {
             const grid = document.getElementById('achievementsGrid');
             
@@ -490,8 +464,6 @@
                     } else {
                         mediaHtml = `<img src="${ach.fileUrl}" alt="${ach.title}" onerror="this.parentElement.innerHTML='<span class=\\'no-media\\'>📄</span>'" />`;
                     }
-                } else if (ach.fileData) {
-                    mediaHtml = `<img src="${ach.fileData}" alt="${ach.title}" />`;
                 } else {
                     mediaHtml = `<span class="no-media">📄</span>`;
                 }
@@ -503,8 +475,8 @@
                 };
 
                 const actionButtons = ach.status === 'pending' ? `
-                    <button class="btn-small btn-approve" onclick="updateStatus('${ach.ownerCode}', '${ach.id}', 'approved')">${t('approveBtn')}</button>
-                    <button class="btn-small btn-reject" onclick="updateStatus('${ach.ownerCode}', '${ach.fileName}', 'rejected')">${t('rejectBtn')}</button>
+                    <button class="btn-small btn-approve" onclick="updateStatus('${ach.trackingCode}', 'approved')">${t('approveBtn')}</button>
+                    <button class="btn-small btn-reject" onclick="updateStatus('${ach.trackingCode}', 'rejected')">${t('rejectBtn')}</button>
                 ` : '';
 
                 return `
@@ -513,7 +485,7 @@
                         <div class="ach-content">
                             <div class="ach-title">${ach.title || 'بدون عنوان'}</div>
                             <div class="ach-desc">${ach.description ? ach.description.substring(0, 100) + (ach.description.length > 100 ? '...' : '') : '---'}</div>
-                            <div class="ach-meta">${t('sender')} ${ach.ownerCode} (${t('rank')} ${ach.ownerRank})</div>
+                            <div class="ach-meta">${t('sender')} ${ach.senderCode} | ${t('trackingCode')} ${ach.trackingCode}</div>
                             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.3rem;">
                                 ${statusMap[ach.status] || ''}
                                 <div>${actionButtons}</div>
@@ -524,8 +496,7 @@
             }).join('');
         }
 
-        // ===== تغییر وضعیت =====
-        async function updateStatus(cardCode, fileName, newStatus) {
+        async function updateStatus(trackingCode, newStatus) {
             const confirmMsg = currentLang === 'fa' 
                 ? `آیا از ${newStatus === 'approved' ? 'تایید' : 'رد'} این اثر مطمئن هستید؟`
                 : `Are you sure you want to ${newStatus === 'approved' ? 'approve' : 'reject'} this achievement?`;
@@ -536,10 +507,15 @@
                 const response = await fetch('/api/update-achievement-status', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ cardCode, fileName, status: newStatus })
+                    body: JSON.stringify({ 
+                        type: 'achievement',
+                        trackingCode: trackingCode, 
+                        status: newStatus 
+                    })
                 });
                 
-                if (!response.ok) throw new Error('خطا در سرور');
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'خطا در سرور');
                 
                 const successMsg = currentLang === 'fa' 
                     ? '✅ وضعیت دستاورد با موفقیت تغییر کرد.'
@@ -551,7 +527,6 @@
             }
         }
 
-        // ===== شروع =====
         loadAchievements();
     </script>
 </body>
