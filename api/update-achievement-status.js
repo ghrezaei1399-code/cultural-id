@@ -131,7 +131,7 @@ module.exports = async function handler(req, res) {
     }
 
     try {
-      // پیدا کردن فایل درخواست دستاورد
+      // ===== پیدا کردن فایل درخواست دستاورد =====
       const listRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/requests`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -169,7 +169,7 @@ module.exports = async function handler(req, res) {
         return res.status(404).json({ error: 'دستاوردی با این کد رهگیری یافت نشد' });
       }
 
-      // به‌روزرسانی وضعیت در فایل درخواست
+      // ===== به‌روزرسانی وضعیت در فایل درخواست =====
       targetData.status = status;
       targetData.updatedAt = new Date().toISOString();
       if (status === 'approved') targetData.approvedAt = new Date().toISOString();
@@ -191,8 +191,10 @@ module.exports = async function handler(req, res) {
         })
       });
 
-      // به‌روزرسانی وضعیت در فایل کاربر
-     const userPath = `data/active/${targetData.senderCode || targetData.cardCode}.json`;
+      // ===== به‌روزرسانی وضعیت در فایل کاربر =====
+      const senderCode = (targetData.senderCode || targetData.cardCode || '').trim();
+      const userPath = `data/active/${senderCode}.json`;
+      
       const userRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -201,18 +203,23 @@ module.exports = async function handler(req, res) {
         const userDataRaw = await userRes.json();
         const userData = JSON.parse(Buffer.from(userDataRaw.content, 'base64').toString('utf8'));
 
-           if (userData.achievements) {
-        const achIndex = userData.achievements.findIndex(a => a.id === trackingCode || a.trackingCode === trackingCode);
-        if (achIndex !== -1) {
-          userData.achievements[achIndex].status = status;
-          if (status === 'approved') {
-            userData.achievements[achIndex].approvedAt = new Date().toISOString();
-          }
-          if (status === 'rejected') {
-            userData.achievements[achIndex].rejectedAt = new Date().toISOString();
+        if (userData.achievements) {
+          const achIndex = userData.achievements.findIndex(a => 
+            a.id === trackingCode || 
+            a.trackingCode === trackingCode ||
+            a.id === targetData.achievementId
+          );
+          
+          if (achIndex !== -1) {
+            userData.achievements[achIndex].status = status;
+            if (status === 'approved') {
+              userData.achievements[achIndex].approvedAt = new Date().toISOString();
+            }
+            if (status === 'rejected') {
+              userData.achievements[achIndex].rejectedAt = new Date().toISOString();
+            }
           }
         }
-      } 
 
         const newUserContent = Buffer.from(JSON.stringify(userData, null, 2), 'utf8').toString('base64');
 
