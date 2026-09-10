@@ -10,7 +10,6 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // ===== در Vercel، داده از req.body می‌آید، نه req.json() =====
     const { cardCode, achievement } = req.body;
 
     if (!cardCode || !achievement) {
@@ -97,6 +96,40 @@ module.exports = async function handler(req, res) {
         message: `Add achievement for ${cardCode}`,
         content: updatedContent,
         sha: userDataRaw.sha,
+        branch: 'main'
+      })
+    });
+
+    // ===== ثبت درخواست برای ادمین =====
+    const requestFileName = `achievement-${Date.now()}-${Math.random().toString(36).substring(7)}.json`;
+    const requestPath = `data/requests/${requestFileName}`;
+    
+    const requestData = {
+      fileName: requestFileName,
+      trackingCode: achievementId,
+      senderCode: cardCode,
+      type: 'achievement',
+      title: title,
+      description: description,
+      category: category || 'other',
+      status: 'pending',
+      achievementId: achievementId,
+      fileUrl: newAchievement.fileUrl,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    const requestContent = Buffer.from(JSON.stringify(requestData, null, 2), 'utf8').toString('base64');
+
+    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${requestPath}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: `Achievement request from ${cardCode} - ${achievementId}`,
+        content: requestContent,
         branch: 'main'
       })
     });
