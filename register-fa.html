@@ -404,7 +404,18 @@
                 <a href="upload-achievement-fa.html" class="btn-upload">🚀 بله، آپلود دستاورد</a>
             </div>
         </form>
-
+        <!-- ===== بخش رهنمایی پیگیری (فرایند اول) ===== -->
+        <div style="margin-top: 3rem; padding: 1.5rem; background: rgba(40,116,166,0.06); border-radius: 20px; border: 2px solid rgba(40,116,166,0.15);">
+            <div style="font-weight: 800; font-size: 1.1rem; color: #2874a6; margin-bottom: 1rem; text-align: center;">🔍 رهنمایی پیگیری دستاورد</div>
+            <div class="form-group">
+                <label>کد رهگیری دستاورد خود را وارد کنید:</label>
+                <input type="text" id="achievementTrackingCode" placeholder="مثلاً: ach-1789031997136-553qg" />
+            </div>
+            <div style="text-align: center; margin-top: 0.5rem;">
+                <button type="button" class="btn btn-primary" onclick="trackAchievement()" style="padding: 0.8rem 2rem; font-size: 0.95rem;">🔍 بررسی وضعیت</button>
+            </div>
+            <div id="trackingResult" style="margin-top: 1rem; display: none;"></div>
+        </div>
         <!-- ===== بخش حذف حساب کاربری ===== -->
         <div class="delete-module">
             <div class="delete-title">⚠️ درخواست انصراف از عضویت</div>
@@ -549,6 +560,58 @@
                 document.getElementById('welcomeBackModule').style.display = 'block';
             }
         })();
+               // ===== پیگیری دستاورد (فرایند اول) =====
+        async function trackAchievement() {
+            const trackingCode = document.getElementById('achievementTrackingCode')?.value.trim();
+            const resultBox = document.getElementById('trackingResult');
+            
+            if (!trackingCode) {
+                alert('لطفاً کد رهگیری را وارد کنید');
+                return;
+            }
+            
+            if (!resultBox) return;
+            
+            resultBox.style.display = 'block';
+            resultBox.innerHTML = '⏳ در حال بررسی...';
+            
+            try {
+                const response = await fetch(`/api/get-request-by-tracking?type=achievement&trackingCode=${trackingCode}`);
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    resultBox.innerHTML = `<div style="color:#c0392b; padding:0.8rem; background:rgba(200,50,50,0.1); border-radius:12px;">❌ ${result.error || 'کد رهگیری یافت نشد'}</div>`;
+                    return;
+                }
+                
+                const req = result.request;
+                let statusText = '';
+                let statusColor = '';
+                
+                if (req.status === 'pending') {
+                    statusText = '⏳ در انتظار تایید ادمین';
+                    statusColor = '#f39c12';
+                } else if (req.status === 'approved') {
+                    statusText = '✅ تایید شده و در گالری نمایش داده می‌شود';
+                    statusColor = '#27ae60';
+                } else if (req.status === 'rejected') {
+                    statusText = '❌ از طرف ادمین رد شده';
+                    statusColor = '#e74c3c';
+                }
+                
+                resultBox.innerHTML = `
+                    <div style="padding:1rem; background:rgba(255,255,255,0.6); border-radius:12px; border-right:3px solid ${statusColor};">
+                        <div style="font-weight:800; color:#8a6d1f; margin-bottom:0.5rem;">📋 ${req.title || 'دستاورد'}</div>
+                        <div style="font-size:0.85rem; color:${statusColor}; font-weight:700;">${statusText}</div>
+                        <div style="font-size:0.75rem; color:#888; margin-top:0.5rem;">کد رهگیری: ${req.trackingCode}</div>
+                        ${req.fileUrl ? `<div style="margin-top:0.5rem;"><a href="${req.fileUrl}" target="_blank" style="color:#2874a6;">👁️ مشاهده فایل</a></div>` : ''}
+                    </div>
+                `;
+            } catch (error) {
+                console.error(error);
+                resultBox.innerHTML = `<div style="color:#c0392b; padding:0.8rem; background:rgba(200,50,50,0.1); border-radius:12px;">❌ خطا در بررسی کد رهگیری</div>`;
+            }
+        } 
     </script>
 </body>
 </html>
