@@ -40,24 +40,19 @@ module.exports = async function handler(req, res) {
     const part2 = Math.floor(1000 + Math.random() * 9000);
     
     // ✅ اصلاح منطق کد: اگر کاربر کد اختیاری وارد کند، آن بخش نهایی کد می‌شود
-    // در غیر این صورت یک کد تصادفی ۵ رقمی تولید می‌شود
     const part3 = optionalCode && optionalCode.trim().length > 0 ? optionalCode.trim() : Math.floor(10000 + Math.random() * 90000).toString();
     
-    // ✅ کد کارت یکتا و نهایی (بدون فاصله برای نام‌گذاری فایل)
+    // ✅ کد کارت یکتا و نهایی (فقط یک فرمت بدون فاصله برای هماهنگی کل سیستم)
     const cardCode = `CIM-${part1}-${part2}-${part3}`;
 
-    // ✅ کد نمایشی برای کاربر (با فاصله برای زیبایی)
-    const displayCode = `CIM - ${part1} - ${part2} - ${part3}`;
-
     const userData = {
-      cardCode, // کلید اصلی جستجو
-      displayCode,
-      optionalCode: part3, // ذخیره بخش اختیاری
+      cardCode, // کلید اصلی جستجو و نمایش
+      optionalCode: part3,
       values,
       priorities: priorities && Array.isArray(priorities) ? priorities.map(Number) : [1, 2, 3, 4, 5, 6, 7],
       communicationEmail: communicationEmail || null,
       registrationDate: new Date().toISOString(),
-      status: 'approved', // ===== تغییر از 'pending' به 'approved' =====
+      status: 'approved',
       rank: 0,
       country: detectedCountry
     };
@@ -96,9 +91,8 @@ module.exports = async function handler(req, res) {
 
     indexData.push({
       cardCode,
-      displayCode,
       optionalCode: part3,
-      status: 'approved', // ===== تغییر از 'pending' به 'approved' =====
+      status: 'approved',
       rank: 0,
       country: detectedCountry,
       registrationDate: userData.registrationDate
@@ -129,7 +123,6 @@ module.exports = async function handler(req, res) {
     return res.status(200).json({
       success: true,
       cardCode,
-      displayCode,
       country: detectedCountry,
       rank: 0,
       message: 'ثبت‌نام با موفقیت انجام شد و کارت شما فعال است.'
