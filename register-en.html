@@ -13,7 +13,6 @@
             justify-content: center;
             align-items: center;
             padding: 2rem 1rem;
-            /* Modern Animated Background */
             background: linear-gradient(-45deg, #fdf6e3, #e8f4f8, #f5e6d3, #e0f7fa);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
@@ -67,7 +66,6 @@
         }
         body.dark .subtitle { color: #c8b890; }
         
-        /* Beautiful Form Fields with Animation */
         .form-group { margin-bottom: 1.8rem; position: relative; }
         .form-group label {
             display: block;
@@ -104,13 +102,12 @@
         }
         body.dark .form-group input:focus { background: #1a1a2e; border-color: #ffd700; }
 
-        /* Beautiful Value Boxes with Distinct Colors */
         .value-item {
             background: rgba(255, 255, 255, 0.6);
             border-radius: 20px;
             padding: 1.5rem;
             margin-bottom: 1.2rem;
-            border-left: 5px solid #d4af37; /* LTR direction */
+            border-left: 5px solid #d4af37;
             transition: all 0.4s ease;
             position: relative;
             overflow: hidden;
@@ -144,7 +141,6 @@
         .value-item input:focus { border-color: #d4af37; background: #fff; }
         body.dark .value-item input { background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.1); color: #f0e8d0; }
 
-        /* Priority Section with Organizational Colors */
         .priority-section {
             margin-top: 3rem;
             padding-top: 2rem;
@@ -185,7 +181,6 @@
             outline: none;
         }
 
-        /* Beautiful Animated Buttons */
         .btn-group { display: flex; gap: 1.2rem; margin-top: 2.5rem; flex-wrap: wrap; }
         .btn {
             flex: 1;
@@ -239,7 +234,7 @@
         }
         
         .theme-toggle {
-            position: fixed; top: 1.5rem; right: 1.5rem; /* Keep right for consistency or switch to left for LTR? Usually right is fine for global tools */
+            position: fixed; top: 1.5rem; right: 1.5rem;
             background: rgba(255, 255, 255, 0.7);
             border: 2px solid rgba(212, 175, 55, 0.3);
             font-size: 1.6rem; cursor: pointer;
@@ -405,6 +400,19 @@
             </div>
         </form>
 
+        <!-- ===== Achievement Tracking Module (Process 1) ===== -->
+        <div style="margin-top: 3rem; padding: 1.5rem; background: rgba(40,116,166,0.06); border-radius: 20px; border: 2px solid rgba(40,116,166,0.15);">
+            <div style="font-weight: 800; font-size: 1.1rem; color: #2874a6; margin-bottom: 1rem; text-align: center;">🔍 Achievement Tracking</div>
+            <div class="form-group">
+                <label>Enter your achievement tracking code:</label>
+                <input type="text" id="achievementTrackingCode" placeholder="e.g. ach-1789031997136-553qg" />
+            </div>
+            <div style="text-align: center; margin-top: 0.5rem;">
+                <button type="button" class="btn btn-primary" onclick="trackAchievement()" style="padding: 0.8rem 2rem; font-size: 0.95rem;">🔍 Check Status</button>
+            </div>
+            <div id="trackingResult" style="margin-top: 1rem; display: none;"></div>
+        </div>
+
         <!-- ===== Delete Module ===== -->
         <div class="delete-module">
             <div class="delete-title">⚠️ Membership Cancellation Request</div>
@@ -495,6 +503,59 @@
                 submitBtn.textContent = '🎯 Get Your ID';
             }
         });
+
+        // ===== Achievement Tracking (Process 1) =====
+        async function trackAchievement() {
+            const trackingCode = document.getElementById('achievementTrackingCode')?.value.trim();
+            const resultBox = document.getElementById('trackingResult');
+            
+            if (!trackingCode) {
+                alert('Please enter your tracking code');
+                return;
+            }
+            
+            if (!resultBox) return;
+            
+            resultBox.style.display = 'block';
+            resultBox.innerHTML = '⏳ Checking...';
+            
+            try {
+                const response = await fetch(`/api/get-request-by-tracking?type=achievement&trackingCode=${trackingCode}`);
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    resultBox.innerHTML = `<div style="color:#c0392b; padding:0.8rem; background:rgba(200,50,50,0.1); border-radius:12px;">❌ ${result.error || 'Tracking code not found'}</div>`;
+                    return;
+                }
+                
+                const req = result.request;
+                let statusText = '';
+                let statusColor = '';
+                
+                if (req.status === 'pending') {
+                    statusText = '⏳ Awaiting admin approval';
+                    statusColor = '#f39c12';
+                } else if (req.status === 'approved') {
+                    statusText = '✅ Approved and displayed in gallery';
+                    statusColor = '#27ae60';
+                } else if (req.status === 'rejected') {
+                    statusText = '❌ Rejected by admin';
+                    statusColor = '#e74c3c';
+                }
+                
+                resultBox.innerHTML = `
+                    <div style="padding:1rem; background:rgba(255,255,255,0.6); border-radius:12px; border-left:3px solid ${statusColor};">
+                        <div style="font-weight:800; color:#8a6d1f; margin-bottom:0.5rem;">📋 ${req.title || 'Achievement'}</div>
+                        <div style="font-size:0.85rem; color:${statusColor}; font-weight:700;">${statusText}</div>
+                        <div style="font-size:0.75rem; color:#888; margin-top:0.5rem;">Tracking Code: ${req.trackingCode}</div>
+                        ${req.fileUrl ? `<div style="margin-top:0.5rem;"><a href="${req.fileUrl}" target="_blank" style="color:#2874a6;">👁️ View File</a></div>` : ''}
+                    </div>
+                `;
+            } catch (error) {
+                console.error(error);
+                resultBox.innerHTML = `<div style="color:#c0392b; padding:0.8rem; background:rgba(200,50,50,0.1); border-radius:12px;">❌ Error checking tracking code</div>`;
+            }
+        }
 
         // ===== Delete Request =====
         async function submitDeleteRequest() {
