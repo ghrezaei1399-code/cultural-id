@@ -268,5 +268,14 @@
     "rank": 0,
     "country": "Iran",
     "registrationDate": "2026-09-10T09:05:27.187Z"
+  },
+  {
+    "cardCode": "CIM-4502-8168-44444",
+    "displayCode": "CIM - 4502 - 8168 - 44444",
+    "optionalCode": "44444",
+    "status": "approved",
+    "rank": 0,
+    "country": "Iran",
+    "registrationDate": "2026-09-10T09:07:32.661Z"
   }
 ]
