@@ -359,6 +359,60 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ observations });
 
     // ===== دریافت درخواست‌های ارتباط =====
+          // ===== دریافت درخواست‌های دستاورد (Achievements) =====
+    if (type === 'achievements') {
+      const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/requests`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('خطا در دریافت درخواست‌های دستاورد');
+      }
+
+      const files = await response.json();
+      const achievements = [];
+
+      for (const file of files) {
+        if (!file.name.startsWith('achievement-') || !file.name.endsWith('.json')) continue;
+        
+        try {
+          const fileRes = await fetch(file.url, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Accept': 'application/vnd.github.v3+json'
+            }
+          });
+          
+          if (!fileRes.ok) continue;
+          
+          const fileData = await fileRes.json();
+          const jsonString = Buffer.from(fileData.content, 'base64').toString('utf8');
+          const requestData = JSON.parse(jsonString);
+          
+          achievements.push({
+            fileName: file.name,
+            trackingCode: requestData.trackingCode,
+            senderCode: requestData.senderCode,
+            title: requestData.title,
+            description: requestData.description,
+            category: requestData.category,
+            status: requestData.status || 'pending',
+            fileUrl: requestData.fileUrl,
+            createdAt: requestData.createdAt,
+            approvedAt: requestData.approvedAt || null,
+            rejectedAt: requestData.rejectedAt || null
+          });
+        } catch (e) {
+          console.error('Error reading achievement file:', file.name, e);
+          continue;
+        }
+      }
+
+      return res.status(200).json({ achievements });
+    }
     } else {
       const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/requests`, {
         headers: {
