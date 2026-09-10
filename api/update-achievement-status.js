@@ -201,18 +201,18 @@ module.exports = async function handler(req, res) {
         const userDataRaw = await userRes.json();
         const userData = JSON.parse(Buffer.from(userDataRaw.content, 'base64').toString('utf8'));
 
-        if (userData.achievements) {
-          const achIndex = userData.achievements.findIndex(a => a.id === trackingCode);
-          if (achIndex !== -1) {
-            userData.achievements[achIndex].status = status;
-            if (status === 'approved') {
-              userData.achievements[achIndex].approvedAt = new Date().toISOString();
-            }
-            if (status === 'rejected') {
-              userData.achievements[achIndex].rejectedAt = new Date().toISOString();
-            }
+           if (userData.achievements) {
+        const achIndex = userData.achievements.findIndex(a => a.id === trackingCode || a.trackingCode === trackingCode);
+        if (achIndex !== -1) {
+          userData.achievements[achIndex].status = status;
+          if (status === 'approved') {
+            userData.achievements[achIndex].approvedAt = new Date().toISOString();
+          }
+          if (status === 'rejected') {
+            userData.achievements[achIndex].rejectedAt = new Date().toISOString();
           }
         }
+      } 
 
         const newUserContent = Buffer.from(JSON.stringify(userData, null, 2), 'utf8').toString('base64');
 
