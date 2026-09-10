@@ -107,7 +107,7 @@ module.exports = async function handler(req, res) {
     const requestData = {
       fileName: requestFileName,
       trackingCode: achievementId,
-      senderCode: cardCode,
+      senderCode: cardCode.trim().replace(/\s+/g, ''),
       type: 'achievement',
       title: title,
       description: description,
