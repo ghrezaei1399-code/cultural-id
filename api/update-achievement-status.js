@@ -204,11 +204,12 @@ module.exports = async function handler(req, res) {
         const userData = JSON.parse(Buffer.from(userDataRaw.content, 'base64').toString('utf8'));
 
         if (userData.achievements) {
-          const achIndex = userData.achievements.findIndex(a => 
-            a.id === trackingCode || 
-            a.trackingCode === trackingCode ||
-            a.id === targetData.achievementId
-          );
+         const achIndex = userData.achievements.findIndex(a => 
+  a.id === trackingCode || 
+  a.trackingCode === trackingCode ||
+  a.id === targetData.achievementId ||
+  a.fileName === targetData.fileName
+);
           
           if (achIndex !== -1) {
             userData.achievements[achIndex].status = status;
