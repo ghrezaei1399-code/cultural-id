@@ -122,17 +122,16 @@ module.exports = async function handler(req, res) {
         }
       }
     } catch (e) { /* ignore */ }
-
-    // ================================================================
-    // ===== ۷. دریافت دستاوردهای تاییدشده (همه کاربران) =====
+      // ================================================================
+    // ===== ۷. دریافت دستاوردهای تاییدشده (همه کاربران + پوشه achievements) =====
     // ================================================================
     const achievements = [];
-    // ===== حذف شرط galleryAllowedIds - همه کاربران =====
+    
+    // الف) دریافت از پروفایل کاربران
     allUsers.forEach(u => {
       if (u.achievements && Array.isArray(u.achievements)) {
         u.achievements.forEach(ach => {
           if (ach.status === 'approved') {
-            // بررسی اینکه آیا کاربر جزو ۲۰۰ نفر اول است یا نه
             const isGolden = galleryAllowedIds.has(u.cardCode);
             achievements.push({
               ...ach,
@@ -146,6 +145,42 @@ module.exports = async function handler(req, res) {
       }
     });
 
+    // ب) دریافت از پوشه data/achievements (فایل‌های جداگانه)
+    try {
+      const achPath = 'data/achievements';
+      const listRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${achPath}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if (listRes.ok) {
+        const files = await listRes.json();
+        const jsonFiles = files.filter(f => f.type === 'file' && f.name.endsWith('.json'));
+        
+        for (const file of jsonFiles) {
+          try {
+            const contentRes = await fetch(file.url, { headers: { 'Authorization': `Bearer ${token}` } });
+            if (contentRes.ok) {
+              const fileData = await contentRes.json();
+              const achData = JSON.parse(Buffer.from(fileData.content, 'base64').toString('utf8'));
+              
+              if (achData.status === 'approved') {
+                // پیدا کردن اطلاعات کاربر برای نمایش رتبه و نشان
+                const ownerUser = allUsers.find(u => u.cardCode === achData.senderCode);
+                const isGolden = ownerUser ? galleryAllowedIds.has(ownerUser.cardCode) : false;
+                
+                achievements.push({
+                  ...achData,
+                  owner: achData.senderCode,
+                  ownerRank: ownerUser ? ownerUser.rank : 0,
+                  ownerBadge: isGolden ? 'golden' : (ownerUser ? ownerUser.badge : 'bronze'),
+                  isGolden: isGolden
+                });
+              }
+            }
+          } catch (e) { /* ignore single file error */ }
+        }
+      }
+    } catch (e) { /* ignore folder error */ }
     // ===== ۸. دریافت مشاهدات =====
     let observations = [];
     try {
