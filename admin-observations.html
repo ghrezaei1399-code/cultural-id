@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>مدیریت مشاهدات | سپهر خردمندی</title>
+    <title>مدیریت ارتباطات و مشاهدات | سپهر خردمندی</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -15,152 +15,99 @@
         }
         body.dark { background: linear-gradient(135deg, #3a2f20 0%, #2a2418 50%, #4a3a28 100%); color: #f0e8d0; }
         .container { max-width: 1200px; margin: 0 auto; }
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 0.8rem;
-            margin-bottom: 1.5rem;
-        }
-        .back-link {
-            padding: 0.5rem 1.2rem;
-            border-radius: 30px;
-            background: rgba(255,255,255,0.05);
-            color: #0a0a1a;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 0.85rem;
-            border: 1px solid rgba(255,255,255,0.08);
-            transition: 0.3s;
-        }
+        
+        /* Top Bar & Titles */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.8rem; margin-bottom: 1.5rem; }
+        .back-link { padding: 0.5rem 1.2rem; border-radius: 30px; background: rgba(255,255,255,0.05); color: #0a0a1a; text-decoration: none; font-weight: 700; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.08); transition: 0.3s; }
         body.dark .back-link { color: #f0e8d0; }
         .back-link:hover { background: rgba(255,255,255,0.08); }
-        
-        .page-title {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: #0a0a1a;
-            text-align: center;
-            margin-bottom: 0.2rem;
-        }
+        .page-title { font-size: 1.6rem; font-weight: 800; color: #0a0a1a; text-align: center; margin-bottom: 0.2rem; }
         body.dark .page-title { color: #f0e8e0; }
-        .page-subtitle {
-            text-align: center;
-            font-size: 0.8rem;
-            color: #2a2a3a;
-            opacity: 0.7;
-            margin-bottom: 1.5rem;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding-bottom: 1rem;
-        }
+        .page-subtitle { text-align: center; font-size: 0.8rem; color: #2a2a3a; opacity: 0.7; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 1rem; }
         body.dark .page-subtitle { color: #c8b890; }
         
-        .stats-mini {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 0.8rem;
-            margin-bottom: 1.5rem;
-        }
-        .stat-mini {
-            background: rgba(255,255,255,0.04);
-            border-radius: 14px;
-            padding: 0.8rem;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.04);
-        }
+        /* Stats & Filters */
+        .stats-mini { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.8rem; margin-bottom: 1.5rem; }
+        .stat-mini { background: rgba(255,255,255,0.04); border-radius: 14px; padding: 0.8rem; text-align: center; border: 1px solid rgba(255,255,255,0.04); }
         body.dark .stat-mini { background: rgba(0,0,0,0.1); }
         .stat-mini .number { font-size: 1.3rem; font-weight: 800; color: #0a0a1a; display: block; }
         body.dark .stat-mini .number { color: #f0e8e0; }
         .stat-mini .label { font-size: 0.65rem; color: #6a6a7a; }
         body.dark .stat-mini .label { color: #a8a8b8; }
         
-        .filter-bar {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-bottom: 1.2rem;
-            justify-content: center;
-        }
-        .filter-btn {
-            padding: 0.4rem 1.2rem;
-            border-radius: 30px;
-            border: 1px solid rgba(212,175,55,0.15);
-            background: rgba(255,255,255,0.03);
-            color: #0a0a1a;
-            font-weight: 700;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+        .filter-bar { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.2rem; justify-content: center; }
+        .filter-btn { padding: 0.4rem 1.2rem; border-radius: 30px; border: 1px solid rgba(212,175,55,0.15); background: rgba(255,255,255,0.03); color: #0a0a1a; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: 0.3s; }
         body.dark .filter-btn { color: #f0e8d0; }
         .filter-btn:hover { background: rgba(212,175,55,0.05); }
-        .filter-btn.active {
-            background: rgba(212,175,55,0.12);
-            border-color: #d4af37;
-        }
+        .filter-btn.active { background: rgba(212,175,55,0.12); border-color: #d4af37; }
         body.dark .filter-btn.active { background: rgba(212,175,55,0.08); }
         
-        .observations-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            max-height: 900px;
-            overflow-y: auto;
-            padding-left: 0.3rem;
-            padding-right: 0.3rem;
-        }
+        /* List & Cards */
+        .observations-list { display: flex; flex-direction: column; gap: 1.5rem; max-height: 900px; overflow-y: auto; padding-left: 0.3rem; padding-right: 0.3rem; }
         .observations-list::-webkit-scrollbar { width: 6px; }
         .observations-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 10px; }
         .observations-list::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.3); border-radius: 10px; }
         
-        .obs-card {
-            background: rgba(255,255,255,0.05);
-            border-radius: 16px;
-            padding: 1.5rem;
-            border: 1px solid rgba(255,255,255,0.06);
-            transition: 0.3s;
-        }
+        .obs-card { background: rgba(255,255,255,0.05); border-radius: 16px; padding: 1.5rem; border: 1px solid rgba(255,255,255,0.06); transition: 0.3s; position: relative; }
         body.dark .obs-card { background: rgba(0,0,0,0.15); }
         .obs-card:hover { background: rgba(255,255,255,0.08); }
         body.dark .obs-card:hover { background: rgba(255,255,255,0.02); }
         
-        .obs-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-        .obs-code {
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #8a6d1f;
-        }
+        .obs-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem; border-bottom: 1px dashed rgba(0,0,0,0.1); padding-bottom: 0.5rem; }
+        .obs-code { font-family: 'Courier New', monospace; font-size: 0.9rem; font-weight: 700; color: #8a6d1f; }
         body.dark .obs-code { color: #f9e79f; }
         .obs-meta { font-size: 0.7rem; color: #888; }
+        
+        /* Sections Separation */
+        .section-divider {
+            margin: 1rem 0 0.5rem 0;
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #2874a6;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        body.dark .section-divider { color: #85c1e9; }
+        .section-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(40,116,166,0.2);
+        }
+
         .obs-body {
             margin-top: 0.5rem;
+            padding: 1rem;
+            background: rgba(255,255,255,0.4);
+            border-radius: 12px;
+            border-right: 4px solid #d4af37;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+        body.dark .obs-body { background: rgba(0,0,0,0.2); }
+        .obs-body p { font-size: 0.95rem; color: #1a1a2a; line-height: 1.8; font-weight: 500; }
+        body.dark .obs-body p { color: #e0e0e0; }
+
+        /* Guide Box */
+        .guide-box {
+            background: rgba(212,175,55,0.08);
+            border: 1px solid rgba(212,175,55,0.2);
+            border-radius: 10px;
             padding: 0.8rem;
-            background: rgba(255,255,255,0.2);
-            border-radius: 8px;
-            border-right: 3px solid rgba(212,175,55,0.3);
-            border-bottom: 2px dashed #d4af37;
             margin-bottom: 1rem;
         }
-        body.dark .obs-body { background: rgba(0,0,0,0.1); }
-        .obs-body p { font-size: 0.9rem; color: #4a4a5a; line-height: 1.6; }
-        body.dark .obs-body p { color: #b0b0c0; }
-        
-        .badge {
-            display: inline-block;
-            padding: 0.15rem 0.6rem;
-            border-radius: 30px;
-            font-size: 0.65rem;
-            font-weight: 700;
+        .guide-item {
+            font-size: 0.85rem;
+            color: #5a4a3a;
+            margin-bottom: 0.3rem;
+            padding-right: 0.5rem;
+            border-right: 2px solid #d4af37;
         }
+        body.dark .guide-item { color: #d0c0b0; }
+
+        /* Badges */
+        .badge { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 30px; font-size: 0.65rem; font-weight: 700; margin-left: 0.3rem; }
         .badge-approved { background: rgba(50,200,50,0.15); color: #0a6a0a; }
         .badge-rejected { background: rgba(200,50,50,0.15); color: #6a1a1a; }
         .badge-pending { background: rgba(255,200,50,0.15); color: #8a7a0a; }
@@ -168,148 +115,80 @@
         .badge-cluster { background: rgba(40,116,166,0.15); color: #2874a6; }
         body.dark .badge-cluster { color: #85c1e9; background: rgba(40,116,166,0.05); }
 
-        .btn-small {
-            padding: 0.25rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: 0.3s;
-            margin: 0.1rem;
-        }
-        .btn-approve { background: rgba(50,200,50,0.15); color: #0a6a0a; }
-        body.dark .btn-approve { color: #82e0aa; }
-        .btn-approve:hover { background: rgba(50,200,50,0.25); }
-        .btn-reject { background: rgba(200,50,50,0.15); color: #6a1a1a; }
-        body.dark .btn-reject { color: #f1948a; }
-        .btn-reject:hover { background: rgba(200,50,50,0.25); }
-        .btn-ai {
-            background: #6366f1;
-            color: white;
-            border: none;
-        }
-        .btn-ai:hover { background: #4f46e5; }
-        
-        .empty-state { text-align: center; padding: 3rem; color: #888; }
-        .obs-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
-        .scroll-hint { text-align: center; padding: 0.8rem; color: #888; font-size: 0.85rem; border-top: 1px solid rgba(212,175,55,0.1); margin-top: 0.5rem; font-weight: 700; }
-        .btn-back-bottom { display: inline-block; margin-top: 2rem; padding: 0.8rem 1.5rem; background: rgba(212,175,55,0.2); color: #8a6d1f; border-radius: 30px; text-decoration: none; font-weight: 700; transition: 0.3s; }
-        
-        .analysis-box {
-            margin-top: 1rem;
-            padding: 1.5rem;
-            background: rgba(212,175,55,0.05);
+        /* Admin Tools & Matrix */
+        .admin-panel {
+            margin-top: 1.5rem;
+            background: rgba(255,255,255,0.3);
             border-radius: 16px;
-            border: 1px solid rgba(212,175,55,0.2);
-            display: none;
-            animation: fadeIn 0.4s ease;
+            padding: 1.2rem;
+            border: 1px solid rgba(0,0,0,0.05);
         }
-        body.dark .analysis-box { background: rgba(212,175,55,0.02); border-color: rgba(212,175,55,0.1); }
-        .analysis-box.active { display: block; }
-        
-        .analysis-box .title {
-            font-weight: 900;
-            font-size: 1rem;
-            color: #8a6d1f;
-            margin-bottom: 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            border-bottom: 2px dashed rgba(212,175,55,0.3);
-            padding-bottom: 0.8rem;
+        body.dark .admin-panel { background: rgba(0,0,0,0.15); border-color: rgba(255,255,255,0.05); }
+
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
-        body.dark .analysis-box .title { color: #f9e79f; }
+        @media(min-width: 768px) { .matrix-grid { grid-template-columns: 1fr 1fr; } }
+
+        .matrix-item label { display: block; font-weight: 700; font-size: 0.8rem; margin-bottom: 0.3rem; color: #4a4a5a; }
+        body.dark .matrix-item label { color: #b0b0c0; }
         
-        .analysis-box .matrix-item { margin-bottom: 1rem; }
-        .analysis-box .matrix-item label {
-            display: block;
-            font-weight: 800;
-            font-size: 0.85rem;
-            color: #2a1a0a;
-            margin-bottom: 0.4rem;
-        }
-        body.dark .analysis-box .matrix-item label { color: #e8d8c8; }
-        
-        .analysis-box .matrix-item textarea, 
-        .analysis-box .matrix-item select,
-        .admin-tools-box textarea,
-        .admin-tools-box select {
+        textarea, select {
             width: 100%;
             padding: 0.8rem;
-            border-radius: 10px;
-            border: 1px solid rgba(212,175,55,0.2);
-            background: rgba(255,255,255,0.6);
+            border-radius: 8px;
+            border: 1px solid rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.8);
             font-family: inherit;
             font-size: 0.9rem;
-            color: #1a0a0a;
             resize: vertical;
-            min-height: 45px;
             outline: none;
-            transition: all 0.3s ease;
         }
-        body.dark .analysis-box .matrix-item textarea,
-        body.dark .admin-tools-box textarea {
-            background: rgba(0,0,0,0.15);
-            color: #f0e8d0;
-            border-color: rgba(212,175,55,0.1);
-        }
-        .analysis-box .matrix-item textarea:focus,
-        .admin-tools-box textarea:focus { 
-            border-color: #d4af37; 
-            box-shadow: 0 0 0 4px rgba(212,175,55,0.1); 
-            background: #fff;
-        }
+        body.dark textarea, body.dark select { background: rgba(0,0,0,0.3); color: #f0e8d0; border-color: rgba(255,255,255,0.1); }
 
-        .admin-tools-box {
-            margin-top: 1.5rem;
-            padding: 1.2rem;
-            background: rgba(40,116,166,0.05);
-            border-radius: 12px;
-            border: 1px solid rgba(40,116,166,0.15);
-        }
-        .admin-tools-box label {
-            font-weight: 800;
-            font-size: 0.85rem;
-            color: #2874a6;
-            display: block;
-            margin-bottom: 0.4rem;
-        }
-        body.dark .admin-tools-box label { color: #85c1e9; }
-        
-        .keywords-container {
+        /* Action Modules - Sequential Flow */
+        .action-modules {
             display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        .keyword-tag {
-            padding: 0.4rem 0.8rem;
-            background: rgba(212,175,55,0.15);
-            border-radius: 20px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: 0.2s;
-            border: 1px solid transparent;
-        }
-        .keyword-tag:hover { background: rgba(212,175,55,0.3); }
-        .keyword-tag.selected {
-            background: #d4af37;
-            color: #fff;
-            font-weight: bold;
-        }
-        
-        .score-section {
+            flex-direction: column;
+            gap: 1rem;
             margin-top: 1.5rem;
             padding-top: 1rem;
-            border-top: 1px solid rgba(0,0,0,0.05);
+            border-top: 2px dashed rgba(212,175,55,0.3);
+        }
+
+        .module-row {
             display: flex;
             align-items: center;
             gap: 1rem;
             flex-wrap: wrap;
+            padding: 0.8rem;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
         }
-        .score-section label { font-weight: 800; font-size: 0.9rem; color: #2a1a0a; }
-        body.dark .score-section label { color: #e8d8c8; }
+        body.dark .module-row { background: rgba(0,0,0,0.1); }
+
+        .btn-small {
+            padding: 0.4rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-save { background: #2874a6; color: white; }
+        .btn-save:hover { background: #1a5276; }
+        .btn-approve-atlas { background: #27ae60; color: white; }
+        .btn-approve-gallery { background: #8e44ad; color: white; }
+        .btn-reject { background: #c0392b; color: white; }
+        .btn-ai { background: #6366f1; color: white; }
+
+        .empty-state { text-align: center; padding: 3rem; color: #888; }
+        .scroll-hint { text-align: center; padding: 0.8rem; color: #888; font-size: 0.85rem; border-top: 1px solid rgba(212,175,55,0.1); margin-top: 0.5rem; font-weight: 700; }
+        .btn-back-bottom { display: inline-block; margin-top: 2rem; padding: 0.8rem 1.5rem; background: rgba(212,175,55,0.2); color: #8a6d1f; border-radius: 30px; text-decoration: none; font-weight: 700; transition: 0.3s; }
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
@@ -317,78 +196,6 @@
         .obs-card.approved { border-color: #27ae60; border-width: 2px; }
         .obs-card.rejected { border-color: #e74c3c; border-width: 2px; }
         .obs-card.score5 { border-color: #d4af37; border-width: 2px; box-shadow: 0 0 20px rgba(212,175,55,0.15); }
-        
-        .cluster-tag {
-            display: inline-block;
-            padding: 0.1rem 0.6rem;
-            border-radius: 12px;
-            font-size: 0.6rem;
-            font-weight: 700;
-            background: rgba(40,116,166,0.1);
-            color: #2874a6;
-            border: 1px solid rgba(40,116,166,0.15);
-            margin-left: 0.3rem;
-        }
-        body.dark .cluster-tag { color: #85c1e9; background: rgba(40,116,166,0.05); }
-        
-        .guide-box {
-            margin-top: 0.8rem;
-            padding: 0.8rem;
-            background: rgba(212,175,55,0.05);
-            border-radius: 8px;
-            border: 1px solid rgba(212,175,55,0.15);
-            display: none;
-        }
-        body.dark .guide-box { background: rgba(212,175,55,0.02); }
-        .guide-box.active { display: block; }
-        .guide-box .guide-title {
-            font-weight: 800;
-            font-size: 0.8rem;
-            color: #8a6d1f;
-            margin-bottom: 0.3rem;
-        }
-        body.dark .guide-box .guide-title { color: #f9e79f; }
-        .guide-box .guide-item {
-            padding: 0.3rem 0.5rem;
-            border-right: 2px solid #d4af37;
-            margin-bottom: 0.3rem;
-            font-size: 0.8rem;
-            color: #4a3a2a;
-            background: rgba(255,255,255,0.3);
-            border-radius: 4px;
-        }
-        body.dark .guide-box .guide-item { color: #d0c0b0; background: rgba(0,0,0,0.05); }
-        
-        .ai-analysis-box {
-            margin-top: 0.8rem;
-            padding: 0.8rem;
-            background: rgba(99,102,241,0.05);
-            border-radius: 8px;
-            border: 1px solid rgba(99,102,241,0.15);
-        }
-        body.dark .ai-analysis-box { background: rgba(99,102,241,0.02); }
-        .ai-analysis-box .ai-title {
-            font-weight: 800;
-            font-size: 0.8rem;
-            color: #6366f1;
-            margin-bottom: 0.3rem;
-        }
-        body.dark .ai-analysis-box .ai-title { color: #818cf8; }
-        .ai-analysis-box .ai-item {
-            padding: 0.2rem 0.4rem;
-            font-size: 0.75rem;
-            color: #4a3a2a;
-        }
-        body.dark .ai-analysis-box .ai-item { color: #d0c0b0; }
-        
-        @media (max-width: 768px) {
-            .container { padding: 1.2rem; }
-            .top-bar { flex-direction: column; align-items: stretch; }
-            .obs-header { flex-direction: column; align-items: stretch; }
-            .obs-actions { flex-direction: column; }
-            .obs-actions .btn-small { width: 100%; text-align: center; }
-            .score-section { flex-direction: column; align-items: stretch; }
-        }
     </style>
 </head>
 <body>
@@ -397,7 +204,7 @@
             <a href="admin.html" class="back-link">↩ بازگشت به داشبورد</a>
         </div>
         
-        <h1 class="page-title">👁️ مدیریت مشاهدات</h1>
+        <h1 class="page-title">👁️ مدیریت ارتباطات و مشاهدات</h1>
         <div class="page-subtitle">بررسی، تحلیل و امتیازدهی مشاهدات خام بر اساس چارچوب سپهر خردمندی</div>
         
         <div class="stats-mini">
@@ -427,9 +234,7 @@
     <script>
         let allObservations = [];
         let currentFilter = 'all';
-        let currentAnalyzingId = null;
         
-        // ===== خوشه‌بندی بر اساس سند سپهر خردمندی =====
         const clusterMap = {
             'human': 'انسان',
             'knowledge': 'دانش و فناوری',
@@ -449,30 +254,17 @@
             const lowerText = text.toLowerCase();
             for (const [cluster, keywords] of Object.entries(clusterKeywords)) {
                 for (const keyword of keywords) {
-                    if (lowerText.includes(keyword)) {
-                        return cluster;
-                    }
+                    if (lowerText.includes(keyword)) return cluster;
                 }
             }
             return 'other';
         }
         
-        function getClusterLabel(cluster) {
-            return clusterMap[cluster] || 'سایر';
-        }
+        function getClusterLabel(cluster) { return clusterMap[cluster] || 'سایر'; }
         
-        function getKeywordsHtml(obsNumber, cluster) {
-            const keywords = clusterKeywords[cluster] || [];
-            let html = `<div class="keywords-container" id="kw-container-${obsNumber}">`;
-            keywords.forEach(kw => {
-                html += `<span class="keyword-tag" onclick="addKeywordToNote('${obsNumber}', '${kw}')">${kw}</span>`;
-            });
-            html += `</div>`;
-            return html;
-        }
-
         async function loadObservations() {
             try {
+                // دریافت تمام داده‌ها بدون حذف هیچ رکوردی
                 const response = await fetch('/api/get-connection-requests?type=observations&t=' + Date.now());
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || 'خطا در دریافت مشاهدات');
@@ -483,7 +275,7 @@
             } catch (error) {
                 console.error('Error:', error);
                 document.getElementById('observationsList').innerHTML = 
-                    `<div class="empty-state" style="color:red;">خطا: ${error.message}</div>`;
+                    `<div class="empty-state" style="color:red;">خطا در ارتباط با سرور: ${error.message}</div>`;
             }
         }
         
@@ -507,30 +299,14 @@
             renderObservations();
         }
 
-        window.addKeywordToNote = function(issueNumber, keyword) {
-            const noteBox = document.getElementById(`adminNote-${issueNumber}`);
-            if (noteBox) {
-                const currentVal = noteBox.value;
-                noteBox.value = currentVal ? currentVal + '، ' + keyword : keyword;
-            }
-            if (event && event.target) {
-                event.target.classList.toggle('selected');
-            }
-        }
-        
         function renderObservations() {
             const container = document.getElementById('observationsList');
             
             let filtered = allObservations;
-            if (currentFilter === 'pending') {
-                filtered = filtered.filter(o => o.status === 'pending');
-            } else if (currentFilter === 'approved') {
-                filtered = filtered.filter(o => o.status === 'approved' && o.score !== 5);
-            } else if (currentFilter === 'score5') {
-                filtered = filtered.filter(o => o.score === 5);
-            } else if (currentFilter === 'rejected') {
-                filtered = filtered.filter(o => o.status === 'rejected');
-            }
+            if (currentFilter === 'pending') filtered = filtered.filter(o => o.status === 'pending');
+            else if (currentFilter === 'approved') filtered = filtered.filter(o => o.status === 'approved' && o.score !== 5);
+            else if (currentFilter === 'score5') filtered = filtered.filter(o => o.score === 5);
+            else if (currentFilter === 'rejected') filtered = filtered.filter(o => o.status === 'rejected');
             
             if (filtered.length === 0) {
                 container.innerHTML = `<div class="empty-state">هیچ مشاهده‌ای با این وضعیت وجود ندارد</div>`;
@@ -539,128 +315,31 @@
             
             container.innerHTML = filtered.map(obs => {
                 let cluster = 'other';
-                let aiAnalysis = null;
-                
-                // اولویت با تحلیل هوش دوم است
-                if (obs.aiAnalysis) {
-                    aiAnalysis = obs.aiAnalysis;
-                    cluster = aiAnalysis.cluster || 'other';
-                } else if (obs.analysis && obs.analysis.adminCluster) {
-                    cluster = obs.analysis.adminCluster;
-                } else {
-                    cluster = detectCluster(obs.observation || '');
-                }
+                if (obs.aiAnalysis && obs.aiAnalysis.cluster) cluster = obs.aiAnalysis.cluster;
+                else if (obs.analysis && obs.analysis.adminCluster) cluster = obs.analysis.adminCluster;
+                else cluster = detectCluster(obs.observation || '');
                 
                 const clusterLabel = getClusterLabel(cluster);
-                
                 const statusMap = {
                     approved: `<span class="badge badge-approved">✅ تایید شده</span>`,
                     rejected: `<span class="badge badge-rejected">❌ رد شده</span>`,
                     pending: `<span class="badge badge-pending">⏳ در انتظار</span>`
                 };
                 
-                const scoreBadge = obs.score === 5 ? 
-                    `<span class="badge badge-score-5">⭐ امتیاز ۵</span>` : 
+                const scoreBadge = obs.score === 5 ? `<span class="badge badge-score-5">⭐ امتیاز ۵</span>` : 
                     (obs.score ? `<span class="badge" style="background:rgba(200,200,200,0.15);color:#888;">امتیاز ${obs.score}</span>` : '');
                 
-                const clusterBadge = cluster !== 'other' ? 
-                    `<span class="badge badge-cluster">📂 ${clusterLabel}</span>` : '';
-                
-                const isPending = obs.status === 'pending';
-                const isApproved = obs.status === 'approved' && obs.score !== 5;
-                const isScore5 = obs.score === 5;
+                const clusterBadge = cluster !== 'other' ? `<span class="badge badge-cluster">📂 ${clusterLabel}</span>` : '';
                 
                 let cardClass = 'obs-card';
-                if (isPending) cardClass += ' pending';
-                else if (isScore5) cardClass += ' score5';
-                else if (isApproved) cardClass += ' approved';
+                if (obs.status === 'pending') cardClass += ' pending';
+                else if (obs.score === 5) cardClass += ' score5';
+                else if (obs.status === 'approved') cardClass += ' approved';
                 else if (obs.status === 'rejected') cardClass += ' rejected';
-                
-                // دکمه‌های ساده شده
-                let actionButtons = '';
-                if (isPending) {
-                    actionButtons = `
-                        <div class="obs-actions">
-                            <button class="btn-small btn-approve" onclick="approveObservation('${obs.number}', 'atlas')">✅ تایید برای اطلس ظهور</button>
-                            <button class="btn-small btn-approve" onclick="approveObservation('${obs.number}', 'gallery')">✅ تایید برای گالری نام‌آوران</button>
-                            <button class="btn-small btn-reject" onclick="rejectObservation('${obs.number}')">❌ رد</button>
-                        </div>
-                    `;
-                }
                 
                 const analysis = obs.analysis || {};
                 
-                const analysisBox = `
-                    <div class="analysis-box" id="analysis-${obs.number}">
-                        <div class="title">📊 تحلیل ۵ سطحی و ابزارهای ادمین</div>
-                        
-                        <div class="admin-tools-box">
-                            <label>📂 تشخیص نهایی خوشه (توسط ادمین):</label>
-                            <select id="adminClusterSelect-${obs.number}" onchange="updateKeywordsView('${obs.number}', this.value)">
-                                <option value="human" ${cluster === 'human' ? 'selected' : ''}>خوشه اول: انسان</option>
-                                <option value="knowledge" ${cluster === 'knowledge' ? 'selected' : ''}>خوشه دوم: دانش و فناوری</option>
-                                <option value="governance" ${cluster === 'governance' ? 'selected' : ''}>خوشه سوم: حکمرانی و تمدن</option>
-                                <option value="survival" ${cluster === 'survival' ? 'selected' : ''}>خوشه چهارم: بقا و آینده</option>
-                                <option value="other">سایر / نیاز به بررسی</option>
-                            </select>
-
-                            <label style="margin-top:1rem; display:block;">🔑 کلیدواژه‌های ظهور (برای تکمیل سریع):</label>
-                            ${getKeywordsHtml(obs.number, cluster)}
-
-                            <label style="margin-top:1rem; display:block;">📝 نظر تحلیلی مشروح ادمین:</label>
-                            <textarea id="adminNote-${obs.number}" rows="3" placeholder="تحلیل عمیق خود را اینجا بنویسید...">${analysis.adminNote || ''}</textarea>
-                        </div>
-
-                        <div style="margin-top:1.5rem; border-top:1px dashed #ccc; padding-top:1rem;">
-                            <div class="matrix-item">
-                                <label>۱. ماتریس ظهورها</label>
-                                <textarea id="emergence-${obs.number}" rows="2">${analysis.emergenceMatrix || obs.matrix_emergence || ''}</textarea>
-                            </div>
-                            <div class="matrix-item">
-                                <label>۲. ماتریس لایه‌ها</label>
-                                <textarea id="layer-${obs.number}" rows="2">${analysis.layerMatrix || obs.matrix_layers || ''}</textarea>
-                            </div>
-                            <div class="matrix-item">
-                                <label>۳. ماتریس ارتباطات</label>
-                                <textarea id="connection-${obs.number}" rows="2">${analysis.connectionMatrix || obs.matrix_connections || ''}</textarea>
-                            </div>
-                            <div class="matrix-item">
-                                <label>۴. ماتریس مقیاس</label>
-                                <textarea id="scale-${obs.number}" rows="2">${analysis.scaleMatrix || obs.matrix_scale || ''}</textarea>
-                            </div>
-                            <div class="matrix-item">
-                                <label>۵. ماتریس ظرفیت</label>
-                                <textarea id="capacity-${obs.number}" rows="2">${analysis.capacityMatrix || obs.matrix_capacity || ''}</textarea>
-                            </div>
-                        </div>
-
-                        <div class="score-section">
-                            <label>⭐ امتیاز (۱ تا ۵):</label>
-                            <select id="score-${obs.number}">
-                                <option value="1" ${obs.score === 1 ? 'selected' : ''}>۱</option>
-                                <option value="2" ${obs.score === 2 ? 'selected' : ''}>۲</option>
-                                <option value="3" ${obs.score === 3 ? 'selected' : ''}>۳</option>
-                                <option value="4" ${obs.score === 4 ? 'selected' : ''}>۴</option>
-                                <option value="5" ${obs.score === 5 ? 'selected' : ''}>۵</option>
-                            </select>
-                            <span class="score-hint">(فقط امتیاز ۵ به گالری اطلس ظهور می‌رود)</span>
-                            <button class="btn-small btn-approve" onclick="saveAnalysis('${obs.number}')">💾 ذخیره تحلیل</button>
-                            <button class="btn-small btn-ai" onclick="autoFillAnalysis('${obs.number}')">🤖 تحلیل هوشمند</button>
-                        </div>
-                    </div>
-                `;
-                
-                // نمایش منطق اتصال معنایی
-                let connectionLogicHtml = '';
-                if (obs.aiAnalysis && obs.aiAnalysis.connection_logic) {
-                    connectionLogicHtml = `
-                        <div style="margin-top:0.8rem; padding:0.6rem; background:rgba(99,102,241,0.05); border-radius:8px; border-right:3px solid #6366f1;">
-                            <div style="font-weight:700; font-size:0.75rem; color:#6366f1; margin-bottom:0.3rem;">🔗 منطق اتصال معنایی:</div>
-                            <div style="font-size:0.8rem; color:#4a3a2a; line-height:1.6;">${obs.aiAnalysis.connection_logic}</div>
-                        </div>
-                    `;
-                }
-
+                // ساختار نمایش اطلاعات برای ادمین
                 return `
                     <div class="${cardClass}" id="card-${obs.number}">
                         <div class="obs-header">
@@ -672,15 +351,87 @@
                             </div>
                             <div class="obs-meta">${new Date(obs.createdAt).toLocaleString('fa-IR')}</div>
                         </div>
+
+                        <!-- 1. مشاهده عضو -->
+                        <div class="section-divider">👁️ مشاهده ثبت شده توسط عضو</div>
                         <div class="obs-body">
                             <p>${obs.observation || 'متن مشاهده موجود نیست'}</p>
                         </div>
-                        ${connectionLogicHtml}
-                        ${actionButtons}
-                        <div style="margin-top:0.8rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
-                            <button class="btn-small btn-module" onclick="toggleAnalysis('${obs.number}')">📊 تحلیل ۵ سطحی</button>
+
+                        <!-- 2. راهنمایی سه سطحی (اگر وجود داشته باشد) -->
+                        ${obs.guidance ? `
+                        <div class="section-divider">💡 راهنمایی سه سطحی سیستم</div>
+                        <div class="guide-box">
+                            <div class="guide-item">سطح ۱: ${obs.guidance.level1 || '-'}</div>
+                            <div class="guide-item">سطح ۲: ${obs.guidance.level2 || '-'}</div>
+                            <div class="guide-item">سطح ۳: ${obs.guidance.level3 || '-'}</div>
+                        </div>` : ''}
+
+                        <!-- 3. ماتریس 5 سطحی و ابزار ادمین -->
+                        <div class="admin-panel">
+                            <div class="section-divider">📊 ماتریس ۵ سطحی و تحلیل ادمین</div>
+                            
+                            <div class="matrix-grid">
+                                <div class="matrix-item">
+                                    <label>۱. ماتریس ظهورها</label>
+                                    <textarea id="emergence-${obs.number}" rows="2">${analysis.emergenceMatrix || obs.matrix_emergence || ''}</textarea>
+                                </div>
+                                <div class="matrix-item">
+                                    <label>۲. ماتریس لایه‌ها</label>
+                                    <textarea id="layer-${obs.number}" rows="2">${analysis.layerMatrix || obs.matrix_layers || ''}</textarea>
+                                </div>
+                                <div class="matrix-item">
+                                    <label>۳. ماتریس ارتباطات</label>
+                                    <textarea id="connection-${obs.number}" rows="2">${analysis.connectionMatrix || obs.matrix_connections || ''}</textarea>
+                                </div>
+                                <div class="matrix-item">
+                                    <label>۴. ماتریس مقیاس</label>
+                                    <textarea id="scale-${obs.number}" rows="2">${analysis.scaleMatrix || obs.matrix_scale || ''}</textarea>
+                                </div>
+                                <div class="matrix-item">
+                                    <label>۵. ماتریس ظرفیت</label>
+                                    <textarea id="capacity-${obs.number}" rows="2">${analysis.capacityMatrix || obs.matrix_capacity || ''}</textarea>
+                                </div>
+                            </div>
+
+                            <div class="matrix-item" style="margin-top:1rem;">
+                                <label>📝 نظر تحلیلی نهایی ادمین:</label>
+                                <textarea id="adminNote-${obs.number}" rows="3" placeholder="تحلیل عمیق خود را اینجا بنویسید...">${analysis.adminNote || ''}</textarea>
+                            </div>
                         </div>
-                        ${analysisBox}
+
+                        <!-- 4. ماژول‌های اقدام (به ترتیب) -->
+                        <div class="action-modules">
+                            <!-- مرحله 1: امتیاز دهی -->
+                            <div class="module-row">
+                                <label style="font-weight:700; color:#2a1a0a;">⭐ امتیازدهی (۱ تا ۵):</label>
+                                <select id="score-${obs.number}" style="width:auto; min-width:100px;">
+                                    <option value="1" ${obs.score === 1 ? 'selected' : ''}>۱</option>
+                                    <option value="2" ${obs.score === 2 ? 'selected' : ''}>۲</option>
+                                    <option value="3" ${obs.score === 3 ? 'selected' : ''}>۳</option>
+                                    <option value="4" ${obs.score === 4 ? 'selected' : ''}>۴</option>
+                                    <option value="5" ${obs.score === 5 ? 'selected' : ''}>۵ (عالی)</option>
+                                </select>
+                                <button class="btn-small btn-ai" onclick="autoFillAnalysis('${obs.number}')">🤖 تحلیل هوشمند</button>
+                            </div>
+
+                            <!-- مرحله 2: ذخیره -->
+                            <div class="module-row" style="justify-content:flex-end;">
+                                <button class="btn-small btn-save" onclick="saveAnalysis('${obs.number}')">💾 ذخیره تحلیل و امتیاز</button>
+                            </div>
+
+                            <!-- مرحله 3: تصمیم نهایی (فقط اگر قبلا رد یا تایید نشده باشد) -->
+                            ${obs.status === 'pending' ? `
+                            <div class="module-row" style="justify-content:space-between; background:rgba(255,255,255,0.5);">
+                                <span style="font-size:0.8rem; color:#666;">تصمیم نهایی پس از ذخیره:</span>
+                                <div style="display:flex; gap:0.5rem;">
+                                    <button class="btn-small btn-approve-atlas" onclick="approveObservation('${obs.number}', 'atlas')">✅ تایید برای اطلس ظهور</button>
+                                    <button class="btn-small btn-approve-gallery" onclick="approveObservation('${obs.number}', 'gallery')">✅ تایید برای گالری نام‌آوران</button>
+                                    <button class="btn-small btn-reject" onclick="rejectObservation('${obs.number}')">❌ رد مشاهده</button>
+                                </div>
+                            </div>
+                            ` : ''}
+                        </div>
                     </div>
                 `;
             }).join('');
@@ -690,54 +441,8 @@
             }
         }
         
-        function toggleAnalysis(issueNumber) {
-            const box = document.getElementById(`analysis-${issueNumber}`);
-            if (box) {
-                if (box.classList.contains('active')) {
-                    box.classList.remove('active');
-                    currentAnalyzingId = null;
-                } else {
-                    document.querySelectorAll('.analysis-box').forEach(b => b.classList.remove('active'));
-                    box.classList.add('active');
-                    currentAnalyzingId = issueNumber;
-                    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    
-                    const obs = allObservations.find(o => o.number == issueNumber);
-                    if(obs) {
-                        let cluster = 'other';
-                        if (obs.aiAnalysis && obs.aiAnalysis.cluster) {
-                            cluster = obs.aiAnalysis.cluster;
-                        } else if (obs.analysis && obs.analysis.adminCluster) {
-                            cluster = obs.analysis.adminCluster;
-                        } else {
-                            cluster = detectCluster(obs.observation || '');
-                        }
-                        updateKeywordsView(issueNumber, cluster);
-                    }
-                }
-            }
-        }
-        
-        window.updateKeywordsView = function(issueNumber, clusterValue) {
-            const container = document.getElementById(`kw-container-${issueNumber}`);
-            if(container) {
-                container.innerHTML = '';
-                const kws = clusterKeywords[clusterValue] || [];
-                kws.forEach(kw => {
-                    const span = document.createElement('span');
-                    span.className = 'keyword-tag';
-                    span.textContent = kw;
-                    span.onclick = () => addKeywordToNote(issueNumber, kw);
-                    container.appendChild(span);
-                });
-            }
-        }
-        
         async function approveObservation(issueNumber, target) {
-            const targetNames = {
-                'atlas': 'اطلس ظهور',
-                'gallery': 'گالری نام‌آوران'
-            };
+            const targetNames = { 'atlas': 'اطلس ظهور', 'gallery': 'گالری نام‌آوران' };
             if (!confirm(`آیا از تایید این مشاهده برای ${targetNames[target]} اطمینان دارید؟`)) return;
             try {
                 const response = await fetch('/api/approve-connection', {
@@ -768,17 +473,14 @@
         }
         
         async function saveAnalysis(issueNumber) {
-            const adminCluster = document.getElementById(`adminClusterSelect-${issueNumber}`)?.value || 'other';
             const adminNote = document.getElementById(`adminNote-${issueNumber}`)?.value.trim() || '';
-
             const analysis = {
                 emergenceMatrix: document.getElementById(`emergence-${issueNumber}`).value.trim(),
                 layerMatrix: document.getElementById(`layer-${issueNumber}`).value.trim(),
                 connectionMatrix: document.getElementById(`connection-${issueNumber}`).value.trim(),
                 scaleMatrix: document.getElementById(`scale-${issueNumber}`).value.trim(),
                 capacityMatrix: document.getElementById(`capacity-${issueNumber}`).value.trim(),
-                adminNote: adminNote,
-                adminCluster: adminCluster
+                adminNote: adminNote
             };
             
             const score = parseInt(document.getElementById(`score-${issueNumber}`).value) || 0;
@@ -798,16 +500,15 @@
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.error || 'خطا در ذخیره تحلیل');
                 
-                alert('✅ تحلیل با موفقیت ذخیره شد.');
-                loadObservations();
+                alert('✅ تحلیل و امتیاز با موفقیت ذخیره شد. اکنون می‌توانید تصمیم نهایی را بگیرید.');
+                // رفرش نمی‌کنیم تا ادمین بتواند دکمه تایید/رد را بزند
+                // اما آمار را آپدیت می‌کنیم
+                loadObservations(); 
             } catch (error) { 
                 alert('خطا: ' + error.message); 
             }
         }
         
-        // ============================================================
-        // ===== دستیار هوشمند ادمین با OpenRouter (Qwen) =====
-        // ============================================================
         window.autoFillAnalysis = async function(issueNumber) {
             const obs = allObservations.find(o => o.number === issueNumber);
             if (!obs) return;
@@ -818,7 +519,6 @@
                 btn.disabled = true;
             }
 
-            // فراخوانی هوش دوم از طریق API جدید
             try {
                 const response = await fetch('/api/approve-connection', {
                     method: 'POST',
@@ -826,7 +526,7 @@
                     body: JSON.stringify({ 
                         action: 'deep_analyze', 
                         observation: obs.observation,
-                        userCountry: 'IR' // یا هر کشور دیگری
+                        userCountry: 'IR'
                     })
                 });
                 
@@ -836,27 +536,17 @@
                 const analysis = result.analysis;
                 
                 if (analysis) {
-                    const clusterSelect = document.getElementById(`adminClusterSelect-${issueNumber}`);
-                    if (clusterSelect && analysis.cluster) {
-                        clusterSelect.value = analysis.cluster;
-                    }
-                    
-                    // پر کردن فیلدها بر اساس ساختار جدید JSON
                     document.getElementById(`emergence-${issueNumber}`).value = (analysis.raw_emergence || []).join('\n');
-                    
                     if (analysis.matrix_layers) {
                         document.getElementById(`layer-${issueNumber}`).value = 
                             `فردی: ${analysis.matrix_layers.individual}\nاجتماعی: ${analysis.matrix_layers.social}\nنهادی: ${analysis.matrix_layers.institutional}\nتمدنی: ${analysis.matrix_layers.civilizational}`;
                     }
-                    
                     document.getElementById(`connection-${issueNumber}`).value = analysis.connections || '';
                     document.getElementById(`scale-${issueNumber}`).value = analysis.scale || '';
                     document.getElementById(`capacity-${issueNumber}`).value = (analysis.neglected_capacity || []).join('\n');
                     document.getElementById(`adminNote-${issueNumber}`).value = analysis.deep_insight || '';
                     
-                    updateKeywordsView(issueNumber, analysis.cluster || 'other');
-                    
-                    alert('✅ تحلیل هوشمند (Qwen) آماده شد. لطفاً بررسی و ذخیره کنید.');
+                    alert('✅ تحلیل هوشمند آماده شد. لطفاً بررسی و ذخیره کنید.');
                 } else {
                     alert('❌ تحلیل خالی دریافت شد.');
                 }
@@ -871,7 +561,6 @@
             }
         }
         
-        // ===== بارگذاری اولیه =====
         loadObservations();
     </script>
 </body>
