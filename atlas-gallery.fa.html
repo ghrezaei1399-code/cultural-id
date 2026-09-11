@@ -210,6 +210,23 @@
         }
         body.dark .theme-toggle { color: #f9e79f; background: rgba(0,0,0,0.2); }
         .theme-toggle:hover { transform: scale(1.1); }
+        
+        /* استایل دکمه پرونده کامل */
+        .btn-full-profile {
+            margin-top: 0.5rem;
+            width: 100%;
+            padding: 0.4rem;
+            background: rgba(212,175,55,0.1);
+            border: 1px solid #d4af37;
+            border-radius: 8px;
+            color: #8a6d1f;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: 0.3s;
+        }
+        .btn-full-profile:hover { background: rgba(212,175,55,0.2); }
+        body.dark .btn-full-profile { color: #f9e79f; border-color: #f9e79f; }
+
         @media (max-width: 768px) {
             .container { padding: 1.2rem; }
             .top-bar { flex-direction: column; align-items: stretch; }
@@ -261,14 +278,14 @@
 
         async function loadData() {
             try {
-                // ۱. دریافت اطلس ظهور (مشاهدات با امتیاز ۵)
+                // ۱. دریافت اطلس ظهور (مشاهدات با امتیاز ۵ یا برچسب gallery)
                 const atlasRes = await fetch('/api/get-connection-requests?type=observations&t=' + new Date().getTime());
                 const atlasData = await atlasRes.json();
                 if (!atlasRes.ok) throw new Error(atlasData.error || 'خطا در دریافت اطلس');
                 allAtlasItems = (atlasData.observations || [])
-                    .filter(obs => obs.score === 5 && obs.status === 'approved');
+                    .filter(obs => (obs.score === 5 || (obs.labels && obs.labels.includes('gallery'))) && obs.status === 'approved');
 
-                // ۲. دریافت دستاوردهای نام‌آوران (emergence) - بدون شرط امتیاز
+                // ۲. دریافت دستاوردهای نام‌آوران (emergence)
                 const usersRes = await fetch('/api/get-users?t=' + new Date().getTime());
                 const usersData = await usersRes.json();
                 if (!usersRes.ok) throw new Error(usersData.error || 'خطا در دریافت کاربران');
@@ -278,8 +295,6 @@
                     usersData.users.forEach(user => {
                         if (user.achievements && Array.isArray(user.achievements)) {
                             user.achievements.forEach(ach => {
-                                // فقط دستاوردهای نام‌آوران (emergence) که تأیید شده‌اند
-                                // بدون شرط امتیاز
                                 if (ach.section === 'emergence' && ach.status === 'approved') {
                                     allAchievements.push({
                                         ...ach,
@@ -330,7 +345,7 @@
                 date: obs.createdAt,
                 category: 'atlas',
                 module: obs.module,
-                analysis: obs.analysis || {}
+                aiAnalysis: obs.aiAnalysis || null // دریافت تحلیل هوش دوم
             }));
 
             const achievementItems = allAchievements.map(ach => ({
@@ -384,6 +399,12 @@
                 }
 
                 const date = item.date ? new Date(item.date).toLocaleString('fa-IR') : '---';
+                
+                // دکمه مشاهده پرونده کامل برای اطلس
+                let detailButton = '';
+                if (isAtlas) {
+                    detailButton = `<button onclick="showAtlasDetail(${item.id})" class="btn-full-profile">📊 مشاهده پرونده کامل ظهور</button>`;
+                }
 
                 return `
                     <div class="gallery-card ${isAtlas ? 'atlas' : 'achievement'}">
@@ -397,10 +418,42 @@
                             </div>
                             ${isAtlas ? `<span class="badge badge-atlas">🏛️ اطلس ظهور</span>` : ''}
                             ${isAchievement ? `<span class="badge badge-achievement">🏆 نام‌آور</span>` : ''}
+                            ${detailButton}
                         </div>
                     </div>
                 `;
             }).join('');
+        }
+
+        // تابع نمایش جزئیات کامل پرونده ظهور
+        window.showAtlasDetail = function(issueNumber) {
+            const obs = allAtlasItems.find(o => o.number === issueNumber);
+            if (!obs) return;
+
+            const ai = obs.aiAnalysis || {};
+            const analysisNote = ai.analysis_note || ai.deep_insight || 'تحلیلی ثبت نشده است.';
+            const guideInd = ai.guide_individual || '---';
+            const guideNet = ai.guide_network || '---';
+            const guidePol = ai.guide_policy || '---';
+            const emergence = ai.matrix_emergence || ai.raw_emergence ? (Array.isArray(ai.raw_emergence) ? ai.raw_emergence.join(', ') : ai.raw_emergence) : '---';
+            const layers = ai.matrix_layers || '---';
+            
+            const detailHtml = `
+                <div style="text-align:right; direction:rtl; line-height:1.8;">
+                    <h3 style="color:#8a6d1f; border-bottom:1px solid #d4af37; padding-bottom:0.5rem;">🏛️ پرونده ظهور #${issueNumber}</h3>
+                    <p><strong>مشاهده خام:</strong> ${obs.observation}</p>
+                    <hr style="border:0; border-top:1px dashed #ccc; margin:1rem 0;">
+                    <p><strong>💡 بینش عمیق (هوش دوم):</strong> ${analysisNote}</p>
+                    <p><strong>📍 راهنمای فردی:</strong> ${guideInd}</p>
+                    <p><strong>🌐 راهنمای شبکه‌ای:</strong> ${guideNet}</p>
+                    <p><strong>🏛️ راهنمای سیاستی:</strong> ${guidePol}</p>
+                    <hr style="border:0; border-top:1px dashed #ccc; margin:1rem 0;">
+                    <p><strong>📊 ظهورها:</strong> ${emergence}</p>
+                    <p><strong>📊 لایه‌ها:</strong> ${typeof layers === 'object' ? JSON.stringify(layers) : layers}</p>
+                </div>
+            `;
+            
+            alert(detailHtml.replace(/<[^>]*>/g, '').substring(0, 500) + '...'); // برای سادگی از alert استفاده شد
         }
 
         loadData();
