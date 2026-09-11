@@ -5,7 +5,7 @@ module.exports = async function handler(req, res) {
   }
 
   const token = process.env.OBSERVER_TOKEN || process.env.GH_TOKEN;
-  const groqKey = process.env.GROQ_API_KEY; // کلید هوش دوم
+  const openRouterKey = process.env.OPENROUTER_API_KEY; // استفاده از کلید موجود
   
   if (!token) {
     return res.status(500).json({ error: 'Token is not configured' });
@@ -17,8 +17,8 @@ module.exports = async function handler(req, res) {
 
   // ===== بخش هوش دوم: تحلیل عمیق سپهری (Deep Analysis) =====
   if (action === 'deep_analyze' && observation) {
-    if (!groqKey) {
-      return res.status(500).json({ error: 'GROQ_API_KEY is missing for deep analysis' });
+    if (!openRouterKey) {
+      return res.status(500).json({ error: 'OPENROUTER_API_KEY is missing for deep analysis' });
     }
 
     // بارگذاری دانش پایه (سند آزمایشگاه سپهر خردمندی)
@@ -75,14 +75,15 @@ module.exports = async function handler(req, res) {
     `;
 
     try {
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${groqKey}`,
+          'Authorization': `Bearer ${openRouterKey}`,
           'Content-Type': 'application/json',
+          'HTTP-Referer': 'https://cultural-id.vercel.app',
         },
         body: JSON.stringify({
-          model: 'qwen-2.5-72b',
+          model: 'qwen/qwen-2.5-72b-instruct', // مدل قدرتمند و رایگان/ارزان
           messages: [
             { role: 'system', content: SEPEHR_KNOWLEDGE_BASE },
             { role: 'user', content: prompt }
@@ -98,7 +99,7 @@ module.exports = async function handler(req, res) {
 
       return res.status(200).json({ success: true, analysis: deepAnalysis });
     } catch (error) {
-      console.error('Groq API Error:', error);
+      console.error('OpenRouter API Error:', error);
       return res.status(500).json({ error: 'Error in deep analysis by AI' });
     }
   }
