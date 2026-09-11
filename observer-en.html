@@ -384,6 +384,43 @@
         }
         body.dark .tracking-link { color: #85c1e9; background: rgba(40,116,166,0.05); }
         .tracking-link:hover { background: rgba(40,116,166,0.15); transform: translateY(-2px); }
+
+        /* ===== Feedback Module Styles ===== */
+        #feedbackModule {
+            display: none; 
+            margin-top: 2rem; 
+            padding: 1.5rem; 
+            background: rgba(212,175,55,0.1); 
+            border-radius: 16px; 
+            border: 2px solid #d4af37; 
+            animation: fadeIn 0.5s ease;
+        }
+        #feedbackModule h3 {
+            color: #8a6d1f; 
+            text-align: center; 
+            margin-bottom: 1rem;
+        }
+        body.dark #feedbackModule h3 { color: #f9e79f; }
+        #feedbackModule p {
+            text-align: center; 
+            font-size: 0.9rem; 
+            margin-bottom: 1.5rem;
+        }
+        body.dark #feedbackModule p { color: #d0c0b0; }
+        #feedbackModule textarea {
+            width: 100%; 
+            padding: 0.8rem; 
+            border-radius: 12px; 
+            border: 2px solid rgba(212,175,55,0.2); 
+            background: rgba(255,255,255,0.5);
+            font-family: inherit;
+            margin-bottom: 1rem;
+        }
+        body.dark #feedbackModule textarea {
+            background: rgba(0,0,0,0.15);
+            color: #f0e8d0;
+            border-color: rgba(212,175,55,0.15);
+        }
         
         @media (max-width: 768px) {
             .container { padding: 1rem; }
@@ -469,6 +506,27 @@
                 <div class="detail-title">📊 AI Analysis</div>
                 <div id="aiResultContent"></div>
             </div>
+        </div>
+
+        <!-- ===== Human Feedback Module (New) ===== -->
+        <div id="feedbackModule">
+            <h3>📊 Human Feedback Module</h3>
+            <p>
+                If you took action based on the received guide, please report the result here. 
+                This feedback goes directly to the <strong>Atlas of Emergence</strong> and helps others.
+            </p>
+            
+            <div class="form-group">
+                <label>Your Membership Code:</label>
+                <input type="text" id="feedbackUserCode" placeholder="CIM-XXXX-XXXX-XXXX" />
+            </div>
+            
+            <div class="form-group">
+                <label>Action Result & Feedback:</label>
+                <textarea id="feedbackText" rows="4" placeholder="What happened? What changed? What challenges did you face?"></textarea>
+            </div>
+            
+            <button onclick="submitFeedback()" class="btn btn-primary" style="width:100%;">📤 Send Feedback to Atlas</button>
         </div>
         
         <div class="back-row">
@@ -763,6 +821,9 @@
                 resultError.style.display = 'none';
                 resultBox.style.display = 'block';
                 
+                // Show Feedback Module
+                document.getElementById('feedbackModule').style.display = 'block';
+                
                 submitBtn.textContent = '✅ Submitted';
                 
                 document.querySelectorAll('.obs-text').forEach(t => t.value = '');
@@ -781,6 +842,45 @@
                 submitBtn.disabled = false;
                 
                 resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        // ===== Feedback Submission Function =====
+        async function submitFeedback() {
+            const userCode = document.getElementById('feedbackUserCode').value.trim();
+            const feedbackText = document.getElementById('feedbackText').value.trim();
+            
+            if (!userCode || !feedbackText) {
+                alert('Please enter your membership code and feedback text.');
+                return;
+            }
+
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '⏳ Sending...';
+
+            try {
+                const response = await fetch('/api/submit-feedback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        cardCode: userCode,
+                        feedback: feedbackText,
+                        type: 'observation_feedback'
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (!response.ok) throw new Error(result.error || 'Error sending feedback');
+
+                alert('✅ Your feedback has been successfully sent to the Atlas of Emergence. Thank you!');
+                document.getElementById('feedbackModule').style.display = 'none';
+                
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+                btn.disabled = false;
+                btn.textContent = '📤 Send Feedback to Atlas';
             }
         }
 
