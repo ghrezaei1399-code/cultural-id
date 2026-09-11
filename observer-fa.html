@@ -541,7 +541,7 @@
     
     <script>
         // ============================================================
-        // توابع مدیریت ماژول‌ها و باکس‌ها (بدون تغییر)
+        // Module & Box Management Functions
         // ============================================================
         function selectModule(btn, module) {
             const parent = btn.closest('.observation-box');
@@ -615,7 +615,7 @@
         }
 
         // ============================================================
-        // کلمات ممنوعه (بدون تغییر)
+        // Forbidden Words (Unchanged)
         // ============================================================
         const FORBIDDEN_WORDS = [
             'جنگ', 'خشونت', 'قتل', 'کشتار', 'ترور', 'بمب', 'انفجار',
@@ -653,7 +653,7 @@
         }
 
         // ============================================================
-        // ===== تابع اصلی ثبت مشاهدات (اصلاح شده) =====
+        // Main Submit Function (Modified)
         // ============================================================
         async function submitObservations() {
             const userCode = document.getElementById('userCode').value.trim();
@@ -700,7 +700,7 @@
             aiResultDetail.classList.remove('active');
 
             try {
-                // فیلتر کلمات ممنوعه
+                // Filter forbidden words
                 for (let i = 0; i < observations.length; i++) {
                     const obs = observations[i];
                     const filterResult = fastFilter(obs.text);
@@ -711,16 +711,18 @@
 
                 submitBtn.textContent = '⏳ در حال ثبت نهایی...';
 
-               // تغییر آدرس به submit-request که هم اکنون شامل بخش بازخورد است
-const response = await fetch('/api/submit-request', { 
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-        cardCode: userCode,
-        feedback: feedbackText,
-        type: 'observation_feedback' // این تایپ باید دقیقاً با شرط داخل API یکی باشد
-    })
-});
+                const response = await fetch('/api/submit-request', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'observations',
+                        cardCode: userCode,
+                        observations: observations.map(o => ({
+                            text: o.text,
+                            module: o.module
+                        }))
+                    })
+                });
                 
                 const result = await response.json();
                 
@@ -729,7 +731,7 @@ const response = await fetch('/api/submit-request', {
                 }
                 
                 // ============================================================
-                // نمایش نتایج دریافتی از سرور با ۵ ماتریس و وضعیت ماژول
+                // Display results with 5 matrices + module status
                 // ============================================================
                 let aiDetailsHtml = '';
                 if (result.issues && result.issues.length > 0) {
@@ -738,7 +740,6 @@ const response = await fetch('/api/submit-request', {
                         const moduleStatus = issue.moduleStatus || 'pending';
                         const moduleMessage = issue.moduleMessage || '';
                         
-                        // ترجمه وضعیت ماژول
                         const moduleStatusLabels = {
                             'pending': '⏳ در انتظار پاسخ هم‌فرهنگ‌ها',
                             'completed': '✅ تکمیل شد',
@@ -751,7 +752,6 @@ const response = await fetch('/api/submit-request', {
                         };
                         const statusText = moduleStatusLabels[moduleStatus] || moduleStatus;
                         
-                        // کلاس CSS برای وضعیت
                         const statusClass = moduleStatus === 'success' ? 'success' :
                                            moduleStatus === 'revision' ? 'revision' :
                                            moduleStatus === 'failed' ? 'failed' :
@@ -766,7 +766,6 @@ const response = await fetch('/api/submit-request', {
                                 'survival': 'بقا و آینده'
                             };
                             
-                            // ===== نمایش ماژول انتخاب‌شده و وضعیت آن =====
                             const moduleNames = {
                                 'collaboration': '🤝 همفکری با دیگران',
                                 'related': '👁️ مشاهدات مرتبط دیگران',
@@ -812,7 +811,7 @@ const response = await fetch('/api/submit-request', {
                     aiResultDetail.classList.add('active');
                 }
                 
-                // ===== نمایش کد رهگیری با لینک پیگیری =====
+                // ===== Show tracking code with link =====
                 const trackingCode = result.trackingCode || '---';
                 const trackingLink = trackingCode !== '---' ? 
                     `<a href="track-observation.html?code=${encodeURIComponent(trackingCode)}" class="tracking-link">🔍 پیگیری وضعیت مشاهده</a>` : '';
@@ -822,7 +821,7 @@ const response = await fetch('/api/submit-request', {
                 resultError.style.display = 'none';
                 resultBox.style.display = 'block';
                 
-                // نمایش ماژول بازخورد
+                // Show Feedback Module
                 document.getElementById('feedbackModule').style.display = 'block';
                 
                 submitBtn.textContent = '✅ ثبت شد';
