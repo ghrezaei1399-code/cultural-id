@@ -28,7 +28,7 @@ module.exports = async function handler(req, res) {
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
 
-    // ============================================================
+      // ============================================================
     // بخش جدید: ثبت بازخورد انسانی (Human Feedback)
     // ============================================================
     if (type === 'observation_feedback') {
