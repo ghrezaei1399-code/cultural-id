@@ -147,10 +147,8 @@
             background: rgba(255,255,255,0.2);
             border-radius: 8px;
             border-right: 3px solid rgba(212,175,55,0.3);
-               /* ... استایل‌های قبلی ... */
-    border-bottom: 2px dashed #d4af37; /* اضافه کردن خط‌چین طلایی */
-    margin-bottom: 1rem;
-}
+            border-bottom: 2px dashed #d4af37;
+            margin-bottom: 1rem;
         }
         body.dark .obs-body { background: rgba(0,0,0,0.1); }
         .obs-body p { font-size: 0.9rem; color: #4a4a5a; line-height: 1.6; }
@@ -853,7 +851,8 @@
                         <div class="guide-item"><strong>🏛️ سطح سیاستی:</strong> ${guide.policy || aiAnalysis?.guide_policy || 'توصیه‌ای ثبت نشده است.'}</div>
                     </div>
                 `;
-                                // ===== نمایش منطق اتصال معنایی (جدید) =====
+                
+                // ===== نمایش منطق اتصال معنایی (جدید) =====
                 let connectionLogicHtml = '';
                 if (obs.aiAnalysis && obs.aiAnalysis.connection_logic) {
                     connectionLogicHtml = `
@@ -895,11 +894,6 @@
             }).join('');
             
             if (filtered.length > 5) {
-                container.innerHTML += `<div class="scroll-hint">⬇️ ${filtered.length} مشاهده وجود دارد (اسکرول کنید)</div>`;
-            }
-        }
-    
-                        if (filtered.length > 5) {
                 container.innerHTML += `<div class="scroll-hint">⬇️ ${filtered.length} مشاهده وجود دارد (اسکرول کنید)</div>`;
             }
         }
@@ -1095,9 +1089,9 @@
         }
         
         // ============================================================
-        // ===== دستیار هوشمند ادمین با OpenRouter =====
+        // ===== دستیار هوشمند ادمین با OpenRouter (Qwen) =====
         // ============================================================
-                         const SEPEHR_ADMIN_PROMPT = `
+        const SEPEHR_ADMIN_PROMPT = `
 === هویت تو ===
 تو "تحلیلگر ارشد آزمایشگاه سپهر خردمندی" هستی. وظیفه تو تبدیل "مشاهده خام" به "پرونده ظهور" است.
 
@@ -1136,39 +1130,24 @@
     "guide_individual": "اقدام کوچک برای ارتقای کیفیت مشاهده یا بهبود وضعیت (بسیار عملی)",
     "guide_network": "ایده برای هم‌افزایی با هم‌فرهنگان بر اساس الگوی کشف شده",
     "guide_policy": "پیشنهاد سیاستی مبتنی بر کشف گسست‌ها یا ناهم‌ترازی‌ها"
-}`;           
-                
+}`;
+
         async function generateAdminAnalysis(obsText) {
             try {
                 const isPersian = /[\u0600-\u06FF]/.test(obsText);
-                const systemPrompt = isPersian ? SEPEHR_ADMIN_PROMPT : `You are a senior analyst of the "Sphere of Wisdom" framework. Help the admin with deep analysis of observations.
-
-**Output Structure (JSON only):**
-{
-    "cluster": "human" | "knowledge" | "governance" | "survival",
-    "emergence": "Emergence Matrix (4 items)",
-    "layer": "Layers Matrix (individual, social, institutional, global)",
-    "connection": "Connections Matrix with other spheres",
-    "scale": "Scale Matrix (local, regional, global)",
-    "capacity": "Capacity Matrix (4 neglected capacities)",
-    "note": "Analytical note for admin (concise and deep)",
-    "guide_individual": "Guide - Individual level (small documented action)",
-    "guide_network": "Guide - Network level (connect with like-minded)",
-    "guide_policy": "Guide - Policy level (documented questioning)"
-}`;
+                const systemPrompt = isPersian ? SEPEHR_ADMIN_PROMPT : `You are a senior analyst of the "Sphere of Wisdom" framework. Help the admin with deep analysis of observations. Return ONLY JSON.`;
 
                 const userPrompt = isPersian ?
 `مشاهده: "${obsText}"
-
 تحلیل بر اساس چارچوب سپهر خردمندی. فقط JSON برگردان.` :
 `Observation: "${obsText}"
-
 Analyze based on the Sphere of Wisdom framework. Return ONLY JSON.`;
 
+                // استفاده از کلید OpenRouter که در Vercel تنظیم شده است
                 const openRouterKey = process.env.OPENROUTER_API_KEY;
                 
-                if (!openRouterKey || typeof openRouterKey === 'undefined') {
-                    console.warn('OPENROUTER_API_KEY not found, using fallback');
+                if (!openRouterKey) {
+                    console.warn('OPENROUTER_API_KEY not found');
                     return null;
                 }
 
@@ -1181,13 +1160,13 @@ Analyze based on the Sphere of Wisdom framework. Return ONLY JSON.`;
                         'X-Title': 'Global Smart Cultural Identity',
                     },
                     body: JSON.stringify({
-                        model: 'google/gemini-2.0-flash-exp:free',
+                        model: 'qwen/qwen-2.5-72b-instruct', // استفاده از مدل قدرتمند Qwen
                         messages: [
                             { role: 'system', content: systemPrompt },
                             { role: 'user', content: userPrompt }
                         ],
-                        temperature: 0.8,
-                        max_tokens: 1200,
+                        temperature: 0.7,
+                        max_tokens: 2000,
                         response_format: { type: 'json_object' }
                     })
                 });
@@ -1224,37 +1203,63 @@ Analyze based on the Sphere of Wisdom framework. Return ONLY JSON.`;
                 btn.disabled = true;
             }
 
-            const analysis = await generateAdminAnalysis(obs.observation);
-            
-            if (analysis) {
-                const clusterSelect = document.getElementById(`adminClusterSelect-${issueNumber}`);
-                if (clusterSelect && analysis.cluster) {
-                    clusterSelect.value = analysis.cluster;
+            // فراخوانی هوش دوم از طریق API جدید
+            try {
+                const response = await fetch('/api/approve-connection', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        action: 'deep_analyze', 
+                        observation: obs.observation,
+                        userCountry: 'IR' // یا هر کشور دیگری
+                    })
+                });
+                
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error);
+
+                const analysis = result.analysis;
+                
+                if (analysis) {
+                    const clusterSelect = document.getElementById(`adminClusterSelect-${issueNumber}`);
+                    if (clusterSelect && analysis.cluster) {
+                        clusterSelect.value = analysis.cluster;
+                    }
+                    
+                    // پر کردن فیلدها بر اساس ساختار جدید JSON
+                    document.getElementById(`emergence-${issueNumber}`).value = (analysis.raw_emergence || []).join('\n');
+                    
+                    if (analysis.matrix_layers) {
+                        document.getElementById(`layer-${issueNumber}`).value = 
+                            `فردی: ${analysis.matrix_layers.individual}\nاجتماعی: ${analysis.matrix_layers.social}\nنهادی: ${analysis.matrix_layers.institutional}\nتمدنی: ${analysis.matrix_layers.civilizational}`;
+                    }
+                    
+                    document.getElementById(`connection-${issueNumber}`).value = analysis.connections || '';
+                    document.getElementById(`scale-${issueNumber}`).value = analysis.scale || '';
+                    document.getElementById(`capacity-${issueNumber}`).value = (analysis.neglected_capacity || []).join('\n');
+                    document.getElementById(`adminNote-${issueNumber}`).value = analysis.deep_insight || '';
+                    
+                    updateKeywordsView(issueNumber, analysis.cluster || 'other');
+                    
+                    // ذخیره موقت راهنماها برای نمایش در باکس راهنما
+                    window.tempGuides = {
+                        individual: analysis.guide_individual,
+                        network: analysis.guide_network,
+                        policy: analysis.guide_policy
+                    };
+
+                    alert('✅ تحلیل هوشمند (Qwen) آماده شد. لطفاً بررسی و ذخیره کنید.');
+                } else {
+                    alert('❌ تحلیل خالی دریافت شد.');
                 }
-                
-                document.getElementById(`emergence-${issueNumber}`).value = analysis.emergence || '';
-                document.getElementById(`layer-${issueNumber}`).value = analysis.layer || '';
-                document.getElementById(`connection-${issueNumber}`).value = analysis.connection || '';
-                document.getElementById(`scale-${issueNumber}`).value = analysis.scale || '';
-                document.getElementById(`capacity-${issueNumber}`).value = analysis.capacity || '';
-                document.getElementById(`adminNote-${issueNumber}`).value = analysis.note || '';
-                
-                updateKeywordsView(issueNumber, analysis.cluster || 'other');
-                
-                window.tempGuides = {
-                    individual: analysis.guide_individual,
-                    network: analysis.guide_network,
-                    policy: analysis.guide_policy
-                };
 
-                alert('✅ تحلیل هوشمند آماده شد. لطفاً بررسی و ذخیره کنید.');
-            } else {
-                alert('❌ خطا در دریافت تحلیل هوشمند. لطفاً دوباره تلاش کنید.');
-            }
-
-            if(btn) {
-                btn.textContent = '🤖 تحلیل هوشمند';
-                btn.disabled = false;
+            } catch (error) {
+                alert('❌ خطا در دریافت تحلیل هوشمند: ' + error.message);
+            } finally {
+                if(btn) {
+                    btn.textContent = '🤖 تحلیل هوشمند';
+                    btn.disabled = false;
+                }
             }
         }
         
