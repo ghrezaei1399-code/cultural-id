@@ -541,6 +541,7 @@
                 let cluster = 'other';
                 let aiAnalysis = null;
                 
+                // اولویت با تحلیل هوش دوم است
                 if (obs.aiAnalysis) {
                     aiAnalysis = obs.aiAnalysis;
                     cluster = aiAnalysis.cluster || 'other';
@@ -575,6 +576,7 @@
                 else if (isApproved) cardClass += ' approved';
                 else if (obs.status === 'rejected') cardClass += ' rejected';
                 
+                // دکمه‌های ساده شده
                 let actionButtons = '';
                 if (isPending) {
                     actionButtons = `
