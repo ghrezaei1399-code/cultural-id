@@ -22,10 +22,65 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'Invalid JSON in request body' });
     }
 
-    const { cardCode, type, description, observations, text } = parsedBody;
+    const { cardCode, type, description, observations, text, feedback } = parsedBody;
 
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
+
+    // ============================================================
+    // بخش جدید: ثبت بازخورد انسانی (Human Feedback)
+    // ============================================================
+    if (type === 'observation_feedback' && feedback) {
+      if (!cardCode || !feedback.trim()) {
+        return res.status(400).json({ error: 'کد کارت و متن بازخورد الزامی است.' });
+      }
+
+      // بررسی وجود کاربر
+      const userPath = `data/active/${cardCode}.json`;
+      const userRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (!userRes.ok) {
+        return res.status(404).json({ error: 'کاربر یافت نشد یا کد کارت اشتباه است.' });
+      }
+
+      const userDataRaw = await userRes.json();
+      const userData = JSON.parse(Buffer.from(userDataRaw.content, 'base64').toString('utf8'));
+
+      // ساخت آبجکت بازخورد
+      const feedbackEntry = {
+        id: Date.now(),
+        cardCode: cardCode,
+        feedbackText: feedback,
+        submittedAt: new Date().toISOString(),
+        status: 'pending_atlas_review', // در انتظار بررسی برای اطلس ظهور
+        country: userData.country || 'Unknown',
+        rank: userData.rank || 0
+      };
+
+      // ذخیره در پوشه feedbacks
+      const feedbackPath = `data/feedbacks/${Date.now()}-${cardCode}.json`;
+      const content = Buffer.from(JSON.stringify(feedbackEntry, null, 2), 'utf8').toString('base64');
+
+      await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${feedbackPath}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: `New feedback from ${cardCode}`,
+          content: content,
+          branch: 'main'
+        })
+      });
+
+      return res.status(200).json({ 
+        success: true, 
+        message: '✅ بازخورد شما با موفقیت ثبت شد و پس از تایید به اطلس ظهور افزوده خواهد شد.' 
+      });
+    }
 
     // ============================================================
     // بخش Observations - با هوش مصنوعی OpenRouter
