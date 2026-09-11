@@ -5,6 +5,8 @@ module.exports = async function handler(req, res) {
   }
 
   const token = process.env.OBSERVER_TOKEN || process.env.GH_TOKEN;
+  const openRouterKey = process.env.OPENROUTER_API_KEY;
+
   if (!token) {
     return res.status(500).json({ error: 'Token is not configured' });
   }
@@ -23,15 +25,14 @@ module.exports = async function handler(req, res) {
     }
 
     const { cardCode, type, description, observations, text, feedback } = parsedBody;
-
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
 
     // ============================================================
     // بخش جدید: ثبت بازخورد انسانی (Human Feedback)
     // ============================================================
-    if (type === 'observation_feedback' && feedback) {
-      if (!cardCode || !feedback.trim()) {
+    if (type === 'observation_feedback') {
+      if (!cardCode || !feedback) {
         return res.status(400).json({ error: 'کد کارت و متن بازخورد الزامی است.' });
       }
 
@@ -54,7 +55,7 @@ module.exports = async function handler(req, res) {
         cardCode: cardCode,
         feedbackText: feedback,
         submittedAt: new Date().toISOString(),
-        status: 'pending_atlas_review', // در انتظار بررسی برای اطلس ظهور
+        status: 'pending_atlas_review',
         country: userData.country || 'Unknown',
         rank: userData.rank || 0
       };
@@ -83,7 +84,7 @@ module.exports = async function handler(req, res) {
     }
 
     // ============================================================
-    // بخش Observations - با هوش مصنوعی OpenRouter
+    // بخش Observations - با هوش مصنوعی OpenRouter (Qwen)
     // ============================================================
     if (type === 'observations' && observations && observations.length > 0) {
       if (!cardCode) {
@@ -107,15 +108,14 @@ module.exports = async function handler(req, res) {
         const isPersian = /[\u0600-\u06FF]/.test(obs.text);
         
         // ============================================================
-        // تحلیل هوش مصنوعی با OpenRouter (Gemini)
+        // تحلیل هوش مصنوعی با OpenRouter (Qwen) - پرامپت دو زبانه
         // ============================================================
         let aiAnalysis = null;
         
         if (!obs.aiAnalysis) {
           try {
-           const openRouterKey = process.env.OPENROUTER_API_KEY || process.env.GH_TOKEN;
-            
             if (openRouterKey) {
+              // پرامپت دو زبانه دقیقاً مطابق درخواست شما
               const systemPrompt = isPersian ? 
 `شما یک تحلیلگر فرهنگی بر اساس چارچوب "سپهر خردمندی" هستید.
 
@@ -209,7 +209,7 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
                   'X-Title': process.env.SITE_NAME || 'Global Smart Cultural Identity',
                 },
                 body: JSON.stringify({
-                  model: 'xiaomi/mimo-v2-flash:free',
+                  model: 'qwen/qwen-2.5-72b-instruct', // استفاده از مدل قدرتمند Qwen
                   messages: [
                     { role: 'system', content: systemPrompt },
                     { role: 'user', content: userPrompt }
@@ -264,7 +264,7 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
         }
 
         // ============================================================
-        // پردازش ماژول انتخاب‌شده
+        // پردازش ماژول انتخاب‌شده (بدون تغییر)
         // ============================================================
         let moduleResult = null;
         let peerInvites = null;
@@ -309,7 +309,6 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
                   moduleResult.analysis = `همفکری با ${selected.length} نفر از هم‌فرهنگان آغاز شد.`;
                   moduleMessage = `همفکری با ${selected.length} نفر از هم‌فرهنگان آغاز شد.`;
                   moduleStatus = 'pending';
-                  // ارسال دعوتنامه به هم‌فرهنگ‌ها
                   peerInvites = await peer_sendInvites({
                     observation: obs.text,
                     observerCode: cardCode,
@@ -362,7 +361,6 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
                   moduleResult.analysis = `۵ همفرهنگ (${referrals.map(u => u.cardCode).join('، ')}) برای ارجاع انتخاب شدند.`;
                   moduleMessage = `۵ همفرهنگ برای ارجاع انتخاب شدند.`;
                   moduleStatus = 'pending';
-                  // ارسال دعوتنامه به ۵ همفرهنگ
                   peerInvites = await peer_sendInvites({
                     observation: obs.text,
                     observerCode: cardCode,
