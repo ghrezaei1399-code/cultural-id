@@ -168,95 +168,6 @@
         .badge-cluster { background: rgba(40,116,166,0.15); color: #2874a6; }
         body.dark .badge-cluster { color: #85c1e9; background: rgba(40,116,166,0.05); }
 
-        /* ===== وضعیت ماژول ===== */
-        .module-status-badge {
-            display: inline-block;
-            padding: 0.1rem 0.5rem;
-            border-radius: 12px;
-            font-size: 0.6rem;
-            font-weight: 700;
-            margin: 0.1rem 0;
-        }
-        .module-status-badge.success {
-            background: rgba(39,174,96,0.15);
-            color: #1a6a3a;
-        }
-        .module-status-badge.revision {
-            background: rgba(243,156,18,0.15);
-            color: #8a5a0a;
-        }
-        .module-status-badge.failed {
-            background: rgba(231,76,60,0.15);
-            color: #6a1a1a;
-        }
-        .module-status-badge.pending {
-            background: rgba(241,196,15,0.15);
-            color: #b7950b;
-        }
-        .module-status-badge.no_peers {
-            background: rgba(149,165,166,0.15);
-            color: #5a6a6a;
-        }
-        body.dark .module-status-badge.success { color: #82e0aa; }
-        body.dark .module-status-badge.revision { color: #f5b041; }
-        body.dark .module-status-badge.failed { color: #f1948a; }
-        body.dark .module-status-badge.pending { color: #f9e79f; }
-        body.dark .module-status-badge.no_peers { color: #aab7b8; }
-
-        .module-type-label {
-            font-size: 0.6rem;
-            color: #6a3d9a;
-            font-weight: 600;
-        }
-        body.dark .module-type-label { color: #d2b4de; }
-
-        /* ===== پاسخ‌های هم‌فرهنگ ===== */
-        .peer-responses-box {
-            margin-top: 0.8rem;
-            padding: 0.6rem;
-            background: rgba(106,61,154,0.04);
-            border-radius: 8px;
-            border: 1px solid rgba(106,61,154,0.1);
-        }
-        body.dark .peer-responses-box { background: rgba(106,61,154,0.02); }
-        .peer-response-item {
-            padding: 0.3rem 0.5rem;
-            border-bottom: 1px solid rgba(0,0,0,0.03);
-            font-size: 0.8rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 0.3rem;
-        }
-        body.dark .peer-response-item { border-bottom-color: rgba(255,255,255,0.03); }
-        .peer-response-item .peer-code {
-            font-weight: 700;
-            color: #8a6d1f;
-        }
-        body.dark .peer-response-item .peer-code { color: #f9e79f; }
-        .peer-response-item .peer-result {
-            padding: 0.1rem 0.4rem;
-            border-radius: 8px;
-            font-size: 0.6rem;
-            font-weight: 700;
-        }
-        .peer-response-item .peer-result.success {
-            background: rgba(39,174,96,0.15);
-            color: #1a6a3a;
-        }
-        .peer-response-item .peer-result.revision {
-            background: rgba(243,156,18,0.15);
-            color: #8a5a0a;
-        }
-        .peer-response-item .peer-result.failed {
-            background: rgba(231,76,60,0.15);
-            color: #6a1a1a;
-        }
-        body.dark .peer-response-item .peer-result.success { color: #82e0aa; }
-        body.dark .peer-response-item .peer-result.revision { color: #f5b041; }
-        body.dark .peer-response-item .peer-result.failed { color: #f1948a; }
-
         .btn-small {
             padding: 0.25rem 0.8rem;
             border-radius: 20px;
@@ -273,20 +184,6 @@
         .btn-reject { background: rgba(200,50,50,0.15); color: #6a1a1a; }
         body.dark .btn-reject { color: #f1948a; }
         .btn-reject:hover { background: rgba(200,50,50,0.25); }
-        .btn-module {
-            background: rgba(40,116,166,0.1);
-            color: #2874a6;
-            border: 1px solid rgba(40,116,166,0.15);
-        }
-        body.dark .btn-module { color: #85c1e9; }
-        .btn-module:hover { background: rgba(40,116,166,0.2); }
-        .btn-cluster {
-            background: rgba(212,175,55,0.15);
-            color: #8a6d1f;
-            border: 1px solid rgba(212,175,55,0.2);
-        }
-        body.dark .btn-cluster { color: #f9e79f; background: rgba(212,175,55,0.05); }
-        .btn-cluster:hover { background: rgba(212,175,55,0.25); }
         .btn-ai {
             background: #6366f1;
             color: white;
@@ -547,35 +444,6 @@
             'survival': ['آب', 'انرژی', 'اقلیم', 'محیط زیست', 'غذا', 'کشاورزی', 'امنیت غذایی', 'پایداری']
         };
         
-        // ===== وضعیت‌های ماژول =====
-        const moduleStatusLabels = {
-            'success': '✅ موفق',
-            'revision': '⚠️ نیاز به اصلاح',
-            'failed': '❌ شکست',
-            'pending': '⏳ در انتظار',
-            'no_peers': '⚠️ هم‌فرهنگی یافت نشد',
-            'no_related': '⚠️ مشاهده مرتبط یافت نشد',
-            'completed': '✅ تکمیل شد',
-            'error': '❌ خطا'
-        };
-        
-        const moduleStatusClass = {
-            'success': 'success',
-            'revision': 'revision',
-            'failed': 'failed',
-            'pending': 'pending',
-            'no_peers': 'no_peers',
-            'no_related': 'no_peers',
-            'completed': 'success',
-            'error': 'failed'
-        };
-        
-        const moduleNames = {
-            'collaboration': '🤝 همفکری با دیگران',
-            'related': '👁️ مشاهدات مرتبط دیگران',
-            'referral': '📤 ارجاع به ۵ همفرهنگ'
-        };
-        
         function detectCluster(text) {
             if (!text) return 'other';
             const lowerText = text.toLowerCase();
@@ -637,10 +505,6 @@
                 btn.classList.toggle('active', btn.dataset.filter === filter);
             });
             renderObservations();
-        }
-        
-        function getModuleLabel(module) {
-            return moduleNames[module] || module || 'بدون ماژول';
         }
 
         window.addKeywordToNote = function(issueNumber, keyword) {
@@ -711,77 +575,18 @@
                 else if (isApproved) cardClass += ' approved';
                 else if (obs.status === 'rejected') cardClass += ' rejected';
                 
-                const moduleHtml = obs.module 
-                    ? `<div class="obs-module"><span class="icon">📌</span> ${getModuleLabel(obs.module)}</div>`
-                    : '';
-                
-                // ===== نمایش وضعیت ماژول =====
-                const moduleStatus = obs.moduleStatus || 'pending';
-                const statusText = moduleStatusLabels[moduleStatus] || moduleStatus;
-                const statusClass = moduleStatusClass[moduleStatus] || 'pending';
-                const moduleDisplay = moduleNames[obs.moduleType] || obs.moduleType || '';
-                
-                let moduleStatusHtml = '';
-                if (obs.moduleType || obs.module) {
-                    moduleStatusHtml = `
-                        <div style="margin-top:0.4rem; display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
-                            <span class="module-type-label">${moduleDisplay || getModuleLabel(obs.module)}</span>
-                            <span class="module-status-badge ${statusClass}">${statusText}</span>
-                            ${obs.moduleData && obs.moduleData.length > 0 ? `<span style="font-size:0.65rem; color:#4a3a2a;">نتایج: ${obs.moduleData.join(', ')}</span>` : ''}
-                        </div>
-                    `;
-                }
-                
-                // ===== نمایش پاسخ‌های هم‌فرهنگ =====
-                let peerResponsesHtml = '';
-                if (obs.peerResponses && obs.peerResponses.length > 0) {
-                    const resultLabels = {
-                        'success': '✅ موفق',
-                        'revision': '⚠️ اصلاح',
-                        'failed': '❌ شکست'
-                    };
-                    peerResponsesHtml = `
-                        <div class="peer-responses-box">
-                            <div style="font-weight:700; font-size:0.75rem; color:#6a3d9a; margin-bottom:0.3rem;">📨 پاسخ‌های هم‌فرهنگ‌ها (${obs.peerResponses.length})</div>
-                            ${obs.peerResponses.map(p => `
-                                <div class="peer-response-item">
-                                    <span class="peer-code">${p.peerCode}</span>
-                                    <span class="peer-result ${p.result}">${resultLabels[p.result] || p.result}</span>
-                                    <span style="font-size:0.65rem; color:#888;">${p.response ? p.response.substring(0, 30) + (p.response.length > 30 ? '...' : '') : ''}</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
-                }
-                
-                const analysis = obs.analysis || {};
-                const guide = analysis.guide || {};
-                
-                let aiHtml = '';
-                if (aiAnalysis) {
-                    aiHtml = `
-                        <div class="ai-analysis-box">
-                            <div class="ai-title">🤖 تحلیل هوش مصنوعی</div>
-                            ${aiAnalysis.score_suggestion ? `<div class="ai-item">⭐ امتیاز پیشنهادی: ${aiAnalysis.score_suggestion}</div>` : ''}
-                            ${aiAnalysis.analysis_note ? `<div class="ai-item">📝 ${aiAnalysis.analysis_note}</div>` : ''}
-                            ${aiAnalysis.guide_individual ? `<div class="ai-item">📍 فردی: ${aiAnalysis.guide_individual}</div>` : ''}
-                            ${aiAnalysis.guide_network ? `<div class="ai-item">🌐 شبکه‌ای: ${aiAnalysis.guide_network}</div>` : ''}
-                            ${aiAnalysis.guide_policy ? `<div class="ai-item">🏛️ سیاستی: ${aiAnalysis.guide_policy}</div>` : ''}
-                        </div>
-                    `;
-                }
-                
                 let actionButtons = '';
                 if (isPending) {
                     actionButtons = `
                         <div class="obs-actions">
                             <button class="btn-small btn-approve" onclick="approveObservation('${obs.number}', 'atlas')">✅ تایید برای اطلس ظهور</button>
                             <button class="btn-small btn-approve" onclick="approveObservation('${obs.number}', 'gallery')">✅ تایید برای گالری نام‌آوران</button>
-                            <button class="btn-small btn-approve" onclick="approveObservation('${obs.number}', 'achievements')">✅ تایید برای ثبت آثار</button>
                             <button class="btn-small btn-reject" onclick="rejectObservation('${obs.number}')">❌ رد</button>
                         </div>
                     `;
                 }
+                
+                const analysis = obs.analysis || {};
                 
                 const analysisBox = `
                     <div class="analysis-box" id="analysis-${obs.number}">
@@ -843,16 +648,7 @@
                     </div>
                 `;
                 
-                const guideBox = `
-                    <div class="guide-box" id="guide-${obs.number}">
-                        <div class="guide-title">📋 بسته راهنمای اقدام عملی</div>
-                        <div class="guide-item"><strong>📍 سطح فردی:</strong> ${guide.individual || aiAnalysis?.guide_individual || 'توصیه‌ای ثبت نشده است.'}</div>
-                        <div class="guide-item"><strong>🌐 سطح شبکه‌ای:</strong> ${guide.network || aiAnalysis?.guide_network || 'توصیه‌ای ثبت نشده است.'}</div>
-                        <div class="guide-item"><strong>🏛️ سطح سیاستی:</strong> ${guide.policy || aiAnalysis?.guide_policy || 'توصیه‌ای ثبت نشده است.'}</div>
-                    </div>
-                `;
-                
-                // ===== نمایش منطق اتصال معنایی (جدید) =====
+                // نمایش منطق اتصال معنایی
                 let connectionLogicHtml = '';
                 if (obs.aiAnalysis && obs.aiAnalysis.connection_logic) {
                     connectionLogicHtml = `
@@ -877,18 +673,12 @@
                         <div class="obs-body">
                             <p>${obs.observation || 'متن مشاهده موجود نیست'}</p>
                         </div>
-                        ${moduleHtml}
-                        ${moduleStatusHtml}
-                        ${peerResponsesHtml}
                         ${connectionLogicHtml}
-                        ${aiHtml}
                         ${actionButtons}
                         <div style="margin-top:0.8rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
                             <button class="btn-small btn-module" onclick="toggleAnalysis('${obs.number}')">📊 تحلیل ۵ سطحی</button>
-                            <button class="btn-small btn-cluster" onclick="generateGuide('${obs.number}')">📋 تولید راهنما</button>
                         </div>
                         ${analysisBox}
-                        ${guideBox}
                     </div>
                 `;
             }).join('');
@@ -941,70 +731,10 @@
             }
         }
         
-        function generateGuide(issueNumber) {
-            const obs = allObservations.find(o => o.number === parseInt(issueNumber));
-            if (!obs) return;
-            
-            let cluster = 'other';
-            if (obs.analysis && obs.analysis.adminCluster) {
-                cluster = obs.analysis.adminCluster;
-            } else if (obs.aiAnalysis && obs.aiAnalysis.cluster) {
-                cluster = obs.aiAnalysis.cluster;
-            } else {
-                cluster = detectCluster(obs.observation || '');
-            }
-            
-            const guides = {
-                'human': {
-                    individual: 'روزانه یک ظهور مرتبط با این موضوع را در دفترچه مشاهده خود یادداشت کنید و از قضاوت بپرهیزید.',
-                    network: 'این مشاهده را با ۳ نفر از هم‌فرهنگان دارای کارت به اشتراک بگذارید و بازخورد خام آنها را بگیرید.',
-                    policy: 'یک یادداشت کوتاه درباره گسست میان سپهر آموزش و سلامت در این پدیده تهیه کنید.'
-                },
-                'knowledge': {
-                    individual: 'ظرفیت‌های مغفول دانشی در این پدیده را فهرست کنید بدون اینکه راه‌حل فناورانه پیشنهاد دهید.',
-                    network: 'در شبکه مجتمع هم‌اندیشی، پرونده مشابهی جستجو کنید و الگوی تکرارشونده آن را گزارش دهید.',
-                    policy: 'خلأ نهادی در دسترسی به دانش مربوط به این ظهور را مستند کنید.'
-                },
-                'governance': {
-                    individual: 'ناهم‌ترازی میان ظرفیت موجود و تجلی واقعی را در این پدیده توصیف کنید.',
-                    network: 'با اعضای خوشه حکمرانی در شبکه هم‌فرهنگان، ماتریس موانع این ظهور را تکمیل کنید.',
-                    policy: 'یک پیشنهاد سیاستی مبتنی بر کرامت انسانی برای رفع گسست سپهری این پدیده بنویسید.'
-                },
-                'survival': {
-                    individual: 'ظرفیت‌های پنهان بقا در این بحران را شناسایی و ثبت کنید.',
-                    network: 'این ظهور را به عنوان یک ابرسپهر احتمالی در پنل نام‌آوران مطرح کنید.',
-                    policy: 'یادداشتی درباره ناهم‌ترازی میان منابع طبیعی و حکمرانی آب/انرژی تهیه نمایید.'
-                },
-                'other': {
-                    individual: 'این مشاهده را بدون قضاوت بازنویسی کنید و سعی کنید یک ظهور جدید در آن پیدا کنید.',
-                    network: 'این مشاهده را با یک هم‌فرهنگ به اشتراک بگذارید و از او بخواهید یک مشاهده مشابه ثبت کند.',
-                    policy: 'به این فکر کنید که اگر این پدیده در سطح کلان رخ دهد، چه گسست‌هایی ایجاد می‌کند؟'
-                }
-            };
-            
-            const guide = guides[cluster] || guides['other'];
-            const clusterLabel = getClusterLabel(cluster);
-            
-            const guideBox = document.getElementById(`guide-${issueNumber}`);
-            if (guideBox) {
-                guideBox.innerHTML = `
-                    <div class="guide-title">📋 بسته راهنمای اقدام عملی (خوشه: ${clusterLabel})</div>
-                    <div class="guide-item"><strong>📍 سطح فردی:</strong> ${guide.individual}</div>
-                    <div class="guide-item"><strong>🌐 سطح شبکه‌ای:</strong> ${guide.network}</div>
-                    <div class="guide-item"><strong>🏛️ سطح سیاستی:</strong> ${guide.policy}</div>
-                `;
-                guideBox.classList.add('active');
-                guideBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-            
-            alert(`📋 بسته راهنما برای خوشه "${clusterLabel}" تولید شد.`);
-        }
-        
         async function approveObservation(issueNumber, target) {
             const targetNames = {
                 'atlas': 'اطلس ظهور',
-                'gallery': 'گالری نام‌آوران',
-                'achievements': 'ثبت آثار نام‌آوران'
+                'gallery': 'گالری نام‌آوران'
             };
             if (!confirm(`آیا از تایید این مشاهده برای ${targetNames[target]} اطمینان دارید؟`)) return;
             try {
@@ -1073,126 +803,9 @@
             }
         }
         
-        async function submitToGallery(issueNumber) {
-            await saveAnalysis(issueNumber);
-            try {
-                const response = await fetch('/api/approve-connection', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ issueNumber, action: 'submit_gallery', type: 'observation' })
-                });
-                const result = await response.json();
-                if (!response.ok) throw new Error(result.error || 'خطا در ارسال به گالری');
-                alert('⭐ مشاهده با امتیاز ۵ به گالری اطلس ظهور ارسال شد.');
-                loadObservations();
-            } catch (error) { alert('خطا: ' + error.message); }
-        }
-        
         // ============================================================
         // ===== دستیار هوشمند ادمین با OpenRouter (Qwen) =====
         // ============================================================
-        const SEPEHR_ADMIN_PROMPT = `
-=== هویت تو ===
-تو "تحلیلگر ارشد آزمایشگاه سپهر خردمندی" هستی. وظیفه تو تبدیل "مشاهده خام" به "پرونده ظهور" است.
-
-=== دانش پایه (الزامات سند آزمایشگاه و الحاقیه ۱) ===
-1. اصل واقعیت‌محوری: فقط پدیده‌های واقعی را ببین.
-2. اصل بی‌طرفی مشاهده: برای اثبات نظریه وارد عمل نشو؛ واقعیت را مشاهده کن.
-3. اصل تعلیق معنا: تا زمانی که ظهورها ثبت نشده‌اند، هیچ تعریف یا تفسیری ارائه نده.
-4. مرحله مشاهده خام: ابتدا فقط آنچه دیده شده را بدون قضاوت بنویس. (بدون علت‌یابی، بدون راه‌حل).
-5. اصل چندسپهری بودن: هیچ پدیده‌ای تک‌بعدی نیست. سپهرهای درگیر، غایب و اثرگذار را شناسایی کن.
-6. اصل کشف نادیده‌ها: هدف آشکارسازی چیزی است که تاکنون دیده نشده (ظرفیت‌های مغفول، موانع نامرئی).
-7. اصل کرامت انسانی: تأثیر ظهور بر گسترش یا محدودسازی کرامت انسانی را بسنج.
-8. اصل ارتقای کیفیت دیدن: هدف حل مستقیم مشکل نیست، بلکه فهم عمیق‌تر بستر ظهور است.
-
-=== فرآیند الزامی تحلیل (Chain of Thought) ===
-قبل از تولید JSON، این مراحل را در ذهن خود طی کن:
-1. **مشاهده خام:** چه چیزهایی عیناً در متن کاربر دیده می‌شود؟ (فقط توصیف فیزیکی/رفتاری).
-2. **ماتریس لایه‌ها:** این پدیده در لایه فردی، اجتماعی، نهادی و تمدنی چه شکلی دارد؟
-3. **کشف گسست:** کدام سپهرها از هم جدا شده‌اند؟ (مثلاً گسست میان آموزش و نیاز بازار).
-4. **ظرفیت مغفول:** چه توانایی‌ای در مردم وجود دارد که دیده نشده است؟
-
-=== ساختار خروجی (فقط JSON) ===
-{
-    "cluster": "human" | "knowledge" | "governance" | "survival",
-    "raw_emergence": ["ظهور ۱ (کاملاً ملموس)", "ظهور ۲ (کاملاً ملموس)", "ظهور ۳ (کاملاً ملموس)"],
-    "matrix_layers": {
-        "individual": "تأثیر مستقیم بر روان/جسم فرد",
-        "social": "واکنش جامعه محلی",
-        "institutional": "عملکرد یا کوتاهی نهاد رسمی",
-        "civilizational": "نشانه تغییر فرهنگی/تمدنی"
-    },
-    "connections": "ارتباط علت و معلولی با سایر سپهرها و گسست‌های مشهود",
-    "scale": "مقیاس دقیق اثرگذاری",
-    "neglected_capacity": "۲ توانایی واقعی و نادیده گرفته شده که اگر فعال شوند، وضعیت تغییر می‌کند",
-    "deep_insight": "یک جمله عمیق که حقیقت پنهان پشت این مشاهده را فاش می‌کند (فراتر از ظاهر)",
-    "connection_logic": "اگر مشاهدات مرتبط وجود دارد، الگوی تکرارشونده بین آنها چیست؟",
-    "guide_individual": "اقدام کوچک برای ارتقای کیفیت مشاهده یا بهبود وضعیت (بسیار عملی)",
-    "guide_network": "ایده برای هم‌افزایی با هم‌فرهنگان بر اساس الگوی کشف شده",
-    "guide_policy": "پیشنهاد سیاستی مبتنی بر کشف گسست‌ها یا ناهم‌ترازی‌ها"
-}`;
-
-        async function generateAdminAnalysis(obsText) {
-            try {
-                const isPersian = /[\u0600-\u06FF]/.test(obsText);
-                const systemPrompt = isPersian ? SEPEHR_ADMIN_PROMPT : `You are a senior analyst of the "Sphere of Wisdom" framework. Help the admin with deep analysis of observations. Return ONLY JSON.`;
-
-                const userPrompt = isPersian ?
-`مشاهده: "${obsText}"
-تحلیل بر اساس چارچوب سپهر خردمندی. فقط JSON برگردان.` :
-`Observation: "${obsText}"
-Analyze based on the Sphere of Wisdom framework. Return ONLY JSON.`;
-
-                // استفاده از کلید OpenRouter که در Vercel تنظیم شده است
-                const openRouterKey = process.env.OPENROUTER_API_KEY;
-                
-                if (!openRouterKey) {
-                    console.warn('OPENROUTER_API_KEY not found');
-                    return null;
-                }
-
-                const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${openRouterKey}`,
-                        'HTTP-Referer': window.location.origin || 'https://cultural-id.vercel.app',
-                        'X-Title': 'Global Smart Cultural Identity',
-                    },
-                    body: JSON.stringify({
-                        model: 'qwen/qwen-2.5-72b-instruct', // استفاده از مدل قدرتمند Qwen
-                        messages: [
-                            { role: 'system', content: systemPrompt },
-                            { role: 'user', content: userPrompt }
-                        ],
-                        temperature: 0.7,
-                        max_tokens: 2000,
-                        response_format: { type: 'json_object' }
-                    })
-                });
-
-                if (!response.ok) {
-                    console.error('OpenRouter Error:', response.status);
-                    return null;
-                }
-
-                const data = await response.json();
-                const content = data.choices?.[0]?.message?.content || '{}';
-                
-                let jsonStr = content;
-                const s = content.indexOf('{');
-                const e = content.lastIndexOf('}');
-                if (s !== -1 && e !== -1) {
-                    jsonStr = content.substring(s, e + 1);
-                }
-                
-                return JSON.parse(jsonStr);
-            } catch (error) {
-                console.error("AI Admin Analysis Error:", error);
-                return null;
-            }
-        }
-
         window.autoFillAnalysis = async function(issueNumber) {
             const obs = allObservations.find(o => o.number === issueNumber);
             if (!obs) return;
@@ -1241,13 +854,6 @@ Analyze based on the Sphere of Wisdom framework. Return ONLY JSON.`;
                     
                     updateKeywordsView(issueNumber, analysis.cluster || 'other');
                     
-                    // ذخیره موقت راهنماها برای نمایش در باکس راهنما
-                    window.tempGuides = {
-                        individual: analysis.guide_individual,
-                        network: analysis.guide_network,
-                        policy: analysis.guide_policy
-                    };
-
                     alert('✅ تحلیل هوشمند (Qwen) آماده شد. لطفاً بررسی و ذخیره کنید.');
                 } else {
                     alert('❌ تحلیل خالی دریافت شد.');
