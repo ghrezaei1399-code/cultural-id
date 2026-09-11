@@ -5,13 +5,103 @@ module.exports = async function handler(req, res) {
   }
 
   const token = process.env.OBSERVER_TOKEN || process.env.GH_TOKEN;
+  const groqKey = process.env.GROQ_API_KEY; // کلید هوش دوم
+  
   if (!token) {
     return res.status(500).json({ error: 'Token is not configured' });
   }
 
-  const { fileName, action, issueNumber, type, moduleType, analysis, score, selected } = req.body;
+  const { fileName, action, issueNumber, type, moduleType, analysis, score, selected, observation, userCountry } = req.body;
   const owner = 'ghrezaei1399-code';
   const repo = 'cultural-id';
+
+  // ===== بخش هوش دوم: تحلیل عمیق سپهری (Deep Analysis) =====
+  if (action === 'deep_analyze' && observation) {
+    if (!groqKey) {
+      return res.status(500).json({ error: 'GROQ_API_KEY is missing for deep analysis' });
+    }
+
+    // بارگذاری دانش پایه (سند آزمایشگاه سپهر خردمندی)
+    const SEPEHR_KNOWLEDGE_BASE = `
+      تو "تحلیلگر ارشد آزمایشگاه سپهر خردمندی" هستی. وظیفه تو تبدیل "مشاهده خام" به "پرونده ظهور" است.
+      
+      === اصول بنیادین (الزامات سند) ===
+      1. اصل واقعیت‌محوری و بی‌طرفی مشاهده.
+      2. اصل تعلیق معنا: تا ظهورها ثبت نشده‌اند، تفسیر نکن.
+      3. مرحله مشاهده خام: فقط توصیف فیزیکی/رفتاری.
+      4. اصل چندسپهری بودن: شناسایی سپهرهای درگیر، غایب و اثرگذار.
+      5. اصل کشف نادیده‌ها: جستجوی ظرفیت‌های مغفول و موانع نامرئی.
+      6. اصل کرامت انسانی: سنجش تأثیر بر عزت نفس.
+      7. اصل ارتقای کیفیت دیدن: هدف فهم عمیق‌تر است نه حل فوری.
+
+      === فیلترهای تحلیلی (ابزارهای کمکی) ===
+      1. تعلیق تفسیر: جدا کردن واقعیت از برداشت.
+      2. ردیابی گسست: یافتن نقاط قطع ارتباط.
+      3. لایه‌برداری معنایی: حرکت از فردی به تمدنی.
+      4. پرسشگری از نادیده‌ها: چه کسی/چه چیزی دیده نمی‌شود؟
+      5. تطبیق الگو: شباهت با مشاهدات قبلی.
+      6. سنجش کرامت: تأثیر بر کرامت انسانی.
+      7. تبدیل ظرفیت به اقدام: یافتن توانایی پنهان.
+      8. چندسپهری نگری: نگاه همزمان از دریچه‌های مختلف.
+      9. تعیین مقیاس اثر: وسعت جغرافیایی و اجتماعی.
+      10. ترجمه معنا: تبدیل به اقدام کوچک و ملموس.
+
+      === ساختار خروجی (فقط JSON) ===
+      {
+          "cluster": "human" | "knowledge" | "governance" | "survival",
+          "raw_emergence": ["ظهور ۱ (ملموس)", "ظهور ۲ (ملموس)", "ظهور ۳ (ملموس)"],
+          "matrix_layers": {
+              "individual": "تأثیر مستقیم بر روان/جسم فرد",
+              "social": "واکنش جامعه محلی",
+              "institutional": "عملکرد یا کوتاهی نهاد رسمی",
+              "civilizational": "نشانه تغییر فرهنگی/تمدنی"
+          },
+          "connections": "ارتباط علت و معلولی با سایر سپهرها و گسست‌های مشهود",
+          "scale": "مقیاس دقیق اثرگذاری",
+          "neglected_capacity": "۲ توانایی واقعی و نادیده گرفته شده که اگر فعال شوند، وضعیت تغییر می‌کند",
+          "deep_insight": "یک جمله عمیق که حقیقت پنهان پشت این مشاهده را فاش می‌کند (فراتر از ظاهر)",
+          "connection_logic": "اگر مشاهدات مرتبط وجود دارد، الگوی تکرارشونده بین آنها چیست؟",
+          "guide_individual": "اقدام کوچک برای ارتقای کیفیت مشاهده یا بهبود وضعیت (بسیار عملی)",
+          "guide_network": "ایده برای هم‌افزایی با هم‌فرهنگان بر اساس الگوی کشف شده",
+          "guide_policy": "پیشنهاد سیاستی مبتنی بر کشف گسست‌ها یا ناهم‌ترازی‌ها"
+      }
+    `;
+
+    const prompt = `
+      کشور کاربر: ${userCountry || 'Unknown'} (تحلیل را با توجه به فرهنگ و واقعیت‌های این منطقه بومی‌سازی کن).
+      مشاهده خام: "${observation}"
+      
+      وظیفه تو تبدیل این مشاهده به یک "پرونده ظهور" استاندارد است. از فیلترهای ۱۰ گانه استفاده کن.
+    `;
+
+    try {
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${groqKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'qwen-2.5-72b',
+          messages: [
+            { role: 'system', content: SEPEHR_KNOWLEDGE_BASE },
+            { role: 'user', content: prompt }
+          ],
+          response_format: { type: 'json_object' },
+          temperature: 0.7,
+          max_tokens: 2000,
+        })
+      });
+
+      const data = await response.json();
+      const deepAnalysis = JSON.parse(data.choices[0]?.message?.content || '{}');
+
+      return res.status(200).json({ success: true, analysis: deepAnalysis });
+    } catch (error) {
+      console.error('Groq API Error:', error);
+      return res.status(500).json({ error: 'Error in deep analysis by AI' });
+    }
+  }
 
   // ===== اگر درخواست از نوع مشاهده (observation) باشد =====
   if (type === 'observation' && issueNumber) {
@@ -37,7 +127,7 @@ module.exports = async function handler(req, res) {
           newLabels.push('approved');
           newLabels.push('observation');
           
-          // تولید بسته راهنما
+          // تولید بسته راهنما (همان کد قبلی شما)
           const guide = generateGuide(issueData.body);
           const commentBody = `
 ### بسته راهنمای اقدام عملی
