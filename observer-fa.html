@@ -711,18 +711,16 @@
 
                 submitBtn.textContent = '⏳ در حال ثبت نهایی...';
 
-                const response = await fetch('/api/submit-request', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        type: 'observations',
-                        cardCode: userCode,
-                        observations: observations.map(o => ({
-                            text: o.text,
-                            module: o.module
-                        }))
-                    })
-                });
+               // تغییر آدرس به submit-request که هم اکنون شامل بخش بازخورد است
+const response = await fetch('/api/submit-request', { 
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+        cardCode: userCode,
+        feedback: feedbackText,
+        type: 'observation_feedback' // این تایپ باید دقیقاً با شرط داخل API یکی باشد
+    })
+});
                 
                 const result = await response.json();
                 
