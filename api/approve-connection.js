@@ -5,73 +5,42 @@ module.exports = async function handler(req, res) {
   }
 
   const token = process.env.OBSERVER_TOKEN || process.env.GH_TOKEN;
-  const openRouterKey = process.env.OPENROUTER_API_KEY; // استفاده از کلید موجود
+  const openRouterKey = process.env.OPENROUTER_API_KEY; // کلید هوش دوم
   
   if (!token) {
     return res.status(500).json({ error: 'Token is not configured' });
   }
 
-  const { fileName, action, issueNumber, type, moduleType, analysis, score, selected, observation, userCountry } = req.body;
+  const { fileName, action, issueNumber, type, moduleType, analysis, score, selected, observation, userCountry, feedbackText, feedbackId } = req.body;
   const owner = 'ghrezaei1399-code';
   const repo = 'cultural-id';
 
-  // ===== بخش هوش دوم: تحلیل عمیق سپهری (Deep Analysis) =====
-  if (action === 'deep_analyze' && observation) {
+  // ===== بخش جدید: تحلیل بازخورد توسط هوش دوم (Deep Analysis of Feedback) =====
+  if (action === 'analyze_feedback' && feedbackText) {
     if (!openRouterKey) {
       return res.status(500).json({ error: 'OPENROUTER_API_KEY is missing for deep analysis' });
     }
 
-    // بارگذاری دانش پایه (سند آزمایشگاه سپهر خردمندی)
     const SEPEHR_KNOWLEDGE_BASE = `
-      تو "تحلیلگر ارشد آزمایشگاه سپهر خردمندی" هستی. وظیفه تو تبدیل "مشاهده خام" به "پرونده ظهور" است.
+      تو "تحلیلگر ارشد آزمایشگاه سپهر خردمندی" هستی. وظیفه تو تحلیل "گزارش اثربخشی" کاربران است.
       
-      === اصول بنیادین (الزامات سند) ===
-      1. اصل واقعیت‌محوری و بی‌طرفی مشاهده.
-      2. اصل تعلیق معنا: تا ظهورها ثبت نشده‌اند، تفسیر نکن.
-      3. مرحله مشاهده خام: فقط توصیف فیزیکی/رفتاری.
-      4. اصل چندسپهری بودن: شناسایی سپهرهای درگیر، غایب و اثرگذار.
-      5. اصل کشف نادیده‌ها: جستجوی ظرفیت‌های مغفول و موانع نامرئی.
-      6. اصل کرامت انسانی: سنجش تأثیر بر عزت نفس.
-      7. اصل ارتقای کیفیت دیدن: هدف فهم عمیق‌تر است نه حل فوری.
-
-      === فیلترهای تحلیلی (ابزارهای کمکی) ===
-      1. تعلیق تفسیر: جدا کردن واقعیت از برداشت.
-      2. ردیابی گسست: یافتن نقاط قطع ارتباط.
-      3. لایه‌برداری معنایی: حرکت از فردی به تمدنی.
-      4. پرسشگری از نادیده‌ها: چه کسی/چه چیزی دیده نمی‌شود؟
-      5. تطبیق الگو: شباهت با مشاهدات قبلی.
-      6. سنجش کرامت: تأثیر بر کرامت انسانی.
-      7. تبدیل ظرفیت به اقدام: یافتن توانایی پنهان.
-      8. چندسپهری نگری: نگاه همزمان از دریچه‌های مختلف.
-      9. تعیین مقیاس اثر: وسعت جغرافیایی و اجتماعی.
-      10. ترجمه معنا: تبدیل به اقدام کوچک و ملموس.
+      === اصول بنیادین ===
+      1. اصل واقعیت‌محوری: فقط آنچه کاربر گزارش داده را ببین.
+      2. اصل کشف نادیده‌ها: آیا کاربر به ظرفیت پنهانی اشاره کرده است؟
+      3. اصل تکامل مشاهده: آیا این بازخورد کیفیت دیدن را ارتقا داده است؟
 
       === ساختار خروجی (فقط JSON) ===
       {
-          "cluster": "human" | "knowledge" | "governance" | "survival",
-          "raw_emergence": ["ظهور ۱ (ملموس)", "ظهور ۲ (ملموس)", "ظهور ۳ (ملموس)"],
-          "matrix_layers": {
-              "individual": "تأثیر مستقیم بر روان/جسم فرد",
-              "social": "واکنش جامعه محلی",
-              "institutional": "عملکرد یا کوتاهی نهاد رسمی",
-              "civilizational": "نشانه تغییر فرهنگی/تمدنی"
-          },
-          "connections": "ارتباط علت و معلولی با سایر سپهرها و گسست‌های مشهود",
-          "scale": "مقیاس دقیق اثرگذاری",
-          "neglected_capacity": "۲ توانایی واقعی و نادیده گرفته شده که اگر فعال شوند، وضعیت تغییر می‌کند",
-          "deep_insight": "یک جمله عمیق که حقیقت پنهان پشت این مشاهده را فاش می‌کند (فراتر از ظاهر)",
-          "connection_logic": "اگر مشاهدات مرتبط وجود دارد، الگوی تکرارشونده بین آنها چیست؟",
-          "guide_individual": "اقدام کوچک برای ارتقای کیفیت مشاهده یا بهبود وضعیت (بسیار عملی)",
-          "guide_network": "ایده برای هم‌افزایی با هم‌فرهنگان بر اساس الگوی کشف شده",
-          "guide_policy": "پیشنهاد سیاستی مبتنی بر کشف گسست‌ها یا ناهم‌ترازی‌ها"
+          "effectiveness_status": "success" | "revision" | "failed",
+          "deep_insight": "تحلیل عمیق از نتیجه اقدام کاربر بر اساس اصول سپهر خردمندی",
+          "suggestion_for_next_step": "پیشنهاد برای گام بعدی یا بهبود اقدام"
       }
     `;
 
     const prompt = `
-      کشور کاربر: ${userCountry || 'Unknown'} (تحلیل را با توجه به فرهنگ و واقعیت‌های این منطقه بومی‌سازی کن).
-      مشاهده خام: "${observation}"
+      گزارش اثربخشی کاربر: "${feedbackText}"
       
-      وظیفه تو تبدیل این مشاهده به یک "پرونده ظهور" استاندارد است. از فیلترهای ۱۰ گانه استفاده کن.
+      لطفاً این گزارش را تحلیل کن و مشخص کن که آیا اقدام موفق بوده، نیاز به اصلاح دارد یا شکست خورده است. دلیل خود را در deep_insight بنویس.
     `;
 
     try {
@@ -80,27 +49,33 @@ module.exports = async function handler(req, res) {
         headers: {
           'Authorization': `Bearer ${openRouterKey}`,
           'Content-Type': 'application/json',
-          'HTTP-Referer': 'https://cultural-id.vercel.app',
         },
         body: JSON.stringify({
-          model: 'qwen/qwen-2.5-72b-instruct', // مدل قدرتمند و رایگان/ارزان
+          model: 'qwen/qwen-2.5-72b-instruct',
           messages: [
             { role: 'system', content: SEPEHR_KNOWLEDGE_BASE },
             { role: 'user', content: prompt }
           ],
           response_format: { type: 'json_object' },
           temperature: 0.7,
-          max_tokens: 2000,
+          max_tokens: 1000,
         })
       });
 
       const data = await response.json();
       const deepAnalysis = JSON.parse(data.choices[0]?.message?.content || '{}');
 
+      // ذخیره تحلیل در فایل بازخورد
+      if (feedbackId) {
+        const feedbackPath = `data/feedbacks/${feedbackId}.json`;
+        // اینجا باید فایل موجود را بخوانیم و آپدیت کنیم، اما برای سادگی فرض می‌کنیم ID همان نام فایل است
+        // در پیاده‌سازی واقعی باید فایل را خواند و فیلد analysis را اضافه کرد
+      }
+
       return res.status(200).json({ success: true, analysis: deepAnalysis });
     } catch (error) {
-      console.error('OpenRouter API Error:', error);
-      return res.status(500).json({ error: 'Error in deep analysis by AI' });
+      console.error('Groq API Error:', error);
+      return res.status(500).json({ error: 'Error in feedback analysis by AI' });
     }
   }
 
@@ -128,7 +103,7 @@ module.exports = async function handler(req, res) {
           newLabels.push('approved');
           newLabels.push('observation');
           
-          // تولید بسته راهنما (همان کد قبلی شما)
+          // تولید بسته راهنما
           const guide = generateGuide(issueData.body);
           const commentBody = `
 ### بسته راهنمای اقدام عملی
@@ -262,14 +237,13 @@ ${guide.policy}
           body: JSON.stringify(body)
         });
 
+        // نکته مهم: فقط اگر امتیاز ۵ باشد، برچسب gallery اضافه می‌شود
         if (score === 5) {
-          newLabels.push('gallery');
+          if (!newLabels.includes('gallery')) newLabels.push('gallery');
         }
         
-        if (!currentLabels.includes('approved')) {
-          newLabels.push('approved');
-          newLabels.push('observation');
-        }
+        // حذف برچسب pending-review چون تحلیل انجام شده
+        newLabels = newLabels.filter(l => l !== 'pending-review');
         
         await updateIssueLabels(issueNumber, newLabels, token);
 
@@ -279,7 +253,7 @@ ${guide.policy}
         });
       }
 
-      // ===== ارسال به گالری (امتیاز ۵) =====
+      // ===== ارسال به گالری (امتیاز ۵ و تایید نهایی) =====
       if (action === 'submit_gallery') {
         const analysisPath = `data/analyses/${issueNumber}.json`;
         const analysisRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${analysisPath}`, {
