@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>مدیریت ارتباطات و مشاهدات | سپهر خردمندی</title>
+    <title>مدیریت مشاهدات | سپهر خردمندی</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -14,209 +14,267 @@
             color: #2a1a0a;
         }
         body.dark { background: linear-gradient(135deg, #3a2f20 0%, #2a2418 50%, #4a3a28 100%); color: #f0e8d0; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        
-        /* Top Bar & Titles */
+        .container { max-width: 1280px; margin: 0 auto; }
+
+        /* ===== Top Bar ===== */
         .top-bar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.8rem; margin-bottom: 1.5rem; }
-        .back-link { padding: 0.5rem 1.2rem; border-radius: 30px; background: rgba(255,255,255,0.05); color: #0a0a1a; text-decoration: none; font-weight: 700; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.08); transition: 0.3s; }
+        .back-link {
+            padding: 0.5rem 1.2rem; border-radius: 30px;
+            background: rgba(255,255,255,0.05); color: #0a0a1a;
+            text-decoration: none; font-weight: 700; font-size: 0.85rem;
+            border: 1px solid rgba(255,255,255,0.08); transition: 0.3s;
+        }
         body.dark .back-link { color: #f0e8d0; }
         .back-link:hover { background: rgba(255,255,255,0.08); }
-        .page-title { font-size: 1.6rem; font-weight: 800; color: #0a0a1a; text-align: center; margin-bottom: 0.2rem; }
+
+        .page-title { font-size: 1.7rem; font-weight: 800; color: #0a0a1a; text-align: center; margin-bottom: 0.2rem; }
         body.dark .page-title { color: #f0e8e0; }
-        .page-subtitle { text-align: center; font-size: 0.8rem; color: #2a2a3a; opacity: 0.7; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 1rem; }
+        .page-subtitle {
+            text-align: center; font-size: 0.8rem; color: #2a2a3a;
+            opacity: 0.7; margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 1rem;
+        }
         body.dark .page-subtitle { color: #c8b890; }
-        
-        /* Stats & Filters */
+
+        /* ===== Stats ===== */
         .stats-mini { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.8rem; margin-bottom: 1.5rem; }
-        .stat-mini { background: rgba(255,255,255,0.04); border-radius: 14px; padding: 0.8rem; text-align: center; border: 1px solid rgba(255,255,255,0.04); }
+        .stat-mini {
+            background: rgba(255,255,255,0.04); border-radius: 14px;
+            padding: 0.9rem 0.8rem; text-align: center;
+            border: 1px solid rgba(255,255,255,0.04); transition: transform 0.2s;
+        }
+        .stat-mini:hover { transform: translateY(-2px); }
         body.dark .stat-mini { background: rgba(0,0,0,0.1); }
         .stat-mini .number { font-size: 1.3rem; font-weight: 800; color: #0a0a1a; display: block; }
         body.dark .stat-mini .number { color: #f0e8e0; }
         .stat-mini .label { font-size: 0.65rem; color: #6a6a7a; }
         body.dark .stat-mini .label { color: #a8a8b8; }
-        
+
+        /* ===== Filter ===== */
         .filter-bar { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.2rem; justify-content: center; }
-        .filter-btn { padding: 0.4rem 1.2rem; border-radius: 30px; border: 1px solid rgba(212,175,55,0.15); background: rgba(255,255,255,0.03); color: #0a0a1a; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: 0.3s; }
+        .filter-btn {
+            padding: 0.4rem 1.2rem; border-radius: 30px;
+            border: 1px solid rgba(212,175,55,0.15);
+            background: rgba(255,255,255,0.03); color: #0a0a1a;
+            font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: 0.3s;
+        }
         body.dark .filter-btn { color: #f0e8d0; }
         .filter-btn:hover { background: rgba(212,175,55,0.05); }
         .filter-btn.active { background: rgba(212,175,55,0.12); border-color: #d4af37; }
-        body.dark .filter-btn.active { background: rgba(212,175,55,0.08); }
-        
-        /* List & Cards */
-        .observations-list { display: flex; flex-direction: column; gap: 1.5rem; max-height: 900px; overflow-y: auto; padding-left: 0.3rem; padding-right: 0.3rem; }
-        .observations-list::-webkit-scrollbar { width: 6px; }
-        .observations-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 10px; }
-        .observations-list::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.3); border-radius: 10px; }
-        
-        .obs-card { background: rgba(255,255,255,0.05); border-radius: 16px; padding: 1.5rem; border: 1px solid rgba(255,255,255,0.06); transition: 0.3s; position: relative; }
-        body.dark .obs-card { background: rgba(0,0,0,0.15); }
-        .obs-card:hover { background: rgba(255,255,255,0.08); }
-        body.dark .obs-card:hover { background: rgba(255,255,255,0.02); }
-        
-        .obs-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem; border-bottom: 1px dashed rgba(0,0,0,0.1); padding-bottom: 0.5rem; }
+
+        /* ===== Observations List ===== */
+        .observations-list { display: flex; flex-direction: column; gap: 1.8rem; }
+
+        /* ===== Observation Card (یک باکس واحد) ===== */
+        .obs-card {
+            background: rgba(255,255,255,0.06); border-radius: 18px;
+            padding: 1.5rem; border: 2px solid rgba(255,255,255,0.08);
+            transition: 0.3s; position: relative; overflow: hidden;
+        }
+        body.dark .obs-card { background: rgba(0,0,0,0.18); }
+        .obs-card:hover { box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
+        .obs-card.pending { border-color: #f39c12; }
+        .obs-card.approved { border-color: #27ae60; }
+        .obs-card.rejected { border-color: #e74c3c; }
+        .obs-card.score5 { border-color: #d4af37; box-shadow: 0 0 25px rgba(212,175,55,0.15); }
+
+        .obs-header {
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;
+            padding-bottom: 0.8rem; border-bottom: 2px dashed rgba(212,175,55,0.25);
+        }
         .obs-code { font-family: 'Courier New', monospace; font-size: 0.9rem; font-weight: 700; color: #8a6d1f; }
         body.dark .obs-code { color: #f9e79f; }
         .obs-meta { font-size: 0.7rem; color: #888; }
-        
-        /* Unified Content Box for Admin */
-        .unified-content-box {
-            background: rgba(255,255,255,0.6);
-            border: 2px solid rgba(212,175,55,0.3);
-            border-radius: 14px;
-            padding: 1.2rem;
-            margin-bottom: 1.2rem;
-            position: relative;
-        }
-        body.dark .unified-content-box { background: rgba(0,0,0,0.25); border-color: rgba(212,175,55,0.15); }
-        
-        .content-section { margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px dashed rgba(0,0,0,0.1); }
-        .content-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        
-        .section-label {
-            font-size: 0.8rem;
-            font-weight: 800;
-            color: #2874a6;
-            margin-bottom: 0.4rem;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-        body.dark .section-label { color: #85c1e9; }
-        
-        .observation-text { font-size: 0.95rem; line-height: 1.8; color: #1a1a2a; font-weight: 500; }
-        body.dark .observation-text { color: #e0e0e0; }
-        
-        .ai1-analysis { 
-            background: rgba(99,102,241,0.08); 
-            padding: 0.8rem; 
-            border-radius: 8px; 
-            border-right: 3px solid #6366f1;
-            font-size: 0.85rem;
-            line-height: 1.7;
-            color: #3a3a5a;
-        }
-        body.dark .ai1-analysis { background: rgba(99,102,241,0.1); color: #c0c0e0; }
-        
-        .collab-section {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            align-items: center;
-        }
-        .collab-tag {
-            padding: 0.3rem 0.8rem;
-            background: rgba(212,175,55,0.15);
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #8a6d1f;
-        }
-        body.dark .collab-tag { background: rgba(212,175,55,0.1); color: #f9e79f; }
-        
-        .guide-box {
-            background: rgba(212,175,55,0.08);
-            border: 1px solid rgba(212,175,55,0.2);
-            border-radius: 10px;
-            padding: 0.8rem;
-        }
-        .guide-item {
-            font-size: 0.85rem;
-            color: #5a4a3a;
-            margin-bottom: 0.3rem;
-            padding-right: 0.5rem;
-            border-right: 2px solid #d4af37;
-        }
-        body.dark .guide-item { color: #d0c0b0; }
-        
-        .matrix-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 0.8rem;
-        }
-        @media(min-width: 768px) { .matrix-grid { grid-template-columns: 1fr 1fr; } }
-        
-        .matrix-item label { display: block; font-weight: 700; font-size: 0.75rem; margin-bottom: 0.2rem; color: #4a4a5a; }
-        body.dark .matrix-item label { color: #b0b0c0; }
-        
-        textarea, select {
-            width: 100%;
-            padding: 0.6rem;
-            border-radius: 8px;
-            border: 1px solid rgba(0,0,0,0.1);
-            background: rgba(255,255,255,0.9);
-            font-family: inherit;
-            font-size: 0.85rem;
-            resize: vertical;
-            outline: none;
-        }
-        body.dark textarea, body.dark select { background: rgba(0,0,0,0.3); color: #f0e8d0; border-color: rgba(255,255,255,0.1); }
-        
-        .final-analysis {
-            background: rgba(39,174,96,0.08);
-            padding: 0.8rem;
-            border-radius: 8px;
-            border-right: 3px solid #27ae60;
-            font-size: 0.85rem;
-            line-height: 1.7;
-            color: #2a4a3a;
-        }
-        body.dark .final-analysis { background: rgba(39,174,96,0.1); color: #a0e0c0; }
 
-        /* Badges */
-        .badge { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 30px; font-size: 0.65rem; font-weight: 700; margin-left: 0.3rem; }
+        /* ===== بخش‌های ۵گانه داخل باکس واحد ===== */
+        .block {
+            padding: 0.9rem 1rem; margin-bottom: 0.8rem;
+            border-radius: 10px; border-right: 4px solid #ccc;
+            background: rgba(255,255,255,0.35);
+        }
+        body.dark .block { background: rgba(0,0,0,0.12); }
+        .block-title {
+            font-weight: 800; font-size: 0.85rem;
+            margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;
+            padding-bottom: 0.35rem;
+            border-bottom: 1px dashed rgba(0,0,0,0.08);
+        }
+        body.dark .block-title { border-color: rgba(255,255,255,0.1); }
+        .block-body { font-size: 0.88rem; line-height: 1.8; }
+        body.dark .block-body { color: #d0d0e0; }
+
+        .block-1 { border-right-color: #d4af37; background: rgba(212,175,55,0.05); }
+        .block-1 .block-title { color: #8a6d1f; }
+        body.dark .block-1 .block-title { color: #f9e79f; }
+
+        .block-2 { border-right-color: #10b981; background: rgba(16,185,129,0.05); }
+        .block-2 .block-title { color: #047857; }
+        body.dark .block-2 .block-title { color: #6ee7b7; }
+
+        .block-3 { border-right-color: #6366f1; background: rgba(99,102,241,0.05); }
+        .block-3 .block-title { color: #4338ca; }
+        body.dark .block-3 .block-title { color: #a5b4fc; }
+
+        .block-4 { border-right-color: #ec4899; background: rgba(236,72,153,0.05); }
+        .block-4 .block-title { color: #be185d; }
+        body.dark .block-4 .block-title { color: #f9a8d4; }
+
+        .block-5 { border-right-color: #0ea5e9; background: rgba(14,165,233,0.05); }
+        .block-5 .block-title { color: #0369a1; }
+        body.dark .block-5 .block-title { color: #7dd3fc; }
+
+        /* سطوح AI1 */
+        .ai-level {
+            padding: 0.5rem 0.7rem; margin-bottom: 0.4rem;
+            background: rgba(255,255,255,0.5); border-radius: 8px;
+            font-size: 0.83rem; line-height: 1.6;
+            border-right: 3px solid #10b981;
+        }
+        body.dark .ai-level { background: rgba(0,0,0,0.15); }
+        .ai-level strong { color: #047857; font-size: 0.78rem; display: block; margin-bottom: 0.15rem; }
+        body.dark .ai-level strong { color: #6ee7b7; }
+
+        /* ماتریس AI2 */
+        .matrix-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 0.6rem;
+        }
+        .matrix-cell {
+            padding: 0.6rem 0.8rem; border-radius: 8px;
+            background: rgba(255,255,255,0.5);
+            border-right: 3px solid #6366f1;
+            font-size: 0.8rem; line-height: 1.6;
+        }
+        body.dark .matrix-cell { background: rgba(0,0,0,0.15); }
+        .matrix-cell .m-label {
+            font-weight: 800; font-size: 0.72rem; color: #4338ca;
+            display: block; margin-bottom: 0.25rem;
+        }
+        body.dark .matrix-cell .m-label { color: #a5b4fc; }
+
+        /* ===== دکمه‌های کپی/ذخیره متن یکپارچه ===== */
+        .copy-toolbar {
+            display: flex; gap: 0.5rem; flex-wrap: wrap;
+            margin: 1rem 0 0.8rem;
+            padding: 0.8rem; border-radius: 10px;
+            background: rgba(100,116,139,0.08);
+            border: 1px dashed rgba(100,116,139,0.3);
+        }
+        .btn-copy {
+            padding: 0.45rem 1rem; border-radius: 25px; border: none;
+            font-weight: 700; font-size: 0.78rem; cursor: pointer;
+            transition: 0.3s; font-family: inherit;
+            background: #64748b; color: #fff;
+        }
+        .btn-copy:hover { background: #475569; }
+        .btn-copy.save { background: #0ea5e9; }
+        .btn-copy.save:hover { background: #0284c7; }
+
+        /* ===== ماژول عملیات ترتیبی ===== */
+        .modules-container {
+            margin-top: 1.2rem; padding: 1.2rem;
+            background: linear-gradient(135deg, rgba(212,175,55,0.07), rgba(99,102,241,0.05));
+            border-radius: 14px; border: 1px solid rgba(212,175,55,0.25);
+        }
+        .modules-title {
+            font-weight: 800; font-size: 0.85rem; color: #8a6d1f;
+            margin-bottom: 1rem; display: flex; align-items: center; gap: 0.4rem;
+        }
+        body.dark .modules-title { color: #f9e79f; }
+
+        .module-step {
+            display: flex; align-items: center; gap: 0.8rem;
+            padding: 0.8rem; margin-bottom: 0.6rem;
+            background: rgba(255,255,255,0.45); border-radius: 10px;
+            border-right: 4px solid #ccc; transition: 0.3s;
+        }
+        body.dark .module-step { background: rgba(0,0,0,0.15); }
+        .module-step.active { border-right-color: #d4af37; background: rgba(212,175,55,0.1); }
+        .module-step.completed { border-right-color: #27ae60; background: rgba(39,174,96,0.08); }
+        .module-step.locked { opacity: 0.45; pointer-events: none; }
+
+        .step-number {
+            width: 30px; height: 30px; border-radius: 50%;
+            background: #ccc; color: #fff; font-weight: 800;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem; flex-shrink: 0;
+        }
+        .module-step.active .step-number { background: #d4af37; }
+        .module-step.completed .step-number { background: #27ae60; }
+
+        .step-content { flex: 1; display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+        .step-content label { font-weight: 700; font-size: 0.8rem; }
+
+        select.score-select {
+            padding: 0.4rem 0.8rem; border-radius: 8px;
+            border: 1px solid rgba(212,175,55,0.3);
+            background: rgba(255,255,255,0.8); font-family: inherit;
+            font-size: 0.85rem; font-weight: 700; cursor: pointer;
+        }
+        body.dark select.score-select { background: rgba(0,0,0,0.25); color: #f0e8d0; }
+
+        .btn-action {
+            padding: 0.5rem 1.2rem; border-radius: 25px; border: none;
+            font-weight: 700; font-size: 0.8rem; cursor: pointer;
+            transition: 0.3s; font-family: inherit;
+        }
+        .btn-action:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-save { background: #6366f1; color: #fff; }
+        .btn-save:not(:disabled):hover { background: #4f46e5; }
+        .btn-atlas { background: rgba(39,174,96,0.18); color: #0a6a0a; }
+        body.dark .btn-atlas { color: #82e0aa; }
+        .btn-atlas:not(:disabled):hover { background: rgba(39,174,96,0.35); }
+        .btn-gallery { background: rgba(212,175,55,0.2); color: #8a6d1f; }
+        body.dark .btn-gallery { color: #f9e79f; }
+        .btn-gallery:not(:disabled):hover { background: rgba(212,175,55,0.35); }
+        .btn-reject { background: rgba(200,50,50,0.18); color: #6a1a1a; }
+        body.dark .btn-reject { color: #f1948a; }
+        .btn-reject:not(:disabled):hover { background: rgba(200,50,50,0.35); }
+
+        /* ===== Badges ===== */
+        .badge { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 30px; font-size: 0.65rem; font-weight: 700; }
         .badge-approved { background: rgba(50,200,50,0.15); color: #0a6a0a; }
+        body.dark .badge-approved { color: #82e0aa; }
         .badge-rejected { background: rgba(200,50,50,0.15); color: #6a1a1a; }
+        body.dark .badge-rejected { color: #f1948a; }
         .badge-pending { background: rgba(255,200,50,0.15); color: #8a7a0a; }
+        body.dark .badge-pending { color: #f9e79f; }
         .badge-score-5 { background: rgba(212,175,55,0.25); color: #8a6d1f; border: 1px solid #d4af37; }
         .badge-cluster { background: rgba(40,116,166,0.15); color: #2874a6; }
-        body.dark .badge-cluster { color: #85c1e9; background: rgba(40,116,166,0.05); }
+        body.dark .badge-cluster { color: #85c1e9; background: rgba(40,116,166,0.08); }
 
-        /* Action Modules - Sequential Flow */
-        .action-modules {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 2px dashed rgba(212,175,55,0.3);
-        }
-
-        .module-row {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            flex-wrap: wrap;
-            padding: 0.6rem 0.8rem;
-            background: rgba(255,255,255,0.2);
-            border-radius: 10px;
-        }
-        body.dark .module-row { background: rgba(0,0,0,0.1); }
-
-        .btn-small {
-            padding: 0.35rem 0.9rem;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            border: none;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-save { background: #2874a6; color: white; }
-        .btn-save:hover { background: #1a5276; }
-        .btn-approve-atlas { background: #27ae60; color: white; }
-        .btn-approve-gallery { background: #8e44ad; color: white; }
-        .btn-reject { background: #c0392b; color: white; }
-
+        /* ===== Misc ===== */
         .empty-state { text-align: center; padding: 3rem; color: #888; }
-        .scroll-hint { text-align: center; padding: 0.8rem; color: #888; font-size: 0.85rem; border-top: 1px solid rgba(212,175,55,0.1); margin-top: 0.5rem; font-weight: 700; }
-        .btn-back-bottom { display: inline-block; margin-top: 2rem; padding: 0.8rem 1.5rem; background: rgba(212,175,55,0.2); color: #8a6d1f; border-radius: 30px; text-decoration: none; font-weight: 700; transition: 0.3s; }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .obs-card.pending { border-color: #f39c12; border-width: 2px; }
-        .obs-card.approved { border-color: #27ae60; border-width: 2px; }
-        .obs-card.rejected { border-color: #e74c3c; border-width: 2px; }
-        .obs-card.score5 { border-color: #d4af37; border-width: 2px; box-shadow: 0 0 20px rgba(212,175,55,0.15); }
+        .loading-state { text-align: center; padding: 3rem; color: #888; }
+        .loading-state::after { content: '...'; animation: dots 1.5s infinite; }
+        @keyframes dots { 0%,20% { content: '.'; } 40% { content: '..'; } 60%,100% { content: '...'; } }
+
+        .btn-back-bottom {
+            display: inline-block; margin-top: 2rem; padding: 0.8rem 1.5rem;
+            background: rgba(212,175,55,0.2); color: #8a6d1f;
+            border-radius: 30px; text-decoration: none; font-weight: 700; transition: 0.3s;
+        }
+        .btn-back-bottom:hover { background: rgba(212,175,55,0.3); }
+
+        .toast {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            padding: 0.8rem 1.5rem; border-radius: 30px;
+            background: #333; color: #fff; font-weight: 700; font-size: 0.85rem;
+            z-index: 9999; opacity: 0; transition: 0.3s;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2); pointer-events: none;
+        }
+        .toast.show { opacity: 1; }
+        .toast.success { background: #27ae60; }
+        .toast.error { background: #e74c3c; }
+        .toast.info { background: #6366f1; }
+
+        @media (max-width: 768px) {
+            .top-bar { flex-direction: column; align-items: stretch; }
+            .obs-header { flex-direction: column; align-items: stretch; }
+            .step-content { flex-direction: column; align-items: stretch; }
+            .matrix-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -224,17 +282,17 @@
         <div class="top-bar">
             <a href="admin.html" class="back-link">↩ بازگشت به داشبورد</a>
         </div>
-        
-        <h1 class="page-title">👁️ مدیریت ارتباطات و مشاهدات</h1>
+
+        <h1 class="page-title">👁️ مدیریت مشاهدات</h1>
         <div class="page-subtitle">بررسی، تحلیل و امتیازدهی مشاهدات خام بر اساس چارچوب سپهر خردمندی</div>
-        
+
         <div class="stats-mini">
             <div class="stat-mini"><span class="number" id="totalObs">۰</span><div class="label">کل مشاهدات</div></div>
             <div class="stat-mini"><span class="number" id="pendingObs">۰</span><div class="label">⏳ در انتظار</div></div>
             <div class="stat-mini"><span class="number" id="approvedObs">۰</span><div class="label">✅ تایید شده</div></div>
             <div class="stat-mini"><span class="number" id="score5Obs">۰</span><div class="label">⭐ امتیاز ۵</div></div>
         </div>
-        
+
         <div class="filter-bar">
             <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">📋 همه</button>
             <button class="filter-btn" data-filter="pending" onclick="setFilter('pending')">⏳ در انتظار</button>
@@ -242,64 +300,223 @@
             <button class="filter-btn" data-filter="score5" onclick="setFilter('score5')">⭐ امتیاز ۵</button>
             <button class="filter-btn" data-filter="rejected" onclick="setFilter('rejected')">❌ رد شده</button>
         </div>
-        
+
         <div id="observationsList" class="observations-list">
-            <div class="empty-state">در حال بارگذاری...</div>
+            <div class="loading-state">در حال بارگذاری</div>
         </div>
-        
-        <div style="text-align:center; margin-top:2rem;">
+
+        <div style="text-align:center;">
             <a href="admin.html" class="btn-back-bottom">↩ بازگشت به پنل ادمین</a>
         </div>
     </div>
-    
+
+    <div id="toast" class="toast"></div>
+
     <script>
+        // ============================================================
+        // ===== State =====
+        // ============================================================
         let allObservations = [];
         let currentFilter = 'all';
-        
+        const localState = {}; // { number: { score, saved, finalized } }
+
+        // ============================================================
+        // ===== Utility =====
+        // ============================================================
+        function escapeHtml(text) {
+            if (text === null || text === undefined) return '';
+            const div = document.createElement('div');
+            div.textContent = String(text);
+            return div.innerHTML;
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show ' + type;
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(() => { toast.className = 'toast ' + type; }, 3000);
+        }
+
+        async function copyToClipboard(text, successMsg = 'متن کپی شد') {
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(text);
+                } else {
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    ta.style.position = 'fixed';
+                    ta.style.opacity = '0';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                }
+                showToast('✅ ' + successMsg, 'success');
+            } catch (e) {
+                showToast('❌ خطا در کپی: ' + e.message, 'error');
+            }
+        }
+
+        // ============================================================
+        // ===== خوشه‌بندی =====
+        // ============================================================
         const clusterMap = {
             'human': 'انسان',
             'knowledge': 'دانش و فناوری',
             'governance': 'حکمرانی و تمدن',
-            'survival': 'بقا و آینده'
+            'survival': 'بقا و آینده',
+            'other': 'سایر'
         };
-        
+
+        const clusterKeywords = {
+            'human': ['فقر', 'آموزش', 'سلامت', 'سلامت روان', 'اعتیاد', 'جوانان', 'خانواده', 'بیماری', 'محرومیت', 'بی‌سوادی'],
+            'knowledge': ['هوش مصنوعی', 'فناوری', 'دانش', 'نوآوری', 'تحقیق', 'علم', 'شکاف دانشی', 'نابرابری علمی', 'انحصار دانش'],
+            'governance': ['فساد', 'جنگ', 'سیاست', 'حکمرانی', 'نهاد', 'قانون', 'مهاجرت نخبگان', 'بحران اعتماد', 'نابرابری'],
+            'survival': ['آب', 'انرژی', 'اقلیم', 'محیط زیست', 'غذا', 'کشاورزی', 'امنیت غذایی', 'پایداری']
+        };
+
         function detectCluster(text) {
             if (!text) return 'other';
-            const lowerText = text.toLowerCase();
-            // منطق خوشه‌بندی حفظ شده از نسخه اصلی
-            return 'other'; 
+            const lowerText = String(text).toLowerCase();
+            let bestCluster = 'other', maxScore = 0;
+            for (const [cluster, keywords] of Object.entries(clusterKeywords)) {
+                let score = 0;
+                for (const keyword of keywords) {
+                    if (lowerText.includes(keyword)) score++;
+                }
+                if (score > maxScore) { maxScore = score; bestCluster = cluster; }
+            }
+            return maxScore > 0 ? bestCluster : 'other';
         }
-        
-        function getClusterLabel(cluster) { return clusterMap[cluster] || 'سایر'; }
-        
+
+        function getClusterLabel(cluster) {
+            return clusterMap[cluster] || 'سایر';
+        }
+
+        // ============================================================
+        // ===== نرمال‌سازی داده‌های سه هوش مصنوعی =====
+        // ============================================================
+        function normalizeAi1(obs) {
+            const src = obs.ai1Guidance || obs.analysis?.ai1Guidance || obs.ai1 || null;
+            if (!src) return null;
+            return {
+                individual: src.individual || src['سطح فردی'] || src.level1 || '',
+                social: src.social || src['سطح اجتماعی'] || src.level2 || '',
+                institutional: src.institutional || src['سطح نهادی'] || src.level3 || ''
+            };
+        }
+
+        function normalizeAi2(obs) {
+            const src = obs.ai2Matrix || obs.analysis?.ai2Matrix || obs.ai2 || obs.aiAnalysis || null;
+            if (!src) return null;
+            return {
+                emergence: src.emergence || src.emergenceMatrix || src['ظهور'] || src.raw_emergence || '',
+                layer: src.layer || src.layerMatrix || src['لایه'] || src.matrix_layers || '',
+                connection: src.connection || src.connectionMatrix || src['ارتباط'] || src.connections || '',
+                scale: src.scale || src.scaleMatrix || src['مقیاس'] || src.scaleText || '',
+                capacity: src.capacity || src.capacityMatrix || src['ظرفیت'] || src.neglected_capacity || ''
+            };
+        }
+
+        function normalizeAi3(obs) {
+            const src = obs.finalAnalysis || obs.analysis?.finalAnalysis || obs.ai3 || obs.aiAnalysis || null;
+            if (!src) return null;
+            if (typeof src === 'string') return { final: src };
+            return {
+                final: src.deep_insight || src.final || src['تحلیل نهایی'] || src.summary || ''
+            };
+        }
+
+        // ============================================================
+        // ===== ساخت متن یکپارچه برای کپی =====
+        // ============================================================
+        function buildUnifiedText(obs) {
+            const ai1 = normalizeAi1(obs);
+            const ai2 = normalizeAi2(obs);
+            const ai3 = normalizeAi3(obs);
+            const cluster = getClusterLabel(
+                obs.aiAnalysis?.cluster || obs.analysis?.adminCluster || detectCluster(obs.observation)
+            );
+
+            const lines = [];
+            lines.push('═══════════════════════════════════════════');
+            lines.push(`OBSERVATION #${obs.number} | Code: ${obs.cardCode || 'N/A'}`);
+            lines.push(`Date: ${obs.createdAt ? new Date(obs.createdAt).toISOString() : 'N/A'}`);
+            lines.push(`Cluster: ${cluster}`);
+            lines.push('═══════════════════════════════════════════');
+            lines.push('');
+            lines.push('▸ [1] RAW OBSERVATION (Member):');
+            lines.push(obs.observation || '-');
+            lines.push('');
+            lines.push('▸ [2] AI-1 THREE-LEVEL GUIDANCE:');
+            if (ai1) {
+                lines.push(`  • Individual: ${ai1.individual || '-'}`);
+                lines.push(`  • Social: ${ai1.social || '-'}`);
+                lines.push(`  • Institutional: ${ai1.institutional || '-'}`);
+            } else { lines.push('  (Not analyzed yet)'); }
+            lines.push('');
+            lines.push('▸ [3] AI-2 FIVE-LEVEL MATRIX:');
+            if (ai2) {
+                lines.push(`  • Emergence: ${ai2.emergence || '-'}`);
+                lines.push(`  • Layer: ${ai2.layer || '-'}`);
+                lines.push(`  • Connection: ${ai2.connection || '-'}`);
+                lines.push(`  • Scale: ${ai2.scale || '-'}`);
+                lines.push(`  • Capacity: ${ai2.capacity || '-'}`);
+            } else { lines.push('  (Not analyzed yet)'); }
+            lines.push('');
+            lines.push('▸ [4] AI-3 FINAL ANALYSIS:');
+            lines.push(ai3?.final || '(Not analyzed yet)');
+            lines.push('');
+            lines.push('═══════════════════════════════════════════');
+            return lines.join('\n');
+        }
+
+        // ============================================================
+        // ===== بارگذاری =====
+        // ============================================================
         async function loadObservations() {
+            const container = document.getElementById('observationsList');
+            container.innerHTML = '<div class="loading-state">در حال بارگذاری</div>';
             try {
-                const response = await fetch('/api/get-connection-requests?type=observations&t=' + Date.now());
+                const response = await fetch('/api/get-connection-requests?type=observations&t=' + Date.now(), {
+                    credentials: 'include'
+                });
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || 'خطا در دریافت مشاهدات');
-                
+
                 allObservations = data.observations || [];
+
+                allObservations.forEach(o => {
+                    if (o.analysis?.savedScore) {
+                        localState[o.number] = {
+                            score: o.analysis.savedScore,
+                            saved: true,
+                            finalized: o.status !== 'pending'
+                        };
+                    }
+                });
+
                 updateStats();
                 renderObservations();
             } catch (error) {
                 console.error('Error:', error);
-                document.getElementById('observationsList').innerHTML = 
-                    `<div class="empty-state" style="color:red;">خطا در ارتباط با سرور: ${error.message}</div>`;
+                container.innerHTML = `<div class="empty-state" style="color:#e74c3c;">خطا: ${escapeHtml(error.message)}</div>`;
             }
         }
-        
+
         function updateStats() {
             const total = allObservations.length;
             const pending = allObservations.filter(o => o.status === 'pending').length;
             const approved = allObservations.filter(o => o.status === 'approved' && o.score !== 5).length;
             const score5 = allObservations.filter(o => o.score === 5).length;
-            
-            document.getElementById('totalObs').textContent = total;
-            document.getElementById('pendingObs').textContent = pending;
-            document.getElementById('approvedObs').textContent = approved;
-            document.getElementById('score5Obs').textContent = score5;
+
+            document.getElementById('totalObs').textContent = total.toLocaleString('fa-IR');
+            document.getElementById('pendingObs').textContent = pending.toLocaleString('fa-IR');
+            document.getElementById('approvedObs').textContent = approved.toLocaleString('fa-IR');
+            document.getElementById('score5Obs').textContent = score5.toLocaleString('fa-IR');
         }
-        
+
         function setFilter(filter) {
             currentFilter = filter;
             document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -308,238 +525,349 @@
             renderObservations();
         }
 
+        // ============================================================
+        // ===== رندر =====
+        // ============================================================
         function renderObservations() {
             const container = document.getElementById('observationsList');
-            
+
             let filtered = allObservations;
             if (currentFilter === 'pending') filtered = filtered.filter(o => o.status === 'pending');
             else if (currentFilter === 'approved') filtered = filtered.filter(o => o.status === 'approved' && o.score !== 5);
             else if (currentFilter === 'score5') filtered = filtered.filter(o => o.score === 5);
             else if (currentFilter === 'rejected') filtered = filtered.filter(o => o.status === 'rejected');
-            
+
             if (filtered.length === 0) {
                 container.innerHTML = `<div class="empty-state">هیچ مشاهده‌ای با این وضعیت وجود ندارد</div>`;
                 return;
             }
-            
-            container.innerHTML = filtered.map(obs => {
-                let cluster = 'other';
-                if (obs.aiAnalysis && obs.aiAnalysis.cluster) cluster = obs.aiAnalysis.cluster;
-                else if (obs.analysis && obs.analysis.adminCluster) cluster = obs.analysis.adminCluster;
-                
-                const clusterLabel = getClusterLabel(cluster);
-                const statusMap = {
-                    approved: `<span class="badge badge-approved">✅ تایید شده</span>`,
-                    rejected: `<span class="badge badge-rejected">❌ رد شده</span>`,
-                    pending: `<span class="badge badge-pending">⏳ در انتظار</span>`
-                };
-                
-                const scoreBadge = obs.score === 5 ? `<span class="badge badge-score-5">⭐ امتیاز ۵</span>` : 
-                    (obs.score ? `<span class="badge" style="background:rgba(200,200,200,0.15);color:#888;">امتیاز ${obs.score}</span>` : '');
-                
-                const clusterBadge = cluster !== 'other' ? `<span class="badge badge-cluster">📂 ${clusterLabel}</span>` : '';
-                
-                let cardClass = 'obs-card';
-                if (obs.status === 'pending') cardClass += ' pending';
-                else if (obs.score === 5) cardClass += ' score5';
-                else if (obs.status === 'approved') cardClass += ' approved';
-                else if (obs.status === 'rejected') cardClass += ' rejected';
-                
-                const analysis = obs.analysis || {};
-                const ai1 = obs.ai1Analysis || {};
-                const ai2 = obs.aiAnalysis || {};
-                
-                // ساختار باکس یکپارچه برای ادمین
-                return `
-                    <div class="${cardClass}" id="card-${obs.number}">
-                        <div class="obs-header">
-                            <div>
-                                <span class="obs-code">#${obs.number} - ${obs.cardCode || 'ناشناس'}</span>
-                                ${statusMap[obs.status] || ''}
-                                ${scoreBadge}
-                                ${clusterBadge}
-                            </div>
-                            <div class="obs-meta">${new Date(obs.createdAt).toLocaleString('fa-IR')}</div>
+
+            container.innerHTML = filtered.map(obs => renderObservationCard(obs)).join('');
+        }
+
+        function renderObservationCard(obs) {
+            const ai1 = normalizeAi1(obs);
+            const ai2 = normalizeAi2(obs);
+            const ai3 = normalizeAi3(obs);
+
+            let cluster = 'other';
+            if (obs.aiAnalysis?.cluster) cluster = obs.aiAnalysis.cluster;
+            else if (obs.analysis?.adminCluster) cluster = obs.analysis.adminCluster;
+            else cluster = detectCluster(obs.observation || '');
+            const clusterLabel = getClusterLabel(cluster);
+
+            const statusMap = {
+                approved: `<span class="badge badge-approved">✅ تایید شده</span>`,
+                rejected: `<span class="badge badge-rejected">❌ رد شده</span>`,
+                pending: `<span class="badge badge-pending">⏳ در انتظار</span>`
+            };
+
+            const scoreBadge = obs.score === 5
+                ? `<span class="badge badge-score-5">⭐ امتیاز ۵</span>`
+                : (obs.score ? `<span class="badge" style="background:rgba(200,200,200,0.15);color:#888;">امتیاز ${obs.score}</span>` : '');
+
+            const clusterBadge = cluster !== 'other'
+                ? `<span class="badge badge-cluster">📂 ${escapeHtml(clusterLabel)}</span>` : '';
+
+            let cardClass = 'obs-card';
+            if (obs.status === 'pending') cardClass += ' pending';
+            else if (obs.score === 5) cardClass += ' score5';
+            else if (obs.status === 'approved') cardClass += ' approved';
+            else if (obs.status === 'rejected') cardClass += ' rejected';
+
+            // ===== محتوای ۵ بخش =====
+            const block1 = `
+                <div class="block block-1">
+                    <div class="block-title">📝 ① مشاهده ثبت‌شده توسط عضو</div>
+                    <div class="block-body">${escapeHtml(obs.observation || 'متن مشاهده موجود نیست')}</div>
+                </div>`;
+
+            const block2 = ai1 ? `
+                <div class="block block-2">
+                    <div class="block-title">🤖 ② راهنمایی سه‌سطحی — هوش مصنوعی اول</div>
+                    <div class="block-body">
+                        ${ai1.individual ? `<div class="ai-level"><strong>سطح فردی:</strong>${escapeHtml(ai1.individual)}</div>` : ''}
+                        ${ai1.social ? `<div class="ai-level"><strong>سطح اجتماعی:</strong>${escapeHtml(ai1.social)}</div>` : ''}
+                        ${ai1.institutional ? `<div class="ai-level"><strong>سطح نهادی:</strong>${escapeHtml(ai1.institutional)}</div>` : ''}
+                        ${(!ai1.individual && !ai1.social && !ai1.institutional) ? '<div class="ai-level" style="opacity:0.6;">در انتظار تحلیل...</div>' : ''}
+                    </div>
+                </div>` : `
+                <div class="block block-2">
+                    <div class="block-title">🤖 ② راهنمایی سه‌سطحی — هوش مصنوعی اول</div>
+                    <div class="block-body" style="opacity:0.6;">هنوز تحلیل نشده است.</div>
+                </div>`;
+
+            const block3 = ai2 ? `
+                <div class="block block-3">
+                    <div class="block-title">🧠 ③ ماتریس ۵ سطحی — هوش مصنوعی دوم</div>
+                    <div class="block-body">
+                        <div class="matrix-grid">
+                            ${ai2.emergence ? `<div class="matrix-cell"><span class="m-label">۱. ظهور</span>${escapeHtml(Array.isArray(ai2.emergence) ? ai2.emergence.join(' • ') : ai2.emergence)}</div>` : ''}
+                            ${ai2.layer ? `<div class="matrix-cell"><span class="m-label">۲. لایه</span>${escapeHtml(Array.isArray(ai2.layer) ? ai2.layer.join(' • ') : (typeof ai2.layer === 'object' ? JSON.stringify(ai2.layer) : ai2.layer))}</div>` : ''}
+                            ${ai2.connection ? `<div class="matrix-cell"><span class="m-label">۳. ارتباط</span>${escapeHtml(Array.isArray(ai2.connection) ? ai2.connection.join(' • ') : ai2.connection)}</div>` : ''}
+                            ${ai2.scale ? `<div class="matrix-cell"><span class="m-label">۴. مقیاس</span>${escapeHtml(Array.isArray(ai2.scale) ? ai2.scale.join(' • ') : ai2.scale)}</div>` : ''}
+                            ${ai2.capacity ? `<div class="matrix-cell"><span class="m-label">۵. ظرفیت</span>${escapeHtml(Array.isArray(ai2.capacity) ? ai2.capacity.join(' • ') : ai2.capacity)}</div>` : ''}
                         </div>
+                        ${(!ai2.emergence && !ai2.layer && !ai2.connection && !ai2.scale && !ai2.capacity) ? '<div style="opacity:0.6;">در انتظار تحلیل...</div>' : ''}
+                    </div>
+                </div>` : `
+                <div class="block block-3">
+                    <div class="block-title">🧠 ③ ماتریس ۵ سطحی — هوش مصنوعی دوم</div>
+                    <div class="block-body" style="opacity:0.6;">هنوز تحلیل نشده است.</div>
+                </div>`;
 
-                        <!-- باکس یکپارچه محتوای مشاهده و تحلیل‌ها -->
-                        <div class="unified-content-box">
-                            <!-- 1. مشاهده عضو -->
-                            <div class="content-section">
-                                <div class="section-label">👁️ مشاهده ثبت شده توسط عضو</div>
-                                <div class="observation-text">${obs.observation || 'متن مشاهده موجود نیست'}</div>
-                            </div>
+            const block4 = ai3?.final ? `
+                <div class="block block-4">
+                    <div class="block-title">💎 ④ تحلیل نهایی — هوش مصنوعی دوم</div>
+                    <div class="block-body">${escapeHtml(ai3.final)}</div>
+                </div>` : `
+                <div class="block block-4">
+                    <div class="block-title">💎 ④ تحلیل نهایی — هوش مصنوعی دوم</div>
+                    <div class="block-body" style="opacity:0.6;">هنوز تحلیل نهایی ثبت نشده است.</div>
+                </div>`;
 
-                            <!-- 2. تحلیل سه سطحی هوش اول -->
-                            ${ai1.threeLevelAnalysis ? `
-                            <div class="content-section">
-                                <div class="section-label">🧠 تحلیل سه سطحی هوش مصنوعی اول</div>
-                                <div class="ai1-analysis">${ai1.threeLevelAnalysis}</div>
-                            </div>` : ''}
+            const block5 = `
+                <div class="block block-5">
+                    <div class="block-title">🎯 ⑤ جمع‌بندی نهایی — هوش مصنوعی سوم (داور/ترکیب‌کننده)</div>
+                    <div class="block-body" id="ai3-final-${obs.number}">
+                        ${obs.ai3Summary ? escapeHtml(obs.ai3Summary) : '<span style="opacity:0.6;">در انتظار جمع‌بندی نهایی...</span>'}
+                    </div>
+                </div>`;
 
-                            <!-- خط فاصله واضح قبل از بخش همفکری -->
-                            <div style="border-top: 2px dashed rgba(212,175,55,0.4); margin: 0.8rem 0;"></div>
+            // ===== state محلی =====
+            const st = localState[obs.number] || {};
+            const isPending = obs.status === 'pending';
+            const canOperate = isPending; // فقط روی pending عملیات
+            const currentScore = st.score || obs.score || '';
+            const isSaved = !!st.saved;
+            const isFinalized = !!st.finalized || !isPending;
 
-                            <!-- 3. انتخاب همفکری / ارجاع -->
-                            <div class="content-section">
-                                <div class="section-label">🤝 انتخاب همفکری / ارجاع توسط عضو</div>
-                                <div class="collab-section">
-                                    ${obs.collaborationChoice ? `<span class="collab-tag">${obs.collaborationChoice}</span>` : '<span style="font-size:0.8rem;color:#888;">انتخابی ثبت نشده</span>'}
-                                    ${obs.referralTargets && obs.referralTargets.length > 0 ? 
-                                        obs.referralTargets.map(t => `<span class="collab-tag">ارجاع به: ${t}</span>`).join('') : ''}
-                                </div>
-                            </div>
+            // ===== ماژول عملیات ترتیبی =====
+            // مرحله ۱: انتخاب امتیاز
+            const step1Class = isFinalized ? 'completed' : (canOperate ? 'active' : 'locked');
+            // مرحله ۲: ذخیره (بعد از امتیاز)
+            const step2Class = isFinalized ? 'completed' : (canOperate && currentScore ? 'active' : 'locked');
+            // مرحله ۳: تایید/رد (بعد از ذخیره)
+            const step3Class = isFinalized ? 'completed' : (canOperate && isSaved ? 'active' : 'locked');
 
-                            <!-- 4. راهنمایی سه سطحی -->
-                            ${obs.guidance ? `
-                            <div class="content-section">
-                                <div class="section-label">💡 راهنمایی سه سطحی سیستم</div>
-                                <div class="guide-box">
-                                    <div class="guide-item">سطح ۱: ${obs.guidance.level1 || '-'}</div>
-                                    <div class="guide-item">سطح ۲: ${obs.guidance.level2 || '-'}</div>
-                                    <div class="guide-item">سطح ۳: ${obs.guidance.level3 || '-'}</div>
-                                </div>
-                            </div>` : ''}
+            const modulesHtml = isPending ? `
+                <div class="modules-container" id="modules-${obs.number}">
+                    <div class="modules-title">⚙️ ماژول عملیات (به ترتیب انجام دهید)</div>
 
-                            <!-- 5. ماتریس‌های هوش دوم -->
-                            <div class="content-section">
-                                <div class="section-label">📊 ماتریس‌های ۵ سطحی هوش مصنوعی دوم</div>
-                                <div class="matrix-grid">
-                                    <div class="matrix-item">
-                                        <label>۱. ماتریس ظهورها</label>
-                                        <textarea id="emergence-${obs.number}" rows="2">${analysis.emergenceMatrix || ai2.matrix_emergence || ''}</textarea>
-                                    </div>
-                                    <div class="matrix-item">
-                                        <label>۲. ماتریس لایه‌ها</label>
-                                        <textarea id="layer-${obs.number}" rows="2">${analysis.layerMatrix || ai2.matrix_layers || ''}</textarea>
-                                    </div>
-                                    <div class="matrix-item">
-                                        <label>۳. ماتریس ارتباطات</label>
-                                        <textarea id="connection-${obs.number}" rows="2">${analysis.connectionMatrix || ai2.matrix_connections || ''}</textarea>
-                                    </div>
-                                    <div class="matrix-item">
-                                        <label>۴. ماتریس مقیاس</label>
-                                        <textarea id="scale-${obs.number}" rows="2">${analysis.scaleMatrix || ai2.matrix_scale || ''}</textarea>
-                                    </div>
-                                    <div class="matrix-item">
-                                        <label>۵. ماتریس ظرفیت</label>
-                                        <textarea id="capacity-${obs.number}" rows="2">${analysis.capacityMatrix || ai2.matrix_capacity || ''}</textarea>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- 6. تحلیل نهایی هوش دوم -->
-                            ${ai2.finalAnalysis || analysis.adminNote ? `
-                            <div class="content-section">
-                                <div class="section-label">🎯 تحلیل نهایی</div>
-                                <div class="final-analysis">${ai2.finalAnalysis || analysis.adminNote || '-'}</div>
-                            </div>` : ''}
-                        </div>
-
-                        <!-- ماژول‌های اقدام (به ترتیب دقیق) -->
-                        <div class="action-modules">
-                            <!-- مرحله 1: امتیاز دهی -->
-                            <div class="module-row">
-                                <label style="font-weight:700; color:#2a1a0a; font-size:0.85rem;">⭐ امتیاز (۱ تا ۵):</label>
-                                <select id="score-${obs.number}" style="width:auto; min-width:80px;">
-                                    <option value="1" ${obs.score === 1 ? 'selected' : ''}>۱</option>
-                                    <option value="2" ${obs.score === 2 ? 'selected' : ''}>۲</option>
-                                    <option value="3" ${obs.score === 3 ? 'selected' : ''}>۳</option>
-                                    <option value="4" ${obs.score === 4 ? 'selected' : ''}>۴</option>
-                                    <option value="5" ${obs.score === 5 ? 'selected' : ''}>۵</option>
-                                </select>
-                            </div>
-
-                            <!-- مرحله 2: ذخیره -->
-                            <div class="module-row" style="justify-content:flex-end;">
-                                <button class="btn-small btn-save" onclick="saveAnalysis('${obs.number}')">💾 ذخیره</button>
-                            </div>
-
-                            <!-- مرحله 3: تصمیم نهایی -->
-                            ${obs.status === 'pending' ? `
-                            <div class="module-row" style="justify-content:space-between; background:rgba(255,255,255,0.5);">
-                                <span style="font-size:0.75rem; color:#666;">تصمیم نهایی:</span>
-                                <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
-                                    <button class="btn-small btn-approve-atlas" onclick="approveObservation('${obs.number}', 'atlas')">✅ تایید برای اطلس ظهور</button>
-                                    <button class="btn-small btn-approve-gallery" onclick="approveObservation('${obs.number}', 'gallery')">✅ تایید برای گالری نام‌آوران</button>
-                                    <button class="btn-small btn-reject" onclick="rejectObservation('${obs.number}')">❌ رد</button>
-                                </div>
-                            </div>
-                            ` : ''}
+                    <div class="module-step ${step1Class}">
+                        <div class="step-number">۱</div>
+                        <div class="step-content">
+                            <label>⭐ امتیازدهی:</label>
+                            <select class="score-select" id="score-${obs.number}" 
+                                    onchange="onScoreChange('${obs.number}', this.value)"
+                                    ${isFinalized ? 'disabled' : ''}>
+                                <option value="">— انتخاب کنید —</option>
+                                <option value="1" ${currentScore == 1 ? 'selected' : ''}>۱</option>
+                                <option value="2" ${currentScore == 2 ? 'selected' : ''}>۲</option>
+                                <option value="3" ${currentScore == 3 ? 'selected' : ''}>۳</option>
+                                <option value="4" ${currentScore == 4 ? 'selected' : ''}>۴</option>
+                                <option value="5" ${currentScore == 5 ? 'selected' : ''}>۵</option>
+                            </select>
                         </div>
                     </div>
-                `;
-            }).join('');
-            
-            if (filtered.length > 5) {
-                container.innerHTML += `<div class="scroll-hint">⬇️ ${filtered.length} مشاهده وجود دارد (اسکرول کنید)</div>`;
+
+                    <div class="module-step ${step2Class}">
+                        <div class="step-number">۲</div>
+                        <div class="step-content">
+                            <label>💾 ذخیره تحلیل:</label>
+                            <button class="btn-action btn-save" id="btn-save-${obs.number}"
+                                    onclick="saveAnalysis('${obs.number}')"
+                                    ${(!currentScore || isSaved || isFinalized) ? 'disabled' : ''}>
+                                ${isSaved ? '✅ ذخیره شد' : '💾 ذخیره'}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="module-step ${step3Class}">
+                        <div class="step-number">۳</div>
+                        <div class="step-content">
+                            <label>🎯 عملیات نهایی:</label>
+                            <button class="btn-action btn-atlas" id="btn-atlas-${obs.number}"
+                                    onclick="finalizeObservation('${obs.number}', 'atlas')"
+                                    ${(!isSaved || isFinalized) ? 'disabled' : ''}>
+                                ✅ تایید برای اطلس ظهور
+                            </button>
+                            <button class="btn-action btn-gallery" id="btn-gallery-${obs.number}"
+                                    onclick="finalizeObservation('${obs.number}', 'gallery')"
+                                    ${(!isSaved || isFinalized) ? 'disabled' : ''}>
+                                ✅ تایید برای گالری نام‌آوران
+                            </button>
+                            <button class="btn-action btn-reject" id="btn-reject-${obs.number}"
+                                    onclick="finalizeObservation('${obs.number}', 'reject')"
+                                    ${(!isSaved || isFinalized) ? 'disabled' : ''}>
+                                ❌ رد
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            ` : '';
+
+            // ===== نوار کپی/ذخیره متن یکپارچه =====
+            const copyToolbar = `
+                <div class="copy-toolbar">
+                    <button class="btn-copy" onclick="copyUnified('${obs.number}')">📋 کپی متن یکپارچه</button>
+                    <button class="btn-copy save" onclick="copyUnified('${obs.number}', true)">💾 ذخیره متن در کلیپ‌بورد</button>
+                </div>
+            `;
+
+            return `
+                <div class="${cardClass}" id="card-${obs.number}">
+                    <div class="obs-header">
+                        <div>
+                            <span class="obs-code">#${obs.number} - ${escapeHtml(obs.cardCode || 'ناشناس')}</span>
+                            ${statusMap[obs.status] || ''}
+                            ${scoreBadge}
+                            ${clusterBadge}
+                        </div>
+                        <div class="obs-meta">${obs.createdAt ? new Date(obs.createdAt).toLocaleString('fa-IR') : ''}</div>
+                    </div>
+
+                    ${block1}
+                    ${block2}
+                    ${block3}
+                    ${block4}
+                    ${block5}
+                    ${copyToolbar}
+                    ${modulesHtml}
+                </div>
+            `;
+        }
+
+        // ============================================================
+        // ===== عملیات ترتیبی =====
+        // ============================================================
+        window.onScoreChange = function(issueNumber, value) {
+            if (!value) return;
+            if (!localState[issueNumber]) localState[issueNumber] = {};
+            localState[issueNumber].score = parseInt(value);
+            localState[issueNumber].saved = false;
+            // رندر مجدد فقط همان کارت
+            rerenderCard(issueNumber);
+        };
+
+        window.saveAnalysis = async function(issueNumber) {
+            const st = localState[issueNumber];
+            if (!st || !st.score) {
+                showToast('ابتدا امتیاز را انتخاب کنید.', 'error');
+                return;
             }
-        }
-        
-        async function approveObservation(issueNumber, target) {
-            const targetNames = { 'atlas': 'اطلس ظهور', 'gallery': 'گالری نام‌آوران' };
-            if (!confirm(`آیا از تایید این مشاهده برای ${targetNames[target]} اطمینان دارید؟`)) return;
+
+            const obs = allObservations.find(o => String(o.number) === String(issueNumber));
+            if (!obs) return;
+
+            const btn = document.getElementById(`btn-save-${issueNumber}`);
+            if (btn) { btn.disabled = true; btn.textContent = '⏳ در حال ذخیره...'; }
+
             try {
+                const analysis = obs.analysis || {};
+                analysis.savedScore = st.score;
+
                 const response = await fetch('/api/approve-connection', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ issueNumber, action: 'approve_all', type: 'observation', target })
-                });
-                const result = await response.json();
-                if (!response.ok) throw new Error(result.error || 'خطا در تایید');
-                alert(`✅ مشاهده برای ${targetNames[target]} تایید شد.`);
-                loadObservations();
-            } catch (error) { alert('خطا: ' + error.message); }
-        }
-        
-        async function rejectObservation(issueNumber) {
-            if (!confirm('آیا از رد این مشاهده اطمینان دارید؟')) return;
-            try {
-                const response = await fetch('/api/approve-connection', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ issueNumber, action: 'reject_all', type: 'observation' })
-                });
-                const result = await response.json();
-                if (!response.ok) throw new Error(result.error || 'خطا در رد');
-                alert(result.message);
-                loadObservations();
-            } catch (error) { alert('خطا: ' + error.message); }
-        }
-        
-        async function saveAnalysis(issueNumber) {
-            const analysis = {
-                emergenceMatrix: document.getElementById(`emergence-${issueNumber}`).value.trim(),
-                layerMatrix: document.getElementById(`layer-${issueNumber}`).value.trim(),
-                connectionMatrix: document.getElementById(`connection-${issueNumber}`).value.trim(),
-                scaleMatrix: document.getElementById(`scale-${issueNumber}`).value.trim(),
-                capacityMatrix: document.getElementById(`capacity-${issueNumber}`).value.trim()
-            };
-            
-            const score = parseInt(document.getElementById(`score-${issueNumber}`).value) || 0;
-            
-            try {
-                const response = await fetch('/api/approve-connection', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        issueNumber, 
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        issueNumber,
                         action: 'save_analysis',
                         type: 'observation',
-                        analysis: analysis,
-                        score: score
+                        analysis,
+                        score: st.score
                     })
                 });
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.error || 'خطا در ذخیره');
-                
-                alert('✅ ذخیره شد.');
-                loadObservations(); 
-            } catch (error) { 
-                alert('خطا: ' + error.message); 
+
+                localState[issueNumber].saved = true;
+                showToast('✅ تحلیل ذخیره شد. حالا می‌توانید عملیات نهایی را انجام دهید.', 'success');
+                rerenderCard(issueNumber);
+            } catch (error) {
+                showToast('❌ خطا: ' + error.message, 'error');
+                if (btn) { btn.disabled = false; btn.textContent = '💾 ذخیره'; }
             }
+        };
+
+        window.finalizeObservation = async function(issueNumber, target) {
+            const st = localState[issueNumber];
+            if (!st || !st.saved) {
+                showToast('ابتدا باید تحلیل را ذخیره کنید.', 'error');
+                return;
+            }
+
+            const targetNames = {
+                'atlas': 'اطلس ظهور',
+                'gallery': 'گالری نام‌آوران',
+                'reject': 'رد'
+            };
+
+            const confirmMsg = target === 'reject'
+                ? 'آیا از رد این مشاهده اطمینان دارید؟'
+                : `آیا از تایید این مشاهده برای ${targetNames[target]} اطمینان دارید؟`;
+
+            if (!confirm(confirmMsg)) return;
+
+            try {
+                let action, extra = {};
+                if (target === 'reject') {
+                    action = 'reject_all';
+                } else {
+                    action = 'approve_all';
+                    extra.target = target;
+                }
+
+                const response = await fetch('/api/approve-connection', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        issueNumber,
+                        action,
+                        type: 'observation',
+                        ...extra
+                    })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'خطا در عملیات نهایی');
+
+                localState[issueNumber].finalized = true;
+                showToast(`✅ عملیات «${targetNames[target]}» با موفقیت انجام شد.`, 'success');
+                loadObservations();
+            } catch (error) {
+                showToast('❌ خطا: ' + error.message, 'error');
+            }
+        };
+
+        // ============================================================
+        // ===== کپی متن یکپارچه =====
+        // ============================================================
+        window.copyUnified = async function(issueNumber, saveMode = false) {
+            const obs = allObservations.find(o => String(o.number) === String(issueNumber));
+            if (!obs) { showToast('مشاهده یافت نشد.', 'error'); return; }
+            const text = buildUnifiedText(obs);
+            await copyToClipboard(text, saveMode ? 'متن در کلیپ‌بورد ذخیره شد' : 'متن یکپارچه کپی شد');
+        };
+
+        // ============================================================
+        // ===== رندر مجدد یک کارت (بدون رندر کل لیست) =====
+        // ============================================================
+        function rerenderCard(issueNumber) {
+            const obs = allObservations.find(o => String(o.number) === String(issueNumber));
+            if (!obs) return;
+            const oldCard = document.getElementById(`card-${issueNumber}`);
+            if (!oldCard) return;
+            const temp = document.createElement('div');
+            temp.innerHTML = renderObservationCard(obs);
+            const newCard = temp.firstElementChild;
+            oldCard.replaceWith(newCard);
         }
-        
+
+        // ============================================================
+        // ===== شروع =====
+        // ============================================================
         loadObservations();
     </script>
 </body>
