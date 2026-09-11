@@ -475,7 +475,26 @@
             <a href="track-observation.html" class="btn-back" style="background:rgba(40,116,166,0.1);border-color:rgba(40,116,166,0.2);">🔍 پیگیری مشاهدات</a>
             <a href="index.html" class="btn-back">↩ بازگشت به صفحه اصلی</a>
         </div>
-        
+                <!-- ===== ماژول بازخورد انسانی (جدید) ===== -->
+        <div id="feedbackModule" style="display:none; margin-top:2rem; padding:1.5rem; background:rgba(212,175,55,0.1); border-radius:16px; border:2px solid #d4af37; animation: fadeIn 0.5s ease;">
+            <h3 style="color:#8a6d1f; text-align:center; margin-bottom:1rem;">📊 ماژول بازخورد انسانی</h3>
+            <p style="text-align:center; font-size:0.9rem; margin-bottom:1.5rem;">
+                اگر بر اساس راهنمای دریافت شده اقدامی انجام دادید، نتیجه را اینجا ثبت کنید. 
+                این بازخورد مستقیماً به <strong>اطلس ظهور</strong> می‌رود و به دیگران کمک می‌کند.
+            </p>
+            
+            <div class="form-group">
+                <label>کد عضویت شما:</label>
+                <input type="text" id="feedbackUserCode" placeholder="CIM-XXXX-XXXX-XXXX" />
+            </div>
+            
+            <div class="form-group">
+                <label>نتیجه اقدام و بازخورد شما:</label>
+                <textarea id="feedbackText" rows="4" placeholder="چه اتفاقی افتاد؟ چه چیزی تغییر کرد؟ چه چالشی داشتید؟" style="width:100%; padding:0.8rem; border-radius:12px; border:2px solid rgba(212,175,55,0.2); background:rgba(255,255,255,0.5);"></textarea>
+            </div>
+            
+            <button onclick="submitFeedback()" class="btn btn-primary" style="width:100%;">📤 ارسال بازخورد به اطلس ظهور</button>
+        </div>
         <div class="note">
             🔒 مشاهدات شما به‌صورت ناشناس و با رعایت کامل حریم خصوصی ثبت می‌شود.
         </div>
@@ -764,9 +783,14 @@
                 resultTitle.textContent = '✅ مشاهدات با موفقیت ثبت و تحلیل شد';
                 resultTracking.innerHTML = `🔗 شماره پیگیری: ${trackingCode}<br>${trackingLink}`;
                 resultError.style.display = 'none';
+                               // ... (کدهای قبلی)
                 resultBox.style.display = 'block';
                 
+                // نمایش ماژول بازخورد
+                document.getElementById('feedbackModule').style.display = 'block';
+                
                 submitBtn.textContent = '✅ ثبت شد';
+                // ...
                 
                 document.querySelectorAll('.obs-text').forEach(t => t.value = '');
                 document.querySelectorAll('.box-module-btn.active').forEach(b => b.classList.remove('active'));
@@ -791,6 +815,48 @@
             updateAddButton();
             console.log('📌 سپهر خردمندی - ثبت مشاهدات');
         });
+              // ===== تابع ارسال بازخورد به اطلس ظهور =====
+        async function submitFeedback() {
+            const userCode = document.getElementById('feedbackUserCode').value.trim();
+            const feedbackText = document.getElementById('feedbackText').value.trim();
+            
+            if (!userCode || !feedbackText) {
+                alert('لطفاً کد عضویت و متن بازخورد را وارد کنید.');
+                return;
+            }
+
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '⏳ در حال ارسال...';
+
+            try {
+                const response = await fetch('/api/submit-feedback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        cardCode: userCode,
+                        feedback: feedbackText,
+                        type: 'observation_feedback'
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (!response.ok) throw new Error(result.error || 'خطا در ارسال بازخورد');
+
+                alert('✅ بازخورد شما با موفقیت به اطلس ظهور ارسال شد. سپاس از مشارکت شما!');
+                document.getElementById('feedbackModule').style.display = 'none';
+                
+            } catch (error) {
+                alert('❌ خطا: ' + error.message);
+                btn.disabled = false;
+                btn.textContent = '📤 ارسال بازخورد به اطلس ظهور';
+            }
+        }
+
+        // نمایش ماژول بازخورد پس از ثبت موفق مشاهده
+        // این خط را به انتهای بلوک موفقیت در تابع submitObservations اضافه کنید:
+        // document.getElementById('feedbackModule').style.display = 'block';  
     </script>
 </body>
 </html>
