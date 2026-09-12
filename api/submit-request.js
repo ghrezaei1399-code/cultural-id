@@ -104,8 +104,12 @@ module.exports = async function handler(req, res) {
         
         let aiAnalysis = null;
         
-        // تلاش برای دریافت تحلیل از هوش مصنوعی
-        if (openRouterKey) {
+                // ============================================================
+        // تحلیل هوش مصنوعی با OpenRouter - با حفظ پرامپت اصلی شما
+        // ============================================================
+        let aiAnalysis = null;
+        
+        if (!obs.aiAnalysis && openRouterKey) {
           try {
             const systemPrompt = isPersian ? 
 `شما یک تحلیلگر فرهنگی بر اساس چارچوب "سپهر خردمندی" هستید.
@@ -191,7 +195,10 @@ module.exports = async function handler(req, res) {
 
 Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ONLY JSON.`;
 
-            // استفاده از مدل سبک‌تر و سریع‌تر برای جلوگیری از خطای 504
+            // ایجاد مهلت زمانی ۱۵ ثانیه‌ای برای جلوگیری از خطای ۵۰۴
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
+
             const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
               method: 'POST',
               headers: {
@@ -200,7 +207,7 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
                 'HTTP-Referer': process.env.SITE_URL || 'https://cultural-id.vercel.app',
               },
               body: JSON.stringify({
-                model: 'qwen/qwen-2.5-7b-instruct', // مدل سریع‌تر
+                model: 'google/gemma-2-9b-it', // مدل سریع و پایدار
                 messages: [
                   { role: 'system', content: systemPrompt },
                   { role: 'user', content: userPrompt }
@@ -208,8 +215,11 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
                 temperature: 0.7,
                 max_tokens: 1000,
                 response_format: { type: 'json_object' }
-              })
+              }),
+              signal: controller.signal
             });
+
+            clearTimeout(timeoutId);
 
             if (response.ok) {
               const data = await response.json();
@@ -240,8 +250,14 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
               console.error('OpenRouter Error:', response.status);
             }
           } catch (err) {
-            console.error('AI Fetch Error:', err);
+            console.warn('AI request timed out or failed, using fallback:', err.message);
+            aiAnalysis = null; 
           }
+        }
+
+        if (!aiAnalysis) {
+          aiAnalysis = getFallbackAnalysis(obs.text, isPersian);
+        }
         }
 
         // اگر هوش مصنوعی کار نکرد، از تحلیل پیش‌فرض استفاده کن
