@@ -260,24 +260,31 @@
             <div class="empty-state">Loading...</div>
         </div>
     </div>
-   <script>
-let allApproved = [];
+    <script>
 let allAtlasItems = [];
-let currentModalItem = null;
+let allAchievements = [];
+let currentFilter = 'all';
 
+function toggleTheme() {
+    document.body.classList.toggle('dark');
+    const btn = document.getElementById('themeToggle');
+    btn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+    localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+}
+if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark');
+    document.getElementById('themeToggle').textContent = '☀️';
+}
+
+// ============================================================
+// Normalization helpers
+// ============================================================
 function normalizeGuide(item) {
     if (item.guide && (item.guide.individual || item.guide.network || item.guide.policy)) {
         return {
             individual: item.guide.individual || '',
             social: item.guide.network || '',
             institutional: item.guide.policy || ''
-        };
-    }
-    if (item.analysis && item.analysis.guide) {
-        return {
-            individual: item.analysis.guide.individual || '',
-            social: item.analysis.guide.network || '',
-            institutional: item.analysis.guide.policy || ''
         };
     }
     return null;
@@ -304,197 +311,220 @@ function normalizeAi3(item) {
     return item.ai3Final || '';
 }
 
-async function loadAchievements() {
-    const container = document.getElementById('achievementsListContainer');
+// ============================================================
+// Load data
+// ============================================================
+async function loadData() {
+    // ===== 1. Atlas observations =====
     try {
-        const res = await fetch('/api/get-users?t=' + new Date().getTime());
-        if (!res.ok) throw new Error('Server connection error');
-        const data = await res.json();
-        allApproved = data.achievements || [];
-        renderAchievements(allApproved);
+        const atlasRes = await fetch('/api/get-connection-requests?type=observations&t=' + Date.now());
+        const atlasData = await atlasRes.json();
+        if (atlasRes.ok) {
+            allAtlasItems = (atlasData.observations || []).filter(obs => obs.status === 'approved');
+        } else {
+            console.error('Atlas error:', atlasData.error);
+            allAtlasItems = [];
+        }
     } catch (e) {
-        console.error(e);
-        container.innerHTML = '<div class="empty-state">Error loading data.</div>';
+        console.error('Atlas fetch error:', e);
+        allAtlasItems = [];
     }
-}
 
-function renderAchievements(items) {
-    const container = document.getElementById('achievementsListContainer');
-    const filter = document.getElementById('categoryFilter').value;
-    let filtered = filter === 'all' ? items : items.filter(item => item.category === filter);
-    if (filtered.length === 0) {
-        container.innerHTML = '<div class="empty-state">No approved achievements yet.</div>';
-        return;
-    }
-    container.innerHTML = filtered.map((item, index) => `
-        <div class="achievement-item" onclick="openModal(${index})">
-            <div class="item-info">
-                <h4>${item.title || 'Untitled'}</h4>
-                <span class="item-meta">${item.category === 'science' ? '📄 Article' : item.category === 'art' ? '🎨 Art' : '🎬 Media'}</span>
-            </div>
-            <span style="font-size:0.9rem; color:#d4af37;">👁️ View</span>
-        </div>
-    `).join('');
-}
-
-function filterAchievements() { renderAchievements(allApproved); }
-
-async function loadAtlas() {
-    const container = document.getElementById('atlasListContainer');
+    // ===== 2. Notable achievements =====
     try {
-        const res = await fetch('/api/get-connection-requests?type=observations&t=' + new Date().getTime());
-        if (!res.ok) throw new Error('Error loading atlas');
-        const data = await res.json();
-        allAtlasItems = (data.observations || []).filter(obs => obs.status === 'approved');
-        renderAtlas(allAtlasItems);
+        const usersRes = await fetch('/api/get-users?t=' + Date.now());
+        const usersData = await usersRes.json();
+        if (usersRes.ok) {
+            allAchievements = [];
+            if (usersData.users) {
+                usersData.users.forEach(user => {
+                    if (user.achievements && Array.isArray(user.achievements)) {
+                        user.achievements.forEach(ach => {
+                            if (ach.section === 'emergence' && ach.status === 'approved') {
+                                allAchievements.push({
+                                    ...ach,
+                                    owner: user.cardCode,
+                                    ownerEmail: user.communicationEmail || '',
+                                    ownerRank: user.rank || 0
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        }
     } catch (e) {
-        console.error(e);
-        container.innerHTML = '<div class="empty-state">Error loading atlas.</div>';
+        console.error('Users fetch error:', e);
+        allAchievements = [];
     }
+
+    updateStats();
+    renderGallery();
 }
 
-function renderAtlas(items) {
-    const container = document.getElementById('atlasListContainer');
+function updateStats() {
+    document.getElementById('totalAtlas').textContent = allAtlasItems.length;
+    document.getElementById('totalAchievements').textContent = allAchievements.length;
+    document.getElementById('totalItems').textContent = allAtlasItems.length + allAchievements.length;
+}
+
+function setFilter(filter) {
+    currentFilter = filter;
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === filter);
+    });
+    renderGallery();
+}
+
+// ============================================================
+// Render gallery
+// ============================================================
+function renderGallery() {
+    const grid = document.getElementById('galleryGrid');
+    if (!grid) return;
+
+    const atlasItems = allAtlasItems.map((obs, idx) => ({
+        type: 'atlas',
+        _idx: idx,
+        id: obs.number,
+        title: obs.observation ? obs.observation.substring(0, 80) + '...' : 'Observation',
+        description: obs.observation || '',
+        owner: obs.cardCode || 'Unknown',
+        score: obs.score || '---',
+        date: obs.createdAt
+    }));
+
+    const achievementItems = allAchievements.map((ach, idx) => ({
+        type: 'achievement',
+        _idx: idx,
+        id: ach.id || ach.fileName || 'unknown',
+        title: ach.title || 'Untitled',
+        description: ach.description || '',
+        owner: ach.owner || 'Unknown',
+        date: ach.createdAt || ach.uploadDate,
+        category: ach.category || 'other',
+        fileUrl: ach.fileUrl || ach.fileData || ''
+    }));
+
+    let items = [];
+    if (currentFilter === 'all') items = [...atlasItems, ...achievementItems];
+    else if (currentFilter === 'atlas') items = atlasItems;
+    else if (currentFilter === 'achievement') items = achievementItems;
+
+    items.sort((a, b) => new Date(b.date) - new Date(a.date));
+
     if (items.length === 0) {
-        container.innerHTML = '<div class="empty-state">No score 5 solutions registered yet.</div>';
+        grid.innerHTML = `<div class="empty-state">No items found in this category</div>`;
         return;
     }
-    container.innerHTML = items.map((item, index) => {
-        const moduleStatus = item.moduleStatus || 'pending';
-        const moduleType = item.moduleType || '';
-        
-        const statusLabels = {
-            'success': '✅ Successful', 'revision': '⚠️ Needs Revision', 'failed': '❌ Failed',
-            'pending': '⏳ Pending', 'no_peers': '⚠️ No Peers Found',
-            'no_related': '⚠️ No Related Observations'
-        };
-        const statusText = statusLabels[moduleStatus] || moduleStatus;
-        const statusClass = moduleStatus === 'success' ? 'success' :
-                           moduleStatus === 'revision' ? 'revision' :
-                           moduleStatus === 'failed' ? 'failed' :
-                           moduleStatus === 'pending' ? 'pending' : 'no_peers';
-        
-        const moduleNames = {
-            'collaboration': '🤝 Collaborate',
-            'related': '👁️ Related Views',
-            'referral': '📤 Refer to 5 Peers'
-        };
-        const moduleDisplay = moduleNames[moduleType] || moduleType || '';
-        
+
+    grid.innerHTML = items.map(item => {
+        const isAtlas = item.type === 'atlas';
+        const isAchievement = item.type === 'achievement';
+
+        let mediaHtml = '';
+        if (isAchievement && item.fileUrl) {
+            mediaHtml = `<img src="${item.fileUrl}" alt="${item.title}" onerror="this.parentElement.innerHTML='<span class=\\'no-media\\'>📄</span>'" />`;
+        } else {
+            mediaHtml = `<span class="no-media">${isAtlas ? '🏛️' : '📄'}</span>`;
+        }
+
+        const date = item.date ? new Date(item.date).toLocaleString('en-US') : '---';
+
+        let detailButton = '';
+        if (isAtlas) {
+            detailButton = `<button onclick="showAtlasDetail(${item._idx})" class="btn-full-profile">📊 View Full Emergence Profile</button>`;
+        } else if (isAchievement) {
+            detailButton = `<button onclick="showAchievementDetail(${item._idx})" class="btn-full-profile">👁️ View Details</button>`;
+        }
+
         return `
-            <div class="achievement-item" onclick="openAtlasModal(${index})">
-                <div class="item-info">
-                    <h4>${item.observation ? item.observation.substring(0, 50) + '...' : 'Observation'}</h4>
-                    <span class="item-meta">⭐ Score ${item.score || '---'}</span>
-                    ${moduleDisplay ? `<span class="module-type-label">${moduleDisplay}</span>` : ''}
-                    <span class="module-status-badge ${statusClass}">${statusText}</span>
+            <div class="gallery-card ${isAtlas ? 'atlas' : 'achievement'}">
+                <div class="card-media">${mediaHtml}</div>
+                <div class="card-content">
+                    <div class="card-title">${item.title}</div>
+                    <div class="card-desc">${item.description ? item.description.substring(0, 120) + (item.description.length > 120 ? '...' : '') : '---'}</div>
+                    <div class="card-meta">
+                        <span class="card-owner">👤 ${item.owner}</span>
+                        <span class="card-date">${date}</span>
+                    </div>
+                    ${isAtlas ? `<span class="badge badge-atlas">🏛️ Atlas</span>` : ''}
+                    ${isAchievement ? `<span class="badge badge-achievement">🏆 Notable</span>` : ''}
+                    ${detailButton}
                 </div>
-                <span style="font-size:0.9rem; color:#6a3d9a;">🏛️ Details</span>
             </div>
         `;
     }).join('');
 }
 
-function openModal(index) {
-    const item = allApproved[index];
+// ============================================================
+// Achievement detail
+// ============================================================
+window.showAchievementDetail = function(idx) {
+    const item = allAchievements[idx];
     if (!item) return;
-    currentModalItem = item;
-    document.getElementById('modalTitle').textContent = item.title || 'Untitled';
-    let descText = item.description || 'No description available';
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    descText = descText.replace(urlRegex, url => `<a href="${url}" target="_blank" style="color:#2874a6; text-decoration:underline;">${url}</a>`);
-    document.getElementById('modalDesc').innerHTML = descText;
-    document.getElementById('modalMeta').textContent = `Submitted by: ${item.owner}`;
-    document.getElementById('modalGuide').style.display = 'none';
-    document.getElementById('modalFeedback').style.display = 'none';
-    document.getElementById('modalModule').style.display = 'none';
-    const mediaDiv = document.getElementById('modalMediaContainer');
+
+    let mediaHtml = '';
     const imageUrl = item.fileUrl || item.fileData;
     if (imageUrl) {
-        mediaDiv.innerHTML = `<img src="${imageUrl}" class="modal-media" style="width:100%;max-height:250px;object-fit:contain;background:#1a1a1a;" onerror="this.outerHTML='<p style=\\'padding:1rem;text-align:center;color:#888;\\'>❌ Image not available</p>'"/>`;
-    } else {
-        mediaDiv.innerHTML = '<p style="padding:1rem;text-align:center;color:#888;">📄 No file attached</p>';
+        mediaHtml = `<img src="${imageUrl}" style="width:100%;max-height:300px;object-fit:contain;background:#1a1a1a;border-radius:8px;margin-bottom:0.8rem;" onerror="this.style.display='none'"/>`;
     }
-    document.getElementById('detailModal').classList.add('active');
-}
 
-function openAtlasModal(index) {
-    const item = allAtlasItems[index];
+    const html = `
+        <div style="direction:ltr; line-height:1.7;">
+            ${mediaHtml}
+            <h3 style="color:#8a6d1f; margin-bottom:0.6rem;">${item.title || 'Untitled'}</h3>
+            <p style="font-size:0.9rem; margin-bottom:0.6rem;">${item.description || 'No description'}</p>
+            <div style="font-size:0.75rem; color:#888;">
+                👤 ${item.owner || 'Unknown'} &nbsp;|&nbsp; 📅 ${item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-US') : '---'}
+            </div>
+        </div>
+    `;
+    showCustomModal('👁️ Achievement Detail', html);
+};
+
+// ============================================================
+// Atlas detail (4-section box)
+// ============================================================
+window.showAtlasDetail = function(idx) {
+    const item = allAtlasItems[idx];
     if (!item) return;
-    currentModalItem = item;
-    
-    document.getElementById('modalTitle').textContent = '🏛️ Atlas of Emergence Profile';
-    document.getElementById('modalDesc').innerHTML = '';
-    document.getElementById('modalMeta').textContent = `⭐ Score: ${item.score || '---'} | Status: ${item.status === 'approved' ? '✅ Approved' : '⏳ Pending'}`;
-    
-    const mediaDiv = document.getElementById('modalMediaContainer');
-    mediaDiv.innerHTML = '';
-    
-    const moduleDiv = document.getElementById('modalModule');
-    const moduleType = item.moduleType || '';
-    const moduleStatus = item.moduleStatus || 'pending';
-    const moduleData = item.moduleData || [];
-    const moduleAnalysis = item.moduleAnalysis || '';
-    
-    const moduleNames = {
-        'collaboration': '🤝 Collaborate',
-        'related': '👁️ Related Views',
-        'referral': '📤 Refer to 5 Peers'
-    };
-    const moduleDisplay = moduleNames[moduleType] || moduleType || 'None';
-    
-    const statusLabels = {
-        'success': '✅ Successful', 'revision': '⚠️ Needs Revision', 'failed': '❌ Failed',
-        'pending': '⏳ Pending', 'no_peers': '⚠️ No Peers Found',
-        'no_related': '⚠️ No Related Observations'
-    };
-    const statusText = statusLabels[moduleStatus] || moduleStatus;
-    const statusClass = moduleStatus === 'success' ? 'success' :
-                       moduleStatus === 'revision' ? 'revision' :
-                       moduleStatus === 'failed' ? 'failed' :
-                       moduleStatus === 'pending' ? 'pending' : 'no_peers';
-    
-    if (moduleType) {
-        moduleDiv.style.display = 'block';
-        document.getElementById('modalModuleType').textContent = moduleDisplay;
-        document.getElementById('modalModuleStatus').innerHTML = `<span class="module-status-badge ${statusClass}">${statusText}</span>`;
-        document.getElementById('modalModuleData').textContent = moduleData.length > 0 ? `Results: ${moduleData.join(', ')}` : '';
-        document.getElementById('modalModuleAnalysis').textContent = moduleAnalysis || '';
-    } else {
-        moduleDiv.style.display = 'none';
-    }
-    
-    const guideBox = document.getElementById('modalGuide');
-    const guideContent = document.getElementById('guideContent');
-    
+
     const guide = normalizeGuide(item);
     const matrix = normalizeMatrix(item);
     const ai3Final = normalizeAi3(item);
-    
+
     const clusterNames = {
         'human': 'Human', 'knowledge': 'Knowledge & Technology',
         'governance': 'Governance & Civilization', 'survival': 'Survival & Future',
         'other': 'Unknown'
     };
-    
-    let html = '';
-    
+
+    let html = `
+        <div style="direction:ltr; line-height:1.8; max-height:70vh; overflow-y:auto;">
+    `;
+
+    // ① Raw observation
     html += `
         <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(212,175,55,0.08); border-radius:10px; border-left:4px solid #d4af37;">
             <div style="font-weight:800; font-size:0.85rem; color:#8a6d1f; margin-bottom:0.4rem;">📝 Registered Observation</div>
             <div style="font-size:0.85rem; line-height:1.8;">${item.observation || '---'}</div>
-        </div>`;
-    
-    if (guide) {
+        </div>
+    `;
+
+    // ② AI-1
+    if (guide && (guide.individual || guide.social || guide.institutional)) {
         html += `
             <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(16,185,129,0.06); border-radius:10px; border-left:4px solid #10b981;">
                 <div style="font-weight:800; font-size:0.85rem; color:#047857; margin-bottom:0.4rem;">🤖 AI-1 — Three-Level Guidance</div>
                 ${guide.individual ? `<div style="margin-bottom:0.4rem; font-size:0.82rem; line-height:1.7;"><strong>📍 Individual:</strong> ${guide.individual}</div>` : ''}
                 ${guide.social ? `<div style="margin-bottom:0.4rem; font-size:0.82rem; line-height:1.7;"><strong>🌐 Social:</strong> ${guide.social}</div>` : ''}
                 ${guide.institutional ? `<div style="font-size:0.82rem; line-height:1.7;"><strong>🏛️ Institutional:</strong> ${guide.institutional}</div>` : ''}
-            </div>`;
+            </div>
+        `;
     }
-    
+
+    // ③ AI-2
     if (matrix && (matrix.emergence || matrix.layer || matrix.connection || matrix.scale || matrix.capacity || matrix.analysis)) {
         html += `
             <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(99,102,241,0.06); border-radius:10px; border-left:4px solid #6366f1;">
@@ -509,91 +539,111 @@ function openAtlasModal(index) {
                 ${matrix.scale ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 Scale:</strong> ${matrix.scale}</div>` : ''}
                 ${matrix.capacity ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 Capacity:</strong> ${matrix.capacity}</div>` : ''}
                 ${matrix.analysis ? `<div style="margin-top:0.5rem; padding:0.5rem; background:rgba(255,255,255,0.5); border-radius:6px; font-size:0.82rem; line-height:1.75;"><strong>Analysis:</strong> ${matrix.analysis}</div>` : ''}
-            </div>`;
+            </div>
+        `;
     }
-    
+
+    // ④ AI-3
     if (ai3Final) {
         html += `
             <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(236,72,153,0.06); border-radius:10px; border-left:4px solid #ec4899;">
                 <div style="font-weight:800; font-size:0.85rem; color:#be185d; margin-bottom:0.4rem;">💎 AI-3 — Final Synthesis</div>
                 <div style="font-size:0.85rem; line-height:1.9;">${ai3Final}</div>
-            </div>`;
+            </div>
+        `;
     }
-    
+
+    // No AI available
     if (!guide && !matrix && !ai3Final) {
         html += `
             <div style="padding:0.8rem; background:rgba(231,76,60,0.08); border-radius:10px; border-left:4px solid #e74c3c;">
                 <div style="font-weight:800; font-size:0.85rem; color:#7a1a1a;">⚠️ AI analysis not available for this observation</div>
                 <div style="font-size:0.78rem; color:#7a1a1a; margin-top:0.3rem;">This observation may have been registered before the three-layer analysis system was activated.</div>
-            </div>`;
+            </div>
+        `;
     }
-    
+
+    // Copy button
     html += `
-        <div style="margin-top:0.8rem; padding:0.6rem; text-align:center; background:rgba(100,116,139,0.08); border-radius:8px; border:1px dashed rgba(100,116,139,0.3);">
-            <button onclick="copyAtlasProfile(${index})" style="padding:0.4rem 1rem; border-radius:20px; background:#64748b; color:#fff; border:none; font-weight:700; font-size:0.8rem; cursor:pointer;">📋 Copy Full Profile</button>
-            <span style="font-size:0.7rem; color:#64748b; margin-left:0.5rem;">For translation</span>
-        </div>`;
-    
-    guideContent.innerHTML = html;
-    guideContent.style.fontSize = '0.85rem';
-    guideBox.style.display = 'block';
-    document.getElementById('modalFeedback').style.display = 'block';
-    document.getElementById('detailModal').classList.add('active');
+            <div style="margin-top:0.8rem; padding:0.6rem; text-align:center; background:rgba(100,116,139,0.08); border-radius:8px; border:1px dashed rgba(100,116,139,0.3);">
+                <button onclick="copyAtlasProfile(${idx})" style="padding:0.4rem 1rem; border-radius:20px; background:#64748b; color:#fff; border:none; font-weight:700; font-size:0.8rem; cursor:pointer;">📋 Copy Full Profile</button>
+                <span style="font-size:0.7rem; color:#64748b; margin-left:0.5rem;">For translation</span>
+            </div>
+        </div>
+    `;
+
+    showCustomModal(`🏛️ Atlas of Emergence #${item.number}`, html);
+};
+
+// ============================================================
+// Simple modal
+// ============================================================
+function showCustomModal(title, bodyHtml) {
+    let modal = document.getElementById('customAtlasModal');
+    if (modal) modal.remove();
+
+    modal = document.createElement('div');
+    modal.id = 'customAtlasModal';
+    modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(3px);';
+    modal.innerHTML = `
+        <div style="background:#fff;color:#2a1a0a;max-width:780px;width:100%;max-height:90vh;overflow-y:auto;border-radius:20px;padding:1.5rem;position:relative;box-shadow:0 20px 40px rgba(0,0,0,0.3);">
+            <button onclick="document.getElementById('customAtlasModal').remove()" style="position:absolute;top:0.5rem;right:0.5rem;background:rgba(0,0,0,0.1);border:none;width:32px;height:32px;border-radius:50%;font-size:1.2rem;cursor:pointer;">✕</button>
+            <h2 style="color:#8a6d1f;margin-bottom:1rem;font-size:1.1rem;padding-right:2.5rem;">${title}</h2>
+            <div>${bodyHtml}</div>
+        </div>
+    `;
+    modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+    document.body.appendChild(modal);
 }
 
-window.copyAtlasProfile = function(index) {
-    const item = allAtlasItems[index];
+// ============================================================
+// Copy full profile
+// ============================================================
+window.copyAtlasProfile = function(idx) {
+    const item = allAtlasItems[idx];
     if (!item) return;
-    
+
     const guide = normalizeGuide(item);
     const matrix = normalizeMatrix(item);
     const ai3Final = normalizeAi3(item);
-    
-    const clusterNames = {
-        'human': 'Human', 'knowledge': 'Knowledge & Technology',
-        'governance': 'Governance & Civilization', 'survival': 'Survival & Future',
-        'other': 'Unknown'
-    };
-    
-    const lines = [];
-    lines.push('═══════════════════════════════════════════');
-    lines.push(`ATLAS PROFILE #${item.number || '---'}`);
-    lines.push(`Tracking Code: OBS-${item.number || '---'}`);
-    lines.push(`Card Code: ${item.cardCode || '---'}`);
-    lines.push(`Date: ${item.createdAt ? new Date(item.createdAt).toISOString() : '---'}`);
-    if (matrix && matrix.cluster) lines.push(`Cluster: ${clusterNames[matrix.cluster] || matrix.cluster}`);
-    if (item.score) lines.push(`Score: ${item.score}`);
-    lines.push('═══════════════════════════════════════════');
-    lines.push('');
-    lines.push('▸ [1] RAW OBSERVATION:');
-    lines.push(item.observation || '-');
-    lines.push('');
+
+    const L = [];
+    L.push('═══════════════════════════════════════════');
+    L.push(`ATLAS PROFILE #${item.number || '---'}`);
+    L.push(`Tracking Code: OBS-${item.number || '---'}`);
+    L.push(`Card Code: ${item.cardCode || '---'}`);
+    L.push(`Date: ${item.createdAt ? new Date(item.createdAt).toISOString() : '---'}`);
+    L.push(`Score: ${item.score || '---'}`);
+    L.push('═══════════════════════════════════════════');
+    L.push('');
+    L.push('▸ [1] RAW OBSERVATION:');
+    L.push(item.observation || '-');
+    L.push('');
     if (guide) {
-        lines.push('▸ [2] AI-1 — THREE-LEVEL GUIDANCE:');
-        if (guide.individual) lines.push(`  📍 Individual: ${guide.individual}`);
-        if (guide.social) lines.push(`  🌐 Social: ${guide.social}`);
-        if (guide.institutional) lines.push(`  🏛️ Institutional: ${guide.institutional}`);
-        lines.push('');
+        L.push('▸ [2] AI-1 — THREE-LEVEL GUIDANCE:');
+        if (guide.individual) L.push(`  📍 Individual: ${guide.individual}`);
+        if (guide.social) L.push(`  🌐 Social: ${guide.social}`);
+        if (guide.institutional) L.push(`  🏛️ Institutional: ${guide.institutional}`);
+        L.push('');
     }
     if (matrix) {
-        lines.push('▸ [3] AI-2 — FIVE-LEVEL MATRIX:');
-        if (matrix.emergence) lines.push(`  📊 Emergence: ${matrix.emergence}`);
-        if (matrix.layer) lines.push(`  📊 Layers: ${matrix.layer}`);
-        if (matrix.connection) lines.push(`  📊 Connections: ${matrix.connection}`);
-        if (matrix.scale) lines.push(`  📊 Scale: ${matrix.scale}`);
-        if (matrix.capacity) lines.push(`  📊 Capacity: ${matrix.capacity}`);
-        if (matrix.analysis) { lines.push(''); lines.push(`  Analysis: ${matrix.analysis}`); }
-        lines.push('');
+        L.push('▸ [3] AI-2 — FIVE-LEVEL MATRIX:');
+        if (matrix.emergence) L.push(`  📊 Emergence: ${matrix.emergence}`);
+        if (matrix.layer) L.push(`  📊 Layers: ${matrix.layer}`);
+        if (matrix.connection) L.push(`  📊 Connections: ${matrix.connection}`);
+        if (matrix.scale) L.push(`  📊 Scale: ${matrix.scale}`);
+        if (matrix.capacity) L.push(`  📊 Capacity: ${matrix.capacity}`);
+        if (matrix.analysis) { L.push(''); L.push(`  Analysis: ${matrix.analysis}`); }
+        L.push('');
     }
     if (ai3Final) {
-        lines.push('▸ [4] AI-3 — FINAL SYNTHESIS:');
-        lines.push(ai3Final);
-        lines.push('');
+        L.push('▸ [4] AI-3 — FINAL SYNTHESIS:');
+        L.push(ai3Final);
+        L.push('');
     }
-    lines.push('═══════════════════════════════════════════');
-    
-    const text = lines.join('\n');
-    
+    L.push('═══════════════════════════════════════════');
+
+    const text = L.join('\n');
     if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(text).then(() => alert('✅ Full profile copied')).catch(() => fallbackCopy(text));
     } else {
@@ -613,26 +663,11 @@ function fallbackCopy(text) {
     document.body.removeChild(ta);
 }
 
-async function submitFeedback(type) {
-    if (!currentModalItem) return;
-    alert(`Thank you! Your feedback (${type}) has been recorded for the reformer network.`);
-}
-
-function closeModal(e) {
-    if (e.target && e.target.id === 'detailModal') {
-        e.target.classList.remove('active');
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    loadAchievements();
-    loadAtlas();
-});
-
-if (localStorage.getItem('theme') === 'dark') {
-    document.body.classList.add('dark');
-}
-</script>
-   
+// ============================================================
+// Init
+// ============================================================
+loadData();
+setInterval(loadData, 60000);
+</script>  
 </body>
 </html>
