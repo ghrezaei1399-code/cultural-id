@@ -389,7 +389,7 @@ ${moduleSection}
           });
         }
 
-        createdIssues.push({
+                createdIssues.push({
           number: issueData.number,
           url: issueData.html_url,
           trackingCode: `OBS-${issueData.number}`,
@@ -397,11 +397,24 @@ ${moduleSection}
           module: selectedModule,
           moduleStatus: moduleStatus,
           moduleMessage: moduleMessage,
-          // ارسال داده‌ها با فرمت جدید برای پنل ادمین
-          ai1Guidance: ai1Data,
-          ai2Matrix: ai2Data,
-          finalAnalysis: ai3Data,
-          aiAnalysis: aiAnalysis
+          // اصلاح نام فیلدها برای هماهنگی کامل با پنل ادمین جدید
+          ai1Guidance: {
+            individual: aiAnalysis.guide_individual,
+            social: aiAnalysis.guide_network,
+            institutional: aiAnalysis.guide_policy
+          },
+          ai2Matrix: {
+            emergence: aiAnalysis.matrix_emergence,
+            layer: aiAnalysis.matrix_layers,
+            connection: aiAnalysis.matrix_connections,
+            scale: aiAnalysis.matrix_scale,
+            capacity: aiAnalysis.matrix_capacity,
+            analysis: aiAnalysis.analysis_note,
+            cluster: aiAnalysis.cluster,
+            score: aiAnalysis.score_suggestion
+          },
+          finalAnalysis: aiAnalysis.analysis_note,
+          aiAnalysis: aiAnalysis // حفظ سازگاری با نسخه‌های قبلی
         });
       }
 
