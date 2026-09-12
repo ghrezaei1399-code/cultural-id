@@ -155,108 +155,120 @@ ${ai3Result.final}
 - **Error Code:** AI3_FAILED
 `;
 
+       
         // ============================================================
-        // پردازش ماژول (بدون تغییر)
+        // پردازش ماژول — فقط اگر ماژول واقعی انتخاب شده باشد
+        // (اگر خالی است، کل این بخش رد می‌شود تا زمان ذخیره شود)
         // ============================================================
         let moduleResult = null;
         let moduleStatus = 'pending';
         let moduleMessage = '';
 
-        if (obs.module && obs.module !== 'none' && obs.module !== 'هیچ‌کدام') {
-          try {
-            const allUsersRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/active`, {
-              headers: { 'Authorization': `Bearer ${token}` }
-            });
-            
-            if (allUsersRes.ok) {
-              const files = await allUsersRes.json();
-              const allUsers = [];
-              
-              for (const file of files) {
-                if (file.name.endsWith('.json') && file.name !== `${cardCode}.json`) {
-                  try {
-                    const fRes = await fetch(file.download_url);
-                    const uData = await fRes.json();
-                    if (uData.status === 'approved') {
-                      allUsers.push(uData);
-                    }
-                  } catch (e) { continue; }
-                }
-              }
-              
-              moduleResult = { type: obs.module, status: 'pending', data: [], analysis: '' };
-              
-              if (obs.module === 'collaboration') {
-                const senderValues = ai2Result?.values || [];
-                const matchedUsers = allUsers.filter(user => {
-                  const userValues = user.values || [];
-                  const common = senderValues.filter(v => userValues.includes(v));
-                  return common.length >= 3;
-                });
-                const selected = matchedUsers.slice(0, 5);
-                moduleResult.data = selected.map(u => u.cardCode);
-                moduleResult.peers = selected.map(u => ({ cardCode: u.cardCode, email: u.communicationEmail }));
-                if (selected.length > 0) {
-                  moduleResult.analysis = `همفکری با ${selected.length} نفر از هم‌فرهنگان آغاز شد.`;
-                  moduleMessage = `همفکری با ${selected.length} نفر از هم‌فرهنگان آغاز شد.`;
-                  moduleStatus = 'pending';
-                } else {
-                  moduleResult.analysis = 'هیچ هم‌فرهنگی با اولویت‌های مشترک یافت نشد.';
-                  moduleMessage = 'هیچ هم‌فرهنگی با اولویت‌های مشترک یافت نشد.';
-                  moduleStatus = 'no_peers';
-                }
-              } else if (obs.module === 'related') {
-                const allIssuesRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues?labels=observation`, {
-                  headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (allIssuesRes.ok) {
-                  const issues = await allIssuesRes.json();
-                  const similar = issues.filter(issue => 
-                    issue.body && issue.body.includes(obs.text.substring(0, 20))
-                  );
-                  moduleResult.data = similar.slice(0, 5).map(i => `#${i.number}`);
-                  if (similar.length > 0) {
-                    moduleResult.analysis = `${similar.length} مشاهده مرتبط با این موضوع وجود دارد.`;
-                    moduleMessage = `${similar.length} مشاهده مرتبط با این موضوع وجود دارد.`;
-                    moduleStatus = 'completed';
-                  } else {
-                    moduleResult.analysis = 'هیچ مشاهده مرتبطی یافت نشد.';
-                    moduleMessage = 'هیچ مشاهده مرتبطی یافت نشد.';
-                    moduleStatus = 'no_related';
-                  }
-                }
-              } else if (obs.module === 'referral') {
-                const senderValues = ai2Result?.values || [];
-                const scoredUsers = allUsers.map(user => {
-                  const userValues = user.values || [];
-                  const common = senderValues.filter(v => userValues.includes(v));
-                  return { ...user, matchCount: common.length };
-                });
-                const referrals = scoredUsers
-                  .filter(u => u.matchCount >= 3)
-                  .sort((a, b) => b.matchCount - a.matchCount)
-                  .slice(0, 5);
-                moduleResult.data = referrals.map(u => u.cardCode);
-                moduleResult.peers = referrals.map(u => ({ cardCode: u.cardCode, email: u.communicationEmail }));
-                if (referrals.length > 0) {
-                  moduleResult.analysis = `۵ همفرهنگ (${referrals.map(u => u.cardCode).join('، ')}) برای ارجاع انتخاب شدند.`;
-                  moduleMessage = '۵ همفرهنگ برای ارجاع انتخاب شدند.';
-                  moduleStatus = 'pending';
-                } else {
-                  moduleResult.analysis = 'هیچ هم‌فرهنگی برای ارجاع یافت نشد.';
-                  moduleMessage = 'هیچ هم‌فرهنگی برای ارجاع یافت نشد.';
-                  moduleStatus = 'no_peers';
-                }
-              }
-            }
-          } catch (moduleError) {
-            console.error('Module processing failed:', moduleError);
-            moduleResult = { type: obs.module, status: 'error', data: [], analysis: 'خطا در پردازش ماژول' };
-            moduleMessage = 'خطا در پردازش ماژول';
-            moduleStatus = 'error';
-          }
-        }
+        const hasModule = obs.module && 
+                         obs.module !== 'none' && 
+                         obs.module !== 'هیچ‌کدام' && 
+                         obs.module !== null && 
+                         obs.module !== '';
 
+        if (hasModule) {
+            try {
+                const allUsersRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/active`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (allUsersRes.ok) {
+                    const files = await allUsersRes.json();
+                    const allUsers = [];
+                    
+                    // خواندن موازی پروفایل‌ها به جای ترتیبی
+                    const profilePromises = files
+                        .filter(file => file.name.endsWith('.json') && file.name !== `${cardCode}.json`)
+                        .map(async (file) => {
+                            try {
+                                const fRes = await fetch(file.download_url);
+                                const uData = await fRes.json();
+                                if (uData.status === 'approved') {
+                                    return uData;
+                                }
+                                return null;
+                            } catch (e) { return null; }
+                        });
+                    
+                    const profiles = await Promise.all(profilePromises);
+                    profiles.forEach(p => { if (p) allUsers.push(p); });
+                    
+                    moduleResult = { type: obs.module, status: 'pending', data: [], analysis: '' };
+                    
+                    if (obs.module === 'collaboration') {
+                        const senderValues = ai2Result?.values || [];
+                        const matchedUsers = allUsers.filter(user => {
+                            const userValues = user.values || [];
+                            const common = senderValues.filter(v => userValues.includes(v));
+                            return common.length >= 3;
+                        });
+                        const selected = matchedUsers.slice(0, 5);
+                        moduleResult.data = selected.map(u => u.cardCode);
+                        moduleResult.peers = selected.map(u => ({ cardCode: u.cardCode, email: u.communicationEmail }));
+                        if (selected.length > 0) {
+                            moduleResult.analysis = `همفکری با ${selected.length} نفر از هم‌فرهنگان آغاز شد.`;
+                            moduleMessage = `همفکری با ${selected.length} نفر از هم‌فرهنگان آغاز شد.`;
+                            moduleStatus = 'pending';
+                        } else {
+                            moduleResult.analysis = 'هیچ هم‌فرهنگی با اولویت‌های مشترک یافت نشد.';
+                            moduleMessage = 'هیچ هم‌فرهنگی با اولویت‌های مشترک یافت نشد.';
+                            moduleStatus = 'no_peers';
+                        }
+                    } else if (obs.module === 'related') {
+                        const allIssuesRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues?labels=observation`, {
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        if (allIssuesRes.ok) {
+                            const issues = await allIssuesRes.json();
+                            const similar = issues.filter(issue => 
+                                issue.body && issue.body.includes(obs.text.substring(0, 20))
+                            );
+                            moduleResult.data = similar.slice(0, 5).map(i => `#${i.number}`);
+                            if (similar.length > 0) {
+                                moduleResult.analysis = `${similar.length} مشاهده مرتبط با این موضوع وجود دارد.`;
+                                moduleMessage = `${similar.length} مشاهده مرتبط با این موضوع وجود دارد.`;
+                                moduleStatus = 'completed';
+                            } else {
+                                moduleResult.analysis = 'هیچ مشاهده مرتبطی یافت نشد.';
+                                moduleMessage = 'هیچ مشاهده مرتبطی یافت نشد.';
+                                moduleStatus = 'no_related';
+                            }
+                        }
+                    } else if (obs.module === 'referral') {
+                        const senderValues = ai2Result?.values || [];
+                        const scoredUsers = allUsers.map(user => {
+                            const userValues = user.values || [];
+                            const common = senderValues.filter(v => userValues.includes(v));
+                            return { ...user, matchCount: common.length };
+                        });
+                        const referrals = scoredUsers
+                            .filter(u => u.matchCount >= 3)
+                            .sort((a, b) => b.matchCount - a.matchCount)
+                            .slice(0, 5);
+                        moduleResult.data = referrals.map(u => u.cardCode);
+                        moduleResult.peers = referrals.map(u => ({ cardCode: u.cardCode, email: u.communicationEmail }));
+                        if (referrals.length > 0) {
+                            moduleResult.analysis = `۵ همفرهنگ (${referrals.map(u => u.cardCode).join('، ')}) برای ارجاع انتخاب شدند.`;
+                            moduleMessage = '۵ همفرهنگ برای ارجاع انتخاب شدند.';
+                            moduleStatus = 'pending';
+                        } else {
+                            moduleResult.analysis = 'هیچ هم‌فرهنگی برای ارجاع یافت نشد.';
+                            moduleMessage = 'هیچ هم‌فرهنگی برای ارجاع یافت نشد.';
+                            moduleStatus = 'no_peers';
+                        }
+                    }
+                }
+            } catch (moduleError) {
+                console.error('Module processing failed:', moduleError);
+                moduleResult = { type: obs.module, status: 'error', data: [], analysis: 'خطا در پردازش ماژول' };
+                moduleMessage = 'خطا در پردازش ماژول';
+                moduleStatus = 'error';
+            }
+        }
         // ============================================================
         // Module Section
         // ============================================================
@@ -886,7 +898,7 @@ const AI_MODEL = 'openai/gpt-4o-mini';
 
 async function callOpenRouter({ systemPrompt, userPrompt, apiKey, maxTokens = 1500, temperature = 0.4 }) {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 25000);
+  const timeoutId = setTimeout(() => controller.abort(), 18000);
 
   try {
     const response = await fetch(OPENROUTER_URL, {
@@ -943,9 +955,9 @@ async function callAI1(observationText, isPersian, apiKey) {
     systemPrompt,
     userPrompt,
     apiKey,
-    maxTokens: 1200,
+    maxTokens: 800,
     temperature: 0.5
-  });
+});
 
   return {
     individual: result.individual || '',
@@ -967,13 +979,13 @@ async function callAI2(observationText, ai1Result, isPersian, apiKey) {
     ? `مشاهده:\n\n"""${observationText}"""${ai1Context}\n\nماتریس ۵ سطحی را پر کن، خوشه را انتخاب کن، امتیاز بده. خروجی فقط JSON معتبر.`
     : `Observation:\n\n"""${observationText}"""${ai1Context}\n\nFill the 5-level matrix, choose cluster, give score. Output only valid JSON.`;
 
-  const result = await callOpenRouter({
+ const result = await callOpenRouter({
     systemPrompt,
     userPrompt,
     apiKey,
-    maxTokens: 1500,
+    maxTokens: 1000,
     temperature: 0.4
-  });
+});
 
   return {
     emergence: result.emergence || '',
@@ -1015,9 +1027,9 @@ async function callAI3(observationText, ai1Result, ai2Result, isPersian, apiKey)
     systemPrompt,
     userPrompt,
     apiKey,
-    maxTokens: 1200,
+    maxTokens: 800,
     temperature: 0.5
-  });
+});
 
   return {
     final: result.final || ''
