@@ -50,9 +50,6 @@ module.exports = async function handler(req, res) {
         const selectedModule = obs.module ? moduleNames[obs.module] || obs.module : 'هیچ‌کدام';
         const isPersian = /[\u0600-\u06FF]/.test(obs.text);
 
-        // ============================================================
-        // اجرای سه هوش مصنوعی جداگانه
-        // ============================================================
         let ai1Result = null;
         let ai2Result = null;
         let ai3Result = null;
@@ -86,9 +83,6 @@ module.exports = async function handler(req, res) {
         const cluster = ai2Result?.cluster || 'human';
         const suggestedScore = ai2Result?.score || null;
 
-        // ============================================================
-        // ساخت بخش‌های AI با تیترهای سازگار با regexهای موجود
-        // ============================================================
         const clusterLabel = isPersian ?
           (cluster === 'human' ? 'انسان' :
            cluster === 'knowledge' ? 'دانش و فناوری' :
@@ -99,8 +93,6 @@ module.exports = async function handler(req, res) {
            cluster === 'governance' ? 'Governance & Civilization' :
            cluster === 'survival' ? 'Survival & Future' : 'Unknown');
 
-        // ---------- AI-1 Section (تیترهای قدیمی: Individual / Network / Policy) ----------
-        // مهم: Network و Policy (نه Social و Institutional) تا regexهای موجود کار کنند
         const ai1Section = ai1Result ? `
 **🤖 AI Analysis:**
 - **Status:** ✅ ${isPersian ? 'تایید شده' : 'Approved'}
@@ -124,7 +116,6 @@ module.exports = async function handler(req, res) {
 - **Policy:** ---
 `;
 
-        // ---------- AI-2 Section (تیترهای قدیمی: Emergence / Layers / Connections / Scale / Capacity / Analysis) ----------
         const ai2Section = ai2Result ? `
 **5 Matrices:**
 - **Emergence:** ${ai2Result.emergence || '---'}
@@ -145,7 +136,6 @@ module.exports = async function handler(req, res) {
 - **Analysis:** ---
 `;
 
-        // ---------- AI-3 Section (تیتر جدید که با هیچ regex موجودی تضاد ندارد) ----------
         const ai3Section = (ai3Result && ai3Result.final) ? `
 **💎 AI-3 Final Synthesis:**
 ${ai3Result.final}
@@ -155,11 +145,6 @@ ${ai3Result.final}
 - **Error Code:** AI3_FAILED
 `;
 
-       
-        // ============================================================
-        // پردازش ماژول — فقط اگر ماژول واقعی انتخاب شده باشد
-        // (اگر خالی است، کل این بخش رد می‌شود تا زمان ذخیره شود)
-        // ============================================================
         let moduleResult = null;
         let moduleStatus = 'pending';
         let moduleMessage = '';
@@ -180,7 +165,6 @@ ${ai3Result.final}
                     const files = await allUsersRes.json();
                     const allUsers = [];
                     
-                    // خواندن موازی پروفایل‌ها به جای ترتیبی
                     const profilePromises = files
                         .filter(file => file.name.endsWith('.json') && file.name !== `${cardCode}.json`)
                         .map(async (file) => {
@@ -269,9 +253,7 @@ ${ai3Result.final}
                 moduleStatus = 'error';
             }
         }
-        // ============================================================
-        // Module Section
-        // ============================================================
+
         let moduleSection = '';
         if (moduleResult) {
           const moduleStatusLabels = {
@@ -297,9 +279,6 @@ ${moduleResult.peers && moduleResult.peers.length > 0 ? `- **Peers:** ${moduleRe
 `;
         }
 
-        // ============================================================
-        // بدنه Issue (سازگار با regexهای موجود)
-        // ============================================================
         const issueTitle = isPersian
           ? `مشاهده خام: ${cardCode}`
           : `Raw Observation: ${cardCode}`;
@@ -346,7 +325,6 @@ ${moduleSection}
 
         const issueData = await response.json();
 
-        // ارسال دعوت‌نامه به هم‌فرهنگان (بدون تغییر ساختار)
         if (moduleResult && moduleResult.peers && moduleResult.peers.length > 0 && 
             (obs.module === 'collaboration' || obs.module === 'referral')) {
           const trackingCode = `OBS-${issueData.number}`;
@@ -382,8 +360,6 @@ ${moduleSection}
       }
 
       const trackingCodes = createdIssues.map(i => i.trackingCode).join(', ');
-      const anyAiFailed = createdIssues.some((_, i) => false); // placeholder
-      const aiFailedCount = createdIssues.filter(x => x.aiErrors && x.aiErrors.length > 0).length;
       
       return res.status(200).json({
         success: true,
@@ -394,7 +370,7 @@ ${moduleSection}
     }
 
     // ============================================================
-    // بخش Delete (بدون تغییر)
+    // بخش Delete
     // ============================================================
     if (type === 'delete') {
       if (!cardCode) {
@@ -439,7 +415,7 @@ ${moduleSection}
     }
 
     // ============================================================
-    // بخش Connection (بدون تغییر)
+    // بخش Connection
     // ============================================================
     if (type === 'connection') {
       if (!cardCode) {
@@ -576,7 +552,7 @@ ${moduleSection}
     }
 
     // ============================================================
-    // بخش Peer Response (بدون تغییر)
+    // بخش Peer Response
     // ============================================================
     if (type === 'peer-response') {
       const { issueNumber, peerCode, response, result, trackingCode } = parsedBody;
@@ -700,30 +676,38 @@ ${moduleSection}
         moduleResult: moduleResult
       });
     }
+
     // ============================================================
-    // بخش Observation Feedback (بازخورد عضو بر اساس راهنمای دریافتی)
+    // بخش Observation Feedback (گسترش‌یافته با issueNumber و result)
     // ============================================================
     if (type === 'observation_feedback') {
-      const { cardCode, feedback } = parsedBody;
+      const { cardCode, feedback, issueNumber, trackingCode, result } = parsedBody;
       
       if (!cardCode || !feedback) {
         return res.status(400).json({ error: 'کد کارت و متن بازخورد الزامی است' });
       }
-      
-      if (feedback.trim().length < 10) {
-        return res.status(400).json({ error: 'متن بازخورد بسیار کوتاه است' });
-      }
 
       const isPersian = /[\u0600-\u06FF]/.test(feedback);
-      const trackingCode = `FB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+      const fbTrackingCode = `FB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+      
+      const resultLabels = {
+        'success': '✅ موفق بود',
+        'revision': '⚠️ نیاز به اصلاح',
+        'failed': '❌ شکست خورد'
+      };
+
+      // ===== ۱. ذخیره در data/feedback/ =====
       const fileName = `observation-feedback-${Date.now()}-${Math.random().toString(36).substring(7)}.json`;
       const requestPath = `data/feedback/${fileName}`;
 
       const feedbackData = {
         fileName: fileName,
-        trackingCode: trackingCode,
+        trackingCode: fbTrackingCode,
         senderCode: cardCode,
+        issueNumber: issueNumber || null,
+        observationTrackingCode: trackingCode || null,
         type: 'observation_feedback',
+        result: result || 'unknown',
         feedback: feedback.trim(),
         isPersian: isPersian,
         status: 'pending',
@@ -733,153 +717,89 @@ ${moduleSection}
 
       const newContent = Buffer.from(JSON.stringify(feedbackData, null, 2), 'utf8').toString('base64');
 
-      const uploadRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${requestPath}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          message: `Observation feedback from ${cardCode} - ${trackingCode}`,
-          content: newContent,
-          branch: 'main'
-        })
-      });
-
-      if (!uploadRes.ok) {
-        const errData = await uploadRes.json().catch(() => ({}));
-        // اگر پوشه وجود ندارد، اول یک فایل placeholder بساز تا پوشه ایجاد شود
-        if (uploadRes.status === 404 || (errData.message && errData.message.includes('Not Found'))) {
-          // تلاش برای ساخت پوشه با یک فایل .gitkeep
-          try {
-            const placeholderContent = Buffer.from('{}', 'utf8').toString('base64');
-            await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/feedback/.gitkeep`, {
-              method: 'PUT',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                message: 'Create feedback folder',
-                content: placeholderContent,
-                branch: 'main'
-              })
-            });
-            // دوباره تلاش کن
-            const retryRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${requestPath}`, {
-              method: 'PUT',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                message: `Observation feedback from ${cardCode} - ${trackingCode}`,
-                content: newContent,
-                branch: 'main'
-              })
-            });
-            if (!retryRes.ok) {
-              const retryErr = await retryRes.json().catch(() => ({}));
-              throw new Error(retryErr.message || 'خطا در ذخیره بازخورد');
-            }
-          } catch (folderErr) {
-            throw new Error('خطا در ساخت پوشه بازخورد: ' + folderErr.message);
-          }
-        } else {
-          throw new Error(errData.message || 'خطا در ذخیره بازخورد');
-        }
-      }
-
-      // ===== ثبت بازخورد به عنوان یک Issue جدید برای ادمین =====
-      let feedbackIssueNumber = null;
       try {
-        const issueTitle = isPersian
-          ? `📝 بازخورد عضو: ${cardCode}`
-          : `📝 Member Feedback: ${cardCode}`;
-        
-        const issueBody = isPersian ? `
-**کد کارت:** ${cardCode}
-
-**متن بازخورد:**
-${feedback}
-
----
-**کد رهگیری بازخورد:** ${trackingCode}
-**تاریخ:** ${new Date().toISOString()}
-**وضعیت:** در انتظار بررسی توسط ادمین
-
-*این بازخورد به صورت خودکار ثبت شده است. ادمین می‌تواند آن را به اطلس ظهور منتقل کند.*
-        ` : `
-**Card Code:** ${cardCode}
-
-**Feedback:**
-${feedback}
-
----
-**Feedback Tracking Code:** ${trackingCode}
-**Date:** ${new Date().toISOString()}
-**Status:** Pending admin review
-
-*This feedback was registered automatically. Admin can move it to the Atlas of Emergence.*
-        `;
-
-        const issueRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues`, {
-          method: 'POST',
+        const uploadRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${requestPath}`, {
+          method: 'PUT',
           headers: {
             'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/vnd.github.v3+json'
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            title: issueTitle,
-            body: issueBody,
-            labels: ['observation-feedback', 'pending-review']
+            message: `Observation feedback from ${cardCode} - ${fbTrackingCode}`,
+            content: newContent,
+            branch: 'main'
           })
         });
 
-        if (issueRes.ok) {
-          const issueData = await issueRes.json();
-          feedbackIssueNumber = issueData.number;
-
-          // به‌روزرسانی فایل با شماره Issue
-          const updatedData = { ...feedbackData, issueNumber: feedbackIssueNumber };
-          const updatedContent = Buffer.from(JSON.stringify(updatedData, null, 2), 'utf8').toString('base64');
-
-          // دریافت SHA فعلی
-          const currentFileRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${requestPath}`, {
-            headers: { 'Authorization': `Bearer ${token}` }
+        if (!uploadRes.ok && uploadRes.status === 404) {
+          // پوشه وجود ندارد → با .gitkeep بساز
+          await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/feedback/.gitkeep`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              message: 'Create feedback folder',
+              content: Buffer.from('{}').toString('base64'),
+              branch: 'main'
+            })
           });
-          if (currentFileRes.ok) {
-            const currentFile = await currentFileRes.json();
-            await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${requestPath}`, {
-              method: 'PUT',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                message: `Update feedback with issue number ${feedbackIssueNumber}`,
-                content: updatedContent,
-                sha: currentFile.sha,
-                branch: 'main'
-              })
-            });
-          }
+          // تلاش دوباره
+          await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${requestPath}`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              message: `Observation feedback from ${cardCode} - ${fbTrackingCode}`,
+              content: newContent,
+              branch: 'main'
+            })
+          });
         }
-      } catch (issueErr) {
-        console.warn('Could not create feedback issue:', issueErr.message);
-        // ادامه می‌دهیم — فایل ذخیره شده است
+      } catch (e) {
+        console.warn('Feedback file save failed:', e.message);
+      }
+
+      // ===== ۲. اضافه کردن کامنت به Issue اصلی =====
+      if (issueNumber) {
+        try {
+          const commentBody = `
+**📊 بازخورد عضو**
+
+- **کد کارت:** ${cardCode}
+- **نتیجه:** ${resultLabels[result] || result || 'نامشخص'}
+- **متن بازخورد:** ${feedback}
+- **کد رهگیری بازخورد:** ${fbTrackingCode}
+- **زمان:** ${new Date().toISOString()}
+
+---
+*این بازخورد به صورت خودکار ثبت شده است.*
+          `;
+
+          await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/comments`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+              'Accept': 'application/vnd.github.v3+json'
+            },
+            body: JSON.stringify({ body: commentBody })
+          });
+        } catch (e) {
+          console.warn('Feedback comment failed:', e.message);
+        }
       }
 
       return res.status(200).json({
         success: true,
-        trackingCode: trackingCode,
-        issueNumber: feedbackIssueNumber,
-        message: isPersian
-          ? '✅ بازخورد شما با موفقیت به اطلس ظهور ارسال شد.'
-          : '✅ Your feedback has been successfully sent to the Atlas of Emergence.'
+        trackingCode: fbTrackingCode,
+        message: isPersian ? '✅ بازخورد شما با موفقیت ثبت شد.' : '✅ Your feedback has been recorded.'
       });
     }
+
     return res.status(400).json({ error: 'Invalid request type.' });
 
   } catch (error) {
@@ -957,7 +877,7 @@ async function callAI1(observationText, isPersian, apiKey) {
     apiKey,
     maxTokens: 800,
     temperature: 0.5
-});
+  });
 
   return {
     individual: result.individual || '',
@@ -979,13 +899,13 @@ async function callAI2(observationText, ai1Result, isPersian, apiKey) {
     ? `مشاهده:\n\n"""${observationText}"""${ai1Context}\n\nماتریس ۵ سطحی را پر کن، خوشه را انتخاب کن، امتیاز بده. خروجی فقط JSON معتبر.`
     : `Observation:\n\n"""${observationText}"""${ai1Context}\n\nFill the 5-level matrix, choose cluster, give score. Output only valid JSON.`;
 
- const result = await callOpenRouter({
+  const result = await callOpenRouter({
     systemPrompt,
     userPrompt,
     apiKey,
     maxTokens: 1000,
     temperature: 0.4
-});
+  });
 
   return {
     emergence: result.emergence || '',
@@ -1029,7 +949,7 @@ async function callAI3(observationText, ai1Result, ai2Result, isPersian, apiKey)
     apiKey,
     maxTokens: 800,
     temperature: 0.5
-});
+  });
 
   return {
     final: result.final || ''
@@ -1054,22 +974,22 @@ const AI1_PROMPT_FA = `تو یک «مشاهده‌گر سپهری» هستی ک�
 
 ۲. از خود پدیده شروع کن، نه از مشکل و نه از ظرفیت. بگذار خود متن، شکل تحلیل را تعیین کند.
 
-۳. هیچ تعریف، تفسیر، نظریه یا چارچوب از پیش‌ساخته‌ای را بر مشاهده تحمیل نکن. اگر مشاهده مبهم است، محتاطانه و بر اساس همان چیزی که دیده می‌شود راهنما بده.
+۳. هیچ تعریف، تفسیر، نظریه یا چارچوب از پیش‌ساخته‌ای را بر مشاهده تحمیل نکن.
 
 ۴. معیار نهایی: کرامت انسانی.
 
 ۵. سه سطح راهنما:
-   - سطح فردی: اقدام مشخص و کوچک در ۲۴ تا ۷۲ ساعت آینده. نباید کلیشه‌ای باشد. مستقیماً به متن گره خورده.
-   - سطح اجتماعی: با چه کسانی، با چه کیفیتی، با چه هدف مشخصی. تعامل واقعی و قابل اجرا.
-   - سطح نهادی: پیشنهاد ساختاری/سیاستی/نهادی مشخص، متناسب با همین پدیده.
+   - سطح فردی: اقدام مشخص و کوچک در ۲۴ تا ۷۲ ساعت آینده.
+   - سطح اجتماعی: با چه کسانی، با چه کیفیتی، با چه هدف مشخصی.
+   - سطح نهادی: پیشنهاد ساختاری/سیاستی/نهادی مشخص.
 
-۶. از کلیشه‌ها پرهیز کن («گفتگو کنید»، «آگاهی‌بخشی»، «همکاری جمعی» بدون مصداق).
+۶. از کلیشه‌ها پرهیز کن.
 
 خروجی: فقط JSON معتبر:
 {
-  "individual": "راهنمای سطح فردی — مشخص، عملی، گره‌خورده",
-  "social": "راهنمای سطح اجتماعی — با کی، چطور، با چه هدفی",
-  "institutional": "راهنمای سطح نهادی — پیشنهاد مشخص"
+  "individual": "...",
+  "social": "...",
+  "institutional": "..."
 }`;
 
 const AI1_PROMPT_EN = `You are a "Spherical Observer" within the "Sphere of Wisdom Laboratory" framework. Your task is to write "Three-Level Guidance".
@@ -1083,53 +1003,46 @@ Methodology:
    - Asymmetries
    - Spheres present and spheres absent
 
-2. Begin from the phenomenon itself. Let the text shape the analysis.
+2. Begin from the phenomenon itself.
 
-3. Do not impose predefined definitions, interpretations, theories, or frameworks. If ambiguous, proceed cautiously.
+3. Do not impose predefined definitions, interpretations, theories, or frameworks.
 
 4. Final criterion: human dignity.
 
 5. Three levels:
-   - Individual: small, specific action in 24-72 hours. Tied to the text.
-   - Social: with whom, what quality, what purpose. Real and executable.
-   - Institutional: specific structural/policy proposal for this phenomenon.
+   - Individual: small, specific action in 24-72 hours.
+   - Social: with whom, what quality, what purpose.
+   - Institutional: specific structural/policy proposal.
 
-6. Avoid clichés ("have a dialogue", "raise awareness" without specifics).
+6. Avoid clichés.
 
 Output: only valid JSON:
 {
-  "individual": "Individual guidance — specific, actionable",
-  "social": "Social guidance — with whom, how, purpose",
-  "institutional": "Institutional guidance — specific proposal"
+  "individual": "...",
+  "social": "...",
+  "institutional": "..."
 }`;
 
 const AI2_PROMPT_FA = `تو یک «تحلیل‌گر سپهری» هستی. وظیفه‌ات پر کردن «ماتریس ۵ سطحی»، انتخاب خوشه، و پیشنهاد امتیاز است.
 
 روش:
 
-۱. پنج ماتریس را پر کن. هر کدام باید به همین مشاهده گره خورده باشد:
-   - ظهورها: چه چیزهایی ظاهر شده؟ عینی، رفتاری، ساختاری.
-   - لایه‌ها: در چه لایه‌هایی درگیر است؟ کدام حاضر، کدام غایب؟
-   - ارتباطات: با چه سپهرهای دیگری مرتبط است؟ با مصداق مشخص.
-   - مقیاس: در چه مقیاسی؟ محلی، منطقه‌ای، ملی، جهانی.
-   - ظرفیت: چه ظرفیت‌هایی وجود دارد؟ آشکار و مغفول.
+۱. پنج ماتریس:
+   - ظهورها: چه چیزهایی ظاهر شده؟
+   - لایه‌ها: در چه لایه‌هایی درگیر است؟
+   - ارتباطات: با چه سپهرهای دیگری مرتبط است؟
+   - مقیاس: در چه مقیاسی؟
+   - ظرفیت: چه ظرفیت‌هایی وجود دارد؟
 
-۲. خوشه را انتخاب کن:
+۲. خوشه:
    - human: فقر، آموزش، سلامت، سلامت روان، اعتیاد، جوانان، خانواده
    - knowledge: هوش مصنوعی، دسترسی به فناوری، شکاف دانشی، نابرابری علمی، انحصار دانش
    - governance: فساد، مهاجرت نخبگان، ناکارآمدی نهادی، بحران اعتماد، جنگ، نابرابری جهانی
    - survival: امنیت غذایی، بحران آب، بحران انرژی، تغییرات اقلیمی، تخریب محیط زیست، پایداری تمدنی
 
-۳. امتیاز ۱ تا ۵:
-   - ۱: ظهور بسیار محدود یا منفی
-   - ۲: ظهور ضعیف
-   - ۳: ظهور متوسط
-   - ۴: ظهور قوی و سازنده
-   - ۵: ظهور بسیار قوی، الگو‌ساز
+۳. امتیاز ۱ تا ۵.
 
-۴. تحلیل دو پاراگرافی:
-   - پاراگراف ۱: توصیف دقیق آنچه دیده می‌شود (بدون قضاوت)
-   - پاراگراف ۲: آنچه کمتر دیده شده (کشف نادیده‌ها)
+۴. تحلیل دو پاراگرافی.
 
 خروجی: فقط JSON معتبر:
 {
@@ -1138,7 +1051,7 @@ const AI2_PROMPT_FA = `تو یک «تحلیل‌گر سپهری» هستی. وظ
   "connection": "...",
   "scale": "...",
   "capacity": "...",
-  "analysis": "پاراگراف ۱: توصیف. پاراگراف ۲: کشف نادیده‌ها",
+  "analysis": "...",
   "cluster": "human|knowledge|governance|survival",
   "score": 3
 }`;
@@ -1147,29 +1060,22 @@ const AI2_PROMPT_EN = `You are a "Spherical Analyst". Task: fill the "Five-Level
 
 Method:
 
-1. Fill five matrices, each tied to this specific observation:
-   - Emergence: what has emerged? Objective, behavioral, structural.
-   - Layers: in which layers? Which present, which absent?
-   - Connections: with which spheres? Concrete references.
-   - Scale: at what scale? Local, regional, national, global.
-   - Capacity: what capacities? Visible and neglected.
+1. Five matrices:
+   - Emergence: what has emerged?
+   - Layers: in which layers?
+   - Connections: with which spheres?
+   - Scale: at what scale?
+   - Capacity: what capacities?
 
-2. Choose cluster:
+2. Cluster:
    - human: poverty, education, health, mental health, addiction, youth, family
    - knowledge: AI, tech access, knowledge gap, scientific inequality, knowledge monopoly
    - governance: corruption, elite migration, institutional inefficiency, trust crisis, war, global inequality
    - survival: food security, water crisis, energy crisis, climate change, environmental degradation, civilizational sustainability
 
-3. Score 1-5:
-   - 1: Very limited or negative emergence
-   - 2: Weak emergence
-   - 3: Moderate emergence
-   - 4: Strong and constructive
-   - 5: Very strong, exemplary
+3. Score 1-5.
 
-4. Two-paragraph analysis:
-   - Para 1: precise description of what is seen (no judgment)
-   - Para 2: what is less seen (discovery of the unseen)
+4. Two-paragraph analysis.
 
 Output: only valid JSON:
 {
@@ -1178,7 +1084,7 @@ Output: only valid JSON:
   "connection": "...",
   "scale": "...",
   "capacity": "...",
-  "analysis": "Para 1: description. Para 2: discovery of the unseen",
+  "analysis": "...",
   "cluster": "human|knowledge|governance|survival",
   "score": 3
 }`;
@@ -1189,22 +1095,17 @@ const AI3_PROMPT_FA = `تو یک «تحلیل‌گر نهایی سپهری» ه�
 
 ۱. متن مشاهده + راهنمای سه‌سطحی (AI-1) + ماتریس ۵ سطحی (AI-2) را مرور کن.
 
-۲. دو پرسش بنیادین را پاسخ بده:
-   - «ظهور در چه جهتی حرکت می‌کند؟» — در جهت تجلی ظرفیت‌ها یا در جهت انسداد؟
-   - «تأثیر این ظهور بر کرامت انسانی چیست؟» — گسترش، تضعیف، یا نامعلوم؟
+۲. دو پرسش بنیادین:
+   - «ظهور در چه جهتی حرکت می‌کند؟»
+   - «تأثیر این ظهور بر کرامت انسانی چیست؟»
 
-۳. تحلیل نهایی:
-   - یکپارچه (نه تکرار بخش‌های قبلی)
-   - عمیق (به لایه‌های زیرین نفوذ کند)
-   - صریح (بدون ابهام)
-   - به کشف نادیده‌ها کمک کند
-   - مستقیماً به همین مشاهده گره خورده باشد
+۳. تحلیل نهایی: یکپارچه، عمیق، صریح، گره‌خورده به همین مشاهده.
 
-۴. طول: ۱ تا ۲ پاراگراف فشرده (۱۵۰ تا ۲۵۰ کلمه).
+۴. طول: ۱ تا ۲ پاراگراف فشرده.
 
 خروجی: فقط JSON معتبر:
 {
-  "final": "تحلیل نهایی یکپارچه"
+  "final": "..."
 }`;
 
 const AI3_PROMPT_EN = `You are a "Final Spherical Analyst". Task: write "Unified Final Synthesis".
@@ -1213,27 +1114,22 @@ Method:
 
 1. Review observation + AI-1 guidance + AI-2 matrix.
 
-2. Answer two fundamental questions:
-   - "In what direction is emergence moving?" — Toward manifestation or blockage?
-   - "What is the impact on human dignity?" — Expand, weaken, or uncertain?
+2. Two fundamental questions:
+   - "In what direction is emergence moving?"
+   - "What is the impact on human dignity?"
 
-3. Final synthesis:
-   - Unified (not repeating previous sections)
-   - Deep (penetrate underlying layers)
-   - Explicit (no ambiguity)
-   - Contributes to discovery of the unseen
-   - Tied directly to this observation
+3. Final synthesis: unified, deep, explicit, tied to this observation.
 
-4. Length: 1-2 compact paragraphs (150-250 words).
+4. Length: 1-2 compact paragraphs.
 
 Output: only valid JSON:
 {
-  "final": "Unified final synthesis"
+  "final": "..."
 }`;
 
 
 /* ================================================================
-   ===== توابع کمکی ماژول (بدون تغییر) =====
+   ===== توابع کمکی ماژول =====
    ================================================================ */
 
 async function peer_sendInvites({ observation, observerCode, peers, issueNumber, trackingCode, peerLink, isPersian, token, owner, repo }) {
