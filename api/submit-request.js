@@ -55,18 +55,55 @@ module.exports = async function handler(req, res) {
         // تلاش برای دریافت تحلیل از هوش مصنوعی
         if (openRouterKey) {
           try {
+            // پرامپت بسیار دقیق و ساختاریافته
             const systemPrompt = isPersian ? 
-`شما یک تحلیلگر فرهنگی بر اساس چارچوب "سپهر خردمندی" هستید. وظیفه شما تولید یک JSON با ۱۱ فیلد دقیق است. فقط JSON برگردانید.
-خوشه‌ها: human, knowledge, governance, survival.
-ماتریس‌ها: emergence, layers, connections, scale, capacity.
-راهنماها: individual, network, policy.
-تحلیل نهایی: analysis.` :
-`You are a cultural analyst based on "Sphere of Wisdom". Return ONLY a JSON with 11 fields: status, cluster, score, analysis, individual, network, policy, matrix_emergence, matrix_layers, matrix_connections, matrix_scale, matrix_capacity.`;
+`شما یک دستیار تحلیلی هستید. وظیفه شما تحلیل مشاهده کاربر بر اساس چارچوب "سپهر خردمندی" و تولید یک آبجکت JSON است.
+قوانین:
+1. فقط و فقط JSON برگردانید. هیچ متنی قبل یا بعد از JSON نباشد.
+2. تمام ۱۱ فیلد زیر باید وجود داشته باشند و با محتوای مشاهده پر شوند.
+3. اگر اطلاعاتی نبود، از عبارات کوتاه و مرتبط استفاده کنید، نه عبارات کلیشه‌ای مثل "تحلیل دقیق".
 
-            const userPrompt = `Observation: "${obs.text}"`;
+ساختار JSON مورد نیاز:
+{
+  "status": "approved",
+  "cluster": "human", // یکی از: human, knowledge, governance, survival
+  "score": 3, // عدد بین 1 تا 5
+  "analysis": "متن تحلیل عمیق در 2 پاراگراف",
+  "individual": "راهنمای عملی برای فرد",
+  "network": "راهنمای تعامل با دیگران",
+  "policy": "پیشنهاد ساختاری یا سیاستی",
+  "matrix_emergence": "تحلیل ماتریس ظهورها",
+  "matrix_layers": "تحلیل ماتریس لایه‌ها",
+  "matrix_connections": "تحلیل ماتریس ارتباطات",
+  "matrix_scale": "تحلیل ماتریس مقیاس",
+  "matrix_capacity": "تحلیل ماتریس ظرفیت"
+}` :
+`You are an analytical assistant. Analyze the observation based on "Sphere of Wisdom" and return a JSON object.
+Rules:
+1. Return ONLY JSON. No extra text.
+2. All 11 fields must be present and filled with specific content from the observation.
+3. Do not use generic placeholders like "Detailed analysis".
+
+Required JSON Structure:
+{
+  "status": "approved",
+  "cluster": "human", // one of: human, knowledge, governance, survival
+  "score": 3, // number between 1-5
+  "analysis": "Deep analysis text in 2 paragraphs",
+  "individual": "Practical guide for the individual",
+  "network": "Guide for interaction with others",
+  "policy": "Structural or policy suggestion",
+  "matrix_emergence": "Analysis of Emergence Matrix",
+  "matrix_layers": "Analysis of Layers Matrix",
+  "matrix_connections": "Analysis of Connections Matrix",
+  "matrix_scale": "Analysis of Scale Matrix",
+  "matrix_capacity": "Analysis of Capacity Matrix"
+}`;
+
+            const userPrompt = `Observation to analyze: "${obs.text}"`;
 
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 ثانیه مهلت
+            const timeoutId = setTimeout(() => controller.abort(), 20000); // 20 ثانیه مهلت
 
             const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
               method: 'POST',
@@ -76,13 +113,13 @@ module.exports = async function handler(req, res) {
                 'HTTP-Referer': process.env.SITE_URL || 'https://cultural-id.vercel.app',
               },
               body: JSON.stringify({
-                model: 'meta-llama/llama-3.1-8b-instruct',
+                model: 'mistralai/mistral-7b-instruct', // مدل پایدار برای JSON
                 messages: [
                   { role: 'system', content: systemPrompt },
                   { role: 'user', content: userPrompt }
                 ],
-                temperature: 0.7,
-                max_tokens: 1000,
+                temperature: 0.5, // کاهش دما برای دقت بیشتر
+                max_tokens: 1200,
                 response_format: { type: 'json_object' }
               }),
               signal: controller.signal
@@ -93,33 +130,35 @@ module.exports = async function handler(req, res) {
             if (response.ok) {
               const data = await response.json();
               const content = data.choices?.[0]?.message?.content || '{}';
+              
+              // استخراج تمیز JSON
               let jsonStr = content;
               const s = content.indexOf('{');
               const e = content.lastIndexOf('}');
               if (s !== -1 && e !== -1) jsonStr = content.substring(s, e + 1);
               
               const analysis = JSON.parse(jsonStr);
-              console.log('AI Response:', analysis); // لاگ برای بررسی
               
+              // نگاشت دقیق داده‌ها بدون مقادیر پیش‌فرض گمراه‌کننده
               aiAnalysis = {
                 status: analysis.status || "approved",
                 cluster: analysis.cluster || "human",
                 score_suggestion: typeof analysis.score === 'number' ? analysis.score : 3,
-                analysis_note: analysis.analysis || "تحلیل دقیق",
-                guide_individual: analysis.individual || "راهنمای فردی",
-                guide_network: analysis.network || "راهنمای شبکه‌ای",
-                guide_policy: analysis.policy || "راهنمای سیاستی",
-                matrix_emergence: analysis.matrix_emergence || "تحلیل ظهورها",
-                matrix_layers: analysis.matrix_layers || "تحلیل لایه‌ها",
-                matrix_connections: analysis.matrix_connections || "تحلیل ارتباطات",
-                matrix_scale: analysis.matrix_scale || "تحلیل مقیاس",
-                matrix_capacity: analysis.matrix_capacity || "تحلیل ظرفیت"
+                analysis_note: analysis.analysis || "",
+                guide_individual: analysis.individual || "",
+                guide_network: analysis.network || "",
+                guide_policy: analysis.policy || "",
+                matrix_emergence: analysis.matrix_emergence || "",
+                matrix_layers: analysis.matrix_layers || "",
+                matrix_connections: analysis.matrix_connections || "",
+                matrix_scale: analysis.matrix_scale || "",
+                matrix_capacity: analysis.matrix_capacity || ""
               };
             } else {
-               console.error('OpenRouter Error:', response.status, await response.text());
+              console.error('OpenRouter Error:', response.status);
             }
           } catch (err) {
-            console.warn('AI failed, using fallback:', err.message);
+            console.warn('AI failed:', err.message);
           }
         }
 
@@ -128,7 +167,7 @@ module.exports = async function handler(req, res) {
           aiAnalysis = getFallbackAnalysis(obs.text, isPersian);
         }
 
-        // نرمال‌سازی داده‌ها برای پنل ادمین جدید
+        // نرمال‌سازی داده‌ها برای پنل ادمین جدید (دقیقاً مطابق نام‌گذاری پنل)
         const ai1Data = {
           individual: aiAnalysis.guide_individual,
           social: aiAnalysis.guide_network,
