@@ -389,7 +389,7 @@ ${moduleSection}
           });
         }
 
-                createdIssues.push({
+                 createdIssues.push({
           number: issueData.number,
           url: issueData.html_url,
           trackingCode: `OBS-${issueData.number}`,
@@ -397,25 +397,32 @@ ${moduleSection}
           module: selectedModule,
           moduleStatus: moduleStatus,
           moduleMessage: moduleMessage,
-          // اصلاح نام فیلدها برای هماهنگی کامل با پنل ادمین جدید
+          
+          // داده‌های هوش اول (برای نمایش در پنل ادمین و صفحه کاربر)
           ai1Guidance: {
-            individual: aiAnalysis.guide_individual,
-            social: aiAnalysis.guide_network,
-            institutional: aiAnalysis.guide_policy
+            individual: String(aiAnalysis.guide_individual || ''),
+            social: String(aiAnalysis.guide_network || ''),
+            institutional: String(aiAnalysis.guide_policy || '')
           },
+          
+          // داده‌های هوش دوم (برای نمایش در پنل ادمین و صفحه کاربر)
           ai2Matrix: {
-            emergence: aiAnalysis.matrix_emergence,
-            layer: aiAnalysis.matrix_layers,
-            connection: aiAnalysis.matrix_connections,
-            scale: aiAnalysis.matrix_scale,
-            capacity: aiAnalysis.matrix_capacity,
-            analysis: aiAnalysis.analysis_note,
-            cluster: aiAnalysis.cluster,
-            score: aiAnalysis.score_suggestion
+            emergence: String(aiAnalysis.matrix_emergence || ''),
+            layer: String(aiAnalysis.matrix_layers || ''),
+            connection: String(aiAnalysis.matrix_connections || ''),
+            scale: String(aiAnalysis.matrix_scale || ''),
+            capacity: String(aiAnalysis.matrix_capacity || ''),
+            analysis: String(aiAnalysis.analysis_note || ''),
+            cluster: String(aiAnalysis.cluster || 'human'),
+            score: aiAnalysis.score_suggestion || 3
           },
-          finalAnalysis: aiAnalysis.analysis_note,
-          aiAnalysis: aiAnalysis // حفظ سازگاری با نسخه‌های قبلی
-        });
+          
+          // تحلیل نهایی هوش سوم
+          finalAnalysis: String(aiAnalysis.analysis_note || ''),
+          
+          // حفظ سازگاری با نسخه‌های قبلی
+          aiAnalysis: aiAnalysis
+        });     
       }
 
       if (createdIssues.length === 0) {
