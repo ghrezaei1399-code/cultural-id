@@ -260,16 +260,26 @@
             <div class="empty-state">در حال بارگذاری...</div>
         </div>
     </div>
-   <script>
-let allApproved = [];
+  <script>
 let allAtlasItems = [];
-let currentModalItem = null;
+let allAchievements = [];
+let currentFilter = 'all';
+
+function toggleTheme() {
+    document.body.classList.toggle('dark');
+    const btn = document.getElementById('themeToggle');
+    btn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+    localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+}
+if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark');
+    document.getElementById('themeToggle').textContent = '☀️';
+}
 
 // ============================================================
-// نرمال‌سازی داده‌های AI
+// نرمال‌سازی
 // ============================================================
 function normalizeGuide(item) {
-    // ساختار جدید: item.guide
     if (item.guide && (item.guide.individual || item.guide.network || item.guide.policy)) {
         return {
             individual: item.guide.individual || '',
@@ -277,19 +287,10 @@ function normalizeGuide(item) {
             institutional: item.guide.policy || ''
         };
     }
-    // ساختار قدیمی: item.analysis.guide
-    if (item.analysis && item.analysis.guide) {
-        return {
-            individual: item.analysis.guide.individual || '',
-            social: item.analysis.guide.network || '',
-            institutional: item.analysis.guide.policy || ''
-        };
-    }
     return null;
 }
 
 function normalizeMatrix(item) {
-    // ساختار جدید: item.matrix_emergence در ریشه
     if (item.matrix_emergence || item.matrix_layers || item.matrix_connections ||
         item.matrix_scale || item.matrix_capacity) {
         return {
@@ -307,213 +308,201 @@ function normalizeMatrix(item) {
 }
 
 function normalizeAi3(item) {
-    if (item.ai3Final) return item.ai3Final;
-    return '';
+    return item.ai3Final || '';
 }
 
 // ============================================================
-// بارگذاری
+// بارگذاری داده
 // ============================================================
-async function loadAchievements() {
-    const container = document.getElementById('achievementsListContainer');
+async function loadData() {
+    const grid = document.getElementById('galleryGrid');
+
+    // ===== ۱. اطلس ظهور =====
     try {
-        const res = await fetch('/api/get-users?t=' + new Date().getTime());
-        if (!res.ok) throw new Error('خطا در ارتباط با سرور');
-        const data = await res.json();
-        allApproved = data.achievements || [];
-        renderAchievements(allApproved);
+        const atlasRes = await fetch('/api/get-connection-requests?type=observations&t=' + Date.now());
+        const atlasData = await atlasRes.json();
+        if (atlasRes.ok) {
+            allAtlasItems = (atlasData.observations || []).filter(obs => obs.status === 'approved');
+        } else {
+            console.error('Atlas error:', atlasData.error);
+            allAtlasItems = [];
+        }
     } catch (e) {
-        console.error(e);
-        container.innerHTML = '<div class="empty-state">خطا در دریافت اطلاعات.</div>';
+        console.error('Atlas fetch error:', e);
+        allAtlasItems = [];
     }
+
+    // ===== ۲. دستاوردها =====
+    try {
+        const usersRes = await fetch('/api/get-users?t=' + Date.now());
+        const usersData = await usersRes.json();
+        if (usersRes.ok) {
+            allAchievements = [];
+            if (usersData.users) {
+                usersData.users.forEach(user => {
+                    if (user.achievements && Array.isArray(user.achievements)) {
+                        user.achievements.forEach(ach => {
+                            if (ach.section === 'emergence' && ach.status === 'approved') {
+                                allAchievements.push({
+                                    ...ach,
+                                    owner: user.cardCode,
+                                    ownerEmail: user.communicationEmail || '',
+                                    ownerRank: user.rank || 0
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    } catch (e) {
+        console.error('Users fetch error:', e);
+        allAchievements = [];
+    }
+
+    updateStats();
+    renderGallery();
 }
 
-function renderAchievements(items) {
-    const container = document.getElementById('achievementsListContainer');
-    const filter = document.getElementById('categoryFilter').value;
-    let filtered = filter === 'all' ? items : items.filter(item => item.category === filter);
-    if (filtered.length === 0) {
-        container.innerHTML = '<div class="empty-state">هنوز دستاوردی تایید نشده است.</div>';
+function updateStats() {
+    document.getElementById('totalAtlas').textContent = allAtlasItems.length.toLocaleString('fa-IR');
+    document.getElementById('totalAchievements').textContent = allAchievements.length.toLocaleString('fa-IR');
+    document.getElementById('totalItems').textContent = (allAtlasItems.length + allAchievements.length).toLocaleString('fa-IR');
+}
+
+function setFilter(filter) {
+    currentFilter = filter;
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === filter);
+    });
+    renderGallery();
+}
+
+function renderGallery() {
+    const grid = document.getElementById('galleryGrid');
+    if (!grid) {
+        console.error('galleryGrid not found');
         return;
     }
-    container.innerHTML = filtered.map((item, index) => `
-        <div class="achievement-item" onclick="openModal(${index})">
-            <div class="item-info">
-                <h4>${item.title || 'بدون عنوان'}</h4>
-                <span class="item-meta">${item.category === 'science' ? '📄 مقاله' : item.category === 'art' ? '🎨 هنری' : '🎬 رسانه'}</span>
-            </div>
-            <span style="font-size:0.9rem; color:#d4af37;">👁️</span>
-        </div>
-    `).join('');
-}
 
-function filterAchievements() { renderAchievements(allApproved); }
+    const atlasItems = allAtlasItems.map((obs, idx) => ({
+        type: 'atlas',
+        _idx: idx,
+        id: obs.number,
+        title: obs.observation ? obs.observation.substring(0, 80) + '...' : 'مشاهده',
+        description: obs.observation || '',
+        owner: obs.cardCode || 'ناشناس',
+        score: obs.score || '---',
+        date: obs.createdAt,
+        category: 'atlas'
+    }));
 
-async function loadAtlas() {
-    const container = document.getElementById('atlasListContainer');
-    try {
-        const res = await fetch('/api/get-connection-requests?type=observations&t=' + new Date().getTime());
-        if (!res.ok) throw new Error('خطا در دریافت اطلاعات');
-        const data = await res.json();
-        allAtlasItems = (data.observations || []).filter(obs => obs.status === 'approved');
-        renderAtlas(allAtlasItems);
-    } catch (e) {
-        console.error(e);
-        container.innerHTML = '<div class="empty-state">خطا در دریافت اطلاعات اطلس.</div>';
-    }
-}
+    const achievementItems = allAchievements.map((ach, idx) => ({
+        type: 'achievement',
+        _idx: idx,
+        id: ach.id || ach.fileName || 'unknown',
+        title: ach.title || 'بدون عنوان',
+        description: ach.description || '',
+        owner: ach.owner || 'ناشناس',
+        date: ach.createdAt || ach.uploadDate,
+        category: ach.category || 'other',
+        fileUrl: ach.fileUrl || ach.fileData || ''
+    }));
 
-function renderAtlas(items) {
-    const container = document.getElementById('atlasListContainer');
+    let items = [];
+    if (currentFilter === 'all') items = [...atlasItems, ...achievementItems];
+    else if (currentFilter === 'atlas') items = atlasItems;
+    else if (currentFilter === 'achievement') items = achievementItems;
+
+    items.sort((a, b) => new Date(b.date) - new Date(a.date));
+
     if (items.length === 0) {
-        container.innerHTML = '<div class="empty-state">هنوز راه‌حلی با امتیاز ۵ ثبت نشده است.</div>';
+        grid.innerHTML = `<div class="empty-state">هیچ موردی در این دسته وجود ندارد</div>`;
         return;
     }
-    container.innerHTML = items.map((item, index) => {
-        const moduleStatus = item.moduleStatus || 'pending';
-        const moduleType = item.moduleType || '';
-        
-        const statusLabels = {
-            'success': '✅ موفق', 'revision': '⚠️ نیاز به اصلاح', 'failed': '❌ شکست',
-            'pending': '⏳ در انتظار', 'no_peers': '⚠️ هم‌فرهنگی یافت نشد',
-            'no_related': '⚠️ مشاهده مرتبط یافت نشد'
-        };
-        const statusText = statusLabels[moduleStatus] || moduleStatus;
-        const statusClass = moduleStatus === 'success' ? 'success' :
-                           moduleStatus === 'revision' ? 'revision' :
-                           moduleStatus === 'failed' ? 'failed' :
-                           moduleStatus === 'pending' ? 'pending' : 'no_peers';
-        
-        const moduleNames = {
-            'collaboration': '🤝 همفکری',
-            'related': '👁️ مشاهدات مرتبط',
-            'referral': '📤 ارجاع به ۵ همفرهنگ'
-        };
-        const moduleDisplay = moduleNames[moduleType] || moduleType || '';
-        
+
+    grid.innerHTML = items.map(item => {
+        const isAtlas = item.type === 'atlas';
+        const isAchievement = item.type === 'achievement';
+
+        let mediaHtml = '';
+        if (isAchievement && item.fileUrl) {
+            mediaHtml = `<img src="${item.fileUrl}" alt="${item.title}" onerror="this.parentElement.innerHTML='<span class=\\'no-media\\'>📄</span>'" />`;
+        } else {
+            mediaHtml = `<span class="no-media">${isAtlas ? '🏛️' : '📄'}</span>`;
+        }
+
+        const date = item.date ? new Date(item.date).toLocaleString('fa-IR') : '---';
+
+        let detailButton = '';
+        if (isAtlas) {
+            detailButton = `<button onclick="showAtlasDetail(${item._idx})" class="btn-full-profile">📊 مشاهده پرونده کامل ظهور</button>`;
+        }
+
         return `
-            <div class="achievement-item" onclick="openAtlasModal(${index})">
-                <div class="item-info">
-                    <h4>${item.observation ? item.observation.substring(0, 50) + '...' : 'مشاهده'}</h4>
-                    <span class="item-meta">⭐ امتیاز ${item.score || '---'}</span>
-                    ${moduleDisplay ? `<span class="module-type-label">${moduleDisplay}</span>` : ''}
-                    <span class="module-status-badge ${statusClass}">${statusText}</span>
+            <div class="gallery-card ${isAtlas ? 'atlas' : 'achievement'}">
+                <div class="card-media">${mediaHtml}</div>
+                <div class="card-content">
+                    <div class="card-title">${item.title}</div>
+                    <div class="card-desc">${item.description ? item.description.substring(0, 120) + (item.description.length > 120 ? '...' : '') : '---'}</div>
+                    <div class="card-meta">
+                        <span class="card-owner">👤 ${item.owner}</span>
+                        <span class="card-date">${date}</span>
+                    </div>
+                    ${isAtlas ? `<span class="badge badge-atlas">🏛️ اطلس ظهور</span>` : ''}
+                    ${isAchievement ? `<span class="badge badge-achievement">🏆 نام‌آور</span>` : ''}
+                    ${detailButton}
                 </div>
-                <span style="font-size:0.9rem; color:#6a3d9a;">🏛️</span>
             </div>
         `;
     }).join('');
 }
 
-function openModal(index) {
-    const item = allApproved[index];
+// ============================================================
+// نمایش جزئیات پرونده ظهور
+// ============================================================
+window.showAtlasDetail = function(idx) {
+    const item = allAtlasItems[idx];
     if (!item) return;
-    currentModalItem = item;
-    document.getElementById('modalTitle').textContent = item.title || 'بدون عنوان';
-    let descText = item.description || 'بدون توضیحات';
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    descText = descText.replace(urlRegex, url => `<a href="${url}" target="_blank" style="color:#2874a6; text-decoration:underline;">${url}</a>`);
-    document.getElementById('modalDesc').innerHTML = descText;
-    document.getElementById('modalMeta').textContent = `ارسال کننده: ${item.owner}`;
-    document.getElementById('modalGuide').style.display = 'none';
-    document.getElementById('modalFeedback').style.display = 'none';
-    document.getElementById('modalModule').style.display = 'none';
-    const mediaDiv = document.getElementById('modalMediaContainer');
-    const imageUrl = item.fileUrl || item.fileData;
-    if (imageUrl) {
-        mediaDiv.innerHTML = `<img src="${imageUrl}" class="modal-media" style="width:100%;max-height:250px;object-fit:contain;background:#1a1a1a;" onerror="this.outerHTML='<p style=\\'padding:1rem;text-align:center;color:#888;\\'>❌ تصویر قابل نمایش نیست</p>'"/>`;
-    } else {
-        mediaDiv.innerHTML = '<p style="padding:1rem;text-align:center;color:#888;">📄 فایل موجود نیست</p>';
-    }
-    document.getElementById('detailModal').classList.add('active');
-}
 
-// ============================================================
-// نمایش مودال اطلس ظهور (بازنویسی‌شده)
-// ============================================================
-function openAtlasModal(index) {
-    const item = allAtlasItems[index];
-    if (!item) return;
-    currentModalItem = item;
-    
-    document.getElementById('modalTitle').textContent = '🏛️ پرونده ظهور';
-    document.getElementById('modalDesc').innerHTML = '';
-    document.getElementById('modalMeta').textContent = `⭐ امتیاز: ${item.score || '---'} | وضعیت: ${item.status === 'approved' ? '✅ تأیید شده' : '⏳ در انتظار'}`;
-    
-    const mediaDiv = document.getElementById('modalMediaContainer');
-    mediaDiv.innerHTML = '';
-    
-    // ===== اطلاعات ماژول =====
-    const moduleDiv = document.getElementById('modalModule');
-    const moduleType = item.moduleType || '';
-    const moduleStatus = item.moduleStatus || 'pending';
-    const moduleData = item.moduleData || [];
-    const moduleAnalysis = item.moduleAnalysis || '';
-    
-    const moduleNames = {
-        'collaboration': '🤝 همفکری با دیگران',
-        'related': '👁️ مشاهدات مرتبط دیگران',
-        'referral': '📤 ارجاع به ۵ همفرهنگ'
-    };
-    const moduleDisplay = moduleNames[moduleType] || moduleType || 'هیچ‌کدام';
-    
-    const statusLabels = {
-        'success': '✅ موفق', 'revision': '⚠️ نیاز به اصلاح', 'failed': '❌ شکست',
-        'pending': '⏳ در انتظار', 'no_peers': '⚠️ هم‌فرهنگی یافت نشد',
-        'no_related': '⚠️ مشاهده مرتبط یافت نشد'
-    };
-    const statusText = statusLabels[moduleStatus] || moduleStatus;
-    const statusClass = moduleStatus === 'success' ? 'success' :
-                       moduleStatus === 'revision' ? 'revision' :
-                       moduleStatus === 'failed' ? 'failed' :
-                       moduleStatus === 'pending' ? 'pending' : 'no_peers';
-    
-    if (moduleType) {
-        moduleDiv.style.display = 'block';
-        document.getElementById('modalModuleType').textContent = moduleDisplay;
-        document.getElementById('modalModuleStatus').innerHTML = `<span class="module-status-badge ${statusClass}">${statusText}</span>`;
-        document.getElementById('modalModuleData').textContent = moduleData.length > 0 ? `نتایج: ${moduleData.join(', ')}` : '';
-        document.getElementById('modalModuleAnalysis').textContent = moduleAnalysis || '';
-    } else {
-        moduleDiv.style.display = 'none';
-    }
-    
-    // ============================================================
-    // باکس ۴ بخشی: مشاهده + AI-1 + AI-2 + AI-3
-    // ============================================================
-    const guideBox = document.getElementById('modalGuide');
-    const guideContent = document.getElementById('guideContent');
-    
     const guide = normalizeGuide(item);
     const matrix = normalizeMatrix(item);
     const ai3Final = normalizeAi3(item);
-    
+
     const clusterNames = {
         'human': 'انسان', 'knowledge': 'دانش و فناوری',
         'governance': 'حکمرانی و تمدن', 'survival': 'بقا و آینده', 'other': 'نامشخص'
     };
-    
-    let html = '';
-    
+
+    // ===== ساخت HTML =====
+    let html = `
+        <div style="text-align:right; direction:rtl; line-height:1.8; max-height:70vh; overflow-y:auto;">
+            <h3 style="color:#8a6d1f; border-bottom:2px solid #d4af37; padding-bottom:0.5rem; margin-bottom:1rem;">
+                🏛️ پرونده ظهور #${item.number}
+            </h3>
+    `;
+
     // ① مشاهده خام
     html += `
         <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(212,175,55,0.08); border-radius:10px; border-right:4px solid #d4af37;">
             <div style="font-weight:800; font-size:0.85rem; color:#8a6d1f; margin-bottom:0.4rem;">📝 مشاهده ثبت‌شده</div>
             <div style="font-size:0.85rem; line-height:1.8;">${item.observation || '---'}</div>
-        </div>`;
-    
-    // ② AI-1 — راهنمای سه‌سطحی
-    if (guide) {
+        </div>
+    `;
+
+    // ② AI-1
+    if (guide && (guide.individual || guide.social || guide.institutional)) {
         html += `
             <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(16,185,129,0.06); border-radius:10px; border-right:4px solid #10b981;">
                 <div style="font-weight:800; font-size:0.85rem; color:#047857; margin-bottom:0.4rem;">🤖 راهنمای سه‌سطحی (AI-1)</div>
                 ${guide.individual ? `<div style="margin-bottom:0.4rem; font-size:0.82rem; line-height:1.7;"><strong>📍 سطح فردی:</strong> ${guide.individual}</div>` : ''}
                 ${guide.social ? `<div style="margin-bottom:0.4rem; font-size:0.82rem; line-height:1.7;"><strong>🌐 سطح اجتماعی:</strong> ${guide.social}</div>` : ''}
                 ${guide.institutional ? `<div style="font-size:0.82rem; line-height:1.7;"><strong>🏛️ سطح نهادی:</strong> ${guide.institutional}</div>` : ''}
-            </div>`;
+            </div>
+        `;
     }
-    
-    // ③ AI-2 — ماتریس ۵ سطحی
+
+    // ③ AI-2
     if (matrix && (matrix.emergence || matrix.layer || matrix.connection || matrix.scale || matrix.capacity || matrix.analysis)) {
         html += `
             <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(99,102,241,0.06); border-radius:10px; border-right:4px solid #6366f1;">
@@ -528,102 +517,117 @@ function openAtlasModal(index) {
                 ${matrix.scale ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 مقیاس:</strong> ${matrix.scale}</div>` : ''}
                 ${matrix.capacity ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 ظرفیت:</strong> ${matrix.capacity}</div>` : ''}
                 ${matrix.analysis ? `<div style="margin-top:0.5rem; padding:0.5rem; background:rgba(255,255,255,0.5); border-radius:6px; font-size:0.82rem; line-height:1.75;"><strong>تحلیل:</strong> ${matrix.analysis}</div>` : ''}
-            </div>`;
+            </div>
+        `;
     }
-    
-    // ④ AI-3 — تحلیل نهایی
+
+    // ④ AI-3
     if (ai3Final) {
         html += `
             <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(236,72,153,0.06); border-radius:10px; border-right:4px solid #ec4899;">
                 <div style="font-weight:800; font-size:0.85rem; color:#be185d; margin-bottom:0.4rem;">💎 تحلیل نهایی (AI-3)</div>
                 <div style="font-size:0.85rem; line-height:1.9;">${ai3Final}</div>
-            </div>`;
+            </div>
+        `;
     }
-    
-    // اگر هیچ تحلیلی موجود نبود
+
+    // اگر هیچ AI نبود
     if (!guide && !matrix && !ai3Final) {
         html += `
             <div style="padding:0.8rem; background:rgba(231,76,60,0.08); border-radius:10px; border-right:4px solid #e74c3c;">
                 <div style="font-weight:800; font-size:0.85rem; color:#7a1a1a;">⚠️ تحلیل هوش مصنوعی برای این مشاهده موجود نیست</div>
                 <div style="font-size:0.78rem; color:#7a1a1a; margin-top:0.3rem;">ممکن است این مشاهده قبل از فعال‌سازی سیستم تحلیل سه‌لایه ثبت شده باشد.</div>
-            </div>`;
+            </div>
+        `;
     }
-    
-    // ===== دکمه کپی همه =====
+
+    // دکمه کپی
     html += `
-        <div style="margin-top:0.8rem; padding:0.6rem; text-align:center; background:rgba(100,116,139,0.08); border-radius:8px; border:1px dashed rgba(100,116,139,0.3);">
-            <button onclick="copyAtlasProfile(${index})" style="padding:0.4rem 1rem; border-radius:20px; background:#64748b; color:#fff; border:none; font-weight:700; font-size:0.8rem; cursor:pointer;">📋 کپی کل پرونده</button>
-            <span style="font-size:0.7rem; color:#64748b; margin-right:0.5rem;">مناسب ارسال به مترجم</span>
-        </div>`;
-    
-    guideContent.innerHTML = html;
-    guideContent.style.fontSize = '0.85rem';
-    guideBox.style.display = 'block';
-    document.getElementById('modalFeedback').style.display = 'block';
-    document.getElementById('detailModal').classList.add('active');
+            <div style="margin-top:0.8rem; padding:0.6rem; text-align:center; background:rgba(100,116,139,0.08); border-radius:8px; border:1px dashed rgba(100,116,139,0.3);">
+                <button onclick="copyAtlasProfile(${idx})" style="padding:0.4rem 1rem; border-radius:20px; background:#64748b; color:#fff; border:none; font-weight:700; font-size:0.8rem; cursor:pointer;">📋 کپی کل پرونده</button>
+            </div>
+        </div>
+    `;
+
+    // ===== نمایش در مودال =====
+    const modalBody = document.getElementById('modalBody');
+    if (modalBody) {
+        modalBody.innerHTML = html;
+    } else {
+        // اگر modalBody نداریم، مودال را از صفر می‌سازیم
+        showCustomModal(`🏛️ پرونده ظهور #${item.number}`, html);
+    }
+};
+
+// ===== مودال ساده =====
+function showCustomModal(title, bodyHtml) {
+    let modal = document.getElementById('customAtlasModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'customAtlasModal';
+        modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(3px);';
+        modal.innerHTML = `
+            <div style="background:#fff;max-width:750px;width:100%;max-height:90vh;overflow-y:auto;border-radius:20px;padding:1.5rem;position:relative;">
+                <button onclick="document.getElementById('customAtlasModal').remove()" style="position:absolute;top:0.5rem;left:0.5rem;background:rgba(0,0,0,0.1);border:none;width:30px;height:30px;border-radius:50%;font-size:1.2rem;cursor:pointer;">✕</button>
+                <h2 style="color:#8a6d1f;margin-bottom:1rem;font-size:1.1rem;">${title}</h2>
+                <div>${bodyHtml}</div>
+            </div>
+        `;
+        modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+        document.body.appendChild(modal);
+    }
 }
 
 // ============================================================
-// کپی کل پرونده ظهور
+// کپی کل پرونده
 // ============================================================
-window.copyAtlasProfile = function(index) {
-    const item = allAtlasItems[index];
+window.copyAtlasProfile = function(idx) {
+    const item = allAtlasItems[idx];
     if (!item) return;
-    
+
     const guide = normalizeGuide(item);
     const matrix = normalizeMatrix(item);
     const ai3Final = normalizeAi3(item);
-    
-    const clusterNames = {
-        'human': 'انسان', 'knowledge': 'دانش و فناوری',
-        'governance': 'حکمرانی و تمدن', 'survival': 'بقا و آینده', 'other': 'نامشخص'
-    };
-    
-    const lines = [];
-    lines.push('═══════════════════════════════════════════');
-    lines.push(`ATLAS PROFILE #${item.number || '---'}`);
-    lines.push(`Tracking Code: OBS-${item.number || '---'}`);
-    lines.push(`Card Code: ${item.cardCode || '---'}`);
-    lines.push(`Date: ${item.createdAt ? new Date(item.createdAt).toISOString() : '---'}`);
-    if (matrix && matrix.cluster) lines.push(`Cluster: ${clusterNames[matrix.cluster] || matrix.cluster}`);
-    if (item.score) lines.push(`Score: ${item.score}`);
-    lines.push('═══════════════════════════════════════════');
-    lines.push('');
-    lines.push('▸ [1] RAW OBSERVATION:');
-    lines.push(item.observation || '-');
-    lines.push('');
+
+    const L = [];
+    L.push('═══════════════════════════════════════════');
+    L.push(`ATLAS PROFILE #${item.number || '---'}`);
+    L.push(`Tracking Code: OBS-${item.number || '---'}`);
+    L.push(`Card Code: ${item.cardCode || '---'}`);
+    L.push(`Date: ${item.createdAt ? new Date(item.createdAt).toISOString() : '---'}`);
+    L.push(`Score: ${item.score || '---'}`);
+    L.push('═══════════════════════════════════════════');
+    L.push('');
+    L.push('▸ [1] RAW OBSERVATION:');
+    L.push(item.observation || '-');
+    L.push('');
     if (guide) {
-        lines.push('▸ [2] AI-1 — THREE-LEVEL GUIDANCE:');
-        if (guide.individual) lines.push(`  📍 Individual: ${guide.individual}`);
-        if (guide.social) lines.push(`  🌐 Social: ${guide.social}`);
-        if (guide.institutional) lines.push(`  🏛️ Institutional: ${guide.institutional}`);
-        lines.push('');
+        L.push('▸ [2] AI-1 — THREE-LEVEL GUIDANCE:');
+        if (guide.individual) L.push(`  📍 Individual: ${guide.individual}`);
+        if (guide.social) L.push(`  🌐 Social: ${guide.social}`);
+        if (guide.institutional) L.push(`  🏛️ Institutional: ${guide.institutional}`);
+        L.push('');
     }
     if (matrix) {
-        lines.push('▸ [3] AI-2 — FIVE-LEVEL MATRIX:');
-        if (matrix.emergence) lines.push(`  📊 Emergence: ${matrix.emergence}`);
-        if (matrix.layer) lines.push(`  📊 Layers: ${matrix.layer}`);
-        if (matrix.connection) lines.push(`  📊 Connections: ${matrix.connection}`);
-        if (matrix.scale) lines.push(`  📊 Scale: ${matrix.scale}`);
-        if (matrix.capacity) lines.push(`  📊 Capacity: ${matrix.capacity}`);
-        if (matrix.analysis) { lines.push(''); lines.push(`  Analysis: ${matrix.analysis}`); }
-        lines.push('');
+        L.push('▸ [3] AI-2 — FIVE-LEVEL MATRIX:');
+        if (matrix.emergence) L.push(`  📊 Emergence: ${matrix.emergence}`);
+        if (matrix.layer) L.push(`  📊 Layers: ${matrix.layer}`);
+        if (matrix.connection) L.push(`  📊 Connections: ${matrix.connection}`);
+        if (matrix.scale) L.push(`  📊 Scale: ${matrix.scale}`);
+        if (matrix.capacity) L.push(`  📊 Capacity: ${matrix.capacity}`);
+        if (matrix.analysis) { L.push(''); L.push(`  Analysis: ${matrix.analysis}`); }
+        L.push('');
     }
     if (ai3Final) {
-        lines.push('▸ [4] AI-3 — FINAL SYNTHESIS:');
-        lines.push(ai3Final);
-        lines.push('');
+        L.push('▸ [4] AI-3 — FINAL SYNTHESIS:');
+        L.push(ai3Final);
+        L.push('');
     }
-    lines.push('═══════════════════════════════════════════');
-    
-    const text = lines.join('\n');
-    
+    L.push('═══════════════════════════════════════════');
+
+    const text = L.join('\n');
     if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text).then(() => {
-            alert('✅ کل پرونده کپی شد');
-        }).catch(() => {
-            fallbackCopy(text);
-        });
+        navigator.clipboard.writeText(text).then(() => alert('✅ کل پرونده کپی شد')).catch(() => fallbackCopy(text));
     } else {
         fallbackCopy(text);
     }
@@ -636,34 +640,14 @@ function fallbackCopy(text) {
     ta.style.opacity = '0';
     document.body.appendChild(ta);
     ta.select();
-    try {
-        document.execCommand('copy');
-        alert('✅ کل پرونده کپی شد');
-    } catch (e) {
-        alert('❌ خطا در کپی');
-    }
+    try { document.execCommand('copy'); alert('✅ کل پرونده کپی شد'); }
+    catch (e) { alert('❌ خطا در کپی'); }
     document.body.removeChild(ta);
 }
 
-async function submitFeedback(type) {
-    if (!currentModalItem) return;
-    alert(`متشکریم! بازخورد شما (${type}) برای شبکه مصلحان ثبت شد.`);
-}
-
-function closeModal(e) {
-    if (e.target && e.target.id === 'detailModal') {
-        e.target.classList.remove('active');
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    loadAchievements();
-    loadAtlas();
-});
-
-if (localStorage.getItem('theme') === 'dark') {
-    document.body.classList.add('dark');
-}
+// ===== شروع =====
+loadData();
+setInterval(loadData, 60000);
 </script>
     
 </body>
