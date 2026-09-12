@@ -781,28 +781,64 @@
     </div>
 
 </div>
-
 <script>
 let allApproved = [];
 let allAtlasItems = [];
 let currentModalItem = null;
 
+function normalizeGuide(item) {
+    if (item.guide && (item.guide.individual || item.guide.network || item.guide.policy)) {
+        return {
+            individual: item.guide.individual || '',
+            social: item.guide.network || '',
+            institutional: item.guide.policy || ''
+        };
+    }
+    if (item.analysis && item.analysis.guide) {
+        return {
+            individual: item.analysis.guide.individual || '',
+            social: item.analysis.guide.network || '',
+            institutional: item.analysis.guide.policy || ''
+        };
+    }
+    return null;
+}
+
+function normalizeMatrix(item) {
+    if (item.matrix_emergence || item.matrix_layers || item.matrix_connections ||
+        item.matrix_scale || item.matrix_capacity) {
+        return {
+            emergence: item.matrix_emergence || '',
+            layer: item.matrix_layers || '',
+            connection: item.matrix_connections || '',
+            scale: item.matrix_scale || '',
+            capacity: item.matrix_capacity || '',
+            analysis: item.analysis || '',
+            cluster: item.cluster || '',
+            score: item.score || null
+        };
+    }
+    return null;
+}
+
+function normalizeAi3(item) {
+    return item.ai3Final || '';
+}
+
 async function loadAchievements() {
     const container = document.getElementById('achievementsListContainer');
     try {
         const res = await fetch('/api/get-users?t=' + new Date().getTime());
-        if (!res.ok) throw new Error('خطا در ارتباط با سرور');
+        if (!res.ok) throw new Error('Server connection error');
         const data = await res.json();
-        
-        // Use pre-processed achievements array from API
         allApproved = data.achievements || [];
-        
         renderAchievements(allApproved);
     } catch (e) {
         console.error(e);
         container.innerHTML = '<div class="empty-state">Error loading data.</div>';
     }
 }
+
 function renderAchievements(items) {
     const container = document.getElementById('achievementsListContainer');
     const filter = document.getElementById('categoryFilter').value;
@@ -845,24 +881,19 @@ function renderAtlas(items) {
         return;
     }
     container.innerHTML = items.map((item, index) => {
-        // Display module status on card
         const moduleStatus = item.moduleStatus || 'pending';
         const moduleType = item.moduleType || '';
         
         const statusLabels = {
-            'success': '✅ Successful',
-            'revision': '⚠️ Needs Revision',
-            'failed': '❌ Failed',
-            'pending': '⏳ Pending',
-            'no_peers': '⚠️ No Peers Found',
+            'success': '✅ Successful', 'revision': '⚠️ Needs Revision', 'failed': '❌ Failed',
+            'pending': '⏳ Pending', 'no_peers': '⚠️ No Peers Found',
             'no_related': '⚠️ No Related Observations'
         };
         const statusText = statusLabels[moduleStatus] || moduleStatus;
         const statusClass = moduleStatus === 'success' ? 'success' :
                            moduleStatus === 'revision' ? 'revision' :
                            moduleStatus === 'failed' ? 'failed' :
-                           moduleStatus === 'pending' ? 'pending' :
-                           'no_peers';
+                           moduleStatus === 'pending' ? 'pending' : 'no_peers';
         
         const moduleNames = {
             'collaboration': '🤝 Collaborate',
@@ -912,22 +943,17 @@ function openAtlasModal(index) {
     const item = allAtlasItems[index];
     if (!item) return;
     currentModalItem = item;
-    document.getElementById('modalTitle').textContent = '🏛️ Atlas of Emergence Observation';
-    document.getElementById('modalDesc').innerHTML = item.observation || 'Observation text not available';
-    document.getElementById('modalMeta').textContent = `⭐ Score: ${item.score || '---'} | Status: ${item.status === 'approved' ? '✅ Approved' : '⏳ Pending'}`;
-    const mediaDiv = document.getElementById('modalMediaContainer');
-    if (item.fileUrl) {
-        mediaDiv.innerHTML = `<img src="${item.fileUrl}" class="modal-media" onerror="this.style.display='none'"/>`;
-    } else {
-        mediaDiv.innerHTML = '';
-    }
     
-    // ===== Display Module Information =====
+    document.getElementById('modalTitle').textContent = '🏛️ Atlas of Emergence Profile';
+    document.getElementById('modalDesc').innerHTML = '';
+    document.getElementById('modalMeta').textContent = `⭐ Score: ${item.score || '---'} | Status: ${item.status === 'approved' ? '✅ Approved' : '⏳ Pending'}`;
+    
+    const mediaDiv = document.getElementById('modalMediaContainer');
+    mediaDiv.innerHTML = '';
+    
     const moduleDiv = document.getElementById('modalModule');
     const moduleType = item.moduleType || '';
     const moduleStatus = item.moduleStatus || 'pending';
-    const moduleData = item.moduleData || [];
-    const moduleAnalysis = item.moduleAnalysis || '';
     
     const moduleNames = {
         'collaboration': '🤝 Collaborate',
@@ -937,49 +963,156 @@ function openAtlasModal(index) {
     const moduleDisplay = moduleNames[moduleType] || moduleType || 'None';
     
     const statusLabels = {
-        'success': '✅ Successful',
-        'revision': '⚠️ Needs Revision',
-        'failed': '❌ Failed',
-        'pending': '⏳ Pending',
-        'no_peers': '⚠️ No Peers Found',
+        'success': '✅ Successful', 'revision': '⚠️ Needs Revision', 'failed': '❌ Failed',
+        'pending': '⏳ Pending', 'no_peers': '⚠️ No Peers Found',
         'no_related': '⚠️ No Related Observations'
     };
     const statusText = statusLabels[moduleStatus] || moduleStatus;
     const statusClass = moduleStatus === 'success' ? 'success' :
                        moduleStatus === 'revision' ? 'revision' :
                        moduleStatus === 'failed' ? 'failed' :
-                       moduleStatus === 'pending' ? 'pending' :
-                       'no_peers';
+                       moduleStatus === 'pending' ? 'pending' : 'no_peers';
     
     if (moduleType) {
         moduleDiv.style.display = 'block';
         document.getElementById('modalModuleType').textContent = moduleDisplay;
         document.getElementById('modalModuleStatus').innerHTML = `<span class="module-status-badge ${statusClass}">${statusText}</span>`;
-        document.getElementById('modalModuleData').textContent = moduleData.length > 0 ? `Results: ${moduleData.join(', ')}` : '';
-        document.getElementById('modalModuleAnalysis').textContent = moduleAnalysis || '';
     } else {
         moduleDiv.style.display = 'none';
     }
     
     const guideBox = document.getElementById('modalGuide');
     const guideContent = document.getElementById('guideContent');
-    if (item.analysis && item.analysis.guide) {
-        guideBox.style.display = 'block';
-        guideContent.innerHTML = `
-            <div style="margin-bottom:0.3rem;"><strong>📍 Individual:</strong> ${item.analysis.guide.individual}</div>
-            <div style="margin-bottom:0.3rem;"><strong>🌐 Network:</strong> ${item.analysis.guide.network}</div>
-            <div><strong>🏛️ Policy:</strong> ${item.analysis.guide.policy}</div>
-        `;
-    } else {
-        guideBox.style.display = 'none';
+    
+    const guide = normalizeGuide(item);
+    const matrix = normalizeMatrix(item);
+    const ai3Final = normalizeAi3(item);
+    
+    const clusterNames = {
+        'human': 'Human', 'knowledge': 'Knowledge & Technology',
+        'governance': 'Governance & Civilization', 'survival': 'Survival & Future',
+        'other': 'Unknown'
+    };
+    
+    let html = '';
+    
+    html += `
+        <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(212,175,55,0.08); border-radius:10px; border-left:4px solid #d4af37;">
+            <div style="font-weight:800; font-size:0.85rem; color:#8a6d1f; margin-bottom:0.4rem;">📝 Registered Observation</div>
+            <div style="font-size:0.85rem; line-height:1.8;">${item.observation || '---'}</div>
+        </div>`;
+    
+    if (guide && (guide.individual || guide.social || guide.institutional)) {
+        html += `
+            <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(16,185,129,0.06); border-radius:10px; border-left:4px solid #10b981;">
+                <div style="font-weight:800; font-size:0.85rem; color:#047857; margin-bottom:0.4rem;">🤖 AI-1 — Three-Level Guidance</div>
+                ${guide.individual ? `<div style="margin-bottom:0.4rem; font-size:0.82rem; line-height:1.7;"><strong>📍 Individual:</strong> ${guide.individual}</div>` : ''}
+                ${guide.social ? `<div style="margin-bottom:0.4rem; font-size:0.82rem; line-height:1.7;"><strong>🌐 Social:</strong> ${guide.social}</div>` : ''}
+                ${guide.institutional ? `<div style="font-size:0.82rem; line-height:1.7;"><strong>🏛️ Institutional:</strong> ${guide.institutional}</div>` : ''}
+            </div>`;
     }
+    
+    if (matrix && (matrix.emergence || matrix.layer || matrix.connection || matrix.scale || matrix.capacity || matrix.analysis)) {
+        html += `
+            <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(99,102,241,0.06); border-radius:10px; border-left:4px solid #6366f1;">
+                <div style="font-weight:800; font-size:0.85rem; color:#4338ca; margin-bottom:0.4rem;">
+                    🧠 AI-2 — Five-Level Matrix
+                    ${matrix.cluster ? `<span style="background:rgba(212,175,55,0.15); padding:0.1rem 0.6rem; border-radius:10px; font-size:0.7rem; margin-left:0.3rem;">📂 ${clusterNames[matrix.cluster] || matrix.cluster}</span>` : ''}
+                    ${matrix.score ? `<span style="background:rgba(39,174,96,0.15); padding:0.1rem 0.6rem; border-radius:10px; font-size:0.7rem;">⭐ Score: ${matrix.score}</span>` : ''}
+                </div>
+                ${matrix.emergence ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 Emergence:</strong> ${matrix.emergence}</div>` : ''}
+                ${matrix.layer ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 Layers:</strong> ${matrix.layer}</div>` : ''}
+                ${matrix.connection ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 Connections:</strong> ${matrix.connection}</div>` : ''}
+                ${matrix.scale ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 Scale:</strong> ${matrix.scale}</div>` : ''}
+                ${matrix.capacity ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 Capacity:</strong> ${matrix.capacity}</div>` : ''}
+                ${matrix.analysis ? `<div style="margin-top:0.5rem; padding:0.5rem; background:rgba(255,255,255,0.5); border-radius:6px; font-size:0.82rem; line-height:1.75;"><strong>Analysis:</strong> ${matrix.analysis}</div>` : ''}
+            </div>`;
+    }
+    
+    if (ai3Final) {
+        html += `
+            <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(236,72,153,0.06); border-radius:10px; border-left:4px solid #ec4899;">
+                <div style="font-weight:800; font-size:0.85rem; color:#be185d; margin-bottom:0.4rem;">💎 AI-3 — Final Synthesis</div>
+                <div style="font-size:0.85rem; line-height:1.9;">${ai3Final}</div>
+            </div>`;
+    }
+    
+    if (!guide && !matrix && !ai3Final) {
+        html += `
+            <div style="padding:0.8rem; background:rgba(231,76,60,0.08); border-radius:10px; border-left:4px solid #e74c3c;">
+                <div style="font-weight:800; font-size:0.85rem; color:#7a1a1a;">⚠️ AI analysis not available for this observation</div>
+                <div style="font-size:0.78rem; color:#7a1a1a; margin-top:0.3rem;">This observation may have been registered before the three-layer analysis system was activated.</div>
+            </div>`;
+    }
+    
+    guideContent.innerHTML = html;
+    guideBox.style.display = 'block';
     document.getElementById('modalFeedback').style.display = 'block';
     document.getElementById('detailModal').classList.add('active');
 }
 
 async function submitFeedback(type) {
     if (!currentModalItem) return;
-    alert(`Thank you! Your feedback (${type}) has been recorded for the reformer network.`);
+    
+    const issueNumber = currentModalItem.number;
+    if (!issueNumber) {
+        alert('❌ Observation number not found.');
+        return;
+    }
+    
+    const cardCode = prompt('To submit feedback, please enter your Cultural Identity Card code:');
+    if (!cardCode || cardCode.trim().length < 5) {
+        alert('❌ Invalid card code.');
+        return;
+    }
+    
+    const resultMap = {
+        'success': 'success',
+        'fix': 'revision',
+        'fail': 'failed'
+    };
+    const result = resultMap[type] || type;
+    
+    const resultLabels = {
+        'success': '✅ Successful',
+        'revision': '⚠️ Needs Revision',
+        'failed': '❌ Failed'
+    };
+    
+    if (!confirm(`Submit feedback "${resultLabels[result]}" for observation #${issueNumber}?`)) {
+        return;
+    }
+    
+    const trackingCode = `OBS-${issueNumber}`;
+    document.querySelectorAll('.fb-btn').forEach(btn => btn.disabled = true);
+    
+    try {
+        const response = await fetch('/api/submit-request', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                type: 'observation_feedback',
+                cardCode: cardCode.trim(),
+                issueNumber: issueNumber,
+                trackingCode: trackingCode,
+                result: result,
+                feedback: `Member feedback based on received guidance: ${resultLabels[result]}`
+            })
+        });
+        
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Error submitting feedback');
+        
+        alert(`✅ Your feedback has been recorded.\n\nFeedback Tracking Code: ${data.trackingCode}`);
+        
+        document.getElementById('detailModal').classList.remove('active');
+        setTimeout(() => { if (typeof loadAtlas === 'function') loadAtlas(); }, 500);
+        
+    } catch (error) {
+        console.error('Feedback error:', error);
+        alert('❌ Error: ' + error.message);
+        document.querySelectorAll('.fb-btn').forEach(btn => btn.disabled = false);
+    }
 }
 
 function closeModal(e) {
@@ -997,5 +1130,6 @@ if (localStorage.getItem('theme') === 'dark') {
     document.body.classList.add('dark');
 }
 </script>
+
 </body>
 </html>
