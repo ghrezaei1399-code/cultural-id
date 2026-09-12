@@ -32,16 +32,16 @@ module.exports = async function handler(req, res) {
 
       for (const comment of comments) {
         const body = comment.body || '';
-        if (body.includes('**📝 پاسخ هم‌فرهنگ**') || body.includes('**Peer Response**')) {
-          const peerMatch = body.match(/\*\*هم‌فرهنگ:\*\*\s*(.+)/) || body.match(/\*\*Peer:\*\*\s*(.+)/);
-          const resultMatch = body.match(/\*\*نتیجه:\*\*\s*(.+)/) || body.match(/\*\*Result:\*\*\s*(.+)/);
-          const responseMatch = body.match(/\*\*پاسخ:\*\*\s*(.+)/) || body.match(/\*\*Response:\*\*\s*(.+)/);
+        if (body.includes('📝 پاسخ هم‌فرهنگ') || body.includes('Peer Response')) {
+          const peerMatch = body.match(/هم‌فرهنگ:\s*(.+)/) || body.match(/Peer:\s*(.+)/);
+          const resultMatch = body.match(/نتیجه:\s*(.+)/) || body.match(/Result:\s*(.+)/);
+          const responseMatch = body.match(/پاسخ:\s*(.+)/) || body.match(/Response:\s*(.+)/);
           
           if (peerMatch && responseMatch) {
             peerResponses.push({
-              peerCode: peerMatch[1].trim(),
-              result: resultMatch ? resultMatch[1].trim() : 'success',
-              response: responseMatch[1].trim(),
+              peerCode: peerMatch[1].trim().replace(/\*\*/g, ''),
+              result: resultMatch ? resultMatch[1].trim().replace(/\*\*/g, '') : 'success',
+              response: responseMatch[1].trim().replace(/\*\*/g, ''),
               timestamp: comment.created_at,
               commentId: comment.id
             });
@@ -81,69 +81,21 @@ module.exports = async function handler(req, res) {
         }
       }
 
-      let moduleType = '';
-      let moduleData = [];
-      let moduleAnalysis = '';
-      let modulePeers = [];
-
-      const bodyLines = body.split('\n');
-      let inModuleSection = false;
-
-      for (const line of bodyLines) {
-        const trimmedLine = line.trim();
-        
-        if (trimmedLine.includes('**📌 Module Result:**') || trimmedLine.includes('**Module Result:**')) {
-          inModuleSection = true;
-          continue;
-        }
-
-        if (inModuleSection) {
-          if (trimmedLine.includes('**Type:**')) {
-            const match = trimmedLine.match(/\*\*Type:\*\*\s*(.+)/);
-            if (match) moduleType = match[1].trim();
-            continue;
-          }
-          if (trimmedLine.includes('**Status:**')) {
-            continue;
-          }
-          if (trimmedLine.includes('**Results:**')) {
-            const match = trimmedLine.match(/\*\*Results:\*\*\s*(.+)/);
-            if (match) {
-              moduleData = match[1].trim().split(',').map(s => s.trim()).filter(s => s && s !== '---');
-            }
-            continue;
-          }
-          if (trimmedLine.includes('**Analysis:**')) {
-            const match = trimmedLine.match(/\*\*Analysis:\*\*\s*(.+)/);
-            if (match) moduleAnalysis = match[1].trim();
-            continue;
-          }
-          if (trimmedLine.includes('**Peers:**')) {
-            const match = trimmedLine.match(/\*\*Peers:\*\*\s*(.+)/);
-            if (match) {
-              modulePeers = match[1].trim().split(',').map(s => s.trim()).filter(s => s && s !== '---');
-            }
-            continue;
-          }
-          if (trimmedLine.includes('---')) {
-            inModuleSection = false;
-          }
-        }
-      }
+      const parsed = parseIssueBody(body);
 
       return res.status(200).json({
         issueNumber: parseInt(issueNumber),
         moduleStatus: moduleStatus,
-        moduleType: moduleType,
-        moduleData: moduleData,
-        moduleAnalysis: moduleAnalysis,
-        modulePeers: modulePeers
+        moduleType: parsed.moduleType,
+        moduleData: parsed.moduleData,
+        moduleAnalysis: parsed.moduleAnalysis,
+        modulePeers: parsed.modulePeers
       });
     }
 
     // ===== دریافت مشاهدات (Observations) =====
     if (type === 'observations') {
-      const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues?labels=observation&state=all`, {
+      const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues?labels=observation&state=all&per_page=100`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/vnd.github.v3+json'
@@ -155,28 +107,15 @@ module.exports = async function handler(req, res) {
       }
 
       const issues = await response.json();
-      
       const observations = [];
+
       for (const issue of issues) {
         const labels = issue.labels.map(l => l.name);
         let status = 'pending';
         let score = null;
-        let cluster = 'other';
-        let analysis = '';
-        const guide = {};
-        let matrix_emergence = '';
-        let matrix_layers = '';
-        let matrix_connections = '';
-        let matrix_scale = '';
-        let matrix_capacity = '';
-        
-        // ===== فیلد جدید: AI-3 Final Synthesis =====
-        let ai3Final = '';
-        let ai3Error = null;
         
         if (labels.includes('approved')) status = 'approved';
         else if (labels.includes('rejected')) status = 'rejected';
-        else if (labels.includes('score-5')) score = 5;
         
         let moduleStatus = 'pending';
         for (const label of labels) {
@@ -185,231 +124,32 @@ module.exports = async function handler(req, res) {
             break;
           }
         }
-        
-        const bodyLines = issue.body.split('\n');
-        let observationText = '';
-        let cardCode = '';
-        let module = '';
-        let inObservation = false;
-        let moduleType = '';
-        let moduleData = [];
-        let moduleAnalysisText = '';
-        let modulePeers = [];
-        let inModuleSection = false;
-        
-        // ===== متغیرهای جدید برای AI-3 =====
-        let inAi3Section = false;
-        let ai3Buffer = [];
-        let aiErrorsFromBody = '';
-        
-        for (const line of bodyLines) {
-          const trimmedLine = line.trim();
-          
-          if (trimmedLine.includes('**Card Code:**')) {
-            const match = trimmedLine.match(/\*\*Card Code:\*\*\s*(.+)/);
-            if (match) cardCode = match[1].trim();
-            continue;
-          }
-          
-          if (trimmedLine.includes('**Observation:**')) {
-            inObservation = true;
-            continue;
-          }
-          
-          if (trimmedLine.includes('**Selected Module:**')) {
-            const match = trimmedLine.match(/\*\*Selected Module:\*\*\s*(.+)/);
-            if (match) module = match[1].trim();
-            continue;
-          }
-          
-          // ===== تشخیص شروع AI-3 =====
-          if (trimmedLine.includes('AI-3 Final Synthesis')) {
-            inAi3Section = true;
-            inObservation = false;
-            inModuleSection = false;
-            continue;
-          }
-          
-          // ===== تشخیص شروع AI-3 =====
-if (trimmedLine.includes('AI-3 Final Synthesis')) {
-  inAi3Section = true;
-  inObservation = false;
-  inModuleSection = false;
-  continue;
-}
 
-// ===== اگر در بخش AI-3 هستیم، خطوط را جمع کن =====
-if (inAi3Section) {
-  // اگر به خط جداکننده یا تیتر بعدی رسیدیم، AI-3 تمام است
-  const isEndMarker = trimmedLine === '---' ||
-                     trimmedLine.startsWith('**📌') ||
-                     trimmedLine.startsWith('**Module Result') ||
-                     trimmedLine.startsWith('**AI Errors:**') ||
-                     trimmedLine.startsWith('**Module Status:**') ||
-                     trimmedLine.startsWith('**Tracking Code:**') ||
-                     trimmedLine.startsWith('**Card Code:**');
-  
-  if (isEndMarker) {
-    inAi3Section = false;
-    // ادامه پردازش این خط از بیرون (fall through)
-  } else if (trimmedLine.startsWith('⚠️') || trimmedLine.includes('AI3_FAILED')) {
-    ai3Error = 'AI3_FAILED';
-    inAi3Section = false;
-  } else if (trimmedLine && !trimmedLine.startsWith('**Error Code:**')) {
-    ai3Buffer.push(trimmedLine);
-    continue;
-  }
-  if (inAi3Section) continue;
-}
-          
-          if (trimmedLine.includes('**Suggested Score:**')) {
-            const match = trimmedLine.match(/\d+/);
-            if (match) score = parseInt(match[0]);
-            continue;
-          }
-          
-          if (trimmedLine.includes('**Analysis:**') && !trimmedLine.includes('Module')) {
-            const match = trimmedLine.match(/\*\*Analysis:\*\*\s*(.+)/);
-            if (match) {
-              const analysisText = match[1].trim();
-              if (analysisText !== '---' && analysisText !== 'تحلیل' && analysisText !== 'Analysis') {
-                analysis = analysisText;
-              }
-            }
-            continue;
-          }
-          
-          if (trimmedLine.includes('**Emergence:**')) {
-            const match = trimmedLine.match(/\*\*Emergence:\*\*\s*(.+)/);
-            if (match) matrix_emergence = match[1].trim();
-            if (matrix_emergence === '---') matrix_emergence = '';
-            continue;
-          }
-          
-          if (trimmedLine.includes('**Layers:**')) {
-            const match = trimmedLine.match(/\*\*Layers:\*\*\s*(.+)/);
-            if (match) matrix_layers = match[1].trim();
-            if (matrix_layers === '---') matrix_layers = '';
-            continue;
-          }
-          
-          if (trimmedLine.includes('**Connections:**')) {
-            const match = trimmedLine.match(/\*\*Connections:\*\*\s*(.+)/);
-            if (match) matrix_connections = match[1].trim();
-            if (matrix_connections === '---') matrix_connections = '';
-            continue;
-          }
-          
-          if (trimmedLine.includes('**Scale:**')) {
-            const match = trimmedLine.match(/\*\*Scale:\*\*\s*(.+)/);
-            if (match) matrix_scale = match[1].trim();
-            if (matrix_scale === '---') matrix_scale = '';
-            continue;
-          }
-          
-          if (trimmedLine.includes('**Capacity:**')) {
-            const match = trimmedLine.match(/\*\*Capacity:\*\*\s*(.+)/);
-            if (match) matrix_capacity = match[1].trim();
-            if (matrix_capacity === '---') matrix_capacity = '';
-            continue;
-          }
-          
-          // ===== استخراج Action Guide (Individual / Network / Policy) =====
-          if (trimmedLine.includes('**Individual:**')) {
-            const match = trimmedLine.match(/\*\*Individual:\*\*\s*(.+)/);
-            if (match && match[1].trim() !== '---') guide.individual = match[1].trim();
-            continue;
-          }
-          
-          if (trimmedLine.includes('**Network:**')) {
-            const match = trimmedLine.match(/\*\*Network:\*\*\s*(.+)/);
-            if (match && match[1].trim() !== '---') guide.network = match[1].trim();
-            continue;
-          }
-          
-          if (trimmedLine.includes('**Policy:**')) {
-            const match = trimmedLine.match(/\*\*Policy:\*\*\s*(.+)/);
-            if (match && match[1].trim() !== '---') guide.policy = match[1].trim();
-            continue;
-          }
-          
-          if (trimmedLine.includes('**AI Errors:**')) {
-            const match = trimmedLine.match(/\*\*AI Errors:\*\*\s*(.+)/);
-            if (match) aiErrorsFromBody = match[1].trim();
-            continue;
-          }
-          
-          if (trimmedLine.includes('**📌 Module Result:**') || trimmedLine.includes('**Module Result:**')) {
-            inModuleSection = true;
-            continue;
-          }
+        const parsed = parseIssueBody(issue.body || '');
 
-          if (inModuleSection) {
-            if (trimmedLine.includes('**Type:**')) {
-              const match = trimmedLine.match(/\*\*Type:\*\*\s*(.+)/);
-              if (match) moduleType = match[1].trim();
-              continue;
-            }
-            if (trimmedLine.includes('**Results:**')) {
-              const match = trimmedLine.match(/\*\*Results:\*\*\s*(.+)/);
-              if (match) {
-                moduleData = match[1].trim().split(',').map(s => s.trim()).filter(s => s && s !== '---');
-              }
-              continue;
-            }
-            if (trimmedLine.includes('**Analysis:**')) {
-              const match = trimmedLine.match(/\*\*Analysis:\*\*\s*(.+)/);
-              if (match) moduleAnalysisText = match[1].trim();
-              continue;
-            }
-            if (trimmedLine.includes('**Peers:**')) {
-              const match = trimmedLine.match(/\*\*Peers:\*\*\s*(.+)/);
-              if (match) {
-                modulePeers = match[1].trim().split(',').map(s => s.trim()).filter(s => s && s !== '---');
-              }
-              continue;
-            }
-            if (trimmedLine.includes('---')) {
-              inModuleSection = false;
-            }
-          }
-          
-          if (inObservation && trimmedLine && !trimmedLine.includes('---') && !trimmedLine.includes('**')) {
-            observationText += trimmedLine + ' ';
-          }
-          if (line.includes('---') && !inModuleSection && !inAi3Section) break;
-        }
-        
-        // اگر AI-3 در حال جمع‌آوری بود و به پایان رسید
-        if (ai3Buffer.length > 0) {
-          ai3Final = ai3Buffer.join(' ').trim();
-        }
-        
-        observationText = observationText.trim() || issue.body.substring(0, 200);
-        
         observations.push({
           number: issue.number,
-          cardCode: cardCode || 'ناشناس',
-          observation: observationText,
-          module: module,
+          cardCode: parsed.cardCode || 'ناشناس',
+          observation: parsed.observation,
+          module: parsed.module,
           status: status,
-          score: score,
-          cluster: cluster,
-          analysis: analysis,
-          matrix_emergence: matrix_emergence,
-          matrix_layers: matrix_layers,
-          matrix_connections: matrix_connections,
-          matrix_scale: matrix_scale,
-          matrix_capacity: matrix_capacity,
-          guide: guide,
-          ai3Final: ai3Final,
-          ai3Error: ai3Error,
-          aiErrors: aiErrorsFromBody,
+          score: parsed.score || score,
+          cluster: parsed.cluster,
+          analysis: parsed.analysis,
+          matrix_emergence: parsed.matrix_emergence,
+          matrix_layers: parsed.matrix_layers,
+          matrix_connections: parsed.matrix_connections,
+          matrix_scale: parsed.matrix_scale,
+          matrix_capacity: parsed.matrix_capacity,
+          guide: parsed.guide,
+          ai3Final: parsed.ai3Final,
+          ai3Error: parsed.ai3Error,
+          aiErrors: parsed.aiErrors,
           moduleStatus: moduleStatus,
-          moduleType: moduleType,
-          moduleData: moduleData,
-          moduleAnalysis: moduleAnalysisText,
-          modulePeers: modulePeers,
+          moduleType: parsed.moduleType,
+          moduleData: parsed.moduleData,
+          moduleAnalysis: parsed.moduleAnalysis,
+          modulePeers: parsed.modulePeers,
           createdAt: issue.created_at,
           issueUrl: issue.html_url
         });
@@ -531,3 +271,275 @@ if (inAi3Section) {
     return res.status(500).json({ error: error.message });
   }
 };
+
+
+// ============================================================
+// تابع کمکی: نرمال‌سازی یک خط (حذف ** و فاصله اضافه)
+// ============================================================
+function normalizeLine(line) {
+  return (line || '').replace(/\*\*/g, '').trim();
+}
+
+// ============================================================
+// تابع کمکی: بررسی اینکه یک خط با یک تیتر شروع می‌شود
+// ============================================================
+function startsWithLabel(line, label) {
+  const normalized = normalizeLine(line);
+  return normalized.startsWith(label);
+}
+
+// ============================================================
+// تابع کمکی: استخراج مقدار بعد از یک تیتر
+// ============================================================
+function extractValue(line, label) {
+  const normalized = normalizeLine(line);
+  if (!normalized.startsWith(label)) return null;
+  return normalized.substring(label.length).trim();
+}
+
+// ============================================================
+// تابع اصلی: پارس کردن بدنه Issue
+// ============================================================
+function parseIssueBody(body) {
+  const result = {
+    cardCode: '',
+    observation: '',
+    module: '',
+    score: null,
+    cluster: 'other',
+    analysis: '',
+    guide: { individual: '', network: '', policy: '' },
+    matrix_emergence: '',
+    matrix_layers: '',
+    matrix_connections: '',
+    matrix_scale: '',
+    matrix_capacity: '',
+    ai3Final: '',
+    ai3Error: null,
+    aiErrors: '',
+    moduleType: '',
+    moduleData: [],
+    moduleAnalysis: '',
+    modulePeers: []
+  };
+
+  if (!body) return result;
+
+  const lines = body.split('\n');
+  
+  // ===== مرحله ۱: استخراج AI-3 (چند خطی) =====
+  let ai3Start = -1;
+  let ai3End = lines.length;
+  for (let i = 0; i < lines.length; i++) {
+    const norm = normalizeLine(lines[i]);
+    if (norm.includes('AI-3 Final Synthesis')) {
+      ai3Start = i + 1;
+      break;
+    }
+  }
+  if (ai3Start !== -1) {
+    for (let i = ai3Start; i < lines.length; i++) {
+      const norm = normalizeLine(lines[i]);
+      if (norm === '---' || 
+          norm.startsWith('📌') ||
+          norm.startsWith('Module Result') ||
+          norm.startsWith('AI Errors:') ||
+          norm.startsWith('Module Status:') ||
+          norm.startsWith('Tracking Code:') ||
+          norm.startsWith('Card Code:')) {
+        ai3End = i;
+        break;
+      }
+    }
+    const ai3Lines = [];
+    for (let i = ai3Start; i < ai3End; i++) {
+      const norm = normalizeLine(lines[i]);
+      if (norm && !norm.startsWith('⚠️') && !norm.includes('AI3_FAILED') && !norm.startsWith('Error Code:')) {
+        ai3Lines.push(norm);
+      } else if (norm.includes('AI3_FAILED') || norm.startsWith('⚠️')) {
+        result.ai3Error = 'AI3_FAILED';
+      }
+    }
+    result.ai3Final = ai3Lines.join(' ').trim();
+  }
+
+  // ===== مرحله ۲: استخراج خط به خط بقیه فیلدها =====
+  let inObservation = false;
+  let inModuleSection = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const norm = normalizeLine(lines[i]);
+    if (!norm) continue;
+
+    // --- Card Code ---
+    if (norm.startsWith('Card Code:')) {
+      result.cardCode = norm.substring('Card Code:'.length).trim();
+      continue;
+    }
+
+    // --- Observation ---
+    if (norm === 'Observation:') {
+      inObservation = true;
+      continue;
+    }
+
+    // --- Selected Module ---
+    if (norm.startsWith('Selected Module:')) {
+      inObservation = false;
+      result.module = norm.substring('Selected Module:'.length).trim();
+      continue;
+    }
+
+    // --- AI Analysis (بخش AI-1) ---
+    if (norm.startsWith('🤖 AI Analysis:') || norm === 'AI Analysis:') {
+      inObservation = false;
+      continue;
+    }
+
+    // --- Status ---
+    if (norm.startsWith('Status:')) {
+      // فقط برای نمایش — نادیده می‌گیریم
+      continue;
+    }
+
+    // --- Cluster ---
+    if (norm.startsWith('Cluster:')) {
+      const clusterText = norm.substring('Cluster:'.length).trim();
+      if (clusterText.includes('انسان') || clusterText.includes('Human')) result.cluster = 'human';
+      else if (clusterText.includes('دانش') || clusterText.includes('Knowledge')) result.cluster = 'knowledge';
+      else if (clusterText.includes('حکمرانی') || clusterText.includes('Governance')) result.cluster = 'governance';
+      else if (clusterText.includes('بقا') || clusterText.includes('Survival')) result.cluster = 'survival';
+      continue;
+    }
+
+    // --- Suggested Score ---
+    if (norm.startsWith('Suggested Score:')) {
+      const match = norm.match(/\d+/);
+      if (match) result.score = parseInt(match[0]);
+      continue;
+    }
+
+    // --- Action Guide ---
+    if (norm === 'Action Guide:' || norm.startsWith('Action Guide:')) {
+      continue;
+    }
+
+    if (norm.startsWith('Individual:')) {
+      const val = norm.substring('Individual:'.length).trim();
+      if (val && val !== '---') result.guide.individual = val;
+      continue;
+    }
+
+    if (norm.startsWith('Network:')) {
+      const val = norm.substring('Network:'.length).trim();
+      if (val && val !== '---') result.guide.network = val;
+      continue;
+    }
+
+    if (norm.startsWith('Policy:')) {
+      const val = norm.substring('Policy:'.length).trim();
+      if (val && val !== '---') result.guide.policy = val;
+      continue;
+    }
+
+    // --- 5 Matrices ---
+    if (norm === '5 Matrices:' || norm.startsWith('5 Matrices:') || norm === '5 Matrices') {
+      continue;
+    }
+
+    if (norm.startsWith('Emergence:')) {
+      const val = norm.substring('Emergence:'.length).trim();
+      if (val && val !== '---') result.matrix_emergence = val;
+      continue;
+    }
+
+    if (norm.startsWith('Layers:')) {
+      const val = norm.substring('Layers:'.length).trim();
+      if (val && val !== '---') result.matrix_layers = val;
+      continue;
+    }
+
+    if (norm.startsWith('Connections:')) {
+      const val = norm.substring('Connections:'.length).trim();
+      if (val && val !== '---') result.matrix_connections = val;
+      continue;
+    }
+
+    if (norm.startsWith('Scale:')) {
+      const val = norm.substring('Scale:'.length).trim();
+      if (val && val !== '---') result.matrix_scale = val;
+      continue;
+    }
+
+    if (norm.startsWith('Capacity:')) {
+      const val = norm.substring('Capacity:'.length).trim();
+      if (val && val !== '---') result.matrix_capacity = val;
+      continue;
+    }
+
+    // --- Analysis (AI-2) ---
+    if (norm.startsWith('Analysis:') && !norm.includes('Module')) {
+      const val = norm.substring('Analysis:'.length).trim();
+      if (val && val !== '---' && val !== 'تحلیل') result.analysis = val;
+      continue;
+    }
+
+    // --- AI Errors ---
+    if (norm.startsWith('AI Errors:')) {
+      result.aiErrors = norm.substring('AI Errors:'.length).trim();
+      continue;
+    }
+
+    // --- Module Result ---
+    if (norm.startsWith('📌') || norm.includes('Module Result:')) {
+      inModuleSection = true;
+      inObservation = false;
+      continue;
+    }
+
+    if (inModuleSection) {
+      if (norm.startsWith('Type:')) {
+        result.moduleType = norm.substring('Type:'.length).trim();
+        continue;
+      }
+      if (norm.startsWith('Status:')) {
+        continue;
+      }
+      if (norm.startsWith('Results:')) {
+        const val = norm.substring('Results:'.length).trim();
+        result.moduleData = val.split(',').map(s => s.trim()).filter(s => s && s !== '---');
+        continue;
+      }
+      if (norm.startsWith('Analysis:')) {
+        result.moduleAnalysis = norm.substring('Analysis:'.length).trim();
+        continue;
+      }
+      if (norm.startsWith('Peers:')) {
+        const val = norm.substring('Peers:'.length).trim();
+        result.modulePeers = val.split(',').map(s => s.trim()).filter(s => s && s !== '---');
+        continue;
+      }
+      if (norm === '---') {
+        inModuleSection = false;
+        continue;
+      }
+    }
+
+    // --- جمع‌آوری متن مشاهده ---
+    if (inObservation && norm && !norm.startsWith('---') && !norm.includes(':')) {
+      result.observation += norm + ' ';
+    }
+
+    // --- توقف در جداکننده اصلی ---
+    if (norm === '---' && !inModuleSection) {
+      inObservation = false;
+    }
+  }
+
+  result.observation = result.observation.trim();
+  if (!result.observation) {
+    result.observation = body.substring(0, 200);
+  }
+
+  return result;
+}
