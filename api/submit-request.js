@@ -29,7 +29,7 @@ module.exports = async function handler(req, res) {
     const repo = 'cultural-id';
 
     // ============================================================
-    // بخش Observations - با هوش مصنوعی OpenRouter
+    // بخش Observations - سه هوش مصنوعی جداگانه
     // ============================================================
     if (type === 'observations' && observations && observations.length > 0) {
       if (!cardCode) {
@@ -49,146 +49,148 @@ module.exports = async function handler(req, res) {
 
         const selectedModule = obs.module ? moduleNames[obs.module] || obs.module : 'هیچ‌کدام';
         const isPersian = /[\u0600-\u06FF]/.test(obs.text);
-        
-        let aiAnalysis = null;
-        
-        // تلاش برای دریافت تحلیل از هوش مصنوعی
-        if (openRouterKey) {
-          try {
-            // پرامپت بسیار دقیق و ساختاریافته
-            const systemPrompt = isPersian ? 
-`شما یک دستیار تحلیلی هستید. وظیفه شما تحلیل مشاهده کاربر بر اساس چارچوب "سپهر خردمندی" و تولید یک آبجکت JSON است.
-قوانین:
-1. فقط و فقط JSON برگردانید. هیچ متنی قبل یا بعد از JSON نباشد.
-2. تمام ۱۱ فیلد زیر باید وجود داشته باشند و با محتوای مشاهده پر شوند.
-3. اگر اطلاعاتی نبود، از عبارات کوتاه و مرتبط استفاده کنید، نه عبارات کلیشه‌ای مثل "تحلیل دقیق".
-
-ساختار JSON مورد نیاز:
-{
-  "status": "approved",
-  "cluster": "human", // یکی از: human, knowledge, governance, survival
-  "score": 3, // عدد بین 1 تا 5
-  "analysis": "متن تحلیل عمیق در 2 پاراگراف",
-  "individual": "راهنمای عملی برای فرد",
-  "network": "راهنمای تعامل با دیگران",
-  "policy": "پیشنهاد ساختاری یا سیاستی",
-  "matrix_emergence": "تحلیل ماتریس ظهورها",
-  "matrix_layers": "تحلیل ماتریس لایه‌ها",
-  "matrix_connections": "تحلیل ماتریس ارتباطات",
-  "matrix_scale": "تحلیل ماتریس مقیاس",
-  "matrix_capacity": "تحلیل ماتریس ظرفیت"
-}` :
-`You are an analytical assistant. Analyze the observation based on "Sphere of Wisdom" and return a JSON object.
-Rules:
-1. Return ONLY JSON. No extra text.
-2. All 11 fields must be present and filled with specific content from the observation.
-3. Do not use generic placeholders like "Detailed analysis".
-
-Required JSON Structure:
-{
-  "status": "approved",
-  "cluster": "human", // one of: human, knowledge, governance, survival
-  "score": 3, // number between 1-5
-  "analysis": "Deep analysis text in 2 paragraphs",
-  "individual": "Practical guide for the individual",
-  "network": "Guide for interaction with others",
-  "policy": "Structural or policy suggestion",
-  "matrix_emergence": "Analysis of Emergence Matrix",
-  "matrix_layers": "Analysis of Layers Matrix",
-  "matrix_connections": "Analysis of Connections Matrix",
-  "matrix_scale": "Analysis of Scale Matrix",
-  "matrix_capacity": "Analysis of Capacity Matrix"
-}`;
-
-            const userPrompt = `Observation to analyze: "${obs.text}"`;
-
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 20000); // 20 ثانیه مهلت
-
-            const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${openRouterKey}`,
-                'HTTP-Referer': process.env.SITE_URL || 'https://cultural-id.vercel.app',
-              },
-              body: JSON.stringify({
-                model: 'mistralai/mistral-7b-instruct', // مدل پایدار برای JSON
-                messages: [
-                  { role: 'system', content: systemPrompt },
-                  { role: 'user', content: userPrompt }
-                ],
-                temperature: 0.5, // کاهش دما برای دقت بیشتر
-                max_tokens: 1200,
-                response_format: { type: 'json_object' }
-              }),
-              signal: controller.signal
-            });
-
-            clearTimeout(timeoutId);
-
-            if (response.ok) {
-              const data = await response.json();
-              const content = data.choices?.[0]?.message?.content || '{}';
-              
-              // استخراج تمیز JSON
-              let jsonStr = content;
-              const s = content.indexOf('{');
-              const e = content.lastIndexOf('}');
-              if (s !== -1 && e !== -1) jsonStr = content.substring(s, e + 1);
-              
-              const analysis = JSON.parse(jsonStr);
-              
-              // نگاشت دقیق داده‌ها بدون مقادیر پیش‌فرض گمراه‌کننده
-              aiAnalysis = {
-                status: analysis.status || "approved",
-                cluster: analysis.cluster || "human",
-                score_suggestion: typeof analysis.score === 'number' ? analysis.score : 3,
-                analysis_note: analysis.analysis || "",
-                guide_individual: analysis.individual || "",
-                guide_network: analysis.network || "",
-                guide_policy: analysis.policy || "",
-                matrix_emergence: analysis.matrix_emergence || "",
-                matrix_layers: analysis.matrix_layers || "",
-                matrix_connections: analysis.matrix_connections || "",
-                matrix_scale: analysis.matrix_scale || "",
-                matrix_capacity: analysis.matrix_capacity || ""
-              };
-            } else {
-              console.error('OpenRouter Error:', response.status);
-            }
-          } catch (err) {
-            console.warn('AI failed:', err.message);
-          }
-        }
-
-        // اگر هوش مصنوعی کار نکرد، از تحلیل پیش‌فرض استفاده کن
-        if (!aiAnalysis) {
-          aiAnalysis = getFallbackAnalysis(obs.text, isPersian);
-        }
-
-        // نرمال‌سازی داده‌ها برای پنل ادمین جدید (دقیقاً مطابق نام‌گذاری پنل)
-        const ai1Data = {
-          individual: aiAnalysis.guide_individual,
-          social: aiAnalysis.guide_network,
-          institutional: aiAnalysis.guide_policy
-        };
-
-        const ai2Data = {
-          emergence: aiAnalysis.matrix_emergence,
-          layer: aiAnalysis.matrix_layers,
-          connection: aiAnalysis.matrix_connections,
-          scale: aiAnalysis.matrix_scale,
-          capacity: aiAnalysis.matrix_capacity,
-          analysis: aiAnalysis.analysis_note,
-          cluster: aiAnalysis.cluster,
-          score: aiAnalysis.score_suggestion
-        };
-
-        const ai3Data = aiAnalysis.analysis_note;
 
         // ============================================================
-        // پردازش ماژول انتخاب‌شده (بدون تغییر)
+        // اجرای سه هوش مصنوعی جداگانه
+        // ============================================================
+        let ai1Result = null;
+        let ai2Result = null;
+        let ai3Result = null;
+        const aiErrors = [];
+
+        if (openRouterKey) {
+          // ----- AI-1: راهنمای سه‌سطحی -----
+          try {
+            ai1Result = await callAI1(obs.text, isPersian, openRouterKey);
+          } catch (err) {
+            console.warn('AI-1 failed:', err.message);
+            aiErrors.push('AI1');
+          }
+
+          // ----- AI-2: ماتریس ۵ سطحی + خوشه + امتیاز -----
+          try {
+            ai2Result = await callAI2(obs.text, ai1Result, isPersian, openRouterKey);
+          } catch (err) {
+            console.warn('AI-2 failed:', err.message);
+            aiErrors.push('AI2');
+          }
+
+          // ----- AI-3: تحلیل نهایی -----
+          try {
+            ai3Result = await callAI3(obs.text, ai1Result, ai2Result, isPersian, openRouterKey);
+          } catch (err) {
+            console.warn('AI-3 failed:', err.message);
+            aiErrors.push('AI3');
+          }
+        } else {
+          aiErrors.push('AI1', 'AI2', 'AI3');
+        }
+
+        const cluster = ai2Result?.cluster || 'human';
+        const suggestedScore = ai2Result?.score || null;
+
+        // ============================================================
+        // ساخت بخش AI برای Issue (دوزبانه)
+        // ============================================================
+        const clusterLabel = isPersian ?
+          (cluster === 'human' ? 'انسان' :
+           cluster === 'knowledge' ? 'دانش و فناوری' :
+           cluster === 'governance' ? 'حکمرانی و تمدن' :
+           cluster === 'survival' ? 'بقا و آینده' : 'نامشخص') :
+          (cluster === 'human' ? 'Human' :
+           cluster === 'knowledge' ? 'Knowledge & Technology' :
+           cluster === 'governance' ? 'Governance & Civilization' :
+           cluster === 'survival' ? 'Survival & Future' : 'Unknown');
+
+        // ---------- AI-1 ----------
+        const ai1Title = isPersian ? '**🤖 تحلیل هوش مصنوعی اول — راهنمای سه‌سطحی:**' : '**🤖 AI-1 Guidance — Three Levels:**';
+        let ai1Section;
+        if (ai1Result) {
+          const lIndividual = isPersian ? '**سطح فردی:**' : '**Individual:**';
+          const lSocial = isPersian ? '**سطح اجتماعی:**' : '**Social:**';
+          const lInstitutional = isPersian ? '**سطح نهادی:**' : '**Institutional:**';
+          ai1Section = `
+${ai1Title}
+- ${lIndividual} ${ai1Result.individual || '---'}
+- ${lSocial} ${ai1Result.social || '---'}
+- ${lInstitutional} ${ai1Result.institutional || '---'}
+`;
+        } else {
+          const errMsg = isPersian
+            ? '- **وضعیت:** ⚠️ تحلیل هوش مصنوعی اول دریافت نشد\n- **کد خطا:** AI1_FAILED\n- **اقدام پیشنهادی:** ادمین باید تحلیل را دستی بررسی کند یا مشاهده را دوباره ثبت کند.'
+            : '- **Status:** ⚠️ AI-1 analysis not received\n- **Error Code:** AI1_FAILED\n- **Suggested Action:** Admin should review manually or resubmit.';
+          ai1Section = `
+${ai1Title}
+${errMsg}
+- **Individual:** ---
+- **Social:** ---
+- **Institutional:** ---
+`;
+        }
+
+        // ---------- AI-2 ----------
+        const ai2Title = isPersian ? '**🧠 تحلیل هوش مصنوعی دوم — ماتریس ۵ سطحی:**' : '**🧠 AI-2 Matrix — Five Levels:**';
+        let ai2Section;
+        if (ai2Result) {
+          const lStatus = isPersian ? '**وضعیت:**' : '**Status:**';
+          const lCluster = isPersian ? '**خوشه:**' : '**Cluster:**';
+          const lScore = isPersian ? '**امتیاز پیشنهادی:**' : '**Suggested Score:**';
+          const lEmergence = isPersian ? '**ظهورها:**' : '**Emergence:**';
+          const lLayers = isPersian ? '**لایه‌ها:**' : '**Layers:**';
+          const lConnections = isPersian ? '**ارتباطات:**' : '**Connections:**';
+          const lScale = isPersian ? '**مقیاس:**' : '**Scale:**';
+          const lCapacity = isPersian ? '**ظرفیت:**' : '**Capacity:**';
+          const lAnalysis = isPersian ? '**تحلیل:**' : '**Analysis:**';
+          ai2Section = `
+${ai2Title}
+- ${lStatus} ${isPersian ? '✅ تایید شده' : '✅ Approved'}
+- ${lCluster} ${clusterLabel}
+- ${lScore} ${suggestedScore || '---'}
+- ${lEmergence} ${ai2Result.emergence || '---'}
+- ${lLayers} ${ai2Result.layer || '---'}
+- ${lConnections} ${ai2Result.connection || '---'}
+- ${lScale} ${ai2Result.scale || '---'}
+- ${lCapacity} ${ai2Result.capacity || '---'}
+- ${lAnalysis} ${ai2Result.analysis || '---'}
+`;
+        } else {
+          const errMsg = isPersian
+            ? '- **وضعیت:** ⚠️ تحلیل هوش مصنوعی دوم دریافت نشد\n- **کد خطا:** AI2_FAILED\n- **اقدام پیشنهادی:** ادمین باید ماتریس را دستی بررسی کند.'
+            : '- **Status:** ⚠️ AI-2 analysis not received\n- **Error Code:** AI2_FAILED\n- **Suggested Action:** Admin should review the matrix manually.';
+          ai2Section = `
+${ai2Title}
+${errMsg}
+- **Cluster:** ${clusterLabel}
+- **Suggested Score:** ---
+- **Emergence:** ---
+- **Layers:** ---
+- **Connections:** ---
+- **Scale:** ---
+- **Capacity:** ---
+- **Analysis:** ---
+`;
+        }
+
+        // ---------- AI-3 ----------
+        const ai3Title = isPersian ? '**💎 تحلیل هوش مصنوعی سوم — جمع‌بندی نهایی:**' : '**💎 AI-3 Final Synthesis:**';
+        let ai3Section;
+        if (ai3Result && ai3Result.final) {
+          ai3Section = `
+${ai3Title}
+${ai3Result.final}
+`;
+        } else {
+          const errMsg = isPersian
+            ? '- **وضعیت:** ⚠️ تحلیل نهایی دریافت نشد\n- **کد خطا:** AI3_FAILED'
+            : '- **Status:** ⚠️ Final synthesis not received\n- **Error Code:** AI3_FAILED';
+          ai3Section = `
+${ai3Title}
+${errMsg}
+`;
+        }
+
+        // ============================================================
+        // پردازش ماژول (بدون تغییر)
         // ============================================================
         let moduleResult = null;
         let peerInvites = null;
@@ -203,7 +205,7 @@ Required JSON Structure:
             
             if (allUsersRes.ok) {
               const files = await allUsersRes.json();
-              let allUsers = [];
+              const allUsers = [];
               
               for (const file of files) {
                 if (file.name.endsWith('.json') && file.name !== `${cardCode}.json`) {
@@ -220,7 +222,7 @@ Required JSON Structure:
               moduleResult = { type: obs.module, status: 'pending', data: [], analysis: '' };
               
               if (obs.module === 'collaboration') {
-                const senderValues = aiAnalysis.values || [];
+                const senderValues = ai2Result?.values || [];
                 const matchedUsers = allUsers.filter(user => {
                   const userValues = user.values || [];
                   const common = senderValues.filter(v => userValues.includes(v));
@@ -269,7 +271,7 @@ Required JSON Structure:
                   }
                 }
               } else if (obs.module === 'referral') {
-                const senderValues = aiAnalysis.values || [];
+                const senderValues = ai2Result?.values || [];
                 const scoredUsers = allUsers.map(user => {
                   const userValues = user.values || [];
                   const common = senderValues.filter(v => userValues.includes(v));
@@ -283,7 +285,7 @@ Required JSON Structure:
                 moduleResult.peers = referrals.map(u => ({ cardCode: u.cardCode, email: u.communicationEmail }));
                 if (referrals.length > 0) {
                   moduleResult.analysis = `۵ همفرهنگ (${referrals.map(u => u.cardCode).join('، ')}) برای ارجاع انتخاب شدند.`;
-                  moduleMessage = `۵ همفرهنگ برای ارجاع انتخاب شدند.`;
+                  moduleMessage = '۵ همفرهنگ برای ارجاع انتخاب شدند.';
                   moduleStatus = 'pending';
                   peerInvites = await peer_sendInvites({
                     observation: obs.text,
@@ -311,82 +313,89 @@ Required JSON Structure:
         }
 
         // ============================================================
-        // ساخت بخش AI برای نمایش در Issue
-        // ============================================================
-        const statusLabel = aiAnalysis.status === 'approved' ? '✅ تایید شده' : '❌ رد شده';
-        const clusterLabel = isPersian ? 
-          (aiAnalysis.cluster === 'human' ? 'انسان' : 
-           aiAnalysis.cluster === 'knowledge' ? 'دانش و فناوری' : 
-           aiAnalysis.cluster === 'governance' ? 'حکمرانی و تمدن' : 
-           aiAnalysis.cluster === 'survival' ? 'بقا و آینده' : 'نامشخص') :
-          (aiAnalysis.cluster || 'Unknown');
-        
-        const moduleStatusLabels = {
-          'pending': '⏳ در انتظار پاسخ هم‌فرهنگ‌ها',
-          'completed': '✅ تکمیل شد',
-          'no_peers': '⚠️ هم‌فرهنگی یافت نشد',
-          'no_related': '⚠️ مشاهده مرتبط یافت نشد',
-          'error': '❌ خطا در پردازش'
-        };
-
-        const aiSection = `
-**🤖 AI Analysis:**
-- **Status:** ${statusLabel}
-- **Cluster:** ${clusterLabel}
-- **Suggested Score:** ${aiAnalysis.score_suggestion || '---'}
-- **Analysis:** ${aiAnalysis.analysis_note || '---'}
-
-**Action Guide:**
-- **Individual:** ${aiAnalysis.guide_individual || '---'}
-- **Network:** ${aiAnalysis.guide_network || '---'}
-- **Policy:** ${aiAnalysis.guide_policy || '---'}
-
-**5 Matrices:**
-- **Emergence:** ${aiAnalysis.matrix_emergence || '---'}
-- **Layers:** ${aiAnalysis.matrix_layers || '---'}
-- **Connections:** ${aiAnalysis.matrix_connections || '---'}
-- **Scale:** ${aiAnalysis.matrix_scale || '---'}
-- **Capacity:** ${aiAnalysis.matrix_capacity || '---'}
-`;
-
-        // ============================================================
-        // ساخت بخش Module Result
+        // ساخت Module Section
         // ============================================================
         let moduleSection = '';
         if (moduleResult) {
+          const moduleStatusLabels = isPersian ? {
+            'pending': '⏳ در انتظار پاسخ هم‌فرهنگ‌ها',
+            'completed': '✅ تکمیل شد',
+            'no_peers': '⚠️ هم‌فرهنگی یافت نشد',
+            'no_related': '⚠️ مشاهده مرتبط یافت نشد',
+            'error': '❌ خطا در پردازش'
+          } : {
+            'pending': '⏳ Awaiting peer responses',
+            'completed': '✅ Completed',
+            'no_peers': '⚠️ No peers found',
+            'no_related': '⚠️ No related observations',
+            'error': '❌ Processing error'
+          };
           const statusText = moduleStatusLabels[moduleResult.status] || moduleResult.status;
           const typeNames = {
             'collaboration': isPersian ? 'همفکری با دیگران' : 'Collaboration',
             'related': isPersian ? 'مشاهدات مرتبط دیگران' : 'Related Observations',
             'referral': isPersian ? 'ارجاع به ۵ همفرهنگ' : 'Referral to 5 Peers'
           };
+          const modTitle = isPersian ? '**📌 نتیجه ماژول:**' : '**📌 Module Result:**';
+          const lType = isPersian ? '**نوع:**' : '**Type:**';
+          const lStatus = isPersian ? '**وضعیت:**' : '**Status:**';
+          const lResults = isPersian ? '**نتایج:**' : '**Results:**';
+          const lAnalysis = isPersian ? '**تحلیل:**' : '**Analysis:**';
+          const lPeers = isPersian ? '**هم‌فرهنگان:**' : '**Peers:**';
           moduleSection = `
-**📌 Module Result:**
-- **Type:** ${typeNames[moduleResult.type] || moduleResult.type}
-- **Status:** ${statusText}
-- **Results:** ${moduleResult.data && moduleResult.data.length > 0 ? moduleResult.data.join(', ') : '---'}
-${moduleResult.analysis ? `- **Analysis:** ${moduleResult.analysis}` : ''}
-${moduleResult.peers && moduleResult.peers.length > 0 ? `- **Peers:** ${moduleResult.peers.map(p => p.cardCode).join(', ')}` : ''}
+${modTitle}
+- ${lType} ${typeNames[moduleResult.type] || moduleResult.type}
+- ${lStatus} ${statusText}
+- ${lResults} ${moduleResult.data && moduleResult.data.length > 0 ? moduleResult.data.join(', ') : '---'}
+${moduleResult.analysis ? `- ${lAnalysis} ${moduleResult.analysis}` : ''}
+${moduleResult.peers && moduleResult.peers.length > 0 ? `- ${lPeers} ${moduleResult.peers.map(p => p.cardCode).join(', ')}` : ''}
 `;
         }
 
-        const issueTitle = isPersian ? `مشاهده خام: ${cardCode}` : `Raw Observation: ${cardCode}`;
-        const issueBody = `
-**Card Code:** ${cardCode}
+        // ============================================================
+        // ساخت بدنه Issue
+        // ============================================================
+        const issueTitle = isPersian
+          ? `مشاهده خام: ${cardCode}`
+          : `Raw Observation: ${cardCode}`;
 
-**Observation:**
+        const bodyLabels = isPersian ? {
+          cardCode: '**کد کارت:**',
+          observation: '**مشاهده:**',
+          selectedModule: '**ماژول انتخاب‌شده:**',
+          footer: '*این مشاهده ثبت شده و در انتظار بررسی است.*',
+          moduleStatus: '**وضعیت ماژول:**',
+          aiErrors: '**خطاهای هوش مصنوعی:**',
+          tracking: '**کد رهگیری:** بعد از ساخت Issue تخصیص می‌یابد.'
+        } : {
+          cardCode: '**Card Code:**',
+          observation: '**Observation:**',
+          selectedModule: '**Selected Module:**',
+          footer: '*This observation has been registered and is pending review.*',
+          moduleStatus: '**Module Status:**',
+          aiErrors: '**AI Errors:**',
+          tracking: '**Tracking Code:** Will be assigned after issue creation.'
+        };
+
+        const issueBody = `
+${bodyLabels.cardCode} ${cardCode}
+
+${bodyLabels.observation}
 ${obs.text}
 
-**Selected Module:**
+${bodyLabels.selectedModule}
 ${selectedModule}
 
-${aiSection}
+${ai1Section}
+${ai2Section}
+${ai3Section}
 ${moduleSection}
 ---
-*This observation has been registered and is pending review.*
+${bodyLabels.footer}
 
-**Module Status:** ${moduleStatus}
-**Tracking Code:** Will be assigned after issue creation.
+${bodyLabels.moduleStatus} ${moduleStatus}
+${bodyLabels.aiErrors} ${aiErrors.length > 0 ? aiErrors.join(', ') : 'None'}
+${bodyLabels.tracking}
         `;
 
         const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues`, {
@@ -411,7 +420,7 @@ ${moduleSection}
         const issueData = await response.json();
 
         // ============================================================
-        // اگر ماژول نیاز به ارجاع به هم‌فرهنگ‌ها دارد، دعوتنامه ارسال کن
+        // ارسال دعوتنامه به هم‌فرهنگان
         // ============================================================
         if (moduleResult && moduleResult.peers && moduleResult.peers.length > 0 && 
             (obs.module === 'collaboration' || obs.module === 'referral')) {
@@ -432,6 +441,31 @@ ${moduleSection}
           });
         }
 
+        // ============================================================
+        // داده خروجی سازگار با normalizeAi1/Ai2/Ai3
+        // ============================================================
+        const ai1Guidance = {
+          individual: ai1Result?.individual || '',
+          social: ai1Result?.social || '',
+          institutional: ai1Result?.institutional || '',
+          _error: !ai1Result ? 'AI1_FAILED' : null
+        };
+
+        const ai2Matrix = {
+          emergence: ai2Result?.emergence || '',
+          layer: ai2Result?.layer || '',
+          connection: ai2Result?.connection || '',
+          scale: ai2Result?.scale || '',
+          capacity: ai2Result?.capacity || '',
+          analysis: ai2Result?.analysis || '',
+          cluster: cluster,
+          score: suggestedScore,
+          _error: !ai2Result ? 'AI2_FAILED' : null
+        };
+
+        const ai3Final = ai3Result?.final || '';
+        const ai3Error = !ai3Result?.final ? 'AI3_FAILED' : null;
+
         createdIssues.push({
           number: issueData.number,
           url: issueData.html_url,
@@ -440,11 +474,11 @@ ${moduleSection}
           module: selectedModule,
           moduleStatus: moduleStatus,
           moduleMessage: moduleMessage,
-          // ارسال داده‌ها با فرمت جدید برای پنل ادمین
-          ai1Guidance: ai1Data,
-          ai2Matrix: ai2Data,
-          finalAnalysis: ai3Data,
-          aiAnalysis: aiAnalysis
+          ai1Guidance: ai1Guidance,
+          ai2Matrix: ai2Matrix,
+          finalAnalysis: ai3Final,
+          ai3Error: ai3Error,
+          aiErrors: aiErrors
         });
       }
 
@@ -453,16 +487,21 @@ ${moduleSection}
       }
 
       const trackingCodes = createdIssues.map(i => i.trackingCode).join(', ');
+      const anyAiFailed = createdIssues.some(i => i.aiErrors && i.aiErrors.length > 0);
+      
       return res.status(200).json({
         success: true,
         trackingCode: trackingCodes,
         issues: createdIssues,
+        aiWarning: anyAiFailed
+          ? 'بعضی از تحلیل‌های هوش مصنوعی دریافت نشد. مشاهده ثبت شد اما ممکن است تحلیل ناقص باشد. ادمین می‌تواند وضعیت را بررسی کند.'
+          : null,
         message: `${createdIssues.length} observation(s) successfully registered.`
       });
     }
 
     // ============================================================
-    // بخش Delete (کاملاً بدون تغییر)
+    // بخش Delete (بدون تغییر)
     // ============================================================
     if (type === 'delete') {
       if (!cardCode) {
@@ -507,7 +546,7 @@ ${moduleSection}
     }
 
     // ============================================================
-    // بخش Connection (کاملاً بدون تغییر)
+    // بخش Connection (بدون تغییر)
     // ============================================================
     if (type === 'connection') {
       if (!cardCode) {
@@ -644,7 +683,7 @@ ${moduleSection}
     }
 
     // ============================================================
-    // بخش جدید: دریافت پاسخ هم‌فرهنگ (Peer Response)
+    // بخش Peer Response (بدون تغییر)
     // ============================================================
     if (type === 'peer-response') {
       const { issueNumber, peerCode, response, result, trackingCode } = parsedBody;
@@ -734,7 +773,7 @@ ${moduleSection}
 - **تحلیل:** ${moduleResult === 'success' ? 'هم‌فرهنگ‌ها این مشاهده را موفق ارزیابی کردند.' : moduleResult === 'revision' ? 'هم‌فرهنگ‌ها نیاز به اصلاح را پیشنهاد کردند.' : 'هم‌فرهنگ‌ها این مشاهده را ناموفق ارزیابی کردند.'}
 
 ---
-*این تحلیل توسط هوش مصنوعی بر اساس پاسخ‌های هم‌فرهنگ‌ها تولید شده است.*
+*این تحلیل بر اساس پاسخ‌های هم‌فرهنگ‌ها تولید شده است.*
         `;
         
         await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/comments`, {
@@ -778,133 +817,402 @@ ${moduleSection}
   }
 };
 
-// ============================================================
-// تابع Fallback (زمانی که هوش مصنوعی کار نکرد)
-// ============================================================
-function getFallbackAnalysis(text, isPersian) {
-  const keywords = {
-    human: ['احساس', 'دوست', 'خانواده', 'عشق', 'غم', 'شادی', 'تنهایی', 'روان', 'ذهن', 'هویت', 'ارزش', 'اخلاق', 'صلح', 'همدلی'],
-    knowledge: ['کتاب', 'آموزش', 'دانش', 'مدرسه', 'یادگیری', 'علم', 'پژوهش', 'تحقیق', 'کتابخانه', 'استاد', 'دانشجو', 'سواد', 'آگاهی', 'فناوری', 'هوش مصنوعی'],
-    governance: ['قانون', 'مدیریت', 'سیاست', 'شهرداری', 'دولت', 'ساختار', 'سازمان', 'نظام', 'برنامه', 'تصمیم', 'مسئول', 'نظارت', 'فساد'],
-    survival: ['غذا', 'آب', 'مسکن', 'بهداشت', 'امنیت', 'پول', 'کار', 'معیشت', 'درمان', 'سلامت', 'ایمنی', 'خطر', 'بقا', 'نیاز', 'محیط زیست']
-  };
 
-  let bestCluster = 'human';
-  let maxScore = 0;
+/* ================================================================
+   ===== توابع فراخوانی هوش مصنوعی =====
+   ================================================================ */
 
-  for (const [cluster, words] of Object.entries(keywords)) {
-    let score = 0;
-    for (const word of words) {
-      if (text.includes(word)) score++;
+const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
+const AI_MODEL = 'openai/gpt-4o-mini'; // مدل پایدار برای JSON
+
+async function callOpenRouter({ systemPrompt, userPrompt, apiKey, maxTokens = 1500, temperature = 0.4 }) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 25000);
+
+  try {
+    const response = await fetch(OPENROUTER_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+        'HTTP-Referer': process.env.SITE_URL || 'https://cultural-id.vercel.app',
+        'X-Title': 'Sphere of Wisdom'
+      },
+      body: JSON.stringify({
+        model: AI_MODEL,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ],
+        temperature,
+        max_tokens: maxTokens,
+        response_format: { type: 'json_object' }
+      }),
+      signal: controller.signal
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const errText = await response.text().catch(() => '');
+      throw new Error(`OpenRouter HTTP ${response.status}: ${errText.substring(0, 200)}`);
     }
-    if (score > maxScore) {
-      maxScore = score;
-      bestCluster = cluster;
-    }
+
+    const data = await response.json();
+    const content = data.choices?.[0]?.message?.content || '{}';
+
+    // استخراج تمیز JSON
+    let jsonStr = content;
+    const s = content.indexOf('{');
+    const e = content.lastIndexOf('}');
+    if (s !== -1 && e !== -1) jsonStr = content.substring(s, e + 1);
+
+    return JSON.parse(jsonStr);
+  } catch (err) {
+    clearTimeout(timeoutId);
+    throw err;
   }
+}
 
-  const clusterNames = {
-    human: isPersian ? 'انسان' : 'Human',
-    knowledge: isPersian ? 'دانش و فناوری' : 'Knowledge',
-    governance: isPersian ? 'حکمرانی و تمدن' : 'Governance',
-    survival: isPersian ? 'بقا و آینده' : 'Survival'
-  };
 
-  const score = Math.min(5, Math.max(1, Math.floor(text.length / 50) + 2));
+/* ================================================================
+   AI-1 — راهنمای سه‌سطحی
+   آموزش روش: مشاهده خام، بدون تحمیل نظریه، ظرفیت‌محوری اصلاح‌شده
+   ================================================================ */
+async function callAI1(observationText, isPersian, apiKey) {
+  const systemPrompt = isPersian ? AI1_PROMPT_FA : AI1_PROMPT_EN;
+  const userPrompt = isPersian
+    ? `مشاهده‌ای که ثبت شده این است:\n\n"""${observationText}"""\n\nحالا بر اساس روشی که در دستورالعمل آمده، سه راهنمای سه‌سطحی برای همین مشاهده بنویس. خروجی فقط JSON معتبر باشد.`
+    : `The registered observation is:\n\n"""${observationText}"""\n\nNow, following the methodology in the instructions, write the three-level guidance for this specific observation. Output only valid JSON.`;
 
-  const templates = {
-    human: isPersian ? 
-      `مشاهده "${text}" در حوزه انسان قرار می‌گیرد. این موضوع بر کیفیت روابط انسانی تأثیر دارد و نیازمند همدلی و گفتگوی جمعی است.` :
-      `Observation "${text}" falls in the Human domain. This topic affects human relationships and requires empathy and collective dialogue.`,
-    knowledge: isPersian ?
-      `مشاهده "${text}" در حوزه دانش و فناوری قرار می‌گیرد و به شکاف‌های آموزشی یا علمی اشاره دارد.` :
-      `Observation "${text}" falls in the Knowledge domain and points to educational or scientific gaps.`,
-    governance: isPersian ?
-      `مشاهده "${text}" در حوزه حکمرانی قرار می‌گیرد و به ساختارها و نظام‌های مدیریتی مربوط می‌شود.` :
-      `Observation "${text}" falls in the Governance domain and relates to management structures and systems.`,
-    survival: isPersian ?
-      `مشاهده "${text}" در حوزه بقا و آینده قرار می‌گیرد و به نیازهای اساسی و معیشتی مربوط می‌شود.` :
-      `Observation "${text}" falls in the Survival domain and relates to basic needs and livelihood.`
-  };
-
-  const guides = {
-    human: {
-      individual: isPersian ? 'در ۲۴ ساعت آینده، با یکی از نزدیکان خود درباره این موضوع گفتگو کنید.' : 'In the next 24 hours, talk to someone close about this topic.',
-      network: isPersian ? 'با ۳ تا ۵ نفر از دوستان خود تماس بگیرید و راه‌حل‌های جمعی پیدا کنید.' : 'Contact 3-5 friends and find collective solutions.',
-      policy: isPersian ? 'یک پیشنهاد مکتوب برای بهبود روابط انسانی در جامعه خود تهیه کنید.' : 'Prepare a written proposal to improve human relations in your community.'
-    },
-    knowledge: {
-      individual: isPersian ? 'یک منبع معتبر درباره این موضوع پیدا کنید و در ۲۴ ساعت آینده مطالعه کنید.' : 'Find a reliable source on this topic and study it in the next 24 hours.',
-      network: isPersian ? 'یک گروه مطالعه با افراد آگاه تشکیل دهید.' : 'Form a study group with knowledgeable people.',
-      policy: isPersian ? 'یک پیشنهاد برای توسعه زیرساخت‌های دانشی تهیه کنید.' : 'Prepare a proposal to develop knowledge infrastructure.'
-    },
-    governance: {
-      individual: isPersian ? 'نقش خود را در ساختارهای موجود بررسی کنید و یک اقدام کوچک برای بهبود انجام دهید.' : 'Examine your role in existing structures and take a small improvement action.',
-      network: isPersian ? 'با افراد تأثیرگذار در این حوزه ارتباط بگیرید.' : 'Connect with influential people in this area.',
-      policy: isPersian ? 'یک پیشنهاد ساختاری برای بهبود نظام مدیریتی تهیه کنید.' : 'Prepare a structural proposal to improve the management system.'
-    },
-    survival: {
-      individual: isPersian ? 'نیازهای اساسی خود را بررسی کنید و یک برنامه عملی در ۲۴ ساعت آینده تهیه کنید.' : 'Assess your basic needs and prepare an action plan in the next 24 hours.',
-      network: isPersian ? 'با افراد در شرایط مشابه ارتباط بگیرید و یک شبکه حمایتی تشکیل دهید.' : 'Connect with people in similar situations and form a support network.',
-      policy: isPersian ? 'یک پیشنهاد برای بهبود زیرساخت‌های معیشتی تهیه کنید.' : 'Prepare a proposal to improve livelihood infrastructure.'
-    }
-  };
-
-  const matrixTemplates = {
-    human: {
-      emergence: isPersian ? 'ظهورهای قابل مشاهده در این پدیده شامل احساسات، روابط و تعاملات انسانی است.' : 'Visible emergences in this phenomenon include emotions, relationships, and human interactions.',
-      layers: isPersian ? 'لایه‌های فردی، اجتماعی و خانوادگی در این پدیده درگیر هستند.' : 'Individual, social, and family layers are involved in this phenomenon.',
-      connections: isPersian ? 'ارتباط میان سپهرهای انسانی، اجتماعی و فرهنگی در این پدیده مشهود است.' : 'Connections between human, social, and cultural spheres are evident in this phenomenon.',
-      scale: isPersian ? 'این پدیده در مقیاس فردی و محلی قابل مشاهده است.' : 'This phenomenon is observable at individual and local scale.',
-      capacity: isPersian ? 'ظرفیت‌های همدلی، گفتگو و مشارکت جمعی در این پدیده وجود دارد.' : 'Capacities for empathy, dialogue, and collective participation exist in this phenomenon.'
-    },
-    knowledge: {
-      emergence: isPersian ? 'ظهورهای قابل مشاهده شامل شکاف‌های دانشی، نیازهای آموزشی و نابرابری علمی است.' : 'Visible emergences include knowledge gaps, educational needs, and scientific inequality.',
-      layers: isPersian ? 'لایه‌های فردی، آموزشی و ساختاری در این پدیده درگیر هستند.' : 'Individual, educational, and structural layers are involved in this phenomenon.',
-      connections: isPersian ? 'ارتباط میان سپهرهای دانشی، فناوری و آموزشی در این پدیده مشهود است.' : 'Connections between knowledge, technology, and educational spheres are evident in this phenomenon.',
-      scale: isPersian ? 'این پدیده در مقیاس فردی، محلی و منطقه‌ای قابل مشاهده است.' : 'This phenomenon is observable at individual, local, and regional scale.',
-      capacity: isPersian ? 'ظرفیت‌های یادگیری، پژوهش و نوآوری در این پدیده وجود دارد.' : 'Capacities for learning, research, and innovation exist in this phenomenon.'
-    },
-    governance: {
-      emergence: isPersian ? 'ظهورهای قابل مشاهده شامل ناکارآمدی نهادی، بحران اعتماد و گسست‌های ساختاری است.' : 'Visible emergences include institutional inefficiency, trust crisis, and structural gaps.',
-      layers: isPersian ? 'لایه‌های ساختاری، نهادی و مدیریتی در این پدیده درگیر هستند.' : 'Structural, institutional, and management layers are involved in this phenomenon.',
-      connections: isPersian ? 'ارتباط میان سپهرهای حکمرانی، قانونی و اجتماعی در این پدیده مشهود است.' : 'Connections between governance, legal, and social spheres are evident in this phenomenon.',
-      scale: isPersian ? 'این پدیده در مقیاس محلی، منطقه‌ای و جهانی قابل مشاهده است.' : 'This phenomenon is observable at local, regional, and global scale.',
-      capacity: isPersian ? 'ظرفیت‌های مشارکت جمعی، شفافیت و پاسخگویی در این پدیده وجود دارد.' : 'Capacities for collective participation, transparency, and accountability exist in this phenomenon.'
-    },
-    survival: {
-      emergence: isPersian ? 'ظهورهای قابل مشاهده شامل بحران منابع، ناامنی معیشتی و تخریب محیط زیست است.' : 'Visible emergences include resource crises, livelihood insecurity, and environmental degradation.',
-      layers: isPersian ? 'لایه‌های فردی، اجتماعی، اقتصادی و زیست‌محیطی در این پدیده درگیر هستند.' : 'Individual, social, economic, and environmental layers are involved in this phenomenon.',
-      connections: isPersian ? 'ارتباط میان سپهرهای بقا، اقتصادی و زیست‌محیطی در این پدیده مشهود است.' : 'Connections between survival, economic, and environmental spheres are evident in this phenomenon.',
-      scale: isPersian ? 'این پدیده در مقیاس محلی، منطقه‌ای و جهانی قابل مشاهده است.' : 'This phenomenon is observable at local, regional, and global scale.',
-      capacity: isPersian ? 'ظرفیت‌های تاب‌آوری، همکاری جمعی و پایداری در این پدیده وجود دارد.' : 'Capacities for resilience, collective cooperation, and sustainability exist in this phenomenon.'
-    }
-  };
-
-  const matrix = matrixTemplates[bestCluster] || matrixTemplates.human;
+  const result = await callOpenRouter({
+    systemPrompt,
+    userPrompt,
+    apiKey,
+    maxTokens: 1200,
+    temperature: 0.5
+  });
 
   return {
-    status: "approved",
-    rejection_reason: null,
-    cluster: bestCluster,
-    score_suggestion: score,
-    analysis_note: templates[bestCluster] || templates.human,
-    guide_individual: guides[bestCluster].individual,
-    guide_network: guides[bestCluster].network,
-    guide_policy: guides[bestCluster].policy,
-    matrix_emergence: matrix.emergence,
-    matrix_layers: matrix.layers,
-    matrix_connections: matrix.connections,
-    matrix_scale: matrix.scale,
-    matrix_capacity: matrix.capacity
+    individual: result.individual || '',
+    social: result.social || '',
+    institutional: result.institutional || ''
   };
 }
 
-// ============================================================
-// توابع جدید برای سیستم ارجاع به هم‌فرهنگ‌ها
-// ============================================================
 
-// ۱. ارسال دعوتنامه به هم‌فرهنگ‌ها (با ایمیل + GitHub)
+/* ================================================================
+   AI-2 — ماتریس ۵ سطحی + خوشه + امتیاز
+   ================================================================ */
+async function callAI2(observationText, ai1Result, isPersian, apiKey) {
+  const systemPrompt = isPersian ? AI2_PROMPT_FA : AI2_PROMPT_EN;
+  const ai1Context = ai1Result
+    ? (isPersian
+        ? `\n\nراهنمای سه‌سطحی که هوش مصنوعی اول برای همین مشاهده نوشته:\n- فردی: ${ai1Result.individual}\n- اجتماعی: ${ai1Result.social}\n- نهادی: ${ai1Result.institutional}`
+        : `\n\nAI-1 three-level guidance for the same observation:\n- Individual: ${ai1Result.individual}\n- Social: ${ai1Result.social}\n- Institutional: ${ai1Result.institutional}`)
+    : '';
+
+  const userPrompt = isPersian
+    ? `مشاهده‌ای که ثبت شده این است:\n\n"""${observationText}"""${ai1Context}\n\nحالا بر اساس روشی که در دستورالعمل آمده، ماتریس ۵ سطحی را برای همین مشاهده پر کن، خوشه مناسب را انتخاب کن، و امتیاز پیشنهادی بده. خروجی فقط JSON معتبر باشد.`
+    : `The registered observation is:\n\n"""${observationText}"""${ai1Context}\n\nNow, following the methodology in the instructions, fill in the 5-level matrix for this specific observation, choose the appropriate cluster, and give a suggested score. Output only valid JSON.`;
+
+  const result = await callOpenRouter({
+    systemPrompt,
+    userPrompt,
+    apiKey,
+    maxTokens: 1500,
+    temperature: 0.4
+  });
+
+  return {
+    emergence: result.emergence || '',
+    layer: result.layer || '',
+    connection: result.connection || '',
+    scale: result.scale || '',
+    capacity: result.capacity || '',
+    analysis: result.analysis || '',
+    cluster: result.cluster || 'human',
+    score: typeof result.score === 'number' ? Math.min(5, Math.max(1, result.score)) : 3
+  };
+}
+
+
+/* ================================================================
+   AI-3 — تحلیل نهایی یکپارچه
+   ================================================================ */
+async function callAI3(observationText, ai1Result, ai2Result, isPersian, apiKey) {
+  const systemPrompt = isPersian ? AI3_PROMPT_FA : AI3_PROMPT_EN;
+
+  const contextParts = [];
+  if (ai1Result) {
+    contextParts.push(isPersian
+      ? `راهنمای سه‌سطحی AI-1:\n- فردی: ${ai1Result.individual}\n- اجتماعی: ${ai1Result.social}\n- نهادی: ${ai1Result.institutional}`
+      : `AI-1 three-level guidance:\n- Individual: ${ai1Result.individual}\n- Social: ${ai1Result.social}\n- Institutional: ${ai1Result.institutional}`);
+  }
+  if (ai2Result) {
+    contextParts.push(isPersian
+      ? `ماتریس ۵ سطحی AI-2:\n- ظهورها: ${ai2Result.emergence}\n- لایه‌ها: ${ai2Result.layer}\n- ارتباطات: ${ai2Result.connection}\n- مقیاس: ${ai2Result.scale}\n- ظرفیت: ${ai2Result.capacity}\n- تحلیل: ${ai2Result.analysis}\n- خوشه: ${ai2Result.cluster}\n- امتیاز پیشنهادی: ${ai2Result.score}`
+      : `AI-2 five-level matrix:\n- Emergence: ${ai2Result.emergence}\n- Layers: ${ai2Result.layer}\n- Connections: ${ai2Result.connection}\n- Scale: ${ai2Result.scale}\n- Capacity: ${ai2Result.capacity}\n- Analysis: ${ai2Result.analysis}\n- Cluster: ${ai2Result.cluster}\n- Suggested Score: ${ai2Result.score}`);
+  }
+
+  const context = contextParts.length > 0
+    ? (isPersian ? `\n\nاطلاعات قبلی:\n${contextParts.join('\n\n')}` : `\n\nPrevious context:\n${contextParts.join('\n\n')}`)
+    : '';
+
+  const userPrompt = isPersian
+    ? `مشاهده اصلی:\n\n"""${observationText}"""${context}\n\nحالا بر اساس روشی که در دستورالعمل آمده، یک تحلیل نهایی یکپارچه بنویس. خروجی فقط JSON معتبر باشد.`
+    : `Original observation:\n\n"""${observationText}"""${context}\n\nNow, following the methodology in the instructions, write a unified final synthesis. Output only valid JSON.`;
+
+  const result = await callOpenRouter({
+    systemPrompt,
+    userPrompt,
+    apiKey,
+    maxTokens: 1200,
+    temperature: 0.5
+  });
+
+  return {
+    final: result.final || ''
+  };
+}
+
+
+/* ================================================================
+   ===== پرامپت‌های آموزشی (دوزبانه) =====
+   هر پرامپت «روش» را آموزش می‌دهد، نه محتوای کلیشه‌ای.
+   ================================================================ */
+
+const AI1_PROMPT_FA = `تو یک «مشاهده‌گر سپهری» هستی که در چارچوب «آزمایشگاه سپهر خردمندی» کار می‌کند. وظیفه‌ات نوشتن «راهنمای سه‌سطحی» برای یک مشاهده است.
+
+روش کار تو:
+
+۱. اول مشاهده را با دقت بخوان. ببین در متن چه چیزی «ظاهر» شده. به دنبال:
+   - ظرفیت‌هایی که در متن پنهان یا آشکار هستند
+   - موانعی که مانع تجلی ظرفیت‌ها شده‌اند
+   - گسست‌هایی میان سپهرها (فردی، اجتماعی، نهادی)
+   - ناهم‌ترازی‌هایی که در متن دیده می‌شود
+   - سپهرهایی که درگیر هستند و سپهرهایی که غایب‌اند
+
+۲. از خود پدیده شروع کن، نه از مشکل و نه از ظرفیت. بگذار خود متن، شکل تحلیل را تعیین کند.
+
+۳. هیچ تعریف، تفسیر، نظریه یا چارچوب از پیش‌ساخته‌ای را بر مشاهده تحمیل نکن. اگر مشاهده مبهم است، محتاطانه و بر اساس همان چیزی که دیده می‌شود راهنما بده.
+
+۴. معیار نهایی: کرامت انسانی. هر راهنما باید در جهت گسترش یا حفاظت از کرامت انسانی باشد.
+
+۵. سه سطح راهنما را با مشخصات زیر بنویس:
+
+   سطح فردی: مشاهده‌گر در ۲۴ تا ۷۲ ساعت آینده چه اقدام مشخص، کوچک و قابل انجامی می‌تواند انجام دهد؟ نباید کلیشه‌ای یا انتزاعی باشد. باید مستقیماً به متن مشاهده گره خورده باشد.
+
+   سطح اجتماعی: این فرد با چه کسانی، با چه کیفیتی، و با چه هدف مشخصی می‌تواند تعامل کند؟ تعامل باید واقعی و قابل اجرا باشد، نه انتزاعی.
+
+   سطح نهادی: چه پیشنهاد ساختاری، سیاستی یا نهادی از دل همین مشاهده قابل استخراج است؟ پیشنهاد باید متناسب با همان پدیده باشد، نه یک توصیه عمومی.
+
+۶. از عبارات کلیشه‌ای مثل «گفتگو کنید»، «آگاهی‌بخشی کنید»، «همکاری جمعی» بدون مصداق مشخص پرهیز کن. هر راهنما باید یک اقدام قابل ردیابی و مشخص باشد.
+
+خروجی: فقط یک آبجکت JSON معتبر با این ساختار:
+{
+  "individual": "راهنمای سطح فردی — مشخص، عملی، گره‌خورده به مشاهده",
+  "social": "راهنمای سطح اجتماعی — با کی، چطور، با چه هدفی",
+  "institutional": "راهنمای سطح نهادی — پیشنهاد مشخص ساختاری یا سیاستی"
+}
+
+هیچ متن اضافه‌ای قبل یا بعد از JSON ننویس.`;
+
+const AI1_PROMPT_EN = `You are a "Spherical Observer" working within the "Sphere of Wisdom Laboratory" framework. Your task is to write "Three-Level Guidance" for an observation.
+
+Your methodology:
+
+1. First, read the observation carefully. Notice what has "emerged" in the text. Look for:
+   - Capacities that are hidden or visible in the text
+   - Obstacles that have prevented capacities from manifesting
+   - Fractures between spheres (individual, social, institutional)
+   - Asymmetries visible in the text
+   - Spheres that are involved and spheres that are absent
+
+2. Begin from the phenomenon itself — not from the problem, not from the capacity. Let the text itself determine the shape of the analysis.
+
+3. Do not impose any predefined definition, interpretation, theory, or framework on the observation. If the observation is ambiguous, give guidance cautiously and based only on what is visible.
+
+4. Final criterion: human dignity. Every guidance must expand or protect human dignity.
+
+5. Write three levels of guidance with these specifications:
+
+   Individual level: What specific, small, actionable step can the observer take in the next 24-72 hours? It must not be cliché or abstract. It must be tied directly to the text of the observation.
+
+   Social level: With whom, with what quality, and for what specific purpose can this person interact? The interaction must be real and executable, not abstract.
+
+   Institutional level: What structural, policy, or institutional proposal can be extracted from this specific observation? The proposal must fit the specific phenomenon, not a generic recommendation.
+
+6. Avoid clichés like "have a dialogue", "raise awareness", "collective cooperation" without specific reference. Every guidance must be a traceable, specific action.
+
+Output: only a valid JSON object with this structure:
+{
+  "individual": "Individual-level guidance — specific, actionable, tied to the observation",
+  "social": "Social-level guidance — with whom, how, for what purpose",
+  "institutional": "Institutional-level guidance — specific structural or policy proposal"
+}
+
+Do not write any text before or after the JSON.`;
+
+const AI2_PROMPT_FA = `تو یک «تحلیل‌گر سپهری» هستی که در چارچوب «آزمایشگاه سپهر خردمندی» کار می‌کند. وظیفه‌ات پر کردن «ماتریس ۵ سطحی» برای یک مشاهده، انتخاب خوشه مناسب، و پیشنهاد امتیاز است.
+
+روش کار تو:
+
+۱. پنج ماتریس را پر کن. هر ماتریس باید بر اساس همین مشاهده باشد، نه یک توصیف کلی:
+
+   ماتریس ظهورها: چه چیزهایی در این مشاهده «ظاهر» شده‌اند؟ ظهورهای عینی، رفتاری، ساختاری. به دنبال چیزهایی باش که تاکنون کمتر دیده شده‌اند.
+
+   ماتریس لایه‌ها: این پدیده در چه لایه‌هایی درگیر است؟ لایه فردی، خانوادگی، محلی، اجتماعی، نهادی، ملی، جهانی. کدام لایه‌ها حاضرند و کدام لایه‌ها غایب؟
+
+   ماتریس ارتباطات: این پدیده با چه سپهرهای دیگری ارتباط دارد؟ ارتباط‌ها را با مصداق مشخص کن، نه به صورت کلی.
+
+   ماتریس مقیاس: این پدیده در چه مقیاسی قابل مشاهده است؟ محلی، منطقه‌ای، ملی، جهانی. ظهور در چه مقیاسی حرکت می‌کند؟
+
+   ماتریس ظرفیت: چه ظرفیت‌هایی در این پدیده وجود دارد؟ ظرفیت‌های آشکار و ظرفیت‌های مغفول.
+
+۲. خوشه مناسب را از بین این چهار انتخاب کن:
+   - human (انسان): فقر، آموزش، سلامت، سلامت روان، اعتیاد، جوانان، خانواده
+   - knowledge (دانش و فناوری): هوش مصنوعی، دسترسی به فناوری، شکاف دانشی، نابرابری علمی، انحصار دانش
+   - governance (حکمرانی و تمدن): فساد، مهاجرت نخبگان، ناکارآمدی نهادی، بحران اعتماد، جنگ، نابرابری جهانی
+   - survival (بقا و آینده): امنیت غذایی، بحران آب، بحران انرژی، تغییرات اقلیمی، تخریب محیط زیست، پایداری تمدنی
+
+۳. امتیاز پیشنهادی از ۱ تا ۵ بده بر اساس این معیارها:
+   - ۱: ظهور بسیار محدود یا منفی
+   - ۲: ظهور ضعیف
+   - ۳: ظهور متوسط و قابل تامل
+   - ۴: ظهور قوی و سازنده
+   - ۵: ظهور بسیار قوی، الگو‌ساز، قابل انتشار در اطلس
+
+۴. یک «تحلیل» دو پاراگرافی بنویس که:
+   - پاراگراف اول: توصیف دقیق آنچه در این مشاهده دیده می‌شود (بدون قضاوت).
+   - پاراگراف دوم: آنچه در این مشاهده کمتر دیده شده یا نادیده مانده (کشف نادیده‌ها).
+
+۵. از عبارات کلیشه‌ای پرهیز کن. هر جمله باید مستقیماً به متن مشاهده گره خورده باشد.
+
+خروجی: فقط یک آبجکت JSON معتبر با این ساختار:
+{
+  "emergence": "تحلیل ظهورها — عینی، مرتبط با همین مشاهده",
+  "layer": "تحلیل لایه‌ها — کدام لایه‌ها حاضر و کدام غایب",
+  "connection": "تحلیل ارتباطات — با کدام سپهرها و چگونه",
+  "scale": "تحلیل مقیاس — در چه مقیاسی ظهور می‌کند",
+  "capacity": "تحلیل ظرفیت — آشکار و مغفول",
+  "analysis": "تحلیل دو پاراگرافی: پاراگراف اول توصیف، پاراگراف دوم کشف نادیده‌ها",
+  "cluster": "human | knowledge | governance | survival",
+  "score": 3
+}
+
+هیچ متن اضافه‌ای قبل یا بعد از JSON ننویس.`;
+
+const AI2_PROMPT_EN = `You are a "Spherical Analyst" working within the "Sphere of Wisdom Laboratory" framework. Your task is to fill the "Five-Level Matrix" for an observation, choose the appropriate cluster, and suggest a score.
+
+Your methodology:
+
+1. Fill the five matrices. Each matrix must be based on this specific observation, not a general description:
+
+   Emergence Matrix: What has "emerged" in this observation? Objective, behavioral, structural emergences. Look for things that have been less visible so far.
+
+   Layers Matrix: In which layers is this phenomenon involved? Individual, family, local, social, institutional, national, global. Which layers are present and which are absent?
+
+   Connections Matrix: With which other spheres is this phenomenon connected? Specify the connections with concrete references, not generalities.
+
+   Scale Matrix: At what scale is this phenomenon observable? Local, regional, national, global. In what direction is the emergence moving?
+
+   Capacity Matrix: What capacities exist in this phenomenon? Visible capacities and neglected capacities.
+
+2. Choose the appropriate cluster from these four:
+   - human: poverty, education, health, mental health, addiction, youth, family
+   - knowledge: AI, technology access, knowledge gap, scientific inequality, knowledge monopoly
+   - governance: corruption, elite migration, institutional inefficiency, trust crisis, war, global inequality
+   - survival: food security, water crisis, energy crisis, climate change, environmental degradation, civilizational sustainability
+
+3. Give a suggested score from 1 to 5 based on these criteria:
+   - 1: Very limited or negative emergence
+   - 2: Weak emergence
+   - 3: Moderate and noteworthy emergence
+   - 4: Strong and constructive emergence
+   - 5: Very strong emergence, exemplary, publishable in the Atlas
+
+4. Write a two-paragraph "analysis":
+   - First paragraph: precise description of what is seen in this observation (without judgment).
+   - Second paragraph: what has been less seen or ignored (discovery of the unseen).
+
+5. Avoid clichés. Every sentence must be tied directly to the text of the observation.
+
+Output: only a valid JSON object with this structure:
+{
+  "emergence": "Emergence analysis — concrete, tied to this observation",
+  "layer": "Layers analysis — which layers are present and which are absent",
+  "connection": "Connections analysis — with which spheres and how",
+  "scale": "Scale analysis — at what scale it emerges",
+  "capacity": "Capacity analysis — visible and neglected",
+  "analysis": "Two-paragraph analysis: first paragraph description, second paragraph discovery of the unseen",
+  "cluster": "human | knowledge | governance | survival",
+  "score": 3
+}
+
+Do not write any text before or after the JSON.`;
+
+const AI3_PROMPT_FA = `تو یک «تحلیل‌گر نهایی سپهری» هستی که در چارچوب «آزمایشگاه سپهر خردمندی» کار می‌کند. وظیفه‌ات نوشتن «تحلیل نهایی یکپارچه» برای یک مشاهده است، با استفاده از متن مشاهده و تحلیل‌های قبلی.
+
+روش کار تو:
+
+۱. ابتدا متن مشاهده را بخوان. سپس راهنمای سه‌سطحی (AI-1) و ماتریس ۵ سطحی (AI-2) را که در اختیارت قرار می‌گیرد، مرور کن.
+
+۲. وظیفه اصلی تو پاسخ به دو پرسش بنیادین است:
+   - «ظهور در چه جهتی حرکت می‌کند؟» — آیا در جهت تجلی ظرفیت‌ها، یا در جهت انسداد و فرسایش؟
+   - «تأثیر این ظهور بر کرامت انسانی چیست؟» — آیا کرامت انسانی را گسترش می‌دهد، تضعیف می‌کند، یا در وضعیت نامعلوم نگه می‌دارد؟
+
+۳. یک تحلیل نهایی بنویس که:
+   - یکپارچه باشد (نه تکرار بخش‌های قبلی)
+   - عمیق باشد (به لایه‌های زیرین پدیده نفوذ کند)
+   - صریح باشد (بدون ابهام و تعارف)
+   - به «کشف نادیده‌ها» کمک کند — آنچه در تحلیل‌های قبلی کمتر دیده شد
+   - از تعمیم‌های کلی پرهیز کند — مستقیماً به همین مشاهده گره خورده باشد
+
+۴. از عبارات کلیشه‌ای پرهیز کن. تحلیل نهایی باید حاصل جمع‌بندی واقعی متن مشاهده و تحلیل‌های قبلی باشد، نه یک متن عمومی درباره موضوع.
+
+۵. طول تحلیل: یک تا دو پاراگراف فشرده (حدود ۱۵۰ تا ۲۵۰ کلمه).
+
+خروجی: فقط یک آبجکت JSON معتبر با این ساختار:
+{
+  "final": "تحلیل نهایی یکپارچه — یک تا دو پاراگراف فشرده"
+}
+
+هیچ متن اضافه‌ای قبل یا بعد از JSON ننویس.`;
+
+const AI3_PROMPT_EN = `You are a "Final Spherical Analyst" working within the "Sphere of Wisdom Laboratory" framework. Your task is to write a "Unified Final Synthesis" for an observation, using the observation text and the previous analyses.
+
+Your methodology:
+
+1. First read the observation text. Then review the three-level guidance (AI-1) and the five-level matrix (AI-2) provided to you.
+
+2. Your main task is to answer two fundamental questions:
+   - "In what direction is the emergence moving?" — Toward manifestation of capacities, or toward blockage and erosion?
+   - "What is the impact of this emergence on human dignity?" — Does it expand human dignity, weaken it, or leave it in an uncertain state?
+
+3. Write a final synthesis that:
+   - Is unified (not a repetition of previous sections)
+   - Is deep (penetrates the underlying layers of the phenomenon)
+   - Is explicit (without ambiguity or flattery)
+   - Contributes to "discovery of the unseen" — what was less seen in the previous analyses
+   - Avoids generalizations — tied directly to this specific observation
+
+4. Avoid clichés. The final synthesis must be a genuine summary of the observation text and previous analyses, not a generic text about the topic.
+
+5. Length: one to two compact paragraphs (about 150-250 words).
+
+Output: only a valid JSON object with this structure:
+{
+  "final": "Unified final synthesis — one to two compact paragraphs"
+}
+
+Do not write any text before or after the JSON.`;
+
+
+/* ================================================================
+   ===== توابع کمکی ماژول (بدون تغییر) =====
+   ================================================================ */
+
 async function peer_sendInvites({ observation, observerCode, peers, issueNumber, trackingCode, peerLink, isPersian, token, owner, repo }) {
   if (!peers || peers.length === 0) {
     return { success: false, message: 'هیچ هم‌فرهنگی برای ارسال دعوتنامه وجود ندارد' };
@@ -938,7 +1246,7 @@ ${peers.map(p => `- ${p.cardCode} (${p.email || 'بدون ایمیل'})`).join('
   const RESEND_API_KEY = process.env.RESEND_API_KEY;
   const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@resend.dev';
 
-  let emailResults = [];
+  const emailResults = [];
 
   if (RESEND_API_KEY) {
     const subject = isPersian ? 'دعوت به همفکری در سپهر خردمندی' : 'Invitation to Collaborate in Sphere of Wisdom';
@@ -1024,11 +1332,11 @@ ${peers.map(p => `- ${p.cardCode} (${p.email || 'بدون ایمیل'})`).join('
       }
     }
   } else {
-    emailResults = peers.map(p => ({ 
+    emailResults.push(...peers.map(p => ({ 
       peer: p.cardCode, 
       success: false, 
       message: 'RESEND_API_KEY not configured. Email not sent.' 
-    }));
+    })));
   }
 
   return {
@@ -1041,7 +1349,6 @@ ${peers.map(p => `- ${p.cardCode} (${p.email || 'بدون ایمیل'})`).join('
   };
 }
 
-// ۲. دریافت تمام پاسخ‌های یک Issue
 async function peer_getAllResponses(issueNumber, token, owner, repo) {
   try {
     const commentsRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/comments`, {
@@ -1051,9 +1358,7 @@ async function peer_getAllResponses(issueNumber, token, owner, repo) {
       }
     });
 
-    if (!commentsRes.ok) {
-      return [];
-    }
+    if (!commentsRes.ok) return [];
 
     const comments = await commentsRes.json();
     const responses = [];
@@ -1084,7 +1389,6 @@ async function peer_getAllResponses(issueNumber, token, owner, repo) {
   }
 }
 
-// ۳. دریافت تعداد هم‌فرهنگ‌های ارجاع شده
 async function peer_getPeerCount(issueNumber, token, owner, repo) {
   try {
     const issueRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}`, {
@@ -1094,14 +1398,12 @@ async function peer_getPeerCount(issueNumber, token, owner, repo) {
       }
     });
 
-    if (!issueRes.ok) {
-      return 0;
-    }
+    if (!issueRes.ok) return 0;
 
     const issue = await issueRes.json();
     const body = issue.body || '';
     
-    const peersMatch = body.match(/\*\*Peers:\*\*\s*(.+)/) || body.match(/\*\*هم‌فرهنگ‌ها:\*\*\s*(.+)/);
+    const peersMatch = body.match(/\*\*Peers:\*\*\s*(.+)/) || body.match(/\*\*هم‌فرهنگان:\*\*\s*(.+)/);
     if (peersMatch) {
       const peers = peersMatch[1].split(',').map(p => p.trim());
       return peers.length;
@@ -1115,11 +1417,8 @@ async function peer_getPeerCount(issueNumber, token, owner, repo) {
   }
 }
 
-// ۴. تحلیل نهایی با پاسخ‌های هم‌فرهنگ‌ها
 async function peer_finalAnalysisWithResponses(issueNumber, responses, token, owner, repo) {
-  if (!responses || responses.length === 0) {
-    return 'pending';
-  }
+  if (!responses || responses.length === 0) return 'pending';
 
   let successCount = 0;
   let revisionCount = 0;
@@ -1139,11 +1438,7 @@ async function peer_finalAnalysisWithResponses(issueNumber, responses, token, ow
   const total = responses.length;
   if (total === 0) return 'pending';
   
-  if (successCount >= total * 0.6) {
-    return 'success';
-  } else if (failedCount >= total * 0.6) {
-    return 'failed';
-  } else {
-    return 'revision';
-  }
+  if (successCount >= total * 0.6) return 'success';
+  if (failedCount >= total * 0.6) return 'failed';
+  return 'revision';
 }
