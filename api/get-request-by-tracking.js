@@ -17,8 +17,7 @@ module.exports = async function handler(req, res) {
   const owner = 'ghrezaei1399-code';
   const repo = 'cultural-id';
 
-  // ===== اگر درخواست از نوع مشاهده (observation) باشد =====
-    // ===== اگر درخواست از نوع دستاورد (achievement) باشد =====
+  // ===== اگر درخواست از نوع دستاورد (achievement) باشد =====
   if (type === 'achievement') {
     try {
       const listResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/requests`, {
@@ -83,6 +82,8 @@ module.exports = async function handler(req, res) {
       return res.status(500).json({ error: error.message });
     }
   }
+
+  // ===== اگر درخواست از نوع مشاهده (observation) باشد =====
   if (type === 'observation') {
     try {
       const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${trackingCode}`, {
@@ -127,7 +128,7 @@ module.exports = async function handler(req, res) {
       let cluster = 'human';
       let score = 3;
       let analysis = '';
-      let guide = { individual: '', network: '', policy: '' };
+      const guide = { individual: '', network: '', policy: '' };
       let matrix_emergence = '';
       let matrix_layers = '';
       let matrix_connections = '';
@@ -135,7 +136,14 @@ module.exports = async function handler(req, res) {
       let matrix_capacity = '';
       let aiStatus = 'pending';
 
-      // ===== متغیرهای جدید برای ماژول =====
+      // ===== فیلد جدید: AI-3 =====
+      let ai3Final = '';
+      let ai3Error = null;
+      let inAi3Section = false;
+      const ai3Buffer = [];
+      let aiErrorsFromBody = '';
+
+      // ===== متغیرهای ماژول =====
       let moduleType = '';
       let moduleData = [];
       let moduleAnalysisText = '';
@@ -164,6 +172,31 @@ module.exports = async function handler(req, res) {
           }
           continue;
         }
+
+        // =============================================
+        // تشخیص شروع AI-3
+        // =============================================
+        if (trimmedLine.includes('**💎 AI-3 Final Synthesis:**')) {
+          inAi3Section = true;
+          inObservation = false;
+          inModuleSection = false;
+          continue;
+        }
+
+        // جمع‌آوری محتوای AI-3
+        if (inAi3Section) {
+          if (trimmedLine.startsWith('**📌') || trimmedLine.startsWith('**Module') ||
+              trimmedLine === '---' || trimmedLine.startsWith('**AI Errors:**') ||
+              trimmedLine.startsWith('**Module Status:**') || trimmedLine.startsWith('**Tracking Code:**')) {
+            inAi3Section = false;
+            // ادامه پردازش این خط در iteration بعدی
+          } else if (trimmedLine.startsWith('⚠️') || trimmedLine.includes('AI3_FAILED')) {
+            ai3Error = 'AI3_FAILED';
+          } else if (trimmedLine && !trimmedLine.startsWith('**Error Code:**')) {
+            ai3Buffer.push(trimmedLine);
+          }
+          if (inAi3Section) continue;
+        }
         
         // =============================================
         // استخراج AI Analysis
@@ -172,7 +205,7 @@ module.exports = async function handler(req, res) {
           continue;
         }
         
-        // استخراج Status از AI Analysis
+        // Status
         if (trimmedLine.includes('**Status:**')) {
           const statusText = trimmedLine.replace('**Status:**', '').trim();
           if (statusText.includes('✅') || statusText.includes('تایید')) {
@@ -183,7 +216,7 @@ module.exports = async function handler(req, res) {
           continue;
         }
         
-        // استخراج Cluster
+        // Cluster
         if (trimmedLine.includes('**Cluster:**')) {
           const clusterText = trimmedLine.replace('**Cluster:**', '').trim();
           if (clusterText.includes('انسان') || clusterText.includes('Human')) cluster = 'human';
@@ -193,14 +226,14 @@ module.exports = async function handler(req, res) {
           continue;
         }
         
-        // استخراج Suggested Score
+        // Suggested Score
         if (trimmedLine.includes('**Suggested Score:**')) {
           const scoreMatch = trimmedLine.match(/\d+/);
           if (scoreMatch) score = parseInt(scoreMatch[0]);
           continue;
         }
         
-        // استخراج Analysis
+        // Analysis (AI-2 — اولین **Analysis:** بعد از 5 Matrices)
         if (trimmedLine.includes('**Analysis:**') && !trimmedLine.includes('Module')) {
           const analysisText = trimmedLine.replace('**Analysis:**', '').trim();
           if (analysisText && analysisText !== '---' && analysisText !== 'تحلیل' && analysisText !== 'Analysis') {
@@ -247,7 +280,7 @@ module.exports = async function handler(req, res) {
         }
         
         // =============================================
-        // استخراج Action Guide
+        // استخراج Action Guide (Individual / Network / Policy)
         // =============================================
         if (trimmedLine.includes('**Action Guide:**') || trimmedLine.includes('**راهنما:**')) {
           continue;
@@ -272,7 +305,16 @@ module.exports = async function handler(req, res) {
         }
 
         // =============================================
-        // استخراج Module Result (بخش جدید)
+        // استخراج AI Errors
+        // =============================================
+        if (trimmedLine.includes('**AI Errors:**')) {
+          const match = trimmedLine.match(/\*\*AI Errors:\*\*\s*(.+)/);
+          if (match) aiErrorsFromBody = match[1].trim();
+          continue;
+        }
+
+        // =============================================
+        // استخراج Module Result
         // =============================================
         if (trimmedLine.includes('**📌 Module Result:**') || trimmedLine.includes('**Module Result:**')) {
           inModuleSection = true;
@@ -286,7 +328,6 @@ module.exports = async function handler(req, res) {
             continue;
           }
           if (trimmedLine.includes('**Status:**')) {
-            // قبلاً از لیبل استخراج شده
             continue;
           }
           if (trimmedLine.includes('**Results:**')) {
@@ -317,7 +358,12 @@ module.exports = async function handler(req, res) {
         if (inObservation && trimmedLine && !trimmedLine.includes('---') && !trimmedLine.includes('**')) {
           observation += trimmedLine + ' ';
         }
-        if (line.includes('---') && !inModuleSection) break;
+        if (line.includes('---') && !inModuleSection && !inAi3Section) break;
+      }
+      
+      // اگر AI-3 جمع‌آوری شد
+      if (ai3Buffer.length > 0) {
+        ai3Final = ai3Buffer.join(' ').trim();
       }
       
       observation = observation.trim() || issueData.body.substring(0, 200);
@@ -332,8 +378,8 @@ module.exports = async function handler(req, res) {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (moduleRes.ok) {
-          const moduleData = await moduleRes.json();
-          const moduleContent = JSON.parse(Buffer.from(moduleData.content, 'base64').toString('utf8'));
+          const moduleDataFile = await moduleRes.json();
+          const moduleContent = JSON.parse(Buffer.from(moduleDataFile.content, 'base64').toString('utf8'));
           moduleResult = moduleContent.moduleResult;
         }
       } catch (e) {
@@ -343,7 +389,7 @@ module.exports = async function handler(req, res) {
       // =============================================
       // دریافت پاسخ‌های هم‌فرهنگ از کامنت‌های Issue
       // =============================================
-      let peerResponses = [];
+      const peerResponses = [];
       try {
         const commentsRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${trackingCode}/comments`, {
           headers: {
@@ -385,17 +431,14 @@ module.exports = async function handler(req, res) {
         observation: observation,
         modules: modules,
         moduleResult: moduleResult,
-        // ===== اطلاعات جدید ماژول =====
         moduleStatus: moduleStatus,
         moduleType: moduleType,
         moduleData: moduleData,
         moduleAnalysis: moduleAnalysisText,
         modulePeers: modulePeers,
-        // ===== پاسخ‌های هم‌فرهنگ =====
         peerResponses: peerResponses,
         peerResponsesCount: peerResponses.length,
         guide: guide,
-        // ===== اطلاعات کامل AI =====
         cluster: cluster,
         score: score,
         analysis: analysis,
@@ -404,6 +447,10 @@ module.exports = async function handler(req, res) {
         matrix_connections: matrix_connections,
         matrix_scale: matrix_scale,
         matrix_capacity: matrix_capacity,
+        // ===== فیلدهای جدید AI-3 =====
+        ai3Final: ai3Final,
+        ai3Error: ai3Error,
+        aiErrors: aiErrorsFromBody,
         issueUrl: issueData.html_url,
         createdAt: issueData.created_at
       });
