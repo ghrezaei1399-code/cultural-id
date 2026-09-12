@@ -230,35 +230,37 @@ module.exports = async function handler(req, res) {
             continue;
           }
           
-          // ===== اگر در بخش AI-3 هستیم، خطوط را جمع کن =====
-          if (inAi3Section) {
-            // اگر به خط --- یا تیتر ماژول رسیدیم، AI-3 تمام شده
-            if (trimmedLine.startsWith('**📌') || trimmedLine.startsWith('**Module') || 
-                trimmedLine === '---' || trimmedLine.startsWith('**AI Errors:**') ||
-                trimmedLine.startsWith('**Module Status:**') || trimmedLine.startsWith('**Tracking Code:**')) {
-              inAi3Section = false;
-              // ادامه پردازش این خط از بیرون
-            } else if (trimmedLine.startsWith('⚠️') || trimmedLine.includes('AI3_FAILED')) {
-              // خطای AI-3
-              ai3Error = 'AI3_FAILED';
-              // باقی نمی‌کنیم
-            } else if (trimmedLine && !trimmedLine.startsWith('**Error Code:**')) {
-              ai3Buffer.push(trimmedLine);
-            }
-            if (inAi3Section) continue;
-          }
-          
-          if (trimmedLine.includes('**Cluster:**')) {
-            const match = trimmedLine.match(/\*\*Cluster:\*\*\s*(.+)/);
-            if (match) {
-              const clusterText = match[1].trim();
-              if (clusterText.includes('Human') || clusterText.includes('انسان')) cluster = 'human';
-              else if (clusterText.includes('Knowledge') || clusterText.includes('دانش')) cluster = 'knowledge';
-              else if (clusterText.includes('Governance') || clusterText.includes('حکمرانی')) cluster = 'governance';
-              else if (clusterText.includes('Survival') || clusterText.includes('بقا')) cluster = 'survival';
-            }
-            continue;
-          }
+          // ===== تشخیص شروع AI-3 =====
+if (trimmedLine.includes('AI-3 Final Synthesis')) {
+  inAi3Section = true;
+  inObservation = false;
+  inModuleSection = false;
+  continue;
+}
+
+// ===== اگر در بخش AI-3 هستیم، خطوط را جمع کن =====
+if (inAi3Section) {
+  // اگر به خط جداکننده یا تیتر بعدی رسیدیم، AI-3 تمام است
+  const isEndMarker = trimmedLine === '---' ||
+                     trimmedLine.startsWith('**📌') ||
+                     trimmedLine.startsWith('**Module Result') ||
+                     trimmedLine.startsWith('**AI Errors:**') ||
+                     trimmedLine.startsWith('**Module Status:**') ||
+                     trimmedLine.startsWith('**Tracking Code:**') ||
+                     trimmedLine.startsWith('**Card Code:**');
+  
+  if (isEndMarker) {
+    inAi3Section = false;
+    // ادامه پردازش این خط از بیرون (fall through)
+  } else if (trimmedLine.startsWith('⚠️') || trimmedLine.includes('AI3_FAILED')) {
+    ai3Error = 'AI3_FAILED';
+    inAi3Section = false;
+  } else if (trimmedLine && !trimmedLine.startsWith('**Error Code:**')) {
+    ai3Buffer.push(trimmedLine);
+    continue;
+  }
+  if (inAi3Section) continue;
+}
           
           if (trimmedLine.includes('**Suggested Score:**')) {
             const match = trimmedLine.match(/\d+/);
