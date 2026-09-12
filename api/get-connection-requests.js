@@ -163,12 +163,16 @@ module.exports = async function handler(req, res) {
         let score = null;
         let cluster = 'other';
         let analysis = '';
-        let guide = {};
+        const guide = {};
         let matrix_emergence = '';
         let matrix_layers = '';
         let matrix_connections = '';
         let matrix_scale = '';
         let matrix_capacity = '';
+        
+        // ===== فیلد جدید: AI-3 Final Synthesis =====
+        let ai3Final = '';
+        let ai3Error = null;
         
         if (labels.includes('approved')) status = 'approved';
         else if (labels.includes('rejected')) status = 'rejected';
@@ -193,6 +197,11 @@ module.exports = async function handler(req, res) {
         let modulePeers = [];
         let inModuleSection = false;
         
+        // ===== متغیرهای جدید برای AI-3 =====
+        let inAi3Section = false;
+        let ai3Buffer = [];
+        let aiErrorsFromBody = '';
+        
         for (const line of bodyLines) {
           const trimmedLine = line.trim();
           
@@ -211,6 +220,32 @@ module.exports = async function handler(req, res) {
             const match = trimmedLine.match(/\*\*Selected Module:\*\*\s*(.+)/);
             if (match) module = match[1].trim();
             continue;
+          }
+          
+          // ===== تشخیص شروع AI-3 =====
+          if (trimmedLine.includes('**💎 AI-3 Final Synthesis:**')) {
+            inAi3Section = true;
+            inObservation = false;
+            inModuleSection = false;
+            continue;
+          }
+          
+          // ===== اگر در بخش AI-3 هستیم، خطوط را جمع کن =====
+          if (inAi3Section) {
+            // اگر به خط --- یا تیتر ماژول رسیدیم، AI-3 تمام شده
+            if (trimmedLine.startsWith('**📌') || trimmedLine.startsWith('**Module') || 
+                trimmedLine === '---' || trimmedLine.startsWith('**AI Errors:**') ||
+                trimmedLine.startsWith('**Module Status:**') || trimmedLine.startsWith('**Tracking Code:**')) {
+              inAi3Section = false;
+              // ادامه پردازش این خط از بیرون
+            } else if (trimmedLine.startsWith('⚠️') || trimmedLine.includes('AI3_FAILED')) {
+              // خطای AI-3
+              ai3Error = 'AI3_FAILED';
+              // باقی نمی‌کنیم
+            } else if (trimmedLine && !trimmedLine.startsWith('**Error Code:**')) {
+              ai3Buffer.push(trimmedLine);
+            }
+            if (inAi3Section) continue;
           }
           
           if (trimmedLine.includes('**Cluster:**')) {
@@ -277,6 +312,31 @@ module.exports = async function handler(req, res) {
             continue;
           }
           
+          // ===== استخراج Action Guide (Individual / Network / Policy) =====
+          if (trimmedLine.includes('**Individual:**')) {
+            const match = trimmedLine.match(/\*\*Individual:\*\*\s*(.+)/);
+            if (match && match[1].trim() !== '---') guide.individual = match[1].trim();
+            continue;
+          }
+          
+          if (trimmedLine.includes('**Network:**')) {
+            const match = trimmedLine.match(/\*\*Network:\*\*\s*(.+)/);
+            if (match && match[1].trim() !== '---') guide.network = match[1].trim();
+            continue;
+          }
+          
+          if (trimmedLine.includes('**Policy:**')) {
+            const match = trimmedLine.match(/\*\*Policy:\*\*\s*(.+)/);
+            if (match && match[1].trim() !== '---') guide.policy = match[1].trim();
+            continue;
+          }
+          
+          if (trimmedLine.includes('**AI Errors:**')) {
+            const match = trimmedLine.match(/\*\*AI Errors:\*\*\s*(.+)/);
+            if (match) aiErrorsFromBody = match[1].trim();
+            continue;
+          }
+          
           if (trimmedLine.includes('**📌 Module Result:**') || trimmedLine.includes('**Module Result:**')) {
             inModuleSection = true;
             continue;
@@ -315,7 +375,12 @@ module.exports = async function handler(req, res) {
           if (inObservation && trimmedLine && !trimmedLine.includes('---') && !trimmedLine.includes('**')) {
             observationText += trimmedLine + ' ';
           }
-          if (line.includes('---') && !inModuleSection) break;
+          if (line.includes('---') && !inModuleSection && !inAi3Section) break;
+        }
+        
+        // اگر AI-3 در حال جمع‌آوری بود و به پایان رسید
+        if (ai3Buffer.length > 0) {
+          ai3Final = ai3Buffer.join(' ').trim();
         }
         
         observationText = observationText.trim() || issue.body.substring(0, 200);
@@ -334,6 +399,10 @@ module.exports = async function handler(req, res) {
           matrix_connections: matrix_connections,
           matrix_scale: matrix_scale,
           matrix_capacity: matrix_capacity,
+          guide: guide,
+          ai3Final: ai3Final,
+          ai3Error: ai3Error,
+          aiErrors: aiErrorsFromBody,
           moduleStatus: moduleStatus,
           moduleType: moduleType,
           moduleData: moduleData,
