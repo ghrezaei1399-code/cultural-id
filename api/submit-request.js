@@ -28,7 +28,7 @@ module.exports = async function handler(req, res) {
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
 
-      // ============================================================
+    // ============================================================
     // بخش جدید: ثبت بازخورد انسانی (Human Feedback)
     // ============================================================
     if (type === 'observation_feedback') {
@@ -36,7 +36,6 @@ module.exports = async function handler(req, res) {
         return res.status(400).json({ error: 'کد کارت و متن بازخورد الزامی است.' });
       }
 
-      // بررسی وجود کاربر
       const userPath = `data/active/${cardCode}.json`;
       const userRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
         headers: { 'Authorization': `Bearer ${token}` }
@@ -49,7 +48,6 @@ module.exports = async function handler(req, res) {
       const userDataRaw = await userRes.json();
       const userData = JSON.parse(Buffer.from(userDataRaw.content, 'base64').toString('utf8'));
 
-      // ساخت آبجکت بازخورد
       const feedbackEntry = {
         id: Date.now(),
         cardCode: cardCode,
@@ -60,7 +58,6 @@ module.exports = async function handler(req, res) {
         rank: userData.rank || 0
       };
 
-      // ذخیره در پوشه feedbacks
       const feedbackPath = `data/feedbacks/${Date.now()}-${cardCode}.json`;
       const content = Buffer.from(JSON.stringify(feedbackEntry, null, 2), 'utf8').toString('base64');
 
@@ -79,7 +76,7 @@ module.exports = async function handler(req, res) {
 
       return res.status(200).json({ 
         success: true, 
-        message: '✅ بازخورد شما با موفقیت ثبت شد و پس از تایید به اطلس ظهور افزوده خواهد شد.' 
+        message: '✅ بازخورد شما با موفقیت ثبت شد.' 
       });
     }
 
@@ -100,26 +97,17 @@ module.exports = async function handler(req, res) {
       const createdIssues = [];
       
       for (const obs of observations) {
-        if (!obs.text || obs.text.length < 10) {
-          continue;
-        }
+        if (!obs.text || obs.text.length < 10) continue;
 
         const selectedModule = obs.module ? moduleNames[obs.module] || obs.module : 'هیچ‌کدام';
         const isPersian = /[\u0600-\u06FF]/.test(obs.text);
         
-        // ============================================================
-        // تحلیل هوش مصنوعی با OpenRouter (Qwen) - پرامپت دو زبانه
-        // ============================================================
-                // ============================================================
-        // تحلیل هوش مصنوعی با OpenRouter (Qwen) - با حفظ پرامپت اصلی شما
-        // ============================================================
         let aiAnalysis = null;
         
-        if (!obs.aiAnalysis) {
+        // تلاش برای دریافت تحلیل از هوش مصنوعی
+        if (openRouterKey) {
           try {
-            if (openRouterKey) {
-              // === پرامپت اصلی و دقیق شما ===
-              const systemPrompt = isPersian ? 
+            const systemPrompt = isPersian ? 
 `شما یک تحلیلگر فرهنگی بر اساس چارچوب "سپهر خردمندی" هستید.
 
 **وظیفه:** تحلیل عمیق مشاهده کاربر و تولید یک JSON با ۱۱ بخش.
@@ -195,7 +183,7 @@ module.exports = async function handler(req, res) {
   "matrix_capacity": "Analysis of Capacity Matrix based on user text"
 }`;
 
-              const userPrompt = isPersian ?
+            const userPrompt = isPersian ?
 `مشاهده کاربر: "${obs.text}"
 
 تحلیل عمیق بر اساس چارچوب سپهر خردمندی با ۵ ماتریس. فقط JSON برگردان.` :
@@ -203,71 +191,65 @@ module.exports = async function handler(req, res) {
 
 Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ONLY JSON.`;
 
-              const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${openRouterKey}`,
-                  'HTTP-Referer': process.env.SITE_URL || 'https://cultural-id.vercel.app',
-                  'X-Title': process.env.SITE_NAME || 'Global Smart Cultural Identity',
-                },
-                body: JSON.stringify({
-                  model: 'qwen/qwen-2.5-72b-instruct',
-                  messages: [
-                    { role: 'system', content: systemPrompt },
-                    { role: 'user', content: userPrompt }
-                  ],
-                  temperature: 0.8,
-                  max_tokens: 1200,
-                  response_format: { type: 'json_object' }
-                })
-              });
+            // استفاده از مدل سبک‌تر و سریع‌تر برای جلوگیری از خطای 504
+            const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${openRouterKey}`,
+                'HTTP-Referer': process.env.SITE_URL || 'https://cultural-id.vercel.app',
+              },
+              body: JSON.stringify({
+                model: 'qwen/qwen-2.5-7b-instruct', // مدل سریع‌تر
+                messages: [
+                  { role: 'system', content: systemPrompt },
+                  { role: 'user', content: userPrompt }
+                ],
+                temperature: 0.7,
+                max_tokens: 1000,
+                response_format: { type: 'json_object' }
+              })
+            });
 
-              if (response.ok) {
-                const data = await response.json();
-                const content = data.choices?.[0]?.message?.content || '{}';
-                
-                let jsonStr = content;
-                const s = content.indexOf('{');
-                const e = content.lastIndexOf('}');
-                if (s !== -1 && e !== -1) {
-                  jsonStr = content.substring(s, e + 1);
-                }
-                
-                const analysis = JSON.parse(jsonStr);
-                
-                aiAnalysis = {
-                  status: analysis.status || "approved",
-                  rejection_reason: analysis.rejection_reason || null,
-                  cluster: analysis.cluster || "human",
-                  score_suggestion: typeof analysis.score === 'number' ? analysis.score : 3,
-                  analysis_note: analysis.analysis || (isPersian ? "تحلیل دقیق" : "Detailed analysis"),
-                  guide_individual: analysis.individual || (isPersian ? "راهنمای فردی" : "Individual guide"),
-                  guide_network: analysis.network || (isPersian ? "راهنمای شبکه‌ای" : "Network guide"),
-                  guide_policy: analysis.policy || (isPersian ? "راهنمای سیاستی" : "Policy guide"),
-                  matrix_emergence: analysis.matrix_emergence || (isPersian ? "تحلیل ماتریس ظهورها" : "Emergence Matrix Analysis"),
-                  matrix_layers: analysis.matrix_layers || (isPersian ? "تحلیل ماتریس لایه‌ها" : "Layers Matrix Analysis"),
-                  matrix_connections: analysis.matrix_connections || (isPersian ? "تحلیل ماتریس ارتباطات" : "Connections Matrix Analysis"),
-                  matrix_scale: analysis.matrix_scale || (isPersian ? "تحلیل ماتریس مقیاس" : "Scale Matrix Analysis"),
-                  matrix_capacity: analysis.matrix_capacity || (isPersian ? "تحلیل ماتریس ظرفیت" : "Capacity Matrix Analysis")
-                };
-              } else {
-                console.error('OpenRouter Error:', response.status);
-              }
+            if (response.ok) {
+              const data = await response.json();
+              const content = data.choices?.[0]?.message?.content || '{}';
+              
+              let jsonStr = content;
+              const s = content.indexOf('{');
+              const e = content.lastIndexOf('}');
+              if (s !== -1 && e !== -1) jsonStr = content.substring(s, e + 1);
+              
+              const analysis = JSON.parse(jsonStr);
+              
+              aiAnalysis = {
+                status: analysis.status || "approved",
+                cluster: analysis.cluster || "human",
+                score_suggestion: typeof analysis.score === 'number' ? analysis.score : 3,
+                analysis_note: analysis.analysis || "تحلیل دقیق",
+                guide_individual: analysis.individual || "راهنمای فردی",
+                guide_network: analysis.network || "راهنمای شبکه‌ای",
+                guide_policy: analysis.policy || "راهنمای سیاستی",
+                matrix_emergence: analysis.matrix_emergence || "تحلیل ظهورها",
+                matrix_layers: analysis.matrix_layers || "تحلیل لایه‌ها",
+                matrix_connections: analysis.matrix_connections || "تحلیل ارتباطات",
+                matrix_scale: analysis.matrix_scale || "تحلیل مقیاس",
+                matrix_capacity: analysis.matrix_capacity || "تحلیل ظرفیت"
+              };
+            } else {
+              console.error('OpenRouter Error:', response.status);
             }
-          } catch (aiError) {
-            console.error('AI Analysis Error:', aiError);
+          } catch (err) {
+            console.error('AI Fetch Error:', err);
           }
-        } else {
-          aiAnalysis = obs.aiAnalysis;
         }
 
+        // اگر هوش مصنوعی کار نکرد، از تحلیل پیش‌فرض استفاده کن
         if (!aiAnalysis) {
           aiAnalysis = getFallbackAnalysis(obs.text, isPersian);
         }
 
-        // === تطبیق خروجی با ساختار مورد نیاز پنل ادمین جدید ===
-        // این بخش باعث می‌شود داده‌های قدیمی شما در پنل جدید درست نمایش داده شوند
+        // نرمال‌سازی داده‌ها برای پنل ادمین جدید
         const ai1Data = {
           individual: aiAnalysis.guide_individual,
           social: aiAnalysis.guide_network,
@@ -285,7 +267,7 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
           score: aiAnalysis.score_suggestion
         };
 
-        const ai3Data = aiAnalysis.analysis_note; // یا می‌توانید بخش دیگری را انتخاب کنید
+        const ai3Data = aiAnalysis.analysis_note;
 
         // ============================================================
         // پردازش ماژول انتخاب‌شده (بدون تغییر)
@@ -296,7 +278,7 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
         let moduleMessage = '';
 
         if (obs.module && obs.module !== 'none' && obs.module !== 'هیچ‌کدام') {
-           try {
+          try {
             const allUsersRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/active`, {
               headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -540,11 +522,11 @@ ${moduleSection}
           module: selectedModule,
           moduleStatus: moduleStatus,
           moduleMessage: moduleMessage,
-          // === ارسال داده‌ها با فرمت جدید برای پنل ادمین ===
+          // ارسال داده‌ها با فرمت جدید برای پنل ادمین
           ai1Guidance: ai1Data,
           ai2Matrix: ai2Data,
           finalAnalysis: ai3Data,
-          aiAnalysis: aiAnalysis // برای سازگاری با نسخه‌های قبلی
+          aiAnalysis: aiAnalysis
         });
       }
 
@@ -570,7 +552,6 @@ ${moduleSection}
       }
 
       const trackingCode = `DEL-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
-
       const fileName = `delete-${Date.now()}-${Math.random().toString(36).substring(7)}.json`;
       const requestPath = `data/requests/${fileName}`;
 
@@ -697,7 +678,6 @@ ${moduleSection}
         .slice(0, MAX_RESULTS);
 
       const trackingCode = `CON-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
-
       const fileName = `connection-${Date.now()}-${Math.random().toString(36).substring(7)}.json`;
       const requestPath = `data/requests/${fileName}`;
 
@@ -1016,9 +996,6 @@ async function peer_sendInvites({ observation, observerCode, peers, issueNumber,
   const link = peerLink || `${siteUrl}/peer-response.html?issue=${issueNumber}&observer=${observerCode}`;
   const tracking = trackingCode || `OBS-${issueNumber}`;
 
-  // ============================================================
-  // ۱. ثبت در GitHub Issue به عنوان کامنت
-  // ============================================================
   if (issueNumber) {
     const inviteComment = `
 **📨 دعوتنامه ارسال شد به:**
@@ -1040,9 +1017,6 @@ ${peers.map(p => `- ${p.cardCode} (${p.email || 'بدون ایمیل'})`).join('
     });
   }
 
-  // ============================================================
-  // ۲. ارسال ایمیل واقعی با Resend
-  // ============================================================
   const RESEND_API_KEY = process.env.RESEND_API_KEY;
   const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@resend.dev';
 
