@@ -223,7 +223,7 @@ module.exports = async function handler(req, res) {
           }
           
           // ===== تشخیص شروع AI-3 =====
-          if (trimmedLine.includes('**💎 AI-3 Final Synthesis:**')) {
+          if (trimmedLine.includes('AI-3 Final Synthesis')) {
             inAi3Section = true;
             inObservation = false;
             inModuleSection = false;
