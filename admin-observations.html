@@ -89,97 +89,111 @@
         }
         body.dark .tracking-code { background: rgba(99,102,241,0.08); color: #a5b4fc; }
 
-        /* ===== ۵ بلوک داخل کارت ===== */
-        .block {
-            padding: 1rem; margin-bottom: 0.9rem;
-            border-radius: 10px; border-right: 4px solid #ccc;
-            background: rgba(255,255,255,0.35);
+        /* ===== باکس واحد ===== */
+        .unified-box {
+            background: rgba(255,255,255,0.55);
+            border-radius: 14px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            border: 2px solid rgba(212,175,55,0.3);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
         }
-        body.dark .block { background: rgba(0,0,0,0.12); }
-        .block-title {
-            font-weight: 800; font-size: 0.88rem;
-            margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.4rem;
-            padding-bottom: 0.4rem;
+        body.dark .unified-box {
+            background: rgba(0,0,0,0.15);
+            border-color: rgba(212,175,55,0.2);
+        }
+        .unified-section {
+            padding: 0.9rem 1rem;
+            margin-bottom: 0.8rem;
+            border-radius: 10px;
+            border-right: 4px solid #ccc;
+        }
+        .unified-section:last-child { margin-bottom: 0; }
+        .unified-section.sec-obs { border-right-color: #d4af37; background: rgba(212,175,55,0.06); }
+        .unified-section.sec-ai1 { border-right-color: #10b981; background: rgba(16,185,129,0.06); }
+        .unified-section.sec-ai2 { border-right-color: #6366f1; background: rgba(99,102,241,0.06); }
+        .unified-section.sec-ai3 { border-right-color: #ec4899; background: rgba(236,72,153,0.06); }
+        .sec-title {
+            font-weight: 800; font-size: 0.85rem;
+            margin-bottom: 0.5rem; padding-bottom: 0.3rem;
             border-bottom: 1px dashed rgba(0,0,0,0.08);
+            display: flex; align-items: center; gap: 0.3rem;
         }
-        body.dark .block-title { border-color: rgba(255,255,255,0.1); }
-        .block-body { font-size: 0.88rem; line-height: 1.85; }
-        body.dark .block-body { color: #d0d0e0; }
+        body.dark .sec-title { border-color: rgba(255,255,255,0.08); }
+        .sec-obs .sec-title { color: #8a6d1f; }
+        .sec-ai1 .sec-title { color: #047857; }
+        .sec-ai2 .sec-title { color: #4338ca; }
+        .sec-ai3 .sec-title { color: #be185d; }
+        body.dark .sec-obs .sec-title { color: #f9e79f; }
+        body.dark .sec-ai1 .sec-title { color: #6ee7b7; }
+        body.dark .sec-ai2 .sec-title { color: #a5b4fc; }
+        body.dark .sec-ai3 .sec-title { color: #f9a8d4; }
+        .sec-body { font-size: 0.87rem; line-height: 1.85; }
+        body.dark .sec-body { color: #d0d0e0; }
 
-        .block-1 { border-right-color: #d4af37; background: rgba(212,175,55,0.05); }
-        .block-1 .block-title { color: #8a6d1f; }
-        body.dark .block-1 .block-title { color: #f9e79f; }
-
-        .block-2 { border-right-color: #10b981; background: rgba(16,185,129,0.05); }
-        .block-2 .block-title { color: #047857; }
-        body.dark .block-2 .block-title { color: #6ee7b7; }
-
-        .block-3 { border-right-color: #6366f1; background: rgba(99,102,241,0.05); }
-        .block-3 .block-title { color: #4338ca; }
-        body.dark .block-3 .block-title { color: #a5b4fc; }
-
-        .block-4 { border-right-color: #ec4899; background: rgba(236,72,153,0.05); }
-        .block-4 .block-title { color: #be185d; }
-        body.dark .block-4 .block-title { color: #f9a8d4; }
-
-        /* سطح‌های AI1 */
-        .ai-level {
-            padding: 0.55rem 0.75rem; margin-bottom: 0.5rem;
-            background: rgba(255,255,255,0.55); border-radius: 8px;
-            font-size: 0.85rem; line-height: 1.7;
+        /* زیربلوک‌های AI-1 */
+        .ai1-level {
+            padding: 0.5rem 0.7rem; margin-bottom: 0.4rem;
+            background: rgba(255,255,255,0.5); border-radius: 6px;
+            font-size: 0.83rem; line-height: 1.7;
             border-right: 3px solid #10b981;
         }
-        body.dark .ai-level { background: rgba(0,0,0,0.15); }
-        .ai-level .level-head {
-            font-weight: 800; font-size: 0.78rem;
-            color: #047857; margin-bottom: 0.2rem; display: block;
+        body.dark .ai1-level { background: rgba(0,0,0,0.12); }
+        .ai1-level .level-head {
+            font-weight: 800; font-size: 0.75rem;
+            color: #047857; margin-bottom: 0.15rem; display: block;
         }
-        body.dark .ai-level .level-head { color: #6ee7b7; }
+        body.dark .ai1-level .level-head { color: #6ee7b7; }
 
-        /* ماتریس AI2 */
+        /* ماتریس AI-2 */
         .matrix-grid {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-            gap: 0.6rem; margin-bottom: 0.6rem;
+            gap: 0.5rem; margin-bottom: 0.5rem;
         }
         .matrix-cell {
-            padding: 0.65rem 0.85rem; border-radius: 8px;
-            background: rgba(255,255,255,0.55);
+            padding: 0.6rem 0.8rem; border-radius: 6px;
+            background: rgba(255,255,255,0.5);
             border-right: 3px solid #6366f1;
             font-size: 0.82rem; line-height: 1.7;
         }
-        body.dark .matrix-cell { background: rgba(0,0,0,0.15); }
+        body.dark .matrix-cell { background: rgba(0,0,0,0.12); }
         .matrix-cell .m-label {
             font-weight: 800; font-size: 0.72rem; color: #4338ca;
-            display: block; margin-bottom: 0.25rem;
+            display: block; margin-bottom: 0.2rem;
         }
         body.dark .matrix-cell .m-label { color: #a5b4fc; }
-
-        /* تحلیل AI2 */
         .ai2-analysis {
-            padding: 0.65rem 0.85rem; margin-top: 0.4rem;
-            border-radius: 8px; background: rgba(99,102,241,0.08);
+            padding: 0.6rem 0.8rem; margin-top: 0.4rem;
+            border-radius: 6px; background: rgba(99,102,241,0.08);
             border-right: 3px solid #6366f1; font-size: 0.85rem; line-height: 1.75;
         }
         body.dark .ai2-analysis { background: rgba(99,102,241,0.05); }
 
-        /* نشانگرهای AI2 */
-        .ai2-badges {
-            display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem;
-            padding-top: 0.6rem; border-top: 1px dashed rgba(99,102,241,0.2);
+        /* AI-3 */
+        .ai3-final {
+            padding: 0.7rem 0.9rem;
+            border-radius: 8px;
+            background: rgba(236,72,153,0.08);
+            border-right: 3px solid #ec4899;
+            font-size: 0.88rem;
+            line-height: 1.9;
         }
-        .ai2-badge {
-            padding: 0.3rem 0.7rem; border-radius: 20px;
-            font-size: 0.75rem; font-weight: 700;
-            background: rgba(255,255,255,0.6); border: 1px solid rgba(99,102,241,0.2);
-        }
-        body.dark .ai2-badge { background: rgba(0,0,0,0.2); }
-        .ai2-badge.cluster { color: #2874a6; border-color: rgba(40,116,166,0.3); }
-        .ai2-badge.score { color: #8a6d1f; border-color: rgba(212,175,55,0.4); background: rgba(212,175,55,0.1); }
-        .ai2-badge.module { color: #7c3aed; border-color: rgba(124,58,237,0.3); }
-        .ai2-badge.culture-ok { color: #047857; border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.08); }
-        .ai2-badge.culture-no { color: #b91c1c; border-color: rgba(220,38,38,0.3); background: rgba(220,38,38,0.08); }
+        body.dark .ai3-final { background: rgba(236,72,153,0.05); }
 
-        /* ===== نوار کپی ===== */
+        /* AI error banner */
+        .ai-error-banner {
+            padding: 0.6rem 0.9rem;
+            border-radius: 8px;
+            background: rgba(231,76,60,0.1);
+            border-right: 4px solid #e74c3c;
+            color: #7a1a1a;
+            font-size: 0.82rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        body.dark .ai-error-banner { color: #f1948a; background: rgba(231,76,60,0.06); }
+
+        /* نوار کپی */
         .copy-toolbar {
             display: flex; gap: 0.5rem; flex-wrap: wrap;
             margin: 1rem 0; padding: 0.8rem;
@@ -198,7 +212,7 @@
         .btn-copy.save:hover { background: #0284c7; }
         .copy-hint { font-size: 0.72rem; color: #64748b; margin-right: auto; }
 
-        /* ===== ماژول ترتیبی ===== */
+        /* ماژول ترتیبی */
         .modules-container {
             margin-top: 1.2rem; padding: 1.2rem;
             background: linear-gradient(135deg, rgba(212,175,55,0.07), rgba(99,102,241,0.05));
@@ -261,7 +275,6 @@
         body.dark .btn-reject { color: #f1948a; }
         .btn-reject:not(:disabled):hover { background: rgba(200,50,50,0.35); }
 
-        /* ===== Badges ===== */
         .badge { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 30px; font-size: 0.65rem; font-weight: 700; }
         .badge-approved { background: rgba(50,200,50,0.15); color: #0a6a0a; }
         body.dark .badge-approved { color: #82e0aa; }
@@ -408,62 +421,94 @@
         // ===== نرمال‌سازی سه هوش مصنوعی =====
         // ============================================================
         function normalizeAi1(obs) {
-            // راهنمای سه‌سطحی هوش مصنوعی اول
-            const src = obs.ai1Guidance || obs.analysis?.ai1Guidance || obs.ai1
-                     || obs.analysis?.ai1 || obs.guidance3level || null;
+            // API جدید: ai1Guidance (در پاسخ مستقیم submit-request)
+            // API لیست: guide.individual / guide.network / guide.policy
+            if (obs.guide && (obs.guide.individual || obs.guide.network || obs.guide.policy)) {
+                return {
+                    individual: obs.guide.individual || '',
+                    social: obs.guide.network || '',      // Network → social
+                    institutional: obs.guide.policy || '' // Policy → institutional
+                };
+            }
+            const src = obs.ai1Guidance || obs.analysis?.ai1Guidance || obs.ai1 || null;
             if (!src) return null;
             return {
-                individual: src.individual || src.individual_level || src['سطح فردی'] || src.level1 || '',
-                social:     src.social     || src.social_level     || src['سطح اجتماعی'] || src.level2 || '',
-                institutional: src.institutional || src.institutional_level || src['سطح نهادی'] || src.level3 || ''
+                individual: src.individual || '',
+                social: src.social || src.network || '',
+                institutional: src.institutional || src.policy || ''
             };
         }
 
         function normalizeAi2(obs) {
-            // ماتریس ۵ سطحی + تحلیل هوش مصنوعی دوم
-            const src = obs.ai2Matrix || obs.analysis?.ai2Matrix || obs.ai2
-                     || obs.aiAnalysis || obs.analysis?.aiAnalysis || null;
+            // API جدید: matrix_emergence, matrix_layers, ... در ریشه
+            if (obs.matrix_emergence || obs.matrix_layers || obs.matrix_connections ||
+                obs.matrix_scale || obs.matrix_capacity || obs.analysis) {
+                return {
+                    emergence: obs.matrix_emergence || '',
+                    layer: obs.matrix_layers || '',
+                    connection: obs.matrix_connections || '',
+                    scale: obs.matrix_scale || '',
+                    capacity: obs.matrix_capacity || '',
+                    analysis: obs.analysis || '',
+                    cluster: obs.cluster || '',
+                    suggestedScore: obs.score || null,
+                    module: obs.module || ''
+                };
+            }
+            const src = obs.ai2Matrix || obs.ai2 || null;
             if (!src) return null;
             return {
-                emergence:  src.emergence  || src.emergenceMatrix  || src['ظهورها'] || src.raw_emergence || '',
-                layer:      src.layer      || src.layerMatrix      || src['لایه‌ها'] || src.matrix_layers || '',
-                connection: src.connection || src.connectionMatrix || src['ارتباطات'] || src.connections || '',
-                scale:      src.scale      || src.scaleMatrix      || src['مقیاس'] || src.scaleText || '',
-                capacity:   src.capacity   || src.capacityMatrix   || src['ظرفیت'] || src.neglected_capacity || '',
-                analysis:   src.analysis   || src.text             || src.deep_insight || '',
-                cluster:    src.cluster    || src.detected_cluster || obs.analysis?.adminCluster || '',
-                suggestedScore: src.suggestedScore || src.suggested_score || src.score || null,
-                module:     src.module     || src.selectedModule   || src.selected_module || '',
-                cultureMatch: src.cultureMatch || src.culture_match || src.hamfarhangi || null
+                emergence: src.emergence || '',
+                layer: src.layer || '',
+                connection: src.connection || '',
+                scale: src.scale || '',
+                capacity: src.capacity || '',
+                analysis: src.analysis || '',
+                cluster: src.cluster || '',
+                suggestedScore: src.score || null,
+                module: src.module || ''
             };
         }
 
         function normalizeAi3(obs) {
-            // تحلیل/جمع‌بندی نهایی هوش مصنوعی سوم
-            const src = obs.finalAnalysis || obs.analysis?.finalAnalysis || obs.ai3
-                     || obs.ai3Summary || obs.analysis?.ai3Summary || null;
-            if (!src) return null;
-            if (typeof src === 'string') return { final: src };
-            return {
-                final: src.final || src.deep_insight || src['تحلیل نهایی']
-                    || src.summary || src.conclusion || ''
-            };
+            // API جدید: ai3Final (فیلد مستقیم)
+            if (obs.ai3Final) {
+                return { final: obs.ai3Final, error: obs.ai3Error || null };
+            }
+            const src = obs.finalAnalysis || obs.ai3 || null;
+            if (!src) {
+                // اگر خطای AI-3 موجود بود، برگردان
+                if (obs.ai3Error) return { final: '', error: obs.ai3Error };
+                return null;
+            }
+            if (typeof src === 'string') return { final: src, error: null };
+            return { final: src.final || '', error: null };
+        }
+
+        // بررسی خطاهای AI از فیلد aiErrors
+        function getAiErrors(obs) {
+            if (!obs.aiErrors) return [];
+            if (Array.isArray(obs.aiErrors)) return obs.aiErrors;
+            if (typeof obs.aiErrors === 'string') {
+                return obs.aiErrors.split(',').map(s => s.trim()).filter(s => s && s !== 'None');
+            }
+            return [];
         }
 
         // ============================================================
-        // ===== ساخت متن یکپارچه برای کپی/ترجمه =====
+        // ===== ساخت متن یکپارچه برای کپی =====
         // ============================================================
         function buildUnifiedText(obs) {
             const ai1 = normalizeAi1(obs);
             const ai2 = normalizeAi2(obs);
             const ai3 = normalizeAi3(obs);
-            const clusterKey = ai2?.cluster || obs.analysis?.adminCluster || detectCluster(obs.observation);
+            const clusterKey = ai2?.cluster || obs.cluster || detectCluster(obs.observation);
             const clusterLabel = getClusterLabel(clusterKey);
 
             const L = [];
             L.push('═══════════════════════════════════════════');
             L.push(`OBSERVATION #${obs.number}`);
-            L.push(`Tracking Code: ${obs.trackingCode || obs.cardCode || 'N/A'}`);
+            L.push(`Tracking Code: ${obs.trackingCode || obs.cardCode || 'OBS-' + obs.number}`);
             L.push(`Date: ${obs.createdAt ? new Date(obs.createdAt).toISOString() : 'N/A'}`);
             L.push(`Cluster: ${clusterLabel}`);
             if (ai2?.suggestedScore) L.push(`AI Suggested Score: ${ai2.suggestedScore}`);
@@ -477,7 +522,7 @@
                 if (ai1.individual)    L.push(`  📍 Individual:    ${ai1.individual}`);
                 if (ai1.social)        L.push(`  🌐 Social:        ${ai1.social}`);
                 if (ai1.institutional) L.push(`  🏛️ Institutional: ${ai1.institutional}`);
-            } else L.push('  (Not analyzed yet)');
+            } else L.push('  ⚠️ (Not available)');
             L.push('');
             L.push('▸ [3] AI-2 — FIVE-LEVEL MATRIX + ANALYSIS:');
             if (ai2) {
@@ -487,13 +532,11 @@
                 if (ai2.scale)      L.push(`  📊 Scale:      ${ai2.scale}`);
                 if (ai2.capacity)   L.push(`  📊 Capacity:   ${ai2.capacity}`);
                 if (ai2.analysis)   { L.push(''); L.push(`  Analysis: ${ai2.analysis}`); }
-                if (ai2.module)     L.push(`  📌 Selected Module: ${ai2.module}`);
-                if (ai2.cultureMatch === false) L.push('  ⚠️ No cultural match found');
-                else if (ai2.cultureMatch) L.push(`  ✅ Cultural match: ${ai2.cultureMatch}`);
-            } else L.push('  (Not analyzed yet)');
+            } else L.push('  ⚠️ (Not available)');
             L.push('');
             L.push('▸ [4] AI-3 — FINAL SYNTHESIS:');
-            L.push(ai3?.final || '(Not analyzed yet)');
+            if (ai3 && ai3.final) L.push(ai3.final);
+            else L.push('  ⚠️ (Not available)');
             L.push('');
             L.push('═══════════════════════════════════════════');
             return L.join('\n');
@@ -576,8 +619,9 @@
             const ai1 = normalizeAi1(obs);
             const ai2 = normalizeAi2(obs);
             const ai3 = normalizeAi3(obs);
+            const aiErrors = getAiErrors(obs);
 
-            let clusterKey = ai2?.cluster || obs.analysis?.adminCluster || detectCluster(obs.observation || '');
+            const clusterKey = ai2?.cluster || obs.cluster || detectCluster(obs.observation || '');
             const clusterLabel = getClusterLabel(clusterKey);
 
             const statusMap = {
@@ -598,103 +642,132 @@
             else if (obs.status === 'rejected') cardClass += ' rejected';
 
             // ===== ① مشاهده خام =====
-            const block1 = `
-                <div class="block block-1">
-                    <div class="block-title">📝 ① مشاهده ثبت‌شده توسط عضو</div>
-                    <div class="block-body">${escapeHtml(obs.observation || 'متن مشاهده موجود نیست')}</div>
+            const sec1 = `
+                <div class="unified-section sec-obs">
+                    <div class="sec-title">📝 ① مشاهده ثبت‌شده توسط عضو</div>
+                    <div class="sec-body">${escapeHtml(obs.observation || 'متن مشاهده موجود نیست')}</div>
                 </div>`;
 
-            // ===== ② AI1 =====
-            let block2;
+            // ===== ② AI-1 =====
+            let sec2;
             if (ai1 && (ai1.individual || ai1.social || ai1.institutional)) {
-                block2 = `
-                    <div class="block block-2">
-                        <div class="block-title">🤖 ② راهنمایی سه‌سطحی — هوش مصنوعی اول</div>
-                        <div class="block-body">
-                            ${ai1.individual ? `<div class="ai-level"><span class="level-head">📍 سطح فردی</span>${escapeHtml(ai1.individual)}</div>` : ''}
-                            ${ai1.social ? `<div class="ai-level"><span class="level-head">🌐 سطح اجتماعی</span>${escapeHtml(ai1.social)}</div>` : ''}
-                            ${ai1.institutional ? `<div class="ai-level"><span class="level-head">🏛️ سطح نهادی</span>${escapeHtml(ai1.institutional)}</div>` : ''}
+                sec2 = `
+                    <div class="unified-section sec-ai1">
+                        <div class="sec-title">🤖 ② راهنمای سه‌سطحی — هوش مصنوعی اول</div>
+                        <div class="sec-body">
+                            ${ai1.individual ? `<div class="ai1-level"><span class="level-head">📍 سطح فردی</span>${escapeHtml(ai1.individual)}</div>` : ''}
+                            ${ai1.social ? `<div class="ai1-level"><span class="level-head">🌐 سطح اجتماعی</span>${escapeHtml(ai1.social)}</div>` : ''}
+                            ${ai1.institutional ? `<div class="ai1-level"><span class="level-head">🏛️ سطح نهادی</span>${escapeHtml(ai1.institutional)}</div>` : ''}
                         </div>
                     </div>`;
             } else {
-                block2 = `
-                    <div class="block block-2">
-                        <div class="block-title">🤖 ② راهنمایی سه‌سطحی — هوش مصنوعی اول</div>
-                        <div class="block-body" style="opacity:0.6;">در انتظار تحلیل هوش مصنوعی اول...</div>
+                sec2 = `
+                    <div class="unified-section sec-ai1">
+                        <div class="sec-title">🤖 ② راهنمای سه‌سطحی — هوش مصنوعی اول</div>
+                        <div class="sec-body">
+                            <div class="ai-error-banner">⚠️ تحلیل هوش مصنوعی اول دریافت نشد (AI1_FAILED) — لطفاً مشاهده را دوباره ثبت کنید یا با پشتیبانی تماس بگیرید.</div>
+                        </div>
                     </div>`;
             }
 
-            // ===== ③ AI2 =====
-            let block3;
-            if (ai2) {
+            // ===== ③ AI-2 =====
+            let sec3;
+            if (ai2 && (ai2.emergence || ai2.layer || ai2.connection || ai2.scale || ai2.capacity || ai2.analysis)) {
                 const cell = (label, val) => {
                     if (!val) return '';
-                    const v = Array.isArray(val) ? val.join(' • ')
-                            : (typeof val === 'object' ? JSON.stringify(val) : val);
-                    return `<div class="matrix-cell"><span class="m-label">${label}</span>${escapeHtml(v)}</div>`;
+                    return `<div class="matrix-cell"><span class="m-label">${label}</span>${escapeHtml(val)}</div>`;
                 };
-                const anyMatrix = ai2.emergence || ai2.layer || ai2.connection || ai2.scale || ai2.capacity;
-                const badges = [];
-                if (ai2.cluster) badges.push(`<span class="ai2-badge cluster">📂 ${escapeHtml(getClusterLabel(ai2.cluster))}</span>`);
-                if (ai2.suggestedScore) badges.push(`<span class="ai2-badge score">⭐ امتیاز پیشنهادی: ${escapeHtml(ai2.suggestedScore)}</span>`);
-                if (ai2.module) badges.push(`<span class="ai2-badge module">📌 ماژول: ${escapeHtml(ai2.module)}</span>`);
-                if (ai2.cultureMatch === false) badges.push(`<span class="ai2-badge culture-no">⚠️ هم‌فرهنگی یافت نشد</span>`);
-                else if (ai2.cultureMatch) badges.push(`<span class="ai2-badge culture-ok">✅ هم‌فرهنگی: ${escapeHtml(ai2.cultureMatch)}</span>`);
-
-                block3 = `
-                    <div class="block block-3">
-                        <div class="block-title">🧠 ③ ماتریس ۵ سطحی + تحلیل — هوش مصنوعی دوم</div>
-                        <div class="block-body">
-                            ${anyMatrix ? `<div class="matrix-grid">
+                sec3 = `
+                    <div class="unified-section sec-ai2">
+                        <div class="sec-title">🧠 ③ ماتریس ۵ سطحی + تحلیل — هوش مصنوعی دوم</div>
+                        <div class="sec-body">
+                            <div class="matrix-grid">
                                 ${cell('📊 ظهورها', ai2.emergence)}
                                 ${cell('📊 لایه‌ها', ai2.layer)}
                                 ${cell('📊 ارتباطات', ai2.connection)}
                                 ${cell('📊 مقیاس', ai2.scale)}
                                 ${cell('📊 ظرفیت', ai2.capacity)}
-                            </div>` : ''}
+                            </div>
                             ${ai2.analysis ? `<div class="ai2-analysis"><strong>تحلیل:</strong> ${escapeHtml(ai2.analysis)}</div>` : ''}
-                            ${badges.length ? `<div class="ai2-badges">${badges.join('')}</div>` : ''}
                         </div>
                     </div>`;
             } else {
-                block3 = `
-                    <div class="block block-3">
-                        <div class="block-title">🧠 ③ ماتریس ۵ سطحی + تحلیل — هوش مصنوعی دوم</div>
-                        <div class="block-body" style="opacity:0.6;">در انتظار تحلیل هوش مصنوعی دوم...</div>
+                sec3 = `
+                    <div class="unified-section sec-ai2">
+                        <div class="sec-title">🧠 ③ ماتریس ۵ سطحی + تحلیل — هوش مصنوعی دوم</div>
+                        <div class="sec-body">
+                            <div class="ai-error-banner">⚠️ تحلیل هوش مصنوعی دوم دریافت نشد (AI2_FAILED) — لطفاً مشاهده را دوباره ثبت کنید یا با پشتیبانی تماس بگیرید.</div>
+                        </div>
                     </div>`;
             }
 
-            // ===== ④ AI3 =====
-            let block4;
-            if (ai3?.final) {
-                block4 = `
-                    <div class="block block-4">
-                        <div class="block-title">💎 ④ تحلیل نهایی — هوش مصنوعی سوم</div>
-                        <div class="block-body">${escapeHtml(ai3.final)}</div>
+            // ===== ④ AI-3 =====
+            let sec4;
+            if (ai3 && ai3.final) {
+                sec4 = `
+                    <div class="unified-section sec-ai3">
+                        <div class="sec-title">💎 ④ تحلیل نهایی — هوش مصنوعی سوم</div>
+                        <div class="sec-body">
+                            <div class="ai3-final">${escapeHtml(ai3.final)}</div>
+                        </div>
                     </div>`;
             } else {
-                block4 = `
-                    <div class="block block-4">
-                        <div class="block-title">💎 ④ تحلیل نهایی — هوش مصنوعی سوم</div>
-                        <div class="block-body" style="opacity:0.6;">در انتظار تحلیل نهایی...</div>
+                sec4 = `
+                    <div class="unified-section sec-ai3">
+                        <div class="sec-title">💎 ④ تحلیل نهایی — هوش مصنوعی سوم</div>
+                        <div class="sec-body">
+                            <div class="ai-error-banner">⚠️ تحلیل نهایی دریافت نشد (AI3_FAILED) — لطفاً مشاهده را دوباره ثبت کنید یا با پشتیبانی تماس بگیرید.</div>
+                        </div>
                     </div>`;
             }
 
-            // ===== state =====
+            // ===== باکس واحد =====
+            const unifiedBox = `
+                <div class="unified-box" id="unified-${obs.number}">
+                    ${sec1}
+                    ${sec2}
+                    ${sec3}
+                    ${sec4}
+                </div>`;
+
+            // ===== نوار کپی =====
+            const copyToolbar = `
+                <div class="copy-toolbar">
+                    <button class="btn-copy" onclick="copyUnified('${obs.number}')">📋 کپی همه (۴ بخش)</button>
+                    <button class="btn-copy save" onclick="copyUnified('${obs.number}', true)">💾 ذخیره در کلیپ‌بورد</button>
+                    <span class="copy-hint">مناسب ارسال به مترجم — شامل مشاهده + AI-1 + AI-2 + AI-3</span>
+                </div>`;
+
+            // ===== State =====
             const st = localState[obs.number] || {};
             const isPending = obs.status === 'pending';
             const currentScore = st.score || obs.score || ai2?.suggestedScore || '';
             const isSaved = !!st.saved;
             const isFinalized = !!st.finalized || !isPending;
 
+            // بررسی آماده بودن AI-ها برای اجازه عملیات نهایی
+            const ai1Ready = ai1 && (ai1.individual || ai1.social || ai1.institutional);
+            const ai2Ready = ai2 && (ai2.emergence || ai2.layer || ai2.connection || ai2.scale || ai2.capacity);
+            const ai3Ready = ai3 && ai3.final;
+            const allAiReady = ai1Ready && ai2Ready && ai3Ready;
+
             // ===== ماژول ترتیبی =====
             const step1Class = isFinalized ? 'completed' : (isPending ? 'active' : 'locked');
             const step2Class = isFinalized ? 'completed' : (isPending && currentScore ? 'active' : 'locked');
             const step3Class = isFinalized ? 'completed' : (isPending && isSaved ? 'active' : 'locked');
 
+            const aiWarning = !allAiReady ? `
+                <div class="ai-error-banner" style="margin-bottom:0.8rem;">
+                    ⚠️ عملیات نهایی غیرفعال است چون بعضی از تحلیل‌های هوش مصنوعی دریافت نشده‌اند.
+                    ${aiErrors.length > 0 ? `(کدهای خطا: ${aiErrors.join(', ')})` : ''}
+                    <br>لطفاً از عضو بخواهید مشاهده را دوباره ثبت کند، یا خودتان تحلیل را دستی بررسی کنید.
+                </div>` : '';
+
             const modulesHtml = isPending ? `
                 <div class="modules-container">
                     <div class="modules-title">⚙️ ماژول عملیات (به ترتیب انجام دهید)</div>
+
+                    ${aiWarning}
 
                     <div class="module-step ${step1Class}">
                         <div class="step-number">۱</div>
@@ -730,26 +803,29 @@
                         <div class="step-number">۳</div>
                         <div class="step-content">
                             <label>🎯 عملیات نهایی:</label>
-                            <button class="btn-action btn-atlas" onclick="finalizeObservation('${obs.number}', 'atlas')"
-                                    ${(!isSaved || isFinalized) ? 'disabled' : ''}>✅ تایید برای اطلس ظهور</button>
-                            <button class="btn-action btn-gallery" onclick="finalizeObservation('${obs.number}', 'gallery')"
-                                    ${(!isSaved || isFinalized) ? 'disabled' : ''}>✅ تایید برای گالری نام‌آوران</button>
-                            <button class="btn-action btn-reject" onclick="finalizeObservation('${obs.number}', 'reject')"
-                                    ${(!isSaved || isFinalized) ? 'disabled' : ''}>❌ رد</button>
+                            <button class="btn-action btn-atlas"
+                                    onclick="finalizeObservation('${obs.number}', 'atlas')"
+                                    ${(!isSaved || isFinalized || !allAiReady) ? 'disabled' : ''}
+                                    title="${!allAiReady ? 'تا وقتی همه تحلیل‌های AI دریافت نشده، غیرفعال است' : ''}">
+                                ✅ تایید برای اطلس ظهور
+                            </button>
+                            <button class="btn-action btn-gallery"
+                                    onclick="finalizeObservation('${obs.number}', 'gallery')"
+                                    ${(!isSaved || isFinalized || !allAiReady) ? 'disabled' : ''}
+                                    title="${!allAiReady ? 'تا وقتی همه تحلیل‌های AI دریافت نشده، غیرفعال است' : ''}">
+                                ✅ تایید برای گالری نام‌آوران
+                            </button>
+                            <button class="btn-action btn-reject"
+                                    onclick="finalizeObservation('${obs.number}', 'reject')"
+                                    ${(!isSaved || isFinalized) ? 'disabled' : ''}>
+                                ❌ رد
+                            </button>
                         </div>
                     </div>
                 </div>` : '';
 
-            // ===== نوار کپی =====
-            const copyToolbar = `
-                <div class="copy-toolbar">
-                    <button class="btn-copy" onclick="copyUnified('${obs.number}')">📋 کپی متن یکپارچه</button>
-                    <button class="btn-copy save" onclick="copyUnified('${obs.number}', true)">💾 ذخیره در کلیپ‌بورد</button>
-                    <span class="copy-hint">مناسب ارسال به مترجم (شامل ۴ بخش: مشاهده، AI1، AI2، AI3)</span>
-                </div>`;
-
             const trackingCode = obs.trackingCode || obs.cardCode
-                ? `<span class="tracking-code">🔗 ${escapeHtml(obs.trackingCode || obs.cardCode)}</span>` : '';
+                ? `<span class="tracking-code">🔗 ${escapeHtml(obs.trackingCode || 'OBS-' + obs.number)}</span>` : '';
 
             return `
                 <div class="${cardClass}" id="card-${obs.number}">
@@ -763,10 +839,7 @@
                         <div class="obs-meta">${obs.createdAt ? new Date(obs.createdAt).toLocaleString('fa-IR') : ''}</div>
                     </div>
 
-                    ${block1}
-                    ${block2}
-                    ${block3}
-                    ${block4}
+                    ${unifiedBox}
                     ${copyToolbar}
                     ${modulesHtml}
                 </div>`;
