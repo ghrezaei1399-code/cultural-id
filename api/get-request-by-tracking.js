@@ -32,7 +32,6 @@ module.exports = async function handler(req, res) {
       }
 
       const files = await listResponse.json();
-      
       if (!Array.isArray(files)) {
         return res.status(500).json({ error: 'خطا در ساختار فایل‌های درخواست' });
       }
@@ -47,9 +46,7 @@ module.exports = async function handler(req, res) {
               'Accept': 'application/vnd.github.v3+json'
             }
           });
-          
           if (!fileRes.ok) continue;
-          
           const fileData = await fileRes.json();
           const jsonString = Buffer.from(fileData.content, 'base64').toString('utf8');
           const requestData = JSON.parse(jsonString);
@@ -107,7 +104,6 @@ module.exports = async function handler(req, res) {
       if (labels.includes('approved')) status = 'approved';
       else if (labels.includes('rejected')) status = 'rejected';
 
-      // استخراج وضعیت ماژول از لیبل‌ها
       let moduleStatus = 'pending';
       for (const label of labels) {
         if (label.startsWith('module-')) {
@@ -116,286 +112,13 @@ module.exports = async function handler(req, res) {
         }
       }
 
-      const bodyLines = issueData.body.split('\n');
-      let observation = '';
-      let modules = [];
-      let inObservation = false;
-      let isPersian = false;
-      
-      // =============================================
-      // استخراج اطلاعات از متن Issue
-      // =============================================
-      let cluster = 'human';
-      let score = 3;
-      let analysis = '';
-      const guide = { individual: '', network: '', policy: '' };
-      let matrix_emergence = '';
-      let matrix_layers = '';
-      let matrix_connections = '';
-      let matrix_scale = '';
-      let matrix_capacity = '';
-      let aiStatus = 'pending';
+      // ===== پارس بدنه Issue با تابع مشترک =====
+      const parsed = parseIssueBody(issueData.body || '');
 
-      // ===== فیلد جدید: AI-3 =====
-      let ai3Final = '';
-      let ai3Error = null;
-      let inAi3Section = false;
-      const ai3Buffer = [];
-      let aiErrorsFromBody = '';
+      // ===== تشخیص زبان =====
+      const isPersian = /[\u0600-\u06FF]/.test(issueData.body || '');
 
-      // ===== متغیرهای ماژول =====
-      let moduleType = '';
-      let moduleData = [];
-      let moduleAnalysisText = '';
-      let modulePeers = [];
-      let inModuleSection = false;
-
-      for (const line of bodyLines) {
-        const trimmedLine = line.trim();
-        
-        // تشخیص زبان
-        if (/[\u0600-\u06FF]/.test(trimmedLine)) {
-          isPersian = true;
-        }
-        
-        // استخراج متن مشاهده
-        if (line.includes('**Observation:**') || line.includes('**مشاهده خام:**')) {
-          inObservation = true;
-          continue;
-        }
-        
-        // استخراج ماژول
-        if (line.includes('**Selected Module:**') || line.includes('**ماژول انتخاب‌شده:**')) {
-          const mods = line.replace(/\*\*Selected Module:\*\*|\*\*ماژول انتخاب‌شده:\*\*/g, '').trim();
-          if (mods && mods !== 'هیچ‌کدام' && mods !== 'None') {
-            modules = mods.split(/[،,]/).map(m => m.trim());
-          }
-          continue;
-        }
-
-        // ===== تشخیص شروع AI-3 =====
-if (trimmedLine.includes('AI-3 Final Synthesis')) {
-  inAi3Section = true;
-  inObservation = false;
-  inModuleSection = false;
-  continue;
-}
-
-// ===== اگر در بخش AI-3 هستیم، خطوط را جمع کن =====
-if (inAi3Section) {
-  // اگر به خط جداکننده یا تیتر بعدی رسیدیم، AI-3 تمام است
-  const isEndMarker = trimmedLine === '---' ||
-                     trimmedLine.startsWith('**📌') ||
-                     trimmedLine.startsWith('**Module Result') ||
-                     trimmedLine.startsWith('**AI Errors:**') ||
-                     trimmedLine.startsWith('**Module Status:**') ||
-                     trimmedLine.startsWith('**Tracking Code:**') ||
-                     trimmedLine.startsWith('**Card Code:**');
-  
-  if (isEndMarker) {
-    inAi3Section = false;
-    // ادامه پردازش این خط از بیرون (fall through)
-  } else if (trimmedLine.startsWith('⚠️') || trimmedLine.includes('AI3_FAILED')) {
-    ai3Error = 'AI3_FAILED';
-    inAi3Section = false;
-  } else if (trimmedLine && !trimmedLine.startsWith('**Error Code:**')) {
-    ai3Buffer.push(trimmedLine);
-    continue;
-  }
-  if (inAi3Section) continue;
-}
-        
-        // =============================================
-        // استخراج AI Analysis
-        // =============================================
-        if (trimmedLine.includes('**🤖 AI Analysis:**') || trimmedLine.includes('**AI Analysis:**')) {
-          continue;
-        }
-        
-        // Status
-        if (trimmedLine.includes('**Status:**')) {
-          const statusText = trimmedLine.replace('**Status:**', '').trim();
-          if (statusText.includes('✅') || statusText.includes('تایید')) {
-            aiStatus = 'approved';
-          } else if (statusText.includes('❌') || statusText.includes('رد')) {
-            aiStatus = 'rejected';
-          }
-          continue;
-        }
-        
-        // Cluster
-        if (trimmedLine.includes('**Cluster:**')) {
-          const clusterText = trimmedLine.replace('**Cluster:**', '').trim();
-          if (clusterText.includes('انسان') || clusterText.includes('Human')) cluster = 'human';
-          else if (clusterText.includes('دانش') || clusterText.includes('Knowledge')) cluster = 'knowledge';
-          else if (clusterText.includes('حکمرانی') || clusterText.includes('Governance')) cluster = 'governance';
-          else if (clusterText.includes('بقا') || clusterText.includes('Survival')) cluster = 'survival';
-          continue;
-        }
-        
-        // Suggested Score
-        if (trimmedLine.includes('**Suggested Score:**')) {
-          const scoreMatch = trimmedLine.match(/\d+/);
-          if (scoreMatch) score = parseInt(scoreMatch[0]);
-          continue;
-        }
-        
-        // Analysis (AI-2 — اولین **Analysis:** بعد از 5 Matrices)
-        if (trimmedLine.includes('**Analysis:**') && !trimmedLine.includes('Module')) {
-          const analysisText = trimmedLine.replace('**Analysis:**', '').trim();
-          if (analysisText && analysisText !== '---' && analysisText !== 'تحلیل' && analysisText !== 'Analysis') {
-            analysis = analysisText;
-          }
-          continue;
-        }
-        
-        // =============================================
-        // استخراج ۵ ماتریس
-        // =============================================
-        if (trimmedLine.includes('**5 Matrices:**') || trimmedLine.includes('**۵ ماتریس:**')) {
-          continue;
-        }
-        
-        if (trimmedLine.includes('**Emergence:**') || trimmedLine.includes('**ظهورها:**')) {
-          matrix_emergence = trimmedLine.replace(/\*\*Emergence:\*\*|\*\*ظهورها:\*\*/g, '').trim();
-          if (matrix_emergence === '---') matrix_emergence = '';
-          continue;
-        }
-        
-        if (trimmedLine.includes('**Layers:**') || trimmedLine.includes('**لایه‌ها:**')) {
-          matrix_layers = trimmedLine.replace(/\*\*Layers:\*\*|\*\*لایه‌ها:\*\*/g, '').trim();
-          if (matrix_layers === '---') matrix_layers = '';
-          continue;
-        }
-        
-        if (trimmedLine.includes('**Connections:**') || trimmedLine.includes('**ارتباطات:**')) {
-          matrix_connections = trimmedLine.replace(/\*\*Connections:\*\*|\*\*ارتباطات:\*\*/g, '').trim();
-          if (matrix_connections === '---') matrix_connections = '';
-          continue;
-        }
-        
-        if (trimmedLine.includes('**Scale:**') || trimmedLine.includes('**مقیاس:**')) {
-          matrix_scale = trimmedLine.replace(/\*\*Scale:\*\*|\*\*مقیاس:\*\*/g, '').trim();
-          if (matrix_scale === '---') matrix_scale = '';
-          continue;
-        }
-        
-        if (trimmedLine.includes('**Capacity:**') || trimmedLine.includes('**ظرفیت:**')) {
-          matrix_capacity = trimmedLine.replace(/\*\*Capacity:\*\*|\*\*ظرفیت:\*\*/g, '').trim();
-          if (matrix_capacity === '---') matrix_capacity = '';
-          continue;
-        }
-        
-        // =============================================
-        // استخراج Action Guide (Individual / Network / Policy)
-        // =============================================
-        if (trimmedLine.includes('**Action Guide:**') || trimmedLine.includes('**راهنما:**')) {
-          continue;
-        }
-        
-        if (trimmedLine.includes('**Individual:**') || trimmedLine.includes('**فردی:**')) {
-          const guideText = trimmedLine.replace(/\*\*Individual:\*\*|\*\*فردی:\*\*/g, '').trim();
-          if (guideText !== '---') guide.individual = guideText;
-          continue;
-        }
-        
-        if (trimmedLine.includes('**Network:**') || trimmedLine.includes('**شبکه‌ای:**')) {
-          const guideText = trimmedLine.replace(/\*\*Network:\*\*|\*\*شبکه‌ای:\*\*/g, '').trim();
-          if (guideText !== '---') guide.network = guideText;
-          continue;
-        }
-        
-        if (trimmedLine.includes('**Policy:**') || trimmedLine.includes('**سیاستی:**')) {
-          const guideText = trimmedLine.replace(/\*\*Policy:\*\*|\*\*سیاستی:\*\*/g, '').trim();
-          if (guideText !== '---') guide.policy = guideText;
-          continue;
-        }
-
-        // =============================================
-        // استخراج AI Errors
-        // =============================================
-        if (trimmedLine.includes('**AI Errors:**')) {
-          const match = trimmedLine.match(/\*\*AI Errors:\*\*\s*(.+)/);
-          if (match) aiErrorsFromBody = match[1].trim();
-          continue;
-        }
-
-        // =============================================
-        // استخراج Module Result
-        // =============================================
-        if (trimmedLine.includes('**📌 Module Result:**') || trimmedLine.includes('**Module Result:**')) {
-          inModuleSection = true;
-          continue;
-        }
-
-        if (inModuleSection) {
-          if (trimmedLine.includes('**Type:**')) {
-            const match = trimmedLine.match(/\*\*Type:\*\*\s*(.+)/);
-            if (match) moduleType = match[1].trim();
-            continue;
-          }
-          if (trimmedLine.includes('**Status:**')) {
-            continue;
-          }
-          if (trimmedLine.includes('**Results:**')) {
-            const match = trimmedLine.match(/\*\*Results:\*\*\s*(.+)/);
-            if (match) {
-              moduleData = match[1].trim().split(',').map(s => s.trim()).filter(s => s && s !== '---');
-            }
-            continue;
-          }
-          if (trimmedLine.includes('**Analysis:**')) {
-            const match = trimmedLine.match(/\*\*Analysis:\*\*\s*(.+)/);
-            if (match) moduleAnalysisText = match[1].trim();
-            continue;
-          }
-          if (trimmedLine.includes('**Peers:**')) {
-            const match = trimmedLine.match(/\*\*Peers:\*\*\s*(.+)/);
-            if (match) {
-              modulePeers = match[1].trim().split(',').map(s => s.trim()).filter(s => s && s !== '---');
-            }
-            continue;
-          }
-          if (trimmedLine.includes('---')) {
-            inModuleSection = false;
-          }
-        }
-        
-        // ادامه جمع‌آوری متن مشاهده
-        if (inObservation && trimmedLine && !trimmedLine.includes('---') && !trimmedLine.includes('**')) {
-          observation += trimmedLine + ' ';
-        }
-        if (line.includes('---') && !inModuleSection && !inAi3Section) break;
-      }
-      
-      // اگر AI-3 جمع‌آوری شد
-      if (ai3Buffer.length > 0) {
-        ai3Final = ai3Buffer.join(' ').trim();
-      }
-      
-      observation = observation.trim() || issueData.body.substring(0, 200);
-
-      // =============================================
-      // خواندن moduleResult از پوشه data/module-results/
-      // =============================================
-      let moduleResult = null;
-      try {
-        const modulePath = `data/module-results/${trackingCode}.json`;
-        const moduleRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${modulePath}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (moduleRes.ok) {
-          const moduleDataFile = await moduleRes.json();
-          const moduleContent = JSON.parse(Buffer.from(moduleDataFile.content, 'base64').toString('utf8'));
-          moduleResult = moduleContent.moduleResult;
-        }
-      } catch (e) {
-        console.error('Error reading module result:', e);
-      }
-
-      // =============================================
-      // دریافت پاسخ‌های هم‌فرهنگ از کامنت‌های Issue
-      // =============================================
+      // ===== دریافت پاسخ‌های هم‌فرهنگ =====
       const peerResponses = [];
       try {
         const commentsRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${trackingCode}/comments`, {
@@ -408,16 +131,16 @@ if (inAi3Section) {
           const comments = await commentsRes.json();
           for (const comment of comments) {
             const body = comment.body || '';
-            if (body.includes('**📝 پاسخ هم‌فرهنگ**') || body.includes('**Peer Response**')) {
-              const peerMatch = body.match(/\*\*هم‌فرهنگ:\*\*\s*(.+)/) || body.match(/\*\*Peer:\*\*\s*(.+)/);
-              const resultMatch = body.match(/\*\*نتیجه:\*\*\s*(.+)/) || body.match(/\*\*Result:\*\*\s*(.+)/);
-              const responseMatch = body.match(/\*\*پاسخ:\*\*\s*(.+)/) || body.match(/\*\*Response:\*\*\s*(.+)/);
+            if (body.includes('📝 پاسخ هم‌فرهنگ') || body.includes('Peer Response')) {
+              const peerMatch = body.match(/هم‌فرهنگ:\s*(.+)/) || body.match(/Peer:\s*(.+)/);
+              const resultMatch = body.match(/نتیجه:\s*(.+)/) || body.match(/Result:\s*(.+)/);
+              const responseMatch = body.match(/پاسخ:\s*(.+)/) || body.match(/Response:\s*(.+)/);
               
               if (peerMatch && responseMatch) {
                 peerResponses.push({
-                  peerCode: peerMatch[1].trim(),
-                  result: resultMatch ? resultMatch[1].trim() : 'success',
-                  response: responseMatch[1].trim(),
+                  peerCode: peerMatch[1].trim().replace(/\*\*/g, ''),
+                  result: resultMatch ? resultMatch[1].trim().replace(/\*\*/g, '') : 'success',
+                  response: responseMatch[1].trim().replace(/\*\*/g, ''),
                   timestamp: comment.created_at,
                   commentId: comment.id
                 });
@@ -429,35 +152,32 @@ if (inAi3Section) {
         console.error('Error reading peer responses:', e);
       }
 
-      // =============================================
-      // خروجی نهایی با تمام اطلاعات
-      // =============================================
+      // ===== خروجی نهایی =====
       return res.status(200).json({
         status: status,
-        aiStatus: aiStatus,
-        observation: observation,
-        modules: modules,
-        moduleResult: moduleResult,
+        aiStatus: 'approved',
+        observation: parsed.observation,
+        modules: parsed.module ? [parsed.module] : [],
+        moduleResult: null,
         moduleStatus: moduleStatus,
-        moduleType: moduleType,
-        moduleData: moduleData,
-        moduleAnalysis: moduleAnalysisText,
-        modulePeers: modulePeers,
+        moduleType: parsed.moduleType,
+        moduleData: parsed.moduleData,
+        moduleAnalysis: parsed.moduleAnalysis,
+        modulePeers: parsed.modulePeers,
         peerResponses: peerResponses,
         peerResponsesCount: peerResponses.length,
-        guide: guide,
-        cluster: cluster,
-        score: score,
-        analysis: analysis,
-        matrix_emergence: matrix_emergence,
-        matrix_layers: matrix_layers,
-        matrix_connections: matrix_connections,
-        matrix_scale: matrix_scale,
-        matrix_capacity: matrix_capacity,
-        // ===== فیلدهای جدید AI-3 =====
-        ai3Final: ai3Final,
-        ai3Error: ai3Error,
-        aiErrors: aiErrorsFromBody,
+        guide: parsed.guide,
+        cluster: parsed.cluster,
+        score: parsed.score,
+        analysis: parsed.analysis,
+        matrix_emergence: parsed.matrix_emergence,
+        matrix_layers: parsed.matrix_layers,
+        matrix_connections: parsed.matrix_connections,
+        matrix_scale: parsed.matrix_scale,
+        matrix_capacity: parsed.matrix_capacity,
+        ai3Final: parsed.ai3Final,
+        ai3Error: parsed.ai3Error,
+        aiErrors: parsed.aiErrors,
         issueUrl: issueData.html_url,
         createdAt: issueData.created_at
       });
@@ -482,7 +202,6 @@ if (inAi3Section) {
     }
 
     const files = await listResponse.json();
-    
     if (!Array.isArray(files)) {
       return res.status(500).json({ error: 'خطا در ساختار فایل‌های درخواست' });
     }
@@ -497,9 +216,7 @@ if (inAi3Section) {
             'Accept': 'application/vnd.github.v3+json'
           }
         });
-        
         if (!fileRes.ok) continue;
-        
         const fileData = await fileRes.json();
         const jsonString = Buffer.from(fileData.content, 'base64').toString('utf8');
         const requestData = JSON.parse(jsonString);
@@ -530,3 +247,250 @@ if (inAi3Section) {
     return res.status(500).json({ error: error.message });
   }
 };
+
+
+// ============================================================
+// تابع کمکی: نرمال‌سازی خط
+// حذف ** و - از ابتدا
+// ============================================================
+function normalizeLine(line) {
+  return (line || '')
+    .replace(/\*\*/g, '')
+    .replace(/^[-•*]\s+/, '')
+    .trim();
+}
+
+
+// ============================================================
+// تابع اصلی: پارس بدنه Issue
+// ============================================================
+function parseIssueBody(body) {
+  const result = {
+    cardCode: '',
+    observation: '',
+    module: '',
+    score: null,
+    cluster: 'other',
+    analysis: '',
+    guide: { individual: '', network: '', policy: '' },
+    matrix_emergence: '',
+    matrix_layers: '',
+    matrix_connections: '',
+    matrix_scale: '',
+    matrix_capacity: '',
+    ai3Final: '',
+    ai3Error: null,
+    aiErrors: '',
+    moduleType: '',
+    moduleData: [],
+    moduleAnalysis: '',
+    modulePeers: []
+  };
+
+  if (!body) return result;
+
+  const lines = body.split('\n');
+
+  // ===== مرحله ۱: استخراج AI-3 (چند خطی) =====
+  let ai3Start = -1;
+  let ai3End = lines.length;
+  for (let i = 0; i < lines.length; i++) {
+    const norm = normalizeLine(lines[i]);
+    if (norm.includes('AI-3 Final Synthesis')) {
+      ai3Start = i + 1;
+      break;
+    }
+  }
+  if (ai3Start !== -1) {
+    for (let i = ai3Start; i < lines.length; i++) {
+      const norm = normalizeLine(lines[i]);
+      if (norm === '---' || 
+          norm.startsWith('📌') ||
+          norm.startsWith('Module Result') ||
+          norm.startsWith('AI Errors:') ||
+          norm.startsWith('Module Status:') ||
+          norm.startsWith('Tracking Code:') ||
+          norm.startsWith('Card Code:')) {
+        ai3End = i;
+        break;
+      }
+    }
+    const ai3Lines = [];
+    for (let i = ai3Start; i < ai3End; i++) {
+      const norm = normalizeLine(lines[i]);
+      if (!norm) continue;
+      if (norm.includes('AI3_FAILED') || norm.startsWith('⚠️')) {
+        result.ai3Error = 'AI3_FAILED';
+      } else if (!norm.startsWith('Error Code:')) {
+        ai3Lines.push(norm);
+      }
+    }
+    result.ai3Final = ai3Lines.join(' ').trim();
+  }
+
+  // ===== مرحله ۲: استخراج بقیه فیلدها =====
+  let inObservation = false;
+  let inModuleSection = false;
+  const observationLines = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const norm = normalizeLine(lines[i]);
+    if (!norm) continue;
+
+    // --- Card Code ---
+    if (norm.startsWith('Card Code:')) {
+      result.cardCode = norm.substring('Card Code:'.length).trim();
+      continue;
+    }
+
+    // --- Observation ---
+    if (norm === 'Observation:') {
+      inObservation = true;
+      continue;
+    }
+
+    // --- Selected Module ---
+    if (norm.startsWith('Selected Module:')) {
+      inObservation = false;
+      result.module = norm.substring('Selected Module:'.length).trim();
+      continue;
+    }
+
+    // --- شروع AI Analysis → پایان مشاهده ---
+    if (norm.includes('AI Analysis:')) {
+      inObservation = false;
+      continue;
+    }
+
+    // --- Action Guide ---
+    if (norm === 'Action Guide:') {
+      continue;
+    }
+
+    // --- Individual / Network / Policy ---
+    if (norm.startsWith('Individual:')) {
+      const val = norm.substring('Individual:'.length).trim();
+      if (val && val !== '---') result.guide.individual = val;
+      continue;
+    }
+    if (norm.startsWith('Network:')) {
+      const val = norm.substring('Network:'.length).trim();
+      if (val && val !== '---') result.guide.network = val;
+      continue;
+    }
+    if (norm.startsWith('Policy:')) {
+      const val = norm.substring('Policy:'.length).trim();
+      if (val && val !== '---') result.guide.policy = val;
+      continue;
+    }
+
+    // --- Cluster ---
+    if (norm.startsWith('Cluster:')) {
+      const clusterText = norm.substring('Cluster:'.length).trim();
+      if (clusterText.includes('انسان') || clusterText.includes('Human')) result.cluster = 'human';
+      else if (clusterText.includes('دانش') || clusterText.includes('Knowledge')) result.cluster = 'knowledge';
+      else if (clusterText.includes('حکمرانی') || clusterText.includes('Governance')) result.cluster = 'governance';
+      else if (clusterText.includes('بقا') || clusterText.includes('Survival')) result.cluster = 'survival';
+      continue;
+    }
+
+    // --- Suggested Score ---
+    if (norm.startsWith('Suggested Score:')) {
+      const match = norm.match(/\d+/);
+      if (match) result.score = parseInt(match[0]);
+      continue;
+    }
+
+    // --- 5 Matrices ---
+    if (norm === '5 Matrices:') continue;
+
+    if (norm.startsWith('Emergence:')) {
+      const val = norm.substring('Emergence:'.length).trim();
+      if (val && val !== '---') result.matrix_emergence = val;
+      continue;
+    }
+    if (norm.startsWith('Layers:')) {
+      const val = norm.substring('Layers:'.length).trim();
+      if (val && val !== '---') result.matrix_layers = val;
+      continue;
+    }
+    if (norm.startsWith('Connections:')) {
+      const val = norm.substring('Connections:'.length).trim();
+      if (val && val !== '---') result.matrix_connections = val;
+      continue;
+    }
+    if (norm.startsWith('Scale:')) {
+      const val = norm.substring('Scale:'.length).trim();
+      if (val && val !== '---') result.matrix_scale = val;
+      continue;
+    }
+    if (norm.startsWith('Capacity:')) {
+      const val = norm.substring('Capacity:'.length).trim();
+      if (val && val !== '---') result.matrix_capacity = val;
+      continue;
+    }
+
+    // --- Analysis (AI-2) ---
+    if (norm.startsWith('Analysis:') && !norm.includes('Module')) {
+      const val = norm.substring('Analysis:'.length).trim();
+      if (val && val !== '---' && val !== 'تحلیل') result.analysis = val;
+      continue;
+    }
+
+    // --- AI Errors ---
+    if (norm.startsWith('AI Errors:')) {
+      result.aiErrors = norm.substring('AI Errors:'.length).trim();
+      continue;
+    }
+
+    // --- Module Result ---
+    if (norm.includes('Module Result:')) {
+      inModuleSection = true;
+      inObservation = false;
+      continue;
+    }
+
+    if (inModuleSection) {
+      if (norm.startsWith('Type:')) {
+        result.moduleType = norm.substring('Type:'.length).trim();
+        continue;
+      }
+      if (norm.startsWith('Status:')) continue;
+      if (norm.startsWith('Results:')) {
+        const val = norm.substring('Results:'.length).trim();
+        result.moduleData = val.split(',').map(s => s.trim()).filter(s => s && s !== '---');
+        continue;
+      }
+      if (norm.startsWith('Analysis:')) {
+        result.moduleAnalysis = norm.substring('Analysis:'.length).trim();
+        continue;
+      }
+      if (norm.startsWith('Peers:')) {
+        const val = norm.substring('Peers:'.length).trim();
+        result.modulePeers = val.split(',').map(s => s.trim()).filter(s => s && s !== '---');
+        continue;
+      }
+      if (norm === '---') {
+        inModuleSection = false;
+        continue;
+      }
+    }
+
+    // --- جمع‌آوری متن مشاهده ---
+    if (inObservation && !norm.startsWith('---')) {
+      observationLines.push(norm);
+    }
+
+    // --- توقف در جداکننده اصلی ---
+    if (norm === '---' && !inModuleSection && !inObservation) {
+      // ادامه می‌دهیم چون ممکن است بخش‌های بعدی هم باشد
+    }
+  }
+
+  result.observation = observationLines.join(' ').trim();
+  if (!result.observation) {
+    result.observation = body.substring(0, 200);
+  }
+
+  return result;
+}
