@@ -538,357 +538,484 @@
             🔒 مشاهدات شما به‌صورت ناشناس و با رعایت کامل حریم خصوصی ثبت می‌شود.
         </div>
     </div>
-    
     <script>
-        // ============================================================
-        // Module & Box Management Functions
-        // ============================================================
-        function selectModule(btn, module) {
-            const parent = btn.closest('.observation-box');
-            parent.querySelectorAll('.box-module-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            btn.dataset.module = module;
-        }
+    // ============================================================
+    // Module & Box Management Functions
+    // ============================================================
+    function selectModule(btn, module) {
+        const parent = btn.closest('.observation-box');
+        parent.querySelectorAll('.box-module-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        btn.dataset.module = module;
+    }
 
-        function removeBox(btn) {
-            const box = btn.closest('.observation-box');
-            if (document.querySelectorAll('.observation-box').length > 1) {
-                box.remove();
-                updateAddButton();
-                renumberBoxes();
-            } else {
-                alert('حداقل یک باکس مشاهده باید وجود داشته باشد.');
-            }
-        }
-
-        function renumberBoxes() {
-            const boxes = document.querySelectorAll('.observation-box');
-            boxes.forEach((box, index) => {
-                const title = box.querySelector('.box-title');
-                if (title) {
-                    title.textContent = `📝 مشاهده ${index + 1}`;
-                }
-            });
-        }
-
-        function addObservationBox() {
-            const container = document.getElementById('observationsContainer');
-            const count = container.children.length + 1;
-            if (count > 5) {
-                alert('حداکثر ۵ مشاهده مجاز است.');
-                return;
-            }
-            
-            const div = document.createElement('div');
-            div.className = 'observation-box';
-            div.innerHTML = `
-                <div class="box-header">
-                    <span class="box-title">📝 مشاهده ${count}</span>
-                    <button class="box-module-btn" onclick="removeBox(this)" style="color:#c0392b;border-color:rgba(200,50,50,0.3);">
-                        <span class="icon">✕</span> حذف
-                    </button>
-                </div>
-                <textarea placeholder="مشاهده خام خود را بنویسید..." class="obs-text"></textarea>
-                <div class="box-modules">
-                    <button class="box-module-btn" onclick="selectModule(this, 'collaboration')">
-                        <span class="icon">🤝</span> همفکری با دیگران
-                    </button>
-                    <button class="box-module-btn" onclick="selectModule(this, 'related')">
-                        <span class="icon">👁️</span> مشاهدات مرتبط دیگران
-                    </button>
-                    <button class="box-module-btn" onclick="selectModule(this, 'referral')">
-                        <span class="icon">📤</span> ارجاع به ۵ همفرهنگ
-                    </button>
-                </div>
-            `;
-            container.appendChild(div);
+    function removeBox(btn) {
+        const box = btn.closest('.observation-box');
+        if (document.querySelectorAll('.observation-box').length > 1) {
+            box.remove();
             updateAddButton();
+            renumberBoxes();
+        } else {
+            alert('حداقل یک باکس مشاهده باید وجود داشته باشد.');
         }
+    }
 
-        function updateAddButton() {
-            const btn = document.getElementById('addBoxBtn');
-            const count = document.querySelectorAll('.observation-box').length;
-            if (btn) {
-                btn.disabled = count >= 5;
-                btn.textContent = count >= 5 ? '❌ حداکثر ۵ مشاهده' : '➕ افزودن مشاهده جدید (حداکثر ۵)';
+    function renumberBoxes() {
+        const boxes = document.querySelectorAll('.observation-box');
+        boxes.forEach((box, index) => {
+            const title = box.querySelector('.box-title');
+            if (title) {
+                title.textContent = `📝 مشاهده ${index + 1}`;
             }
+        });
+    }
+
+    function addObservationBox() {
+        const container = document.getElementById('observationsContainer');
+        const count = container.children.length + 1;
+        if (count > 5) {
+            alert('حداکثر ۵ مشاهده مجاز است.');
+            return;
         }
+        
+        const div = document.createElement('div');
+        div.className = 'observation-box';
+        div.innerHTML = `
+            <div class="box-header">
+                <span class="box-title">📝 مشاهده ${count}</span>
+                <button class="box-module-btn" onclick="removeBox(this)" style="color:#c0392b;border-color:rgba(200,50,50,0.3);">
+                    <span class="icon">✕</span> حذف
+                </button>
+            </div>
+            <textarea placeholder="مشاهده خام خود را بنویسید..." class="obs-text"></textarea>
+            <div class="box-modules">
+                <button class="box-module-btn" onclick="selectModule(this, 'collaboration')">
+                    <span class="icon">🤝</span> همفکری با دیگران
+                </button>
+                <button class="box-module-btn" onclick="selectModule(this, 'related')">
+                    <span class="icon">👁️</span> مشاهدات مرتبط دیگران
+                </button>
+                <button class="box-module-btn" onclick="selectModule(this, 'referral')">
+                    <span class="icon">📤</span> ارجاع به ۵ همفرهنگ
+                </button>
+            </div>
+        `;
+        container.appendChild(div);
+        updateAddButton();
+    }
 
-        // ============================================================
-        // Forbidden Words (Unchanged)
-        // ============================================================
-        const FORBIDDEN_WORDS = [
-            'جنگ', 'خشونت', 'قتل', 'کشتار', 'ترور', 'بمب', 'انفجار',
-            'مرگ', 'آدم کشی', 'جنایت', 'خونریزی', 'تجاوز',
-            'نژادپرست', 'نژادپرستی', 'برتری نژادی', 'تبعیض نژادی',
-            'کشتن', 'اعدام', 'سلاخی',
-            'استعمار', 'بهره کشی', 'استثمار', 'غارت', 'چپاول', 'تاراج',
-            'دزدی', 'سرقت', 'کلاه برداری', 'اختلاس', 'رشوه', 'رانت',
-            'مواد مخدر', 'شیشه', 'هروئین', 'کوکائین', 'ماریجوانا', 'گل',
-            'تریاک', 'حشیش', 'اکستازی', 'مشروبات الکلی', 'الکل', 'شراب',
-            'عرق', 'ودیكا', 'ویسکی', 'ابزار استعمال', 'پیپ', 'سرنگ',
-            'سكس', 'تن فروشی', 'روسپی', 'روابط نامشروع', 'پورن', 'مستجن',
-            'تفنگ', 'كلاش', 'اسلحه', 'موشك', 'تانك', 'جنگنده', 'بمب‌افکن'
-        ];
+    function updateAddButton() {
+        const btn = document.getElementById('addBoxBtn');
+        const count = document.querySelectorAll('.observation-box').length;
+        if (btn) {
+            btn.disabled = count >= 5;
+            btn.textContent = count >= 5 ? '❌ حداکثر ۵ مشاهده' : '➕ افزودن مشاهده جدید (حداکثر ۵)';
+        }
+    }
 
-        function fastFilter(text) {
-            const lowerText = text.toLowerCase();
-            for (const keyword of FORBIDDEN_WORDS) {
-                const lowerKeyword = keyword.toLowerCase();
-                const regex = new RegExp('\\b' + lowerKeyword + '\\b', 'i');
-                if (regex.test(lowerText)) {
-                    return {
-                        blocked: true,
-                        reason: `متن شامل کلمه ممنوعه "${keyword}" است. لطفاً یک مشاهده فرهنگی ثبت کنید.`
-                    };
-                }
-            }
-            if (text.trim().length < 10) {
+    // ============================================================
+    // Forbidden Words
+    // ============================================================
+    const FORBIDDEN_WORDS = [
+        'جنگ', 'خشونت', 'قتل', 'کشتار', 'ترور', 'بمب', 'انفجار',
+        'مرگ', 'آدم کشی', 'جنایت', 'خونریزی', 'تجاوز',
+        'نژادپرست', 'نژادپرستی', 'برتری نژادی', 'تبعیض نژادی',
+        'کشتن', 'اعدام', 'سلاخی',
+        'استعمار', 'بهره کشی', 'استثمار', 'غارت', 'چپاول', 'تاراج',
+        'دزدی', 'سرقت', 'کلاه برداری', 'اختلاس', 'رشوه', 'رانت',
+        'مواد مخدر', 'شیشه', 'هروئین', 'کوکائین', 'ماریجوانا', 'گل',
+        'تریاک', 'حشیش', 'اکستازی', 'مشروبات الکلی', 'الکل', 'شراب',
+        'عرق', 'ودیكا', 'ویسکی', 'ابزار استعمال', 'پیپ', 'سرنگ',
+        'سكس', 'تن فروشی', 'روسپی', 'روابط نامشروع', 'پورن', 'مستجن',
+        'تفنگ', 'كلاش', 'اسلحه', 'موشك', 'تانك', 'جنگنده', 'بمب‌افکن'
+    ];
+
+    function fastFilter(text) {
+        const lowerText = text.toLowerCase();
+        for (const keyword of FORBIDDEN_WORDS) {
+            const lowerKeyword = keyword.toLowerCase();
+            const regex = new RegExp('\\b' + lowerKeyword + '\\b', 'i');
+            if (regex.test(lowerText)) {
                 return {
                     blocked: true,
-                    reason: 'متن مشاهده بسیار کوتاه است. لطفاً توضیح بیشتری بنویسید.'
+                    reason: `متن شامل کلمه ممنوعه "${keyword}" است. لطفاً یک مشاهده فرهنگی ثبت کنید.`
                 };
             }
-            return { blocked: false };
         }
+        if (text.trim().length < 10) {
+            return {
+                blocked: true,
+                reason: 'متن مشاهده بسیار کوتاه است. لطفاً توضیح بیشتری بنویسید.'
+            };
+        }
+        return { blocked: false };
+    }
 
-        // ============================================================
-        // Main Submit Function (Modified)
-        // ============================================================
-        async function submitObservations() {
-            const userCode = document.getElementById('userCode').value.trim();
-            const boxes = document.querySelectorAll('.observation-box');
-            const observations = [];
-            let hasError = false;
+    // ============================================================
+    // نرمال‌سازی داده‌های AI (سازگار با ساختار جدید و قدیم)
+    // ============================================================
+    function normalizeAi1FromIssue(issue) {
+        if (issue.ai1Guidance && (issue.ai1Guidance.individual || issue.ai1Guidance.social || issue.ai1Guidance.institutional)) {
+            return {
+                individual: issue.ai1Guidance.individual || '',
+                social: issue.ai1Guidance.social || '',
+                institutional: issue.ai1Guidance.institutional || '',
+                error: issue.ai1Guidance._error || null
+            };
+        }
+        const ai = issue.aiAnalysis;
+        if (ai) {
+            return {
+                individual: ai.guide_individual || '',
+                social: ai.guide_network || '',
+                institutional: ai.guide_policy || '',
+                error: null
+            };
+        }
+        return null;
+    }
+
+    function normalizeAi2FromIssue(issue) {
+        if (issue.ai2Matrix && (issue.ai2Matrix.emergence || issue.ai2Matrix.layer || issue.ai2Matrix.connection || issue.ai2Matrix.scale || issue.ai2Matrix.capacity)) {
+            return {
+                emergence: issue.ai2Matrix.emergence || '',
+                layer: issue.ai2Matrix.layer || '',
+                connection: issue.ai2Matrix.connection || '',
+                scale: issue.ai2Matrix.scale || '',
+                capacity: issue.ai2Matrix.capacity || '',
+                analysis: issue.ai2Matrix.analysis || '',
+                cluster: issue.ai2Matrix.cluster || 'human',
+                score: issue.ai2Matrix.score || null,
+                error: issue.ai2Matrix._error || null
+            };
+        }
+        const ai = issue.aiAnalysis;
+        if (ai) {
+            return {
+                emergence: ai.matrix_emergence || '',
+                layer: ai.matrix_layers || '',
+                connection: ai.matrix_connections || '',
+                scale: ai.matrix_scale || '',
+                capacity: ai.matrix_capacity || '',
+                analysis: ai.analysis_note || '',
+                cluster: ai.cluster || 'human',
+                score: ai.score_suggestion || null,
+                error: null
+            };
+        }
+        return null;
+    }
+
+    function normalizeAi3FromIssue(issue) {
+        if (issue.finalAnalysis) return { final: issue.finalAnalysis, error: null };
+        if (issue.ai3Error) return { final: '', error: issue.ai3Error };
+        return null;
+    }
+
+    // ============================================================
+    // Main Submit Function
+    // ============================================================
+    async function submitObservations() {
+        const userCode = document.getElementById('userCode').value.trim();
+        const boxes = document.querySelectorAll('.observation-box');
+        const observations = [];
+        let hasError = false;
+        
+        if (!userCode) {
+            alert('لطفاً کد کارت هویت فرهنگی خود را وارد کنید.');
+            return;
+        }
+        
+        boxes.forEach((box, index) => {
+            const text = box.querySelector('.obs-text').value.trim();
+            const selectedModule = box.querySelector('.box-module-btn.active');
+            const moduleType = selectedModule ? selectedModule.dataset.module : null;
             
-            if (!userCode) {
-                alert('لطفاً کد کارت هویت فرهنگی خود را وارد کنید.');
+            if (!text) {
+                alert(`لطفاً مشاهده ${index + 1} را پر کنید.`);
+                hasError = true;
                 return;
             }
             
-            boxes.forEach((box, index) => {
-                const text = box.querySelector('.obs-text').value.trim();
-                const selectedModule = box.querySelector('.box-module-btn.active');
-                const moduleType = selectedModule ? selectedModule.dataset.module : null;
-                
-                if (!text) {
-                    alert(`لطفاً مشاهده ${index + 1} را پر کنید.`);
-                    hasError = true;
-                    return;
+            observations.push({
+                text: text,
+                module: moduleType,
+                index: index + 1
+            });
+        });
+        
+        if (hasError) return;
+
+        const submitBtn = document.getElementById('submitBtn');
+        const resultBox = document.getElementById('resultBox');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultTracking = document.getElementById('resultTracking');
+        const resultError = document.getElementById('resultError');
+        const aiResultDetail = document.getElementById('aiResultDetail');
+        const aiResultContent = document.getElementById('aiResultContent');
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = '🤖 در حال تحلیل هوشمند...';
+        resultBox.style.display = 'none';
+        aiResultDetail.classList.remove('active');
+
+        try {
+            for (let i = 0; i < observations.length; i++) {
+                const obs = observations[i];
+                const filterResult = fastFilter(obs.text);
+                if (filterResult.blocked) {
+                    throw new Error(`مشاهده شماره ${obs.index} رد شد: ${filterResult.reason}`);
                 }
-                
-                observations.push({
-                    text: text,
-                    module: moduleType,
-                    index: index + 1
-                });
+            }
+
+            submitBtn.textContent = '⏳ در حال ثبت نهایی...';
+
+            const response = await fetch('/api/submit-request', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    type: 'observations',
+                    cardCode: userCode,
+                    observations: observations.map(o => ({
+                        text: o.text,
+                        module: o.module
+                    }))
+                })
             });
             
-            if (hasError) return;
-
-            const submitBtn = document.getElementById('submitBtn');
-            const resultBox = document.getElementById('resultBox');
-            const resultTitle = document.getElementById('resultTitle');
-            const resultTracking = document.getElementById('resultTracking');
-            const resultError = document.getElementById('resultError');
-            const aiResultDetail = document.getElementById('aiResultDetail');
-            const aiResultContent = document.getElementById('aiResultContent');
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = '🤖 در حال تحلیل هوشمند...';
-            resultBox.style.display = 'none';
-            aiResultDetail.classList.remove('active');
-
-            try {
-                // Filter forbidden words
-                for (let i = 0; i < observations.length; i++) {
-                    const obs = observations[i];
-                    const filterResult = fastFilter(obs.text);
-                    if (filterResult.blocked) {
-                        throw new Error(`مشاهده شماره ${obs.index} رد شد: ${filterResult.reason}`);
-                    }
-                }
-
-                submitBtn.textContent = '⏳ در حال ثبت نهایی...';
-
-                const response = await fetch('/api/submit-request', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        type: 'observations',
-                        cardCode: userCode,
-                        observations: observations.map(o => ({
-                            text: o.text,
-                            module: o.module
-                        }))
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (!response.ok) {
-                    throw new Error(result.error || 'خطا در ثبت مشاهدات');
-                }
-                
-                // ============================================================
-                // Display results with 5 matrices + module status
-                // ============================================================
-                let aiDetailsHtml = '';
-                if (result.issues && result.issues.length > 0) {
-                    result.issues.forEach((issue, idx) => {
-                        const ai = issue.aiAnalysis;
-                        const moduleStatus = issue.moduleStatus || 'pending';
-                        const moduleMessage = issue.moduleMessage || '';
-                        
-                        const moduleStatusLabels = {
-                            'pending': '⏳ در انتظار پاسخ هم‌فرهنگ‌ها',
-                            'completed': '✅ تکمیل شد',
-                            'no_peers': '⚠️ هم‌فرهنگی یافت نشد',
-                            'no_related': '⚠️ مشاهده مرتبط یافت نشد',
-                            'error': '❌ خطا در پردازش',
-                            'success': '✅ موفق',
-                            'revision': '⚠️ نیاز به اصلاح',
-                            'failed': '❌ شکست'
-                        };
-                        const statusText = moduleStatusLabels[moduleStatus] || moduleStatus;
-                        
-                        const statusClass = moduleStatus === 'success' ? 'success' :
-                                           moduleStatus === 'revision' ? 'revision' :
-                                           moduleStatus === 'failed' ? 'failed' :
-                                           moduleStatus === 'no_peers' || moduleStatus === 'no_related' ? 'no_peers' :
-                                           'pending';
-                        
-                        if (ai) {
-                            const clusterNames = {
-                                'human': 'انسان',
-                                'knowledge': 'دانش و فناوری',
-                                'governance': 'حکمرانی و تمدن',
-                                'survival': 'بقا و آینده'
-                            };
-                            
-                            const moduleNames = {
-                                'collaboration': '🤝 همفکری با دیگران',
-                                'related': '👁️ مشاهدات مرتبط دیگران',
-                                'referral': '📤 ارجاع به ۵ همفرهنگ'
-                            };
-                            const moduleDisplay = moduleNames[issue.module] || issue.module || 'هیچ‌کدام';
-                            
-                            aiDetailsHtml += `
-                                <div style="border-bottom:1px solid rgba(212,175,55,0.1); padding:0.8rem 0;">
-                                    <strong>مشاهده ${idx + 1}:</strong>
-                                    <div style="font-size:0.85rem; margin-top:0.3rem;">
-                                        <span style="display:inline-block; background:rgba(212,175,55,0.1); padding:0.1rem 0.5rem; border-radius:12px; font-size:0.7rem;">
-                                            📂 ${clusterNames[ai.cluster] || ai.cluster || 'نامشخص'}
-                                        </span>
-                                        <span style="display:inline-block; background:rgba(39,174,96,0.1); padding:0.1rem 0.5rem; border-radius:12px; font-size:0.7rem;">
-                                            ⭐ امتیاز پیشنهادی: ${ai.score_suggestion || '?'}
-                                        </span>
-                                    </div>
-                                    <div style="font-size:0.8rem; color:#4a3a2a; margin-top:0.3rem;">
-                                        <strong>تحلیل:</strong> ${ai.analysis_note || '---'}
-                                    </div>
-                                    ${ai.guide_individual ? `<div style="font-size:0.75rem; color:#2874a6; margin-top:0.2rem;">📍 ${ai.guide_individual}</div>` : ''}
-                                    ${ai.guide_network ? `<div style="font-size:0.75rem; color:#27ae60; margin-top:0.2rem;">🌐 ${ai.guide_network}</div>` : ''}
-                                    ${ai.guide_policy ? `<div style="font-size:0.75rem; color:#8a6d1f; margin-top:0.2rem;">🏛️ ${ai.guide_policy}</div>` : ''}
-                                    ${ai.matrix_emergence ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 ظهورها: ${ai.matrix_emergence}</div>` : ''}
-                                    ${ai.matrix_layers ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 لایه‌ها: ${ai.matrix_layers}</div>` : ''}
-                                    ${ai.matrix_connections ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 ارتباطات: ${ai.matrix_connections}</div>` : ''}
-                                    ${ai.matrix_scale ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 مقیاس: ${ai.matrix_scale}</div>` : ''}
-                                    ${ai.matrix_capacity ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 ظرفیت: ${ai.matrix_capacity}</div>` : ''}
-                                </div>
-                                <div class="module-status-box">
-                                    <div class="module-label">📌 ماژول انتخاب‌شده: ${moduleDisplay}</div>
-                                    <div class="module-status ${statusClass}">${statusText}</div>
-                                    ${moduleMessage ? `<div style="font-size:0.8rem; color:#4a3a2a; margin-top:0.3rem;">${moduleMessage}</div>` : ''}
-                                </div>
-                            `;
-                        }
-                    });
-                }
-                
-                if (aiDetailsHtml) {
-                    aiResultContent.innerHTML = aiDetailsHtml;
-                    aiResultDetail.classList.add('active');
-                }
-                
-                // ===== Show tracking code with link =====
-                const trackingCode = result.trackingCode || '---';
-                const trackingLink = trackingCode !== '---' ? 
-                    `<a href="track-observation.html?code=${encodeURIComponent(trackingCode)}" class="tracking-link">🔍 پیگیری وضعیت مشاهده</a>` : '';
-                
-                resultTitle.textContent = '✅ مشاهدات با موفقیت ثبت و تحلیل شد';
-                resultTracking.innerHTML = `🔗 شماره پیگیری: ${trackingCode}<br>${trackingLink}`;
-                resultError.style.display = 'none';
-                resultBox.style.display = 'block';
-                
-                // Show Feedback Module
-                document.getElementById('feedbackModule').style.display = 'block';
-                
-                submitBtn.textContent = '✅ ثبت شد';
-                
-                document.querySelectorAll('.obs-text').forEach(t => t.value = '');
-                document.querySelectorAll('.box-module-btn.active').forEach(b => b.classList.remove('active'));
-                updateAddButton();
-                
-                resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                
-            } catch (error) {
-                console.error('Error:', error);
-                resultTitle.textContent = '❌ خطا در ثبت مشاهدات';
-                resultError.textContent = error.message;
-                resultError.style.display = 'block';
-                resultBox.style.display = 'block';
-                submitBtn.textContent = '📤 تلاش مجدد';
-                submitBtn.disabled = false;
-                
-                resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }
-
-        // ===== Feedback Submission Function =====
-        async function submitFeedback() {
-            const userCode = document.getElementById('feedbackUserCode').value.trim();
-            const feedbackText = document.getElementById('feedbackText').value.trim();
+            const result = await response.json();
             
-            if (!userCode || !feedbackText) {
-                alert('لطفاً کد عضویت و متن بازخورد را وارد کنید.');
-                return;
+            if (!response.ok) {
+                throw new Error(result.error || 'خطا در ثبت مشاهدات');
             }
+            
+            // ============================================================
+            // نمایش نتایج — با ساختار جدید (ai1Guidance / ai2Matrix / finalAnalysis)
+            // ============================================================
+            let aiDetailsHtml = '';
+            let aiFailCount = 0;
+            let aiSuccessCount = 0;
 
-            const btn = event.target;
-            btn.disabled = true;
-            btn.textContent = '⏳ در حال ارسال...';
+            if (result.issues && result.issues.length > 0) {
+                result.issues.forEach((issue, idx) => {
+                    const ai1 = normalizeAi1FromIssue(issue);
+                    const ai2 = normalizeAi2FromIssue(issue);
+                    const ai3 = normalizeAi3FromIssue(issue);
+                    const moduleStatus = issue.moduleStatus || 'pending';
+                    const moduleMessage = issue.moduleMessage || '';
+                    
+                    const moduleStatusLabels = {
+                        'pending': '⏳ در انتظار پاسخ هم‌فرهنگ‌ها',
+                        'completed': '✅ تکمیل شد',
+                        'no_peers': '⚠️ هم‌فرهنگی یافت نشد',
+                        'no_related': '⚠️ مشاهده مرتبط یافت نشد',
+                        'error': '❌ خطا در پردازش',
+                        'success': '✅ موفق',
+                        'revision': '⚠️ نیاز به اصلاح',
+                        'failed': '❌ شکست'
+                    };
+                    const statusText = moduleStatusLabels[moduleStatus] || moduleStatus;
+                    
+                    const statusClass = moduleStatus === 'success' ? 'success' :
+                                       moduleStatus === 'revision' ? 'revision' :
+                                       moduleStatus === 'failed' ? 'failed' :
+                                       moduleStatus === 'no_peers' || moduleStatus === 'no_related' ? 'no_peers' :
+                                       'pending';
+                    
+                    const clusterNames = {
+                        'human': 'انسان',
+                        'knowledge': 'دانش و فناوری',
+                        'governance': 'حکمرانی و تمدن',
+                        'survival': 'بقا و آینده',
+                        'other': 'نامشخص'
+                    };
+                    
+                    const moduleNames = {
+                        'collaboration': '🤝 همفکری با دیگران',
+                        'related': '👁️ مشاهدات مرتبط دیگران',
+                        'referral': '📤 ارجاع به ۵ همفرهنگ'
+                    };
+                    const moduleDisplay = moduleNames[issue.module] || issue.module || 'هیچ‌کدام';
+                    
+                    // بررسی خطاها
+                    const hasAi1 = ai1 && (ai1.individual || ai1.social || ai1.institutional);
+                    const hasAi2 = ai2 && (ai2.emergence || ai2.layer || ai2.connection || ai2.scale || ai2.capacity || ai2.analysis);
+                    const hasAi3 = ai3 && ai3.final;
+                    if (hasAi1) aiSuccessCount++; else aiFailCount++;
+                    if (hasAi2) aiSuccessCount++; else aiFailCount++;
+                    if (hasAi3) aiSuccessCount++; else aiFailCount++;
 
-            try {
-                // اصلاح آدرس API به submit-request
-                const response = await fetch('/api/submit-request', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        cardCode: userCode,
-                        feedback: feedbackText,
-                        type: 'observation_feedback'
-                    })
+                    aiDetailsHtml += `
+                        <div style="border-bottom:1px solid rgba(212,175,55,0.1); padding:0.8rem 0;">
+                            <strong>مشاهده ${idx + 1}:</strong>
+                    `;
+
+                    // ===== AI-1 =====
+                    if (hasAi1) {
+                        aiDetailsHtml += `
+                            <div style="margin-top:0.5rem; padding:0.6rem; background:rgba(16,185,129,0.06); border-radius:8px; border-right:3px solid #10b981;">
+                                <div style="font-weight:800; font-size:0.8rem; color:#047857; margin-bottom:0.3rem;">🤖 راهنمای سه‌سطحی (AI-1)</div>
+                                ${ai1.individual ? `<div style="font-size:0.78rem; color:#2874a6; margin-top:0.2rem;"><strong>📍 فردی:</strong> ${ai1.individual}</div>` : ''}
+                                ${ai1.social ? `<div style="font-size:0.78rem; color:#27ae60; margin-top:0.2rem;"><strong>🌐 اجتماعی:</strong> ${ai1.social}</div>` : ''}
+                                ${ai1.institutional ? `<div style="font-size:0.78rem; color:#8a6d1f; margin-top:0.2rem;"><strong>🏛️ نهادی:</strong> ${ai1.institutional}</div>` : ''}
+                            </div>
+                        `;
+                    } else {
+                        aiDetailsHtml += `
+                            <div style="margin-top:0.5rem; padding:0.6rem; background:rgba(231,76,60,0.08); border-radius:8px; border-right:3px solid #e74c3c;">
+                                <div style="font-weight:800; font-size:0.8rem; color:#7a1a1a;">⚠️ تحلیل AI-1 دریافت نشد (AI1_FAILED)</div>
+                                <div style="font-size:0.75rem; color:#7a1a1a; margin-top:0.2rem;">لطفاً مشاهده را دوباره ثبت کنید یا با پشتیبانی تماس بگیرید.</div>
+                            </div>
+                        `;
+                    }
+
+                    // ===== AI-2 =====
+                    if (hasAi2) {
+                        aiDetailsHtml += `
+                            <div style="margin-top:0.5rem; padding:0.6rem; background:rgba(99,102,241,0.06); border-radius:8px; border-right:3px solid #6366f1;">
+                                <div style="font-weight:800; font-size:0.8rem; color:#4338ca; margin-bottom:0.3rem;">
+                                    🧠 ماتریس ۵ سطحی (AI-2)
+                                    ${ai2.cluster ? `<span style="background:rgba(212,175,55,0.15); padding:0.1rem 0.5rem; border-radius:10px; font-size:0.7rem; margin-right:0.3rem;">📂 ${clusterNames[ai2.cluster] || ai2.cluster}</span>` : ''}
+                                    ${ai2.score ? `<span style="background:rgba(39,174,96,0.15); padding:0.1rem 0.5rem; border-radius:10px; font-size:0.7rem;">⭐ امتیاز پیشنهادی: ${ai2.score}</span>` : ''}
+                                </div>
+                                ${ai2.emergence ? `<div style="font-size:0.75rem; color:#4a3a2a; margin-top:0.2rem;"><strong>📊 ظهورها:</strong> ${ai2.emergence}</div>` : ''}
+                                ${ai2.layer ? `<div style="font-size:0.75rem; color:#4a3a2a; margin-top:0.2rem;"><strong>📊 لایه‌ها:</strong> ${ai2.layer}</div>` : ''}
+                                ${ai2.connection ? `<div style="font-size:0.75rem; color:#4a3a2a; margin-top:0.2rem;"><strong>📊 ارتباطات:</strong> ${ai2.connection}</div>` : ''}
+                                ${ai2.scale ? `<div style="font-size:0.75rem; color:#4a3a2a; margin-top:0.2rem;"><strong>📊 مقیاس:</strong> ${ai2.scale}</div>` : ''}
+                                ${ai2.capacity ? `<div style="font-size:0.75rem; color:#4a3a2a; margin-top:0.2rem;"><strong>📊 ظرفیت:</strong> ${ai2.capacity}</div>` : ''}
+                                ${ai2.analysis ? `<div style="font-size:0.78rem; color:#2a1a0a; margin-top:0.3rem; padding:0.4rem; background:rgba(255,255,255,0.4); border-radius:6px;"><strong>تحلیل:</strong> ${ai2.analysis}</div>` : ''}
+                            </div>
+                        `;
+                    } else {
+                        aiDetailsHtml += `
+                            <div style="margin-top:0.5rem; padding:0.6rem; background:rgba(231,76,60,0.08); border-radius:8px; border-right:3px solid #e74c3c;">
+                                <div style="font-weight:800; font-size:0.8rem; color:#7a1a1a;">⚠️ تحلیل AI-2 دریافت نشد (AI2_FAILED)</div>
+                                <div style="font-size:0.75rem; color:#7a1a1a; margin-top:0.2rem;">لطفاً مشاهده را دوباره ثبت کنید یا با پشتیبانی تماس بگیرید.</div>
+                            </div>
+                        `;
+                    }
+
+                    // ===== AI-3 =====
+                    if (hasAi3) {
+                        aiDetailsHtml += `
+                            <div style="margin-top:0.5rem; padding:0.6rem; background:rgba(236,72,153,0.06); border-radius:8px; border-right:3px solid #ec4899;">
+                                <div style="font-weight:800; font-size:0.8rem; color:#be185d; margin-bottom:0.3rem;">💎 تحلیل نهایی (AI-3)</div>
+                                <div style="font-size:0.8rem; line-height:1.8; color:#2a1a0a;">${ai3.final}</div>
+                            </div>
+                        `;
+                    } else {
+                        aiDetailsHtml += `
+                            <div style="margin-top:0.5rem; padding:0.6rem; background:rgba(231,76,60,0.08); border-radius:8px; border-right:3px solid #e74c3c;">
+                                <div style="font-weight:800; font-size:0.8rem; color:#7a1a1a;">⚠️ تحلیل AI-3 دریافت نشد (AI3_FAILED)</div>
+                                <div style="font-size:0.75rem; color:#7a1a1a; margin-top:0.2rem;">لطفاً مشاهده را دوباره ثبت کنید یا با پشتیبانی تماس بگیرید.</div>
+                            </div>
+                        `;
+                    }
+
+                    // ===== ماژول =====
+                    aiDetailsHtml += `
+                            <div class="module-status-box">
+                                <div class="module-label">📌 ماژول انتخاب‌شده: ${moduleDisplay}</div>
+                                <div class="module-status ${statusClass}">${statusText}</div>
+                                ${moduleMessage ? `<div style="font-size:0.8rem; color:#4a3a2a; margin-top:0.3rem;">${moduleMessage}</div>` : ''}
+                            </div>
+                        </div>
+                    `;
                 });
-
-                const result = await response.json();
-                
-                if (!response.ok) throw new Error(result.error || 'خطا در ارسال بازخورد');
-
-                alert('✅ بازخورد شما با موفقیت به اطلس ظهور ارسال شد. سپاس از مشارکت شما!');
-                document.getElementById('feedbackModule').style.display = 'none';
-                
-            } catch (error) {
-                alert('❌ خطا: ' + error.message);
-                btn.disabled = false;
-                btn.textContent = '📤 ارسال بازخورد به اطلس ظهور';
             }
+            
+            if (aiDetailsHtml) {
+                aiResultContent.innerHTML = aiDetailsHtml;
+                aiResultDetail.classList.add('active');
+            }
+            
+            // ===== پیام موفقیت بر اساس وضعیت AI =====
+            const trackingCode = result.trackingCode || '---';
+            const trackingLink = trackingCode !== '---' ? 
+                `<a href="track-observation.html?code=${encodeURIComponent(trackingCode)}" class="tracking-link">🔍 پیگیری وضعیت مشاهده</a>` : '';
+            
+            let successMessage;
+            if (aiFailCount === 0 && aiSuccessCount > 0) {
+                successMessage = '✅ مشاهدات با موفقیت ثبت و تحلیل شد';
+            } else if (aiFailCount > 0 && aiSuccessCount > 0) {
+                successMessage = '⚠️ مشاهدات ثبت شد اما بعضی تحلیل‌های هوش مصنوعی ناقص است — لطفاً جزئیات را بررسی کنید';
+            } else if (aiFailCount > 0) {
+                successMessage = '⚠️ مشاهدات ثبت شد اما تحلیل هوش مصنوعی در دسترس نیست — لطفاً بعداً بررسی کنید';
+            } else {
+                successMessage = '✅ مشاهدات با موفقیت ثبت شد';
+            }
+            
+            resultTitle.textContent = successMessage;
+            resultTracking.innerHTML = `🔗 شماره پیگیری: ${trackingCode}<br>${trackingLink}`;
+            resultError.style.display = 'none';
+            resultBox.style.display = 'block';
+            
+            document.getElementById('feedbackModule').style.display = 'block';
+            
+            submitBtn.textContent = '✅ ثبت شد';
+            
+            document.querySelectorAll('.obs-text').forEach(t => t.value = '');
+            document.querySelectorAll('.box-module-btn.active').forEach(b => b.classList.remove('active'));
+            updateAddButton();
+            
+            resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+        } catch (error) {
+            console.error('Error:', error);
+            resultTitle.textContent = '❌ خطا در ثبت مشاهدات';
+            resultError.textContent = error.message;
+            resultError.style.display = 'block';
+            resultBox.style.display = 'block';
+            submitBtn.textContent = '📤 تلاش مجدد';
+            submitBtn.disabled = false;
+            
+            resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    // ===== Feedback Submission Function =====
+    async function submitFeedback() {
+        const userCode = document.getElementById('feedbackUserCode').value.trim();
+        const feedbackText = document.getElementById('feedbackText').value.trim();
+        
+        if (!userCode || !feedbackText) {
+            alert('لطفاً کد عضویت و متن بازخورد را وارد کنید.');
+            return;
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            updateAddButton();
-            console.log('📌 سپهر خردمندی - ثبت مشاهدات');
-        });
-    </script>
+        const btn = event.target;
+        btn.disabled = true;
+        btn.textContent = '⏳ در حال ارسال...';
+
+        try {
+            const response = await fetch('/api/submit-request', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    cardCode: userCode,
+                    feedback: feedbackText,
+                    type: 'observation_feedback'
+                })
+            });
+
+            const result = await response.json();
+            
+            if (!response.ok) throw new Error(result.error || 'خطا در ارسال بازخورد');
+
+            alert('✅ بازخورد شما با موفقیت به اطلس ظهور ارسال شد. سپاس از مشارکت شما!');
+            document.getElementById('feedbackModule').style.display = 'none';
+            
+        } catch (error) {
+            alert('❌ خطا: ' + error.message);
+            btn.disabled = false;
+            btn.textContent = '📤 ارسال بازخورد به اطلس ظهور';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        updateAddButton();
+        console.log('📌 سپهر خردمندی - ثبت مشاهدات');
+    });
+</script>
 </body>
 </html>
