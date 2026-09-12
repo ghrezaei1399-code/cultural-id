@@ -538,357 +538,207 @@
             🔒 Your observations are registered anonymously with full privacy protection.
         </div>
     </div>
-    
     <script>
-        // ============================================================
-        // Module & Box Management Functions
-        // ============================================================
-        function selectModule(btn, module) {
-            const parent = btn.closest('.observation-box');
-            parent.querySelectorAll('.box-module-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            btn.dataset.module = module;
-        }
+    const moduleStatusLabels = {
+        'success': '✅ موفق', 'revision': '⚠️ نیاز به اصلاح', 'failed': '❌ شکست',
+        'pending': '⏳ در انتظار', 'no_peers': '⚠️ هم‌فرهنگی یافت نشد',
+        'no_related': '⚠️ مشاهده مرتبط یافت نشد', 'completed': '✅ تکمیل شد', 'error': '❌ خطا'
+    };
+    
+    const moduleStatusClass = {
+        'success': 'success', 'revision': 'revision', 'failed': 'failed',
+        'pending': 'pending', 'no_peers': 'no_peers', 'no_related': 'no_peers',
+        'completed': 'success', 'error': 'failed'
+    };
+    
+    const moduleNames = {
+        'collaboration': '🤝 همفکری با دیگران', 'related': '👁️ مشاهدات مرتبط دیگران',
+        'referral': '📤 ارجاع به ۵ همفرهنگ'
+    };
+    
+    const resultLabels = {
+        'success': '✅ موفق', 'revision': '⚠️ اصلاح', 'failed': '❌ شکست'
+    };
 
-        function removeBox(btn) {
-            const box = btn.closest('.observation-box');
-            if (document.querySelectorAll('.observation-box').length > 1) {
-                box.remove();
-                updateAddButton();
-                renumberBoxes();
+    const clusterNames = {
+        'human': 'انسان', 'knowledge': 'دانش و فناوری',
+        'governance': 'حکمرانی و تمدن', 'survival': 'بقا و آینده', 'other': 'نامشخص'
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        if (code) {
+            document.getElementById('trackingCode').value = code;
+            document.getElementById('trackBtn').click();
+        }
+    });
+
+    document.getElementById('trackBtn').addEventListener('click', async function() {
+        let trackingCode = document.getElementById('trackingCode').value.trim();
+        const resultBox = document.getElementById('resultBox');
+        const statusIcon = document.getElementById('statusIcon');
+        const statusTitle = document.getElementById('statusTitle');
+        const observationDisplay = document.getElementById('observationDisplay');
+        const modulesDisplay = document.getElementById('modulesDisplay');
+        const moduleResultBox = document.getElementById('moduleResultBox');
+        const guideContainer = document.getElementById('guideContainer');
+        const errorMsg = document.getElementById('errorMsg');
+        const moduleStatusDisplay = document.getElementById('moduleStatusDisplay');
+        const peerResponsesContainer = document.getElementById('peerResponsesContainer');
+        
+        if (!trackingCode) { alert('لطفاً کد پیگیری را وارد کنید.'); return; }
+        if (trackingCode.startsWith('OBS-')) trackingCode = trackingCode.replace('OBS-', '');
+        
+        resultBox.className = 'result-box';
+        resultBox.style.display = 'none';
+        modulesDisplay.style.display = 'none';
+        moduleResultBox.style.display = 'none';
+        guideContainer.style.display = 'none';
+        errorMsg.style.display = 'none';
+        moduleStatusDisplay.innerHTML = '';
+        peerResponsesContainer.innerHTML = '';
+        
+        try {
+            const response = await fetch(`/api/get-request-by-tracking?type=observation&trackingCode=${trackingCode}&t=${Date.now()}`);
+            const result = await response.json();
+            
+            if (!response.ok) throw new Error(result.error || 'خطا در دریافت اطلاعات');
+            
+            resultBox.style.display = 'block';
+            
+            if (result.status === 'pending') {
+                resultBox.className = 'result-box pending';
+                statusIcon.textContent = '⏳';
+                statusTitle.textContent = 'در انتظار بررسی';
+                observationDisplay.textContent = result.observation || 'مشاهده‌ی شما در صف بررسی است.';
+            } else if (result.status === 'approved') {
+                resultBox.className = 'result-box approved';
+                statusIcon.textContent = '✅';
+                statusTitle.textContent = 'تأیید شده';
+            } else if (result.status === 'rejected') {
+                resultBox.className = 'result-box rejected';
+                statusIcon.textContent = '❌';
+                statusTitle.textContent = 'رد شده';
+            }
+            
+            observationDisplay.textContent = result.observation || '---';
+            
+            // ===== باکس ۴ بخشی (مشاهده + AI-1 + AI-2 + AI-3) =====
+            let analysisHtml = '';
+            
+            // AI-1
+            if (result.guide && (result.guide.individual || result.guide.network || result.guide.policy)) {
+                analysisHtml += `
+                    <div style="margin-top:0.8rem; padding:0.8rem; background:rgba(16,185,129,0.06); border-radius:10px; border-right:4px solid #10b981;">
+                        <div style="font-weight:800; font-size:0.85rem; color:#047857; margin-bottom:0.5rem;">🤖 راهنمای سه‌سطحی (AI-1)</div>
+                        ${result.guide.individual ? `<div style="margin-bottom:0.4rem;"><strong>📍 سطح فردی:</strong> ${result.guide.individual}</div>` : ''}
+                        ${result.guide.network ? `<div style="margin-bottom:0.4rem;"><strong>🌐 سطح اجتماعی:</strong> ${result.guide.network}</div>` : ''}
+                        ${result.guide.policy ? `<div><strong>🏛️ سطح نهادی:</strong> ${result.guide.policy}</div>` : ''}
+                    </div>`;
             } else {
-                alert('At least one observation box is required.');
-            }
-        }
-
-        function renumberBoxes() {
-            const boxes = document.querySelectorAll('.observation-box');
-            boxes.forEach((box, index) => {
-                const title = box.querySelector('.box-title');
-                if (title) {
-                    title.textContent = `📝 Observation ${index + 1}`;
-                }
-            });
-        }
-
-        function addObservationBox() {
-            const container = document.getElementById('observationsContainer');
-            const count = container.children.length + 1;
-            if (count > 5) {
-                alert('Maximum 5 observations allowed.');
-                return;
+                analysisHtml += `
+                    <div style="margin-top:0.8rem; padding:0.8rem; background:rgba(231,76,60,0.06); border-radius:10px; border-right:4px solid #e74c3c;">
+                        <div style="font-weight:800; font-size:0.85rem; color:#7a1a1a;">⚠️ تحلیل AI-1 دریافت نشد (AI1_FAILED)</div>
+                    </div>`;
             }
             
-            const div = document.createElement('div');
-            div.className = 'observation-box';
-            div.innerHTML = `
-                <div class="box-header">
-                    <span class="box-title">📝 Observation ${count}</span>
-                    <button class="box-module-btn" onclick="removeBox(this)" style="color:#c0392b;border-color:rgba(200,50,50,0.3);">
-                        <span class="icon">✕</span> Remove
-                    </button>
-                </div>
-                <textarea placeholder="Write your raw observation here..." class="obs-text"></textarea>
-                <div class="box-modules">
-                    <button class="box-module-btn" onclick="selectModule(this, 'collaboration')">
-                        <span class="icon">🤝</span> Collaborate
-                    </button>
-                    <button class="box-module-btn" onclick="selectModule(this, 'related')">
-                        <span class="icon">👁️</span> Related Views
-                    </button>
-                    <button class="box-module-btn" onclick="selectModule(this, 'referral')">
-                        <span class="icon">📤</span> Refer to 5 Peers
-                    </button>
-                </div>
-            `;
-            container.appendChild(div);
-            updateAddButton();
-        }
-
-        function updateAddButton() {
-            const btn = document.getElementById('addBoxBtn');
-            const count = document.querySelectorAll('.observation-box').length;
-            if (btn) {
-                btn.disabled = count >= 5;
-                btn.textContent = count >= 5 ? '❌ Maximum 5 observations' : '➕ Add New Observation (Max 5)';
-            }
-        }
-
-        // ============================================================
-        // Forbidden Words (Unchanged)
-        // ============================================================
-        const FORBIDDEN_WORDS = [
-            'war', 'violence', 'murder', 'kill', 'killing', 'terror', 'bomb', 'explosion',
-            'death', 'homicide', 'crime', 'bloodshed', 'rape', 'massacre',
-            'racist', 'racism', 'racial superiority', 'racial discrimination',
-            'execute', 'execution', 'slaughter',
-            'colonialism', 'exploitation', 'plunder', 'loot', 'pillage',
-            'theft', 'robbery', 'fraud', 'embezzlement', 'bribe', 'rent seeking',
-            'drugs', 'heroin', 'cocaine', 'marijuana', 'weed', 'opium',
-            'hashish', 'ecstasy', 'alcohol', 'liquor', 'wine',
-            'vodka', 'whiskey', 'pipe', 'syringe', 'crack',
-            'sex', 'prostitution', 'porn', 'pornography', 'obscene',
-            'gun', 'rifle', 'weapon', 'missile', 'tank', 'fighter jet', 'bomber'
-        ];
-
-        function fastFilter(text) {
-            const lowerText = text.toLowerCase();
-            for (const keyword of FORBIDDEN_WORDS) {
-                const lowerKeyword = keyword.toLowerCase();
-                const regex = new RegExp('\\b' + lowerKeyword + '\\b', 'i');
-                if (regex.test(lowerText)) {
-                    return {
-                        blocked: true,
-                        reason: `Text contains forbidden word "${keyword}". Please register a cultural observation.`
-                    };
-                }
-            }
-            if (text.trim().length < 10) {
-                return {
-                    blocked: true,
-                    reason: 'Observation text is too short. Please provide more detail.'
-                };
-            }
-            return { blocked: false };
-        }
-
-        // ============================================================
-        // Main Submit Function (Modified)
-        // ============================================================
-        async function submitObservations() {
-            const userCode = document.getElementById('userCode').value.trim();
-            const boxes = document.querySelectorAll('.observation-box');
-            const observations = [];
-            let hasError = false;
-            
-            if (!userCode) {
-                alert('Please enter your Cultural Identity Card Code.');
-                return;
+            // AI-2
+            const hasAi2 = result.matrix_emergence || result.matrix_layers || result.matrix_connections || result.matrix_scale || result.matrix_capacity || result.analysis;
+            if (hasAi2) {
+                analysisHtml += `
+                    <div style="margin-top:0.8rem; padding:0.8rem; background:rgba(99,102,241,0.06); border-radius:10px; border-right:4px solid #6366f1;">
+                        <div style="font-weight:800; font-size:0.85rem; color:#4338ca; margin-bottom:0.5rem;">
+                            🧠 ماتریس ۵ سطحی (AI-2)
+                            ${result.cluster ? `<span style="background:rgba(212,175,55,0.15); padding:0.1rem 0.6rem; border-radius:10px; font-size:0.7rem; margin-right:0.3rem;">📂 ${clusterNames[result.cluster] || result.cluster}</span>` : ''}
+                            ${result.score ? `<span style="background:rgba(39,174,96,0.15); padding:0.1rem 0.6rem; border-radius:10px; font-size:0.7rem;">⭐ امتیاز: ${result.score}</span>` : ''}
+                        </div>
+                        ${result.matrix_emergence ? `<div style="margin-bottom:0.4rem; font-size:0.83rem;"><strong>📊 ظهورها:</strong> ${result.matrix_emergence}</div>` : ''}
+                        ${result.matrix_layers ? `<div style="margin-bottom:0.4rem; font-size:0.83rem;"><strong>📊 لایه‌ها:</strong> ${result.matrix_layers}</div>` : ''}
+                        ${result.matrix_connections ? `<div style="margin-bottom:0.4rem; font-size:0.83rem;"><strong>📊 ارتباطات:</strong> ${result.matrix_connections}</div>` : ''}
+                        ${result.matrix_scale ? `<div style="margin-bottom:0.4rem; font-size:0.83rem;"><strong>📊 مقیاس:</strong> ${result.matrix_scale}</div>` : ''}
+                        ${result.matrix_capacity ? `<div style="margin-bottom:0.4rem; font-size:0.83rem;"><strong>📊 ظرفیت:</strong> ${result.matrix_capacity}</div>` : ''}
+                        ${result.analysis ? `<div style="margin-top:0.5rem; padding:0.5rem; background:rgba(255,255,255,0.4); border-radius:6px; font-size:0.83rem;"><strong>تحلیل:</strong> ${result.analysis}</div>` : ''}
+                    </div>`;
+            } else {
+                analysisHtml += `
+                    <div style="margin-top:0.8rem; padding:0.8rem; background:rgba(231,76,60,0.06); border-radius:10px; border-right:4px solid #e74c3c;">
+                        <div style="font-weight:800; font-size:0.85rem; color:#7a1a1a;">⚠️ تحلیل AI-2 دریافت نشد (AI2_FAILED)</div>
+                    </div>`;
             }
             
-            boxes.forEach((box, index) => {
-                const text = box.querySelector('.obs-text').value.trim();
-                const selectedModule = box.querySelector('.box-module-btn.active');
-                const moduleType = selectedModule ? selectedModule.dataset.module : null;
-                
-                if (!text) {
-                    alert(`Please fill in observation ${index + 1}.`);
-                    hasError = true;
-                    return;
-                }
-                
-                observations.push({
-                    text: text,
-                    module: moduleType,
-                    index: index + 1
-                });
-            });
+            // AI-3
+            if (result.ai3Final) {
+                analysisHtml += `
+                    <div style="margin-top:0.8rem; padding:0.8rem; background:rgba(236,72,153,0.06); border-radius:10px; border-right:4px solid #ec4899;">
+                        <div style="font-weight:800; font-size:0.85rem; color:#be185d; margin-bottom:0.5rem;">💎 تحلیل نهایی (AI-3)</div>
+                        <div style="font-size:0.85rem; line-height:1.9;">${result.ai3Final}</div>
+                    </div>`;
+            } else {
+                analysisHtml += `
+                    <div style="margin-top:0.8rem; padding:0.8rem; background:rgba(231,76,60,0.06); border-radius:10px; border-right:4px solid #e74c3c;">
+                        <div style="font-weight:800; font-size:0.85rem; color:#7a1a1a;">⚠️ تحلیل نهایی دریافت نشد (AI3_FAILED)</div>
+                    </div>`;
+            }
             
-            if (hasError) return;
-
-            const submitBtn = document.getElementById('submitBtn');
-            const resultBox = document.getElementById('resultBox');
-            const resultTitle = document.getElementById('resultTitle');
-            const resultTracking = document.getElementById('resultTracking');
-            const resultError = document.getElementById('resultError');
-            const aiResultDetail = document.getElementById('aiResultDetail');
-            const aiResultContent = document.getElementById('aiResultContent');
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = '🤖 Analyzing with AI...';
-            resultBox.style.display = 'none';
-            aiResultDetail.classList.remove('active');
-
-            try {
-                // Filter forbidden words
-                for (let i = 0; i < observations.length; i++) {
-                    const obs = observations[i];
-                    const filterResult = fastFilter(obs.text);
-                    if (filterResult.blocked) {
-                        throw new Error(`Observation #${obs.index} rejected: ${filterResult.reason}`);
-                    }
-                }
-
-                submitBtn.textContent = '⏳ Finalizing registration...';
-
-                const response = await fetch('/api/submit-request', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        type: 'observations',
-                        cardCode: userCode,
-                        observations: observations.map(o => ({
-                            text: o.text,
-                            module: o.module
-                        }))
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (!response.ok) {
-                    throw new Error(result.error || 'Registration error');
-                }
-                
-                // ============================================================
-                // Display results with 5 matrices + module status
-                // ============================================================
-                let aiDetailsHtml = '';
-                if (result.issues && result.issues.length > 0) {
-                    result.issues.forEach((issue, idx) => {
-                        const ai = issue.aiAnalysis;
-                        const moduleStatus = issue.moduleStatus || 'pending';
-                        const moduleMessage = issue.moduleMessage || '';
-                        
-                        const moduleStatusLabels = {
-                            'pending': '⏳ Awaiting peer responses',
-                            'completed': '✅ Completed',
-                            'no_peers': '⚠️ No peers found',
-                            'no_related': '⚠️ No related observations found',
-                            'error': '❌ Processing error',
-                            'success': '✅ Successful',
-                            'revision': '⚠️ Needs revision',
-                            'failed': '❌ Failed'
-                        };
-                        const statusText = moduleStatusLabels[moduleStatus] || moduleStatus;
-                        
-                        const statusClass = moduleStatus === 'success' ? 'success' :
-                                           moduleStatus === 'revision' ? 'revision' :
-                                           moduleStatus === 'failed' ? 'failed' :
-                                           moduleStatus === 'no_peers' || moduleStatus === 'no_related' ? 'no_peers' :
-                                           'pending';
-                        
-                        if (ai) {
-                            const clusterNames = {
-                                'human': 'Human',
-                                'knowledge': 'Knowledge & Technology',
-                                'governance': 'Governance & Civilization',
-                                'survival': 'Survival & Future'
-                            };
-                            
-                            const moduleNames = {
-                                'collaboration': '🤝 Collaborate',
-                                'related': '👁️ Related Views',
-                                'referral': '📤 Refer to 5 Peers'
-                            };
-                            const moduleDisplay = moduleNames[issue.module] || issue.module || 'None';
-                            
-                            aiDetailsHtml += `
-                                <div style="border-bottom:1px solid rgba(212,175,55,0.1); padding:0.8rem 0;">
-                                    <strong>Observation ${idx + 1}:</strong>
-                                    <div style="font-size:0.85rem; margin-top:0.3rem;">
-                                        <span style="display:inline-block; background:rgba(212,175,55,0.1); padding:0.1rem 0.5rem; border-radius:12px; font-size:0.7rem;">
-                                            📂 ${clusterNames[ai.cluster] || ai.cluster || 'Unknown'}
-                                        </span>
-                                        <span style="display:inline-block; background:rgba(39,174,96,0.1); padding:0.1rem 0.5rem; border-radius:12px; font-size:0.7rem;">
-                                            ⭐ Suggested Score: ${ai.score_suggestion || '?'}
-                                        </span>
-                                    </div>
-                                    <div style="font-size:0.8rem; color:#4a3a2a; margin-top:0.3rem;">
-                                        <strong>Analysis:</strong> ${ai.analysis_note || '---'}
-                                    </div>
-                                    ${ai.guide_individual ? `<div style="font-size:0.75rem; color:#2874a6; margin-top:0.2rem;">📍 ${ai.guide_individual}</div>` : ''}
-                                    ${ai.guide_network ? `<div style="font-size:0.75rem; color:#27ae60; margin-top:0.2rem;">🌐 ${ai.guide_network}</div>` : ''}
-                                    ${ai.guide_policy ? `<div style="font-size:0.75rem; color:#8a6d1f; margin-top:0.2rem;">🏛️ ${ai.guide_policy}</div>` : ''}
-                                    ${ai.matrix_emergence ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 Emergence: ${ai.matrix_emergence}</div>` : ''}
-                                    ${ai.matrix_layers ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 Layers: ${ai.matrix_layers}</div>` : ''}
-                                    ${ai.matrix_connections ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 Connections: ${ai.matrix_connections}</div>` : ''}
-                                    ${ai.matrix_scale ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 Scale: ${ai.matrix_scale}</div>` : ''}
-                                    ${ai.matrix_capacity ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 Capacity: ${ai.matrix_capacity}</div>` : ''}
-                                </div>
-                                <div class="module-status-box">
-                                    <div class="module-label">📌 Selected Module: ${moduleDisplay}</div>
-                                    <div class="module-status ${statusClass}">${statusText}</div>
-                                    ${moduleMessage ? `<div style="font-size:0.8rem; color:#4a3a2a; margin-top:0.3rem;">${moduleMessage}</div>` : ''}
-                                </div>
-                            `;
-                        }
-                    });
-                }
-                
-                if (aiDetailsHtml) {
-                    aiResultContent.innerHTML = aiDetailsHtml;
-                    aiResultDetail.classList.add('active');
-                }
-                
-                // ===== Show tracking code with link =====
-                const trackingCode = result.trackingCode || '---';
-                const trackingLink = trackingCode !== '---' ? 
-                    `<a href="track-observation.html?code=${encodeURIComponent(trackingCode)}" class="tracking-link">🔍 Track Observation Status</a>` : '';
-                
-                resultTitle.textContent = '✅ Observations Registered & Analyzed';
-                resultTracking.innerHTML = `🔗 Tracking Code: ${trackingCode}<br>${trackingLink}`;
-                resultError.style.display = 'none';
-                resultBox.style.display = 'block';
-                
-                // Show Feedback Module
-                document.getElementById('feedbackModule').style.display = 'block';
-                
-                submitBtn.textContent = '✅ Submitted';
-                
-                document.querySelectorAll('.obs-text').forEach(t => t.value = '');
-                document.querySelectorAll('.box-module-btn.active').forEach(b => b.classList.remove('active'));
-                updateAddButton();
-                
-                resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                
-            } catch (error) {
-                console.error('Error:', error);
-                resultTitle.textContent = '❌ Registration Error';
-                resultError.textContent = error.message;
-                resultError.style.display = 'block';
-                resultBox.style.display = 'block';
-                submitBtn.textContent = '📤 Try Again';
-                submitBtn.disabled = false;
-                
-                resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }
-
-        // ===== Feedback Submission Function =====
-        async function submitFeedback() {
-            const userCode = document.getElementById('feedbackUserCode').value.trim();
-            const feedbackText = document.getElementById('feedbackText').value.trim();
+            guideContainer.innerHTML = analysisHtml;
+            guideContainer.style.display = 'block';
+            guideContainer.className = ''; // کلاس guide-box را حذف کن چون ساختار جدید داریم
             
-            if (!userCode || !feedbackText) {
-                alert('Please enter your membership code and feedback text.');
-                return;
+            // ===== ماژول =====
+            if (result.modules && result.modules.length > 0) {
+                modulesDisplay.innerHTML = result.modules.map(mod => `<span class="module-tag">${mod}</span>`).join('');
+                modulesDisplay.style.display = 'flex';
             }
-
-            const btn = event.target;
-            btn.disabled = true;
-            btn.textContent = '⏳ Sending...';
-
-            try {
-                // Corrected API endpoint to submit-request
-                const response = await fetch('/api/submit-request', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        cardCode: userCode,
-                        feedback: feedbackText,
-                        type: 'observation_feedback'
-                    })
-                });
-
-                const result = await response.json();
+            
+            if (result.moduleType || result.moduleStatus) {
+                const moduleDisplay = moduleNames[result.moduleType] || result.moduleType || '';
+                const statusText = moduleStatusLabels[result.moduleStatus] || result.moduleStatus || 'pending';
+                const statusClass = moduleStatusClass[result.moduleStatus] || 'pending';
                 
-                if (!response.ok) throw new Error(result.error || 'Error sending feedback');
-
-                alert('✅ Your feedback has been successfully sent to the Atlas of Emergence. Thank you!');
-                document.getElementById('feedbackModule').style.display = 'none';
+                let html = `
+                    <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; padding:0.5rem; background:rgba(106,61,154,0.04); border-radius:8px;">
+                        <span style="font-weight:700; color:#6a3d9a; font-size:0.85rem;">📌 ماژول:</span>
+                        <span style="font-weight:700; color:#2a1a0a; font-size:0.85rem;">${moduleDisplay || 'هیچ‌کدام'}</span>
+                        ${moduleDisplay ? `<span class="module-status-badge ${statusClass}">${statusText}</span>` : ''}
+                    </div>`;
                 
-            } catch (error) {
-                alert('❌ Error: ' + error.message);
-                btn.disabled = false;
-                btn.textContent = '📤 Send Feedback to Atlas';
+                if (result.moduleData && result.moduleData.length > 0) {
+                    html += `<div style="margin-top:0.5rem; padding:0.5rem; background:rgba(255,255,255,0.3); border-radius:8px; font-size:0.8rem;"><strong>نتایج:</strong> ${result.moduleData.join('، ')}</div>`;
+                }
+                if (result.moduleAnalysis) {
+                    html += `<div style="margin-top:0.3rem; padding:0.5rem; background:rgba(255,255,255,0.2); border-radius:8px; font-size:0.8rem; font-style:italic;">${result.moduleAnalysis}</div>`;
+                }
+                moduleStatusDisplay.innerHTML = html;
             }
+            
+            // ===== پاسخ‌های هم‌فرهنگ =====
+            if (result.peerResponses && result.peerResponses.length > 0) {
+                peerResponsesContainer.innerHTML = `
+                    <div class="peer-responses-box">
+                        <div style="font-weight:700; font-size:0.8rem; color:#6a3d9a; margin-bottom:0.3rem;">📨 پاسخ‌های هم‌فرهنگ‌ها (${result.peerResponses.length})</div>
+                        ${result.peerResponses.map(p => `
+                            <div class="peer-response-item">
+                                <span class="peer-code">${p.peerCode}</span>
+                                <span class="peer-result ${p.result}">${resultLabels[p.result] || p.result}</span>
+                                <span style="font-size:0.65rem; color:#888;">${p.response ? p.response.substring(0, 30) + (p.response.length > 30 ? '...' : '') : ''}</span>
+                            </div>
+                        `).join('')}
+                    </div>`;
+            }
+            
+        } catch (error) {
+            console.error('Error:', error);
+            resultBox.style.display = 'block';
+            resultBox.className = 'result-box rejected';
+            statusIcon.textContent = '❌';
+            statusTitle.textContent = 'خطا';
+            observationDisplay.textContent = '';
+            guideContainer.style.display = 'none';
+            errorMsg.textContent = error.message || 'مشاهده‌ای با این کد پیدا نشد.';
+            errorMsg.style.display = 'block';
         }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            updateAddButton();
-            console.log('📌 Sphere of Wisdom - Register Observations');
-        });
-    </script>
+    });
+</script>    
 </body>
 </html>
