@@ -110,12 +110,15 @@ module.exports = async function handler(req, res) {
         // ============================================================
         // تحلیل هوش مصنوعی با OpenRouter (Qwen) - پرامپت دو زبانه
         // ============================================================
+                // ============================================================
+        // تحلیل هوش مصنوعی با OpenRouter (Qwen) - با حفظ پرامپت اصلی شما
+        // ============================================================
         let aiAnalysis = null;
         
         if (!obs.aiAnalysis) {
           try {
             if (openRouterKey) {
-              // پرامپت دو زبانه دقیقاً مطابق درخواست شما
+              // === پرامپت اصلی و دقیق شما ===
               const systemPrompt = isPersian ? 
 `شما یک تحلیلگر فرهنگی بر اساس چارچوب "سپهر خردمندی" هستید.
 
@@ -209,7 +212,7 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
                   'X-Title': process.env.SITE_NAME || 'Global Smart Cultural Identity',
                 },
                 body: JSON.stringify({
-                  model: 'qwen/qwen-2.5-72b-instruct', // استفاده از مدل قدرتمند Qwen
+                  model: 'qwen/qwen-2.5-72b-instruct',
                   messages: [
                     { role: 'system', content: systemPrompt },
                     { role: 'user', content: userPrompt }
@@ -263,6 +266,27 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
           aiAnalysis = getFallbackAnalysis(obs.text, isPersian);
         }
 
+        // === تطبیق خروجی با ساختار مورد نیاز پنل ادمین جدید ===
+        // این بخش باعث می‌شود داده‌های قدیمی شما در پنل جدید درست نمایش داده شوند
+        const ai1Data = {
+          individual: aiAnalysis.guide_individual,
+          social: aiAnalysis.guide_network,
+          institutional: aiAnalysis.guide_policy
+        };
+
+        const ai2Data = {
+          emergence: aiAnalysis.matrix_emergence,
+          layer: aiAnalysis.matrix_layers,
+          connection: aiAnalysis.matrix_connections,
+          scale: aiAnalysis.matrix_scale,
+          capacity: aiAnalysis.matrix_capacity,
+          analysis: aiAnalysis.analysis_note,
+          cluster: aiAnalysis.cluster,
+          score: aiAnalysis.score_suggestion
+        };
+
+        const ai3Data = aiAnalysis.analysis_note; // یا می‌توانید بخش دیگری را انتخاب کنید
+
         // ============================================================
         // پردازش ماژول انتخاب‌شده (بدون تغییر)
         // ============================================================
@@ -272,7 +296,7 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
         let moduleMessage = '';
 
         if (obs.module && obs.module !== 'none' && obs.module !== 'هیچ‌کدام') {
-          try {
+           try {
             const allUsersRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/active`, {
               headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -516,8 +540,11 @@ ${moduleSection}
           module: selectedModule,
           moduleStatus: moduleStatus,
           moduleMessage: moduleMessage,
-          aiAnalysis: aiAnalysis,
-          moduleResult: moduleResult
+          // === ارسال داده‌ها با فرمت جدید برای پنل ادمین ===
+          ai1Guidance: ai1Data,
+          ai2Matrix: ai2Data,
+          finalAnalysis: ai3Data,
+          aiAnalysis: aiAnalysis // برای سازگاری با نسخه‌های قبلی
         });
       }
 
