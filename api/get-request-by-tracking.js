@@ -173,30 +173,37 @@ module.exports = async function handler(req, res) {
           continue;
         }
 
-        // =============================================
-        // تشخیص شروع AI-3
-        // =============================================
-        if (trimmedLine.includes('**💎 AI-3 Final Synthesis:**')) {
-          inAi3Section = true;
-          inObservation = false;
-          inModuleSection = false;
-          continue;
-        }
+        // ===== تشخیص شروع AI-3 =====
+if (trimmedLine.includes('AI-3 Final Synthesis')) {
+  inAi3Section = true;
+  inObservation = false;
+  inModuleSection = false;
+  continue;
+}
 
-        // جمع‌آوری محتوای AI-3
-        if (inAi3Section) {
-          if (trimmedLine.startsWith('**📌') || trimmedLine.startsWith('**Module') ||
-              trimmedLine === '---' || trimmedLine.startsWith('**AI Errors:**') ||
-              trimmedLine.startsWith('**Module Status:**') || trimmedLine.startsWith('**Tracking Code:**')) {
-            inAi3Section = false;
-            // ادامه پردازش این خط در iteration بعدی
-          } else if (trimmedLine.startsWith('⚠️') || trimmedLine.includes('AI3_FAILED')) {
-            ai3Error = 'AI3_FAILED';
-          } else if (trimmedLine && !trimmedLine.startsWith('**Error Code:**')) {
-            ai3Buffer.push(trimmedLine);
-          }
-          if (inAi3Section) continue;
-        }
+// ===== اگر در بخش AI-3 هستیم، خطوط را جمع کن =====
+if (inAi3Section) {
+  // اگر به خط جداکننده یا تیتر بعدی رسیدیم، AI-3 تمام است
+  const isEndMarker = trimmedLine === '---' ||
+                     trimmedLine.startsWith('**📌') ||
+                     trimmedLine.startsWith('**Module Result') ||
+                     trimmedLine.startsWith('**AI Errors:**') ||
+                     trimmedLine.startsWith('**Module Status:**') ||
+                     trimmedLine.startsWith('**Tracking Code:**') ||
+                     trimmedLine.startsWith('**Card Code:**');
+  
+  if (isEndMarker) {
+    inAi3Section = false;
+    // ادامه پردازش این خط از بیرون (fall through)
+  } else if (trimmedLine.startsWith('⚠️') || trimmedLine.includes('AI3_FAILED')) {
+    ai3Error = 'AI3_FAILED';
+    inAi3Section = false;
+  } else if (trimmedLine && !trimmedLine.startsWith('**Error Code:**')) {
+    ai3Buffer.push(trimmedLine);
+    continue;
+  }
+  if (inAi3Section) continue;
+}
         
         // =============================================
         // استخراج AI Analysis
