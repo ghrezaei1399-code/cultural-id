@@ -688,7 +688,186 @@ ${moduleSection}
         moduleResult: moduleResult
       });
     }
+    // ============================================================
+    // بخش Observation Feedback (بازخورد عضو بر اساس راهنمای دریافتی)
+    // ============================================================
+    if (type === 'observation_feedback') {
+      const { cardCode, feedback } = parsedBody;
+      
+      if (!cardCode || !feedback) {
+        return res.status(400).json({ error: 'کد کارت و متن بازخورد الزامی است' });
+      }
+      
+      if (feedback.trim().length < 10) {
+        return res.status(400).json({ error: 'متن بازخورد بسیار کوتاه است' });
+      }
 
+      const isPersian = /[\u0600-\u06FF]/.test(feedback);
+      const trackingCode = `FB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+      const fileName = `observation-feedback-${Date.now()}-${Math.random().toString(36).substring(7)}.json`;
+      const requestPath = `data/feedback/${fileName}`;
+
+      const feedbackData = {
+        fileName: fileName,
+        trackingCode: trackingCode,
+        senderCode: cardCode,
+        type: 'observation_feedback',
+        feedback: feedback.trim(),
+        isPersian: isPersian,
+        status: 'pending',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      const newContent = Buffer.from(JSON.stringify(feedbackData, null, 2), 'utf8').toString('base64');
+
+      const uploadRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${requestPath}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: `Observation feedback from ${cardCode} - ${trackingCode}`,
+          content: newContent,
+          branch: 'main'
+        })
+      });
+
+      if (!uploadRes.ok) {
+        const errData = await uploadRes.json().catch(() => ({}));
+        // اگر پوشه وجود ندارد، اول یک فایل placeholder بساز تا پوشه ایجاد شود
+        if (uploadRes.status === 404 || (errData.message && errData.message.includes('Not Found'))) {
+          // تلاش برای ساخت پوشه با یک فایل .gitkeep
+          try {
+            const placeholderContent = Buffer.from('{}', 'utf8').toString('base64');
+            await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/feedback/.gitkeep`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                message: 'Create feedback folder',
+                content: placeholderContent,
+                branch: 'main'
+              })
+            });
+            // دوباره تلاش کن
+            const retryRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${requestPath}`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                message: `Observation feedback from ${cardCode} - ${trackingCode}`,
+                content: newContent,
+                branch: 'main'
+              })
+            });
+            if (!retryRes.ok) {
+              const retryErr = await retryRes.json().catch(() => ({}));
+              throw new Error(retryErr.message || 'خطا در ذخیره بازخورد');
+            }
+          } catch (folderErr) {
+            throw new Error('خطا در ساخت پوشه بازخورد: ' + folderErr.message);
+          }
+        } else {
+          throw new Error(errData.message || 'خطا در ذخیره بازخورد');
+        }
+      }
+
+      // ===== ثبت بازخورد به عنوان یک Issue جدید برای ادمین =====
+      let feedbackIssueNumber = null;
+      try {
+        const issueTitle = isPersian
+          ? `📝 بازخورد عضو: ${cardCode}`
+          : `📝 Member Feedback: ${cardCode}`;
+        
+        const issueBody = isPersian ? `
+**کد کارت:** ${cardCode}
+
+**متن بازخورد:**
+${feedback}
+
+---
+**کد رهگیری بازخورد:** ${trackingCode}
+**تاریخ:** ${new Date().toISOString()}
+**وضعیت:** در انتظار بررسی توسط ادمین
+
+*این بازخورد به صورت خودکار ثبت شده است. ادمین می‌تواند آن را به اطلس ظهور منتقل کند.*
+        ` : `
+**Card Code:** ${cardCode}
+
+**Feedback:**
+${feedback}
+
+---
+**Feedback Tracking Code:** ${trackingCode}
+**Date:** ${new Date().toISOString()}
+**Status:** Pending admin review
+
+*This feedback was registered automatically. Admin can move it to the Atlas of Emergence.*
+        `;
+
+        const issueRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/vnd.github.v3+json'
+          },
+          body: JSON.stringify({
+            title: issueTitle,
+            body: issueBody,
+            labels: ['observation-feedback', 'pending-review']
+          })
+        });
+
+        if (issueRes.ok) {
+          const issueData = await issueRes.json();
+          feedbackIssueNumber = issueData.number;
+
+          // به‌روزرسانی فایل با شماره Issue
+          const updatedData = { ...feedbackData, issueNumber: feedbackIssueNumber };
+          const updatedContent = Buffer.from(JSON.stringify(updatedData, null, 2), 'utf8').toString('base64');
+
+          // دریافت SHA فعلی
+          const currentFileRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${requestPath}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (currentFileRes.ok) {
+            const currentFile = await currentFileRes.json();
+            await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${requestPath}`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                message: `Update feedback with issue number ${feedbackIssueNumber}`,
+                content: updatedContent,
+                sha: currentFile.sha,
+                branch: 'main'
+              })
+            });
+          }
+        }
+      } catch (issueErr) {
+        console.warn('Could not create feedback issue:', issueErr.message);
+        // ادامه می‌دهیم — فایل ذخیره شده است
+      }
+
+      return res.status(200).json({
+        success: true,
+        trackingCode: trackingCode,
+        issueNumber: feedbackIssueNumber,
+        message: isPersian
+          ? '✅ بازخورد شما با موفقیت به اطلس ظهور ارسال شد.'
+          : '✅ Your feedback has been successfully sent to the Atlas of Emergence.'
+      });
+    }
     return res.status(400).json({ error: 'Invalid request type.' });
 
   } catch (error) {
