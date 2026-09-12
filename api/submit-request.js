@@ -76,7 +76,7 @@ module.exports = async function handler(req, res) {
                 'HTTP-Referer': process.env.SITE_URL || 'https://cultural-id.vercel.app',
               },
               body: JSON.stringify({
-                model: 'google/gemma-2-9b-it',
+               model: 'meta-llama/llama-3.1-8b-instruct',
                 messages: [
                   { role: 'system', content: systemPrompt },
                   { role: 'user', content: userPrompt }
