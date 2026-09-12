@@ -29,59 +29,7 @@ module.exports = async function handler(req, res) {
     const repo = 'cultural-id';
 
     // ============================================================
-    // بخش جدید: ثبت بازخورد انسانی (Human Feedback)
-    // ============================================================
-    if (type === 'observation_feedback') {
-      if (!cardCode || !feedback) {
-        return res.status(400).json({ error: 'کد کارت و متن بازخورد الزامی است.' });
-      }
-
-      const userPath = `data/active/${cardCode}.json`;
-      const userRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-
-      if (!userRes.ok) {
-        return res.status(404).json({ error: 'کاربر یافت نشد یا کد کارت اشتباه است.' });
-      }
-
-      const userDataRaw = await userRes.json();
-      const userData = JSON.parse(Buffer.from(userDataRaw.content, 'base64').toString('utf8'));
-
-      const feedbackEntry = {
-        id: Date.now(),
-        cardCode: cardCode,
-        feedbackText: feedback,
-        submittedAt: new Date().toISOString(),
-        status: 'pending_atlas_review',
-        country: userData.country || 'Unknown',
-        rank: userData.rank || 0
-      };
-
-      const feedbackPath = `data/feedbacks/${Date.now()}-${cardCode}.json`;
-      const content = Buffer.from(JSON.stringify(feedbackEntry, null, 2), 'utf8').toString('base64');
-
-      await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${feedbackPath}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          message: `New feedback from ${cardCode}`,
-          content: content,
-          branch: 'main'
-        })
-      });
-
-      return res.status(200).json({ 
-        success: true, 
-        message: '✅ بازخورد شما با موفقیت ثبت شد.' 
-      });
-    }
-
-    // ============================================================
-    // بخش Observations - با هوش مصنوعی OpenRouter (Qwen)
+    // بخش Observations - با هوش مصنوعی OpenRouter
     // ============================================================
     if (type === 'observations' && observations && observations.length > 0) {
       if (!cardCode) {
@@ -104,100 +52,21 @@ module.exports = async function handler(req, res) {
         
         let aiAnalysis = null;
         
-                // ============================================================
-        // تحلیل هوش مصنوعی با OpenRouter - با حفظ پرامپت اصلی شما
-        // ============================================================
-        let aiAnalysis = null;
-        
-        if (!obs.aiAnalysis && openRouterKey) {
+        // تلاش برای دریافت تحلیل از هوش مصنوعی
+        if (openRouterKey) {
           try {
             const systemPrompt = isPersian ? 
-`شما یک تحلیلگر فرهنگی بر اساس چارچوب "سپهر خردمندی" هستید.
+`شما یک تحلیلگر فرهنگی بر اساس چارچوب "سپهر خردمندی" هستید. وظیفه شما تولید یک JSON با ۱۱ فیلد دقیق است. فقط JSON برگردانید.
+خوشه‌ها: human, knowledge, governance, survival.
+ماتریس‌ها: emergence, layers, connections, scale, capacity.
+راهنماها: individual, network, policy.
+تحلیل نهایی: analysis.` :
+`You are a cultural analyst based on "Sphere of Wisdom". Return ONLY a JSON with 11 fields: status, cluster, score, analysis, individual, network, policy, matrix_emergence, matrix_layers, matrix_connections, matrix_scale, matrix_capacity.`;
 
-**وظیفه:** تحلیل عمیق مشاهده کاربر و تولید یک JSON با ۱۱ بخش.
+            const userPrompt = `Observation: "${obs.text}"`;
 
-**قوانین:**
-۱. فقط JSON برگردانید. هیچ توضیح اضافی.
-۲. تحلیل شما باید بر اساس متن کاربر باشد.
-۳. هر بخش باید کامل و دقیق باشد.
-
-**خوشه‌ها (۴ خوشه اطلس ظهور):**
-- human: انسان (مسائل فردی، روانشناختی، خانواده، روابط)
-- knowledge: دانش و فناوری (آموزش، علم، پژوهش، فناوری)
-- governance: حکمرانی و تمدن (مدیریت، قانون، ساختارها)
-- survival: بقا و آینده (معیشت، آب، غذا، محیط زیست، امنیت)
-
-**۵ ماتریس سپهر خردمندی:**
-۱. ماتریس ظهورها: چه چیزهایی در این پدیده ظاهر شده و دیده می‌شود؟
-۲. ماتریس لایه‌ها: چه لایه‌هایی از این پدیده وجود دارد (فردی، اجتماعی، ساختاری، تمدنی)؟
-۳. ماتریس ارتباطات: روابط میان سپهرهای درگیر چگونه است؟
-۴. ماتریس مقیاس: این پدیده در چه مقیاسی است (فردی، محلی، منطقه‌ای، جهانی)؟
-۵. ماتریس ظرفیت: چه ظرفیت‌هایی وجود دارد و کدام مغفول مانده است؟
-
-**ساختار خروجی (فقط این JSON را برگردانید):**
-{
-  "status": "approved",
-  "cluster": "human",
-  "score": 3,
-  "analysis": "تحلیل عمیق و دقیق بر اساس متن کاربر در ۳ پاراگراف",
-  "individual": "راهنمای عملی که کاربر در ۲۴ ساعت آینده انجام دهد",
-  "network": "راهنمای هماهنگی با ۳ تا ۵ نفر دیگر",
-  "policy": "پیشنهاد یا سوال ساختاری برای تغییر",
-  "matrix_emergence": "تحلیل ماتریس ظهورها بر اساس متن کاربر",
-  "matrix_layers": "تحلیل ماتریس لایه‌ها بر اساس متن کاربر",
-  "matrix_connections": "تحلیل ماتریس ارتباطات بر اساس متن کاربر",
-  "matrix_scale": "تحلیل ماتریس مقیاس بر اساس متن کاربر",
-  "matrix_capacity": "تحلیل ماتریس ظرفیت بر اساس متن کاربر"
-}` :
-`You are a cultural analyst based on the "Sphere of Wisdom" framework.
-
-**Task:** Deep analysis of a raw observation, return a JSON with 11 fields.
-
-**Strict Rules:**
-1. Return ONLY JSON. No extra text.
-2. Your analysis must be based on the user's text.
-3. Each field must be complete and precise.
-
-**Clusters (4 Atlas of Emergence clusters):**
-- human: Human (individual, psychological, family, relationships)
-- knowledge: Knowledge and Technology (education, science, research)
-- governance: Governance and Civilization (management, law, structures)
-- survival: Survival and Future (livelihood, water, food, environment, security)
-
-**5 Sphere of Wisdom Matrices:**
-1. Emergence Matrix: What has emerged and is visible in this phenomenon?
-2. Layers Matrix: What layers exist (individual, social, structural, civilizational)?
-3. Connections Matrix: How are the involved spheres connected?
-4. Scale Matrix: What is the scale (individual, local, regional, global)?
-5. Capacity Matrix: What capacities exist and which have been neglected?
-
-**Output Structure (return ONLY this JSON):**
-{
-  "status": "approved",
-  "cluster": "human",
-  "score": 3,
-  "analysis": "Deep and precise analysis based on user text in 3 paragraphs",
-  "individual": "Practical guide the user should do in the next 24 hours",
-  "network": "Guide for coordinating with 3-5 other people",
-  "policy": "Structural suggestion or question for change",
-  "matrix_emergence": "Analysis of Emergence Matrix based on user text",
-  "matrix_layers": "Analysis of Layers Matrix based on user text",
-  "matrix_connections": "Analysis of Connections Matrix based on user text",
-  "matrix_scale": "Analysis of Scale Matrix based on user text",
-  "matrix_capacity": "Analysis of Capacity Matrix based on user text"
-}`;
-
-            const userPrompt = isPersian ?
-`مشاهده کاربر: "${obs.text}"
-
-تحلیل عمیق بر اساس چارچوب سپهر خردمندی با ۵ ماتریس. فقط JSON برگردان.` :
-`User observation: "${obs.text}"
-
-Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ONLY JSON.`;
-
-            // ایجاد مهلت زمانی ۱۵ ثانیه‌ای برای جلوگیری از خطای ۵۰۴
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 15000);
+            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 ثانیه مهلت
 
             const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
               method: 'POST',
@@ -207,13 +76,13 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
                 'HTTP-Referer': process.env.SITE_URL || 'https://cultural-id.vercel.app',
               },
               body: JSON.stringify({
-                model: 'google/gemma-2-9b-it', // مدل سریع و پایدار
+                model: 'google/gemma-2-9b-it',
                 messages: [
                   { role: 'system', content: systemPrompt },
                   { role: 'user', content: userPrompt }
                 ],
                 temperature: 0.7,
-                max_tokens: 1000,
+                max_tokens: 800,
                 response_format: { type: 'json_object' }
               }),
               signal: controller.signal
@@ -224,14 +93,12 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
             if (response.ok) {
               const data = await response.json();
               const content = data.choices?.[0]?.message?.content || '{}';
-              
               let jsonStr = content;
               const s = content.indexOf('{');
               const e = content.lastIndexOf('}');
               if (s !== -1 && e !== -1) jsonStr = content.substring(s, e + 1);
               
               const analysis = JSON.parse(jsonStr);
-              
               aiAnalysis = {
                 status: analysis.status || "approved",
                 cluster: analysis.cluster || "human",
@@ -246,18 +113,10 @@ Deep analysis based on the Sphere of Wisdom framework with 5 matrices. Return ON
                 matrix_scale: analysis.matrix_scale || "تحلیل مقیاس",
                 matrix_capacity: analysis.matrix_capacity || "تحلیل ظرفیت"
               };
-            } else {
-              console.error('OpenRouter Error:', response.status);
             }
           } catch (err) {
-            console.warn('AI request timed out or failed, using fallback:', err.message);
-            aiAnalysis = null; 
+            console.warn('AI failed, using fallback:', err.message);
           }
-        }
-
-        if (!aiAnalysis) {
-          aiAnalysis = getFallbackAnalysis(obs.text, isPersian);
-        }
         }
 
         // اگر هوش مصنوعی کار نکرد، از تحلیل پیش‌فرض استفاده کن
