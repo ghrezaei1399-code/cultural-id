@@ -66,7 +66,7 @@ module.exports = async function handler(req, res) {
             const userPrompt = `Observation: "${obs.text}"`;
 
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 ثانیه مهلت
+            const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 ثانیه مهلت
 
             const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
               method: 'POST',
@@ -76,13 +76,13 @@ module.exports = async function handler(req, res) {
                 'HTTP-Referer': process.env.SITE_URL || 'https://cultural-id.vercel.app',
               },
               body: JSON.stringify({
-               model: 'meta-llama/llama-3.1-8b-instruct',
+                model: 'meta-llama/llama-3.1-8b-instruct',
                 messages: [
                   { role: 'system', content: systemPrompt },
                   { role: 'user', content: userPrompt }
                 ],
                 temperature: 0.7,
-                max_tokens: 800,
+                max_tokens: 1000,
                 response_format: { type: 'json_object' }
               }),
               signal: controller.signal
@@ -99,6 +99,8 @@ module.exports = async function handler(req, res) {
               if (s !== -1 && e !== -1) jsonStr = content.substring(s, e + 1);
               
               const analysis = JSON.parse(jsonStr);
+              console.log('AI Response:', analysis); // لاگ برای بررسی
+              
               aiAnalysis = {
                 status: analysis.status || "approved",
                 cluster: analysis.cluster || "human",
@@ -113,6 +115,8 @@ module.exports = async function handler(req, res) {
                 matrix_scale: analysis.matrix_scale || "تحلیل مقیاس",
                 matrix_capacity: analysis.matrix_capacity || "تحلیل ظرفیت"
               };
+            } else {
+               console.error('OpenRouter Error:', response.status, await response.text());
             }
           } catch (err) {
             console.warn('AI failed, using fallback:', err.message);
@@ -389,7 +393,7 @@ ${moduleSection}
           });
         }
 
-                 createdIssues.push({
+        createdIssues.push({
           number: issueData.number,
           url: issueData.html_url,
           trackingCode: `OBS-${issueData.number}`,
@@ -397,32 +401,12 @@ ${moduleSection}
           module: selectedModule,
           moduleStatus: moduleStatus,
           moduleMessage: moduleMessage,
-          
-          // داده‌های هوش اول (برای نمایش در پنل ادمین و صفحه کاربر)
-          ai1Guidance: {
-            individual: String(aiAnalysis.guide_individual || ''),
-            social: String(aiAnalysis.guide_network || ''),
-            institutional: String(aiAnalysis.guide_policy || '')
-          },
-          
-          // داده‌های هوش دوم (برای نمایش در پنل ادمین و صفحه کاربر)
-          ai2Matrix: {
-            emergence: String(aiAnalysis.matrix_emergence || ''),
-            layer: String(aiAnalysis.matrix_layers || ''),
-            connection: String(aiAnalysis.matrix_connections || ''),
-            scale: String(aiAnalysis.matrix_scale || ''),
-            capacity: String(aiAnalysis.matrix_capacity || ''),
-            analysis: String(aiAnalysis.analysis_note || ''),
-            cluster: String(aiAnalysis.cluster || 'human'),
-            score: aiAnalysis.score_suggestion || 3
-          },
-          
-          // تحلیل نهایی هوش سوم
-          finalAnalysis: String(aiAnalysis.analysis_note || ''),
-          
-          // حفظ سازگاری با نسخه‌های قبلی
+          // ارسال داده‌ها با فرمت جدید برای پنل ادمین
+          ai1Guidance: ai1Data,
+          ai2Matrix: ai2Data,
+          finalAnalysis: ai3Data,
           aiAnalysis: aiAnalysis
-        });     
+        });
       }
 
       if (createdIssues.length === 0) {
