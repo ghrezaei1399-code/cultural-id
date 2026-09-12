@@ -277,7 +277,10 @@ module.exports = async function handler(req, res) {
 // تابع کمکی: نرمال‌سازی یک خط (حذف ** و فاصله اضافه)
 // ============================================================
 function normalizeLine(line) {
-  return (line || '').replace(/\*\*/g, '').trim();
+  return (line || '')
+    .replace(/\*\*/g, '')
+    .replace(/^[-•*]\s+/, '')
+    .trim();
 }
 
 // ============================================================
