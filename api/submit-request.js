@@ -363,6 +363,20 @@ ${moduleSection}
           moduleStatus: moduleStatus,
           moduleMessage: moduleMessage,
           aiDebug: aiDebug
+                   aiAnalysis: ai1Result ? {
+            guide_individual: ai1Result.individual || '',
+            guide_network: ai1Result.social || '',
+            guide_policy: ai1Result.institutional || '',
+            cluster: cluster,
+            score_suggestion: suggestedScore,
+            analysis_note: ai2Result?.analysis || '',
+            matrix_emergence: ai2Result?.emergence || '',
+            matrix_layers: ai2Result?.layer || '',
+            matrix_connections: ai2Result?.connection || '',
+            matrix_scale: ai2Result?.scale || '',
+            matrix_capacity: ai2Result?.capacity || '',
+            ai3_final: ai3Result?.final || ''
+          } : null 
         });
       }
 
