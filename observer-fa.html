@@ -706,7 +706,12 @@
         return null;
     }
 
-    function normalizeAi3FromIssue(issue) {
+        function normalizeAi3FromIssue(issue) {
+        // ساختار جدید: aiAnalysis.ai3_final
+        if (issue.aiAnalysis && issue.aiAnalysis.ai3_final) {
+            return { final: issue.aiAnalysis.ai3_final, error: null };
+        }
+        // ساختار قدیمی: finalAnalysis
         if (issue.finalAnalysis) return { final: issue.finalAnalysis, error: null };
         if (issue.ai3Error) return { final: '', error: issue.ai3Error };
         return null;
