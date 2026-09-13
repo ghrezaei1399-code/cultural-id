@@ -55,6 +55,8 @@ module.exports = async function handler(req, res) {
         let ai3Result = null;
         const aiErrors = [];
 
+                const aiDebug = {};
+
         if (openRouterKey) {
           // اجرای AI-1 اول (چون AI-2 و AI-3 به آن نیاز دارند)
           try {
@@ -62,6 +64,7 @@ module.exports = async function handler(req, res) {
           } catch (err) {
             console.warn('AI-1 failed:', err.message);
             aiErrors.push('AI1');
+            aiDebug.AI1 = err.message;
           }
 
           // اجرای AI-2 و AI-3 به صورت موازی
@@ -70,11 +73,12 @@ module.exports = async function handler(req, res) {
             callAI3(obs.text, ai1Result, null, isPersian, openRouterKey)
           ]);
 
-          if (ai2Outcome.status === 'fulfilled') {
+                    if (ai2Outcome.status === 'fulfilled') {
             ai2Result = ai2Outcome.value;
           } else {
             console.warn('AI-2 failed:', ai2Outcome.reason?.message);
             aiErrors.push('AI2');
+            aiDebug.AI2 = ai2Outcome.reason?.message || 'Unknown error';
           }
 
           if (ai3Outcome.status === 'fulfilled') {
@@ -82,10 +86,8 @@ module.exports = async function handler(req, res) {
           } else {
             console.warn('AI-3 failed:', ai3Outcome.reason?.message);
             aiErrors.push('AI3');
+            aiDebug.AI3 = ai3Outcome.reason?.message || 'Unknown error';
           }
-        } else {
-          aiErrors.push('AI1', 'AI2', 'AI3');
-        }
 
         const cluster = ai2Result?.cluster || 'human';
         const suggestedScore = ai2Result?.score || null;
@@ -351,14 +353,15 @@ ${moduleSection}
           });
         }
 
-        createdIssues.push({
+                createdIssues.push({
           number: issueData.number,
           url: issueData.html_url,
           trackingCode: `OBS-${issueData.number}`,
           observation: obs.text.substring(0, 50) + '...',
           module: selectedModule,
           moduleStatus: moduleStatus,
-          moduleMessage: moduleMessage
+          moduleMessage: moduleMessage,
+          aiDebug: aiDebug
         });
       }
 
@@ -818,10 +821,19 @@ ${moduleSection}
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const AI_MODEL = 'openai/gpt-4o-mini';
-
 async function callOpenRouter({ systemPrompt, userPrompt, apiKey, maxTokens = 1500, temperature = 0.4 }) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 18000);
+
+  if (!apiKey) {
+    clearTimeout(timeoutId);
+    throw new Error('API_KEY_MISSING: OPENROUTER_API_KEY is not set');
+  }
+
+  if (!apiKey.startsWith('sk-or-')) {
+    clearTimeout(timeoutId);
+    throw new Error(`API_KEY_INVALID: OPENROUTER_API_KEY does not start with "sk-or-". Current prefix: "${apiKey.substring(0, 8)}..."`);
+  }
 
   try {
     const response = await fetch(OPENROUTER_URL, {
@@ -849,7 +861,7 @@ async function callOpenRouter({ systemPrompt, userPrompt, apiKey, maxTokens = 15
 
     if (!response.ok) {
       const errText = await response.text().catch(() => '');
-      throw new Error(`OpenRouter HTTP ${response.status}: ${errText.substring(0, 200)}`);
+      throw new Error(`HTTP_${response.status}: ${errText.substring(0, 300)}`);
     }
 
     const data = await response.json();
@@ -863,10 +875,13 @@ async function callOpenRouter({ systemPrompt, userPrompt, apiKey, maxTokens = 15
     return JSON.parse(jsonStr);
   } catch (err) {
     clearTimeout(timeoutId);
-    throw err;
+    // خطا را با نام دقیق‌تر پرتاب کن
+    const msg = err.name === 'AbortError' 
+      ? 'TIMEOUT_18S: OpenRouter did not respond within 18 seconds'
+      : err.message;
+    throw new Error(msg);
   }
 }
-
 
 async function callAI1(observationText, isPersian, apiKey) {
   const systemPrompt = isPersian ? AI1_PROMPT_FA : AI1_PROMPT_EN;
