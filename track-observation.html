@@ -224,7 +224,6 @@
         }
         body.dark .error-banner { color: #f1948a; }
 
-        /* ماژول */
         .module-status-badge {
             display: inline-block;
             padding: 0.1rem 0.6rem;
@@ -244,7 +243,6 @@
         body.dark .module-status-badge.pending { color: #f9e79f; }
         body.dark .module-status-badge.no_peers { color: #aab7b8; }
 
-        /* بازخورد */
         .feedback-box {
             margin-top: 1.5rem;
             padding: 1rem;
@@ -312,6 +310,42 @@
         .fb-fail { color: #6a1a1a; border-color: #e74c3c; background: rgba(231,76,60,0.1); }
         .fb-fail:hover { background: rgba(231,76,60,0.25); }
         .fb-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .feedback-display {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(39,174,96,0.08);
+            border-radius: 12px;
+            border: 2px solid rgba(39,174,96,0.3);
+        }
+        body.dark .feedback-display { background: rgba(39,174,96,0.03); border-color: rgba(39,174,96,0.15); }
+        .feedback-display h4 {
+            font-size: 0.9rem;
+            color: #1a6a3a;
+            margin-bottom: 0.6rem;
+            text-align: center;
+        }
+        body.dark .feedback-display h4 { color: #82e0aa; }
+        .feedback-display .result-badge {
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .feedback-display .result-badge.success { background: rgba(39,174,96,0.15); color: #1a6a3a; }
+        .feedback-display .result-badge.revision { background: rgba(243,156,18,0.15); color: #8a5a0a; }
+        .feedback-display .result-badge.failed { background: rgba(231,76,60,0.15); color: #6a1a1a; }
+        .feedback-display .feedback-text {
+            font-size: 0.85rem;
+            line-height: 1.8;
+            padding: 0.6rem 0.8rem;
+            background: rgba(255,255,255,0.4);
+            border-radius: 8px;
+            font-style: italic;
+        }
+        body.dark .feedback-display .feedback-text { background: rgba(0,0,0,0.1); }
 
         .error-msg { color: #c0392b; text-align: center; padding: 0.5rem; }
         body.dark .error-msg { color: #f1948a; }
@@ -394,6 +428,7 @@
                     <button class="fb-btn fb-fail" onclick="submitFeedback('fail')">❌ شکست خورد</button>
                 </div>
             </div>
+            <div id="feedbackDisplay" class="feedback-display" style="display:none;"></div>
             <div id="errorMsg" class="error-msg" style="display:none;"></div>
         </div>
         
@@ -431,6 +466,12 @@
             'governance': 'حکمرانی و تمدن', 'survival': 'بقا و آینده', 'other': 'نامشخص'
         };
 
+        const feedbackResultLabels = {
+            'success': '✅ موفق بود',
+            'revision': '⚠️ نیاز به اصلاح',
+            'failed': '❌ شکست خورد'
+        };
+
         let currentTrackingCode = null;
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -449,6 +490,7 @@
             const statusTitle = document.getElementById('statusTitle');
             const unifiedContent = document.getElementById('unifiedContent');
             const feedbackBox = document.getElementById('feedbackBox');
+            const feedbackDisplay = document.getElementById('feedbackDisplay');
             const errorMsg = document.getElementById('errorMsg');
             
             if (!trackingCode) { alert('لطفاً کد پیگیری را وارد کنید.'); return; }
@@ -460,6 +502,8 @@
             resultBox.style.display = 'none';
             unifiedContent.innerHTML = '';
             feedbackBox.style.display = 'none';
+            feedbackDisplay.style.display = 'none';
+            feedbackDisplay.innerHTML = '';
             errorMsg.style.display = 'none';
             
             try {
@@ -488,14 +532,12 @@
                 // ===== باکس ۴ بخشی =====
                 let html = '';
                 
-                // ① مشاهده خام
                 html += `
                     <div class="section-box sec-obs">
                         <div class="sec-title">📝 ① مشاهده ثبت‌شده</div>
                         <div class="sec-body">${result.observation || '---'}</div>
                     </div>`;
                 
-                // ② AI-1
                 if (result.guide && (result.guide.individual || result.guide.network || result.guide.policy)) {
                     html += `
                         <div class="section-box sec-ai1">
@@ -510,7 +552,6 @@
                     html += `<div class="section-box sec-ai1"><div class="error-banner">⚠️ تحلیل AI-1 دریافت نشد (AI1_FAILED)</div></div>`;
                 }
                 
-                // ③ AI-2
                 const hasAi2 = result.matrix_emergence || result.matrix_layers || result.matrix_connections || result.matrix_scale || result.matrix_capacity || result.analysis;
                 if (hasAi2) {
                     html += `
@@ -533,7 +574,6 @@
                     html += `<div class="section-box sec-ai2"><div class="error-banner">⚠️ تحلیل AI-2 دریافت نشد (AI2_FAILED)</div></div>`;
                 }
                 
-                // ④ AI-3
                 if (result.ai3Final) {
                     html += `
                         <div class="section-box sec-ai3">
@@ -544,7 +584,6 @@
                     html += `<div class="section-box sec-ai3"><div class="error-banner">⚠️ تحلیل نهایی دریافت نشد (AI3_FAILED)</div></div>`;
                 }
                 
-                // ⑤ ماژول
                 if (result.moduleType || result.moduleStatus) {
                     const moduleDisplay = moduleNames[result.moduleType] || result.moduleType || 'هیچ‌کدام';
                     const statusText = moduleStatusLabels[result.moduleStatus] || result.moduleStatus || 'pending';
@@ -563,9 +602,28 @@
                 
                 unifiedContent.innerHTML = html;
                 
-                // ===== نمایش باکس بازخورد فقط برای مشاهدات تأییدشده =====
+                // ===== نمایش فرم بازخورد یا بازخورد قبلی =====
                 if (result.status === 'approved') {
-                    feedbackBox.style.display = 'block';
+                    if (result.userFeedback) {
+                        // کاربر قبلاً بازخورد داده — نمایش بازخورد ثبت‌شده
+                        const resultClass = result.userFeedback.result || 'success';
+                        feedbackDisplay.innerHTML = `
+                            <h4>✅ بازخورد شما قبلاً ثبت شده است</h4>
+                            <div style="text-align:center;">
+                                <span class="result-badge ${resultClass}">${feedbackResultLabels[resultClass] || result.userFeedback.resultLabel || resultClass}</span>
+                            </div>
+                            <div class="feedback-text">${result.userFeedback.text}</div>
+                            <div style="font-size:0.7rem; color:#888; text-align:center; margin-top:0.5rem;">
+                                زمان ثبت: ${new Date(result.userFeedback.timestamp).toLocaleString('fa-IR')}
+                            </div>
+                        `;
+                        feedbackDisplay.style.display = 'block';
+                        feedbackBox.style.display = 'none';
+                    } else {
+                        // کاربر هنوز بازخورد نداده — نمایش فرم
+                        feedbackBox.style.display = 'block';
+                        feedbackDisplay.style.display = 'none';
+                    }
                 }
                 
             } catch (error) {
@@ -576,6 +634,7 @@
                 statusTitle.textContent = 'خطا';
                 unifiedContent.innerHTML = '';
                 feedbackBox.style.display = 'none';
+                feedbackDisplay.style.display = 'none';
                 errorMsg.textContent = error.message || 'مشاهده‌ای با این کد پیدا نشد.';
                 errorMsg.style.display = 'block';
             }
@@ -622,8 +681,24 @@
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || 'خطا در ثبت بازخورد');
                 
-                alert(`✅ بازخورد شما با موفقیت ثبت شد.\n\nکد رهگیری بازخورد: ${data.trackingCode}`);
-                document.getElementById('feedbackBox').style.display = 'none';
+                alert('✅ بازخورد شما با موفقیت ثبت شد.\n\nاز مشارکت شما سپاسگزاریم.');
+                
+                // ===== تبدیل فرم به نمایش بازخورد =====
+                const feedbackBox = document.getElementById('feedbackBox');
+                const feedbackDisplay = document.getElementById('feedbackDisplay');
+                
+                feedbackDisplay.innerHTML = `
+                    <h4>✅ بازخورد شما ثبت شد</h4>
+                    <div style="text-align:center;">
+                        <span class="result-badge ${result}">${resultLabels[result]}</span>
+                    </div>
+                    <div class="feedback-text">${feedbackText}</div>
+                    <div style="font-size:0.7rem; color:#888; text-align:center; margin-top:0.5rem;">
+                        زمان ثبت: ${new Date().toLocaleString('fa-IR')}
+                    </div>
+                `;
+                feedbackDisplay.style.display = 'block';
+                feedbackBox.style.display = 'none';
                 
             } catch (error) {
                 console.error('Feedback error:', error);
