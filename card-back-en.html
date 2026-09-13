@@ -248,11 +248,11 @@
                 .then(res => res.json())
                 .then(data => {
                     const displayElement = document.getElementById('cardCodeDisplay');
-                    if (data.user && data.user.displayCode) {
-                        displayElement.textContent = data.user.displayCode;
-                    } else {
-                        displayElement.textContent = code.replace(/-/g, ' - ');
-                    }
+                    if (data.user && data.user.cardCode) {
+    displayElement.textContent = data.user.cardCode;
+} else {
+    displayElement.textContent = code;
+}
                 })
                 .catch(err => {
                     console.error('Error:', err);
