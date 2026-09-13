@@ -353,9 +353,6 @@
         .btn-wisdom { background: linear-gradient(135deg, #2874a6, #5dade2); color: #fff; }
         .btn-atlas { background: linear-gradient(135deg, #6a3d9a, #d2b4de); color: #fff; }
 
-        .btn-achievement-no-link, .btn-atlas-no-link { cursor: default; opacity: 0.7; }
-        .btn-achievement-no-link:hover, .btn-atlas-no-link:hover { transform: none; box-shadow: none; }
-
         .cta-note { text-align: center; font-size: 0.5rem; color: #6a5a3a; margin: -0.3rem 0 0.5rem 0; font-weight: 600; }
         body.dark .cta-note { color: #c8b890; }
 
@@ -442,26 +439,11 @@
             font-weight: 700;
             margin-top: 0.2rem;
         }
-        .module-status-badge.success {
-            background: rgba(39,174,96,0.15);
-            color: #1a6a3a;
-        }
-        .module-status-badge.revision {
-            background: rgba(243,156,18,0.15);
-            color: #8a5a0a;
-        }
-        .module-status-badge.failed {
-            background: rgba(231,76,60,0.15);
-            color: #6a1a1a;
-        }
-        .module-status-badge.pending {
-            background: rgba(241,196,15,0.15);
-            color: #b7950b;
-        }
-        .module-status-badge.no_peers {
-            background: rgba(149,165,166,0.15);
-            color: #5a6a6a;
-        }
+        .module-status-badge.success { background: rgba(39,174,96,0.15); color: #1a6a3a; }
+        .module-status-badge.revision { background: rgba(243,156,18,0.15); color: #8a5a0a; }
+        .module-status-badge.failed { background: rgba(231,76,60,0.15); color: #6a1a1a; }
+        .module-status-badge.pending { background: rgba(241,196,15,0.15); color: #b7950b; }
+        .module-status-badge.no_peers { background: rgba(149,165,166,0.15); color: #5a6a6a; }
         body.dark .module-status-badge.success { color: #82e0aa; }
         body.dark .module-status-badge.revision { color: #f5b041; }
         body.dark .module-status-badge.failed { color: #f1948a; }
@@ -474,27 +456,6 @@
             font-weight: 600;
         }
         body.dark .module-type-label { color: #d2b4de; }
-
-        .feedback-row {
-            display: flex;
-            gap: 0.3rem;
-            width: 100%;
-            margin-top: 0.2rem;
-        }
-        .fb-btn {
-            flex: 1;
-            padding: 0.2rem;
-            font-size: 0.5rem;
-            border-radius: 6px;
-            border: 1px solid rgba(0,0,0,0.1);
-            background: rgba(255,255,255,0.5);
-            cursor: pointer;
-            text-align: center;
-        }
-        .fb-btn:hover { background: #eee; }
-        .fb-success { color: #27ae60; border-color: #27ae60; }
-        .fb-fix { color: #f39c12; border-color: #f39c12; }
-        .fb-fail { color: #e74c3c; border-color: #e74c3c; }
 
         .empty-state { text-align: center; padding: 0.5rem; color: #888; font-size: 0.7rem; }
 
@@ -539,6 +500,19 @@
             z-index: 10;
         }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .feedback-note {
+            font-size: 0.7rem;
+            color: #8a6d1f;
+            text-align: center;
+            padding: 0.6rem;
+            background: rgba(212,175,55,0.08);
+            border-radius: 8px;
+            border: 1px dashed rgba(212,175,55,0.3);
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+        body.dark .feedback-note { color: #f9e79f; background: rgba(212,175,55,0.04); }
 
         @media (max-width: 768px) {
             body { padding: 0.5rem; }
@@ -754,7 +728,6 @@
                 <h2 id="modalTitle" style="color:#8a6d1f; margin-bottom:0.5rem; font-size:1.1rem;"></h2>
                 <div id="modalDesc" style="line-height:1.6; color:#3a2a1a; font-size:0.85rem;"></div>
                 
-                <!-- ===== بخش ماژول ===== -->
                 <div id="modalModule" style="margin-top:0.8rem; padding:0.6rem; background:rgba(106,61,154,0.06); border-radius:10px; border-right:3px solid #6a3d9a; display:none;">
                     <div style="font-size:0.75rem; font-weight:700; color:#6a3d9a; margin-bottom:0.3rem;">📌 ماژول انتخاب‌شده:</div>
                     <div id="modalModuleType" style="font-size:0.85rem; color:#2a1a0a;"></div>
@@ -767,41 +740,29 @@
                     <h4 style="font-size:0.9rem; color:#8a6d1f; margin-bottom:0.5rem;">📋 راهنمای اقدام:</h4>
                     <div id="guideContent" style="font-size:0.8rem;"></div>
                 </div>
-                <div id="modalFeedback" style="margin-top:1rem; display:none;">
-                    <h4 style="font-size:0.9rem; color:#6a3d9a; margin-bottom:0.5rem;">📊 گزارش اثربخشی:</h4>
-                    <div class="feedback-row">
-                        <button class="fb-btn fb-success" onclick="submitFeedback('success')">✅ موفق بود</button>
-                        <button class="fb-btn fb-fix" onclick="submitFeedback('fix')">⚠️ نیاز به اصلاح</button>
-                        <button class="fb-btn fb-fail" onclick="submitFeedback('fail')">❌ شکست خورد</button>
-                    </div>
+
+                <div id="modalFeedbackNote" class="feedback-note" style="display:none;">
+                    📊 گزارش اثربخشی: (در صورت ارائه بازخورد از طرف مشاهده‌کننده، این بخش نیز به رویت می‌رسد)
                 </div>
+
                 <div id="modalMeta" style="margin-top:0.8rem; font-size:0.7rem; color:#888;"></div>
             </div>
         </div>
     </div>
 
 </div>
+
 <script>
 let allApproved = [];
 let allAtlasItems = [];
 let currentModalItem = null;
 
-// ============================================================
-// نرمال‌سازی داده‌های AI
-// ============================================================
 function normalizeGuide(item) {
     if (item.guide && (item.guide.individual || item.guide.network || item.guide.policy)) {
         return {
             individual: item.guide.individual || '',
             social: item.guide.network || '',
             institutional: item.guide.policy || ''
-        };
-    }
-    if (item.analysis && item.analysis.guide) {
-        return {
-            individual: item.analysis.guide.individual || '',
-            social: item.analysis.guide.network || '',
-            institutional: item.analysis.guide.policy || ''
         };
     }
     return null;
@@ -828,9 +789,6 @@ function normalizeAi3(item) {
     return item.ai3Final || '';
 }
 
-// ============================================================
-// بارگذاری دستاوردها
-// ============================================================
 async function loadAchievements() {
     const container = document.getElementById('achievementsListContainer');
     try {
@@ -866,9 +824,6 @@ function renderAchievements(items) {
 
 function filterAchievements() { renderAchievements(allApproved); }
 
-// ============================================================
-// بارگذاری اطلس ظهور
-// ============================================================
 async function loadAtlas() {
     const container = document.getElementById('atlasListContainer');
     try {
@@ -911,11 +866,14 @@ function renderAtlas(items) {
         };
         const moduleDisplay = moduleNames[moduleType] || moduleType || '';
         
+        // نمایش امتیاز ادمین (اگر موجود باشد) وگرنه امتیاز AI
+        const displayScore = item.adminScore || item.score || '---';
+        
         return `
             <div class="achievement-item" onclick="openAtlasModal(${index})">
                 <div class="item-info">
                     <h4>${item.observation ? item.observation.substring(0, 50) + '...' : 'مشاهده'}</h4>
-                    <span class="item-meta">⭐ امتیاز ${item.score || '---'}</span>
+                    <span class="item-meta">⭐ امتیاز ${displayScore}</span>
                     ${moduleDisplay ? `<span class="module-type-label">${moduleDisplay}</span>` : ''}
                     <span class="module-status-badge ${statusClass}">${statusText}</span>
                 </div>
@@ -925,9 +883,6 @@ function renderAtlas(items) {
     }).join('');
 }
 
-// ============================================================
-// مودال دستاورد
-// ============================================================
 function openModal(index) {
     const item = allApproved[index];
     if (!item) return;
@@ -939,7 +894,7 @@ function openModal(index) {
     document.getElementById('modalDesc').innerHTML = descText;
     document.getElementById('modalMeta').textContent = `ارسال کننده: ${item.owner}`;
     document.getElementById('modalGuide').style.display = 'none';
-    document.getElementById('modalFeedback').style.display = 'none';
+    document.getElementById('modalFeedbackNote').style.display = 'none';
     document.getElementById('modalModule').style.display = 'none';
     const mediaDiv = document.getElementById('modalMediaContainer');
     const imageUrl = item.fileUrl || item.fileData;
@@ -951,27 +906,23 @@ function openModal(index) {
     document.getElementById('detailModal').classList.add('active');
 }
 
-// ============================================================
-// مودال اطلس ظهور (۴ بخش)
-// ============================================================
 function openAtlasModal(index) {
     const item = allAtlasItems[index];
     if (!item) return;
     currentModalItem = item;
     
-    document.getElementById('modalTitle').textContent = '🏛️ پرونده ظهور';
-    document.getElementById('modalDesc').innerHTML = '';
-    document.getElementById('modalMeta').textContent = `⭐ امتیاز: ${item.score || '---'} | وضعیت: ${item.status === 'approved' ? '✅ تأیید شده' : '⏳ در انتظار'}`;
+    document.getElementById('modalTitle').textContent = '🏛️ مشاهده از اطلس ظهور';
+    document.getElementById('modalDesc').innerHTML = item.observation || 'متن مشاهده موجود نیست';
+    
+    const displayScore = item.adminScore || item.score || '---';
+    document.getElementById('modalMeta').textContent = `⭐ امتیاز: ${displayScore} | وضعیت: ${item.status === 'approved' ? '✅ تأیید شده' : '⏳ در انتظار'}`;
     
     const mediaDiv = document.getElementById('modalMediaContainer');
     mediaDiv.innerHTML = '';
     
-    // ===== اطلاعات ماژول =====
     const moduleDiv = document.getElementById('modalModule');
     const moduleType = item.moduleType || '';
     const moduleStatus = item.moduleStatus || 'pending';
-    const moduleData = item.moduleData || [];
-    const moduleAnalysis = item.moduleAnalysis || '';
     
     const moduleNames = {
         'collaboration': '🤝 همفکری با دیگران',
@@ -995,15 +946,10 @@ function openAtlasModal(index) {
         moduleDiv.style.display = 'block';
         document.getElementById('modalModuleType').textContent = moduleDisplay;
         document.getElementById('modalModuleStatus').innerHTML = `<span class="module-status-badge ${statusClass}">${statusText}</span>`;
-        document.getElementById('modalModuleData').textContent = moduleData.length > 0 ? `نتایج: ${moduleData.join(', ')}` : '';
-        document.getElementById('modalModuleAnalysis').textContent = moduleAnalysis || '';
     } else {
         moduleDiv.style.display = 'none';
     }
     
-    // ============================================================
-    // باکس ۴ بخشی
-    // ============================================================
     const guideBox = document.getElementById('modalGuide');
     const guideContent = document.getElementById('guideContent');
     
@@ -1018,14 +964,12 @@ function openAtlasModal(index) {
     
     let html = '';
     
-    // ① مشاهده خام
     html += `
         <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(212,175,55,0.08); border-radius:10px; border-right:4px solid #d4af37;">
             <div style="font-weight:800; font-size:0.85rem; color:#8a6d1f; margin-bottom:0.4rem;">📝 مشاهده ثبت‌شده</div>
             <div style="font-size:0.85rem; line-height:1.8;">${item.observation || '---'}</div>
         </div>`;
     
-    // ② AI-1
     if (guide && (guide.individual || guide.social || guide.institutional)) {
         html += `
             <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(16,185,129,0.06); border-radius:10px; border-right:4px solid #10b981;">
@@ -1036,14 +980,12 @@ function openAtlasModal(index) {
             </div>`;
     }
     
-    // ③ AI-2
     if (matrix && (matrix.emergence || matrix.layer || matrix.connection || matrix.scale || matrix.capacity || matrix.analysis)) {
         html += `
             <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(99,102,241,0.06); border-radius:10px; border-right:4px solid #6366f1;">
                 <div style="font-weight:800; font-size:0.85rem; color:#4338ca; margin-bottom:0.4rem;">
                     🧠 ماتریس ۵ سطحی (AI-2)
                     ${matrix.cluster ? `<span style="background:rgba(212,175,55,0.15); padding:0.1rem 0.6rem; border-radius:10px; font-size:0.7rem; margin-right:0.3rem;">📂 ${clusterNames[matrix.cluster] || matrix.cluster}</span>` : ''}
-                    ${matrix.score ? `<span style="background:rgba(39,174,96,0.15); padding:0.1rem 0.6rem; border-radius:10px; font-size:0.7rem;">⭐ امتیاز: ${matrix.score}</span>` : ''}
                 </div>
                 ${matrix.emergence ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 ظهورها:</strong> ${matrix.emergence}</div>` : ''}
                 ${matrix.layer ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 لایه‌ها:</strong> ${matrix.layer}</div>` : ''}
@@ -1054,7 +996,6 @@ function openAtlasModal(index) {
             </div>`;
     }
     
-    // ④ AI-3
     if (ai3Final) {
         html += `
             <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(236,72,153,0.06); border-radius:10px; border-right:4px solid #ec4899;">
@@ -1063,86 +1004,20 @@ function openAtlasModal(index) {
             </div>`;
     }
     
-    // اگر هیچ AI نبود
     if (!guide && !matrix && !ai3Final) {
         html += `
             <div style="padding:0.8rem; background:rgba(231,76,60,0.08); border-radius:10px; border-right:4px solid #e74c3c;">
                 <div style="font-weight:800; font-size:0.85rem; color:#7a1a1a;">⚠️ تحلیل هوش مصنوعی برای این مشاهده موجود نیست</div>
-                <div style="font-size:0.78rem; color:#7a1a1a; margin-top:0.3rem;">ممکن است این مشاهده قبل از فعال‌سازی سیستم تحلیل سه‌لایه ثبت شده باشد.</div>
             </div>`;
     }
     
     guideContent.innerHTML = html;
     guideBox.style.display = 'block';
-    document.getElementById('modalFeedback').style.display = 'block';
+    
+    // ===== نمایش پیام راهنمای بازخورد =====
+    document.getElementById('modalFeedbackNote').style.display = 'block';
+    
     document.getElementById('detailModal').classList.add('active');
-}
-
-// ============================================================
-// ثبت بازخورد
-// ============================================================
-async function submitFeedback(type) {
-    if (!currentModalItem) return;
-    
-    const issueNumber = currentModalItem.number;
-    if (!issueNumber) {
-        alert('❌ شماره مشاهده پیدا نشد.');
-        return;
-    }
-    
-    const cardCode = prompt('برای ثبت بازخورد، لطفاً کد کارت هویت فرهنگی خود را وارد کنید:');
-    if (!cardCode || cardCode.trim().length < 5) {
-        alert('❌ کد کارت معتبر وارد نشد.');
-        return;
-    }
-    
-    const resultMap = {
-        'success': 'success',
-        'fix': 'revision',
-        'fail': 'failed'
-    };
-    const result = resultMap[type] || type;
-    
-    const resultLabels = {
-        'success': '✅ موفق بود',
-        'revision': '⚠️ نیاز به اصلاح',
-        'failed': '❌ شکست خورد'
-    };
-    
-    if (!confirm(`آیا از ثبت بازخورد «${resultLabels[result]}» برای مشاهده #${issueNumber} اطمینان دارید؟`)) {
-        return;
-    }
-    
-    const trackingCode = `OBS-${issueNumber}`;
-    document.querySelectorAll('.fb-btn').forEach(btn => btn.disabled = true);
-    
-    try {
-        const response = await fetch('/api/submit-request', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                type: 'observation_feedback',
-                cardCode: cardCode.trim(),
-                issueNumber: issueNumber,
-                trackingCode: trackingCode,
-                result: result,
-                feedback: `بازخورد عضو بر اساس راهنمای دریافتی: ${resultLabels[result]}`
-            })
-        });
-        
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || 'خطا در ثبت بازخورد');
-        
-        alert(`✅ بازخورد شما با موفقیت ثبت شد.\n\nکد رهگیری بازخورد: ${data.trackingCode}`);
-        
-        document.getElementById('detailModal').classList.remove('active');
-        setTimeout(() => { if (typeof loadAtlas === 'function') loadAtlas(); }, 500);
-        
-    } catch (error) {
-        console.error('Feedback error:', error);
-        alert('❌ خطا در ثبت بازخورد: ' + error.message);
-        document.querySelectorAll('.fb-btn').forEach(btn => btn.disabled = false);
-    }
 }
 
 function closeModal(e) {
@@ -1160,6 +1035,5 @@ if (localStorage.getItem('theme') === 'dark') {
     document.body.classList.add('dark');
 }
 </script>
-
 </body>
 </html>
