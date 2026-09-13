@@ -5,7 +5,7 @@ module.exports = async function handler(req, res) {
   }
 
   const token = process.env.OBSERVER_TOKEN || process.env.GH_TOKEN;
-  const openRouterKey = process.env.OPENROUTER_API_KEY; // کلید هوش دوم
+  const openRouterKey = process.env.OPENROUTER_API_KEY;
   
   if (!token) {
     return res.status(500).json({ error: 'Token is not configured' });
@@ -15,7 +15,7 @@ module.exports = async function handler(req, res) {
   const owner = 'ghrezaei1399-code';
   const repo = 'cultural-id';
 
-  // ===== بخش جدید: تحلیل بازخورد توسط هوش دوم (Deep Analysis of Feedback) =====
+  // ===== بخش تحلیل بازخورد توسط هوش دوم =====
   if (action === 'analyze_feedback' && feedbackText) {
     if (!openRouterKey) {
       return res.status(500).json({ error: 'OPENROUTER_API_KEY is missing for deep analysis' });
@@ -65,13 +65,6 @@ module.exports = async function handler(req, res) {
       const data = await response.json();
       const deepAnalysis = JSON.parse(data.choices[0]?.message?.content || '{}');
 
-      // ذخیره تحلیل در فایل بازخورد
-      if (feedbackId) {
-        const feedbackPath = `data/feedbacks/${feedbackId}.json`;
-        // اینجا باید فایل موجود را بخوانیم و آپدیت کنیم، اما برای سادگی فرض می‌کنیم ID همان نام فایل است
-        // در پیاده‌سازی واقعی باید فایل را خواند و فیلد analysis را اضافه کرد
-      }
-
       return res.status(200).json({ success: true, analysis: deepAnalysis });
     } catch (error) {
       console.error('Groq API Error:', error);
@@ -103,7 +96,6 @@ module.exports = async function handler(req, res) {
           newLabels.push('approved');
           newLabels.push('observation');
           
-          // تولید بسته راهنما
           const guide = generateGuide(issueData.body);
           const commentBody = `
 ### بسته راهنمای اقدام عملی
@@ -140,7 +132,6 @@ ${guide.policy}
             body: JSON.stringify({ body: commentBody })
           });
 
-          // ===== اجرای ماژول انتخاب‌شده =====
           const selectedModule = extractModuleFromIssue(issueData.body);
           let moduleResult = null;
           
@@ -169,7 +160,6 @@ ${guide.policy}
             newLabels.push('related');
           }
           
-          // ===== ذخیره نتیجه‌ی ماژول =====
           if (moduleResult) {
             await saveModuleResult(issueNumber, moduleResult, token);
           }
@@ -199,7 +189,7 @@ ${guide.policy}
         });
       }
 
-      // ===== ذخیره تحلیل ۵ سطحی =====
+      // ===== ذخیره تحلیل + امتیاز ادمین در Issue =====
       if (action === 'save_analysis' && analysis) {
         const analysisPath = `data/analyses/${issueNumber}.json`;
         const analysisData = {
@@ -237,12 +227,34 @@ ${guide.policy}
           body: JSON.stringify(body)
         });
 
-        // نکته مهم: فقط اگر امتیاز ۵ باشد، برچسب gallery اضافه می‌شود
+        // ===== ثبت امتیاز ادمین در Issue (کامنت جدید) =====
+        const adminScoreComment = `
+### ⭐ امتیاز ادمین
+
+**امتیاز نهایی:** ${score || 0}
+
+**Admin Score:** ${score || 0}
+
+**زمان ثبت:** ${new Date().toISOString()}
+
+---
+*این امتیاز توسط ادمین ثبت شده و در گالری اطلس ظهور نمایش داده می‌شود.*
+        `;
+
+        await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/comments`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/vnd.github.v3+json'
+          },
+          body: JSON.stringify({ body: adminScoreComment })
+        });
+
         if (score === 5) {
           if (!newLabels.includes('gallery')) newLabels.push('gallery');
         }
         
-        // حذف برچسب pending-review چون تحلیل انجام شده
         newLabels = newLabels.filter(l => l !== 'pending-review');
         
         await updateIssueLabels(issueNumber, newLabels, token);
@@ -253,7 +265,7 @@ ${guide.policy}
         });
       }
 
-      // ===== ارسال به گالری (امتیاز ۵ و تایید نهایی) =====
+      // ===== ارسال به گالری =====
       if (action === 'submit_gallery') {
         const analysisPath = `data/analyses/${issueNumber}.json`;
         const analysisRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${analysisPath}`, {
@@ -271,12 +283,12 @@ ${guide.policy}
           return res.status(400).json({ error: 'برای ارسال به گالری، امتیاز باید ۵ باشد.' });
         }
         
-        const newLabels = currentLabels.filter(l => l !== 'pending-review');
-        if (!newLabels.includes('gallery')) newLabels.push('gallery');
-        if (!newLabels.includes('approved')) newLabels.push('approved');
-        newLabels.push('observation');
+        const newLabelsGallery = currentLabels.filter(l => l !== 'pending-review');
+        if (!newLabelsGallery.includes('gallery')) newLabelsGallery.push('gallery');
+        if (!newLabelsGallery.includes('approved')) newLabelsGallery.push('approved');
+        newLabelsGallery.push('observation');
         
-        await updateIssueLabels(issueNumber, newLabels, token);
+        await updateIssueLabels(issueNumber, newLabelsGallery, token);
 
         return res.status(200).json({
           success: true,
@@ -286,7 +298,6 @@ ${guide.policy}
 
       // ===== انتخاب هم‌فکران توسط ادمین =====
       if (action === 'select_referral' && selected) {
-        // دریافت نتیجه ماژول
         const modulePath = `data/module-results/${issueNumber}.json`;
         const moduleRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${modulePath}`, {
           headers: { 'Authorization': `Bearer ${token}` }
@@ -299,7 +310,6 @@ ${guide.policy}
         const moduleDataRaw = await moduleRes.json();
         const moduleData = JSON.parse(Buffer.from(moduleDataRaw.content, 'base64').toString('utf8'));
         
-        // به‌روزرسانی انتخاب‌ها
         moduleData.moduleResult.selected = selected;
         moduleData.moduleResult.status = 'completed';
         moduleData.updatedAt = new Date().toISOString();
@@ -334,7 +344,7 @@ ${guide.policy}
     }
   }
 
-  // ===== منطق قبلی: تأیید/رد درخواست‌های ارتباط =====
+  // ===== تأیید/رد درخواست‌های ارتباط =====
   if (!fileName || !action) {
     return res.status(400).json({ error: 'نام فایل و نوع عملیات الزامی است' });
   }
@@ -456,8 +466,8 @@ async function updateIssueLabels(issueNumber, labels, token, state = 'open') {
 function extractModuleFromIssue(body) {
   const lines = body.split('\n');
   for (const line of lines) {
-    if (line.includes('**ماژول انتخاب‌شده:**')) {
-      return line.replace('**ماژول انتخاب‌شده:**', '').trim();
+    if (line.includes('**Selected Module:**') || line.includes('**ماژول انتخاب‌شده:**')) {
+      return line.replace('**Selected Module:**', '').replace('**ماژول انتخاب‌شده:**', '').trim();
     }
   }
   return '';
@@ -466,8 +476,8 @@ function extractModuleFromIssue(body) {
 function extractCardCode(body) {
   const lines = body.split('\n');
   for (const line of lines) {
-    if (line.includes('**کد کارت:**')) {
-      return line.replace('**کد کارت:**', '').trim();
+    if (line.includes('**Card Code:**') || line.includes('**کد کارت:**')) {
+      return line.replace('**Card Code:**', '').replace('**کد کارت:**', '').trim();
     }
   }
   return '';
@@ -642,7 +652,6 @@ async function saveModuleResult(issueNumber, moduleResult, token) {
   }
 }
 
-// ===== تولید بسته راهنمای اقدام عملی =====
 function generateGuide(issueBody) {
   const text = issueBody.toLowerCase();
   let cluster = 'انسان';
