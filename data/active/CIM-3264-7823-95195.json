@@ -1,0 +1,27 @@
+{
+  "cardCode": "CIM-3264-7823-95195",
+  "optionalCode": "95195",
+  "values": [
+    "هویت ملی",
+    "خرد ضمنی",
+    "اعتماد توزیع شده",
+    "گفتگو",
+    "ارامش فعال",
+    "ترویج مدارا",
+    "تکامل مشترک"
+  ],
+  "priorities": [
+    4,
+    5,
+    6,
+    4,
+    3,
+    2,
+    1
+  ],
+  "communicationEmail": "ghrezaei1399@gmail.com",
+  "registrationDate": "2026-09-13T20:06:43.704Z",
+  "status": "approved",
+  "rank": 0,
+  "country": "Iran"
+}
