@@ -344,11 +344,11 @@
                 .then(data => {
                     const displayElement = document.getElementById('cardCodeDisplay');
                     // نمایش مستقیم کد بدون هیچ تغییری (بدون فاصله اضافی)
-                    if (data.user && data.user.cardCode) {
-                        displayElement.textContent = data.user.cardCode;
-                    } else {
-                        displayElement.textContent = code;
-                    }
+                   if (data.user && data.user.displayCode) {
+    displayElement.textContent = data.user.displayCode;
+} else {
+    displayElement.textContent = code.replace(/-/g, ' - ');
+}
                 })
                 .catch(err => {
                     console.error('Error:', err);
