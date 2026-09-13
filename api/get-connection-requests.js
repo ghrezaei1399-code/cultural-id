@@ -274,7 +274,7 @@ module.exports = async function handler(req, res) {
 
 
 // ============================================================
-// تابع کمکی: نرمال‌سازی یک خط (حذف ** و فاصله اضافه)
+// تابع کمکی: نرمال‌سازی خط
 // ============================================================
 function normalizeLine(line) {
   return (line || '')
@@ -283,22 +283,6 @@ function normalizeLine(line) {
     .trim();
 }
 
-// ============================================================
-// تابع کمکی: بررسی اینکه یک خط با یک تیتر شروع می‌شود
-// ============================================================
-function startsWithLabel(line, label) {
-  const normalized = normalizeLine(line);
-  return normalized.startsWith(label);
-}
-
-// ============================================================
-// تابع کمکی: استخراج مقدار بعد از یک تیتر
-// ============================================================
-function extractValue(line, label) {
-  const normalized = normalizeLine(line);
-  if (!normalized.startsWith(label)) return null;
-  return normalized.substring(label.length).trim();
-}
 
 // ============================================================
 // تابع اصلی: پارس کردن بدنه Issue
@@ -329,7 +313,7 @@ function parseIssueBody(body) {
   if (!body) return result;
 
   const lines = body.split('\n');
-  
+
   // ===== مرحله ۱: استخراج AI-3 (چند خطی) =====
   let ai3Start = -1;
   let ai3End = lines.length;
@@ -343,9 +327,9 @@ function parseIssueBody(body) {
   if (ai3Start !== -1) {
     for (let i = ai3Start; i < lines.length; i++) {
       const norm = normalizeLine(lines[i]);
-      if (norm === '---' || 
+      if (norm === '---' ||
           norm.startsWith('📌') ||
-          norm.startsWith('Module Result') ||
+          norm.includes('Module Result') ||
           norm.startsWith('AI Errors:') ||
           norm.startsWith('Module Status:') ||
           norm.startsWith('Tracking Code:') ||
@@ -357,55 +341,70 @@ function parseIssueBody(body) {
     const ai3Lines = [];
     for (let i = ai3Start; i < ai3End; i++) {
       const norm = normalizeLine(lines[i]);
-      if (norm && !norm.startsWith('⚠️') && !norm.includes('AI3_FAILED') && !norm.startsWith('Error Code:')) {
-        ai3Lines.push(norm);
-      } else if (norm.includes('AI3_FAILED') || norm.startsWith('⚠️')) {
+      if (!norm) continue;
+      if (norm.includes('AI3_FAILED') || norm.startsWith('⚠️')) {
         result.ai3Error = 'AI3_FAILED';
+      } else if (!norm.startsWith('Error Code:')) {
+        ai3Lines.push(norm);
       }
     }
     result.ai3Final = ai3Lines.join(' ').trim();
   }
 
-  // ===== مرحله ۲: استخراج خط به خط بقیه فیلدها =====
+  // ===== مرحله ۲: استخراج بقیه فیلدها =====
   let inObservation = false;
   let inModuleSection = false;
+  const observationLines = [];
 
   for (let i = 0; i < lines.length; i++) {
     const norm = normalizeLine(lines[i]);
     if (!norm) continue;
 
-    // --- Card Code ---
     if (norm.startsWith('Card Code:')) {
       result.cardCode = norm.substring('Card Code:'.length).trim();
       continue;
     }
 
-    // --- Observation ---
-    if (norm === 'Observation:') {
+    if (norm === 'Observation:' || norm === 'Observation') {
       inObservation = true;
       continue;
     }
 
-    // --- Selected Module ---
     if (norm.startsWith('Selected Module:')) {
       inObservation = false;
       result.module = norm.substring('Selected Module:'.length).trim();
       continue;
     }
 
-    // --- AI Analysis (بخش AI-1) ---
-    if (norm.startsWith('🤖 AI Analysis:') || norm === 'AI Analysis:') {
+    if (norm.includes('AI Analysis:')) {
       inObservation = false;
       continue;
     }
 
-    // --- Status ---
-    if (norm.startsWith('Status:')) {
-      // فقط برای نمایش — نادیده می‌گیریم
+    if (norm === 'Action Guide:' || norm === 'Action Guide') {
       continue;
     }
 
-    // --- Cluster ---
+    if (norm.startsWith('Status:') && !norm.includes('Module')) {
+      continue;
+    }
+
+    if (norm.startsWith('Individual:')) {
+      const val = norm.substring('Individual:'.length).trim();
+      if (val && val !== '---') result.guide.individual = val;
+      continue;
+    }
+    if (norm.startsWith('Network:')) {
+      const val = norm.substring('Network:'.length).trim();
+      if (val && val !== '---') result.guide.network = val;
+      continue;
+    }
+    if (norm.startsWith('Policy:')) {
+      const val = norm.substring('Policy:'.length).trim();
+      if (val && val !== '---') result.guide.policy = val;
+      continue;
+    }
+
     if (norm.startsWith('Cluster:')) {
       const clusterText = norm.substring('Cluster:'.length).trim();
       if (clusterText.includes('انسان') || clusterText.includes('Human')) result.cluster = 'human';
@@ -415,86 +414,60 @@ function parseIssueBody(body) {
       continue;
     }
 
-    // --- Suggested Score ---
     if (norm.startsWith('Suggested Score:')) {
       const match = norm.match(/\d+/);
       if (match) result.score = parseInt(match[0]);
       continue;
     }
 
-    // --- Action Guide ---
-    if (norm === 'Action Guide:' || norm.startsWith('Action Guide:')) {
-      continue;
-    }
-
-    if (norm.startsWith('Individual:')) {
-      const val = norm.substring('Individual:'.length).trim();
-      if (val && val !== '---') result.guide.individual = val;
-      continue;
-    }
-
-    if (norm.startsWith('Network:')) {
-      const val = norm.substring('Network:'.length).trim();
-      if (val && val !== '---') result.guide.network = val;
-      continue;
-    }
-
-    if (norm.startsWith('Policy:')) {
-      const val = norm.substring('Policy:'.length).trim();
-      if (val && val !== '---') result.guide.policy = val;
-      continue;
-    }
-
-    // --- 5 Matrices ---
-    if (norm === '5 Matrices:' || norm.startsWith('5 Matrices:') || norm === '5 Matrices') {
-      continue;
-    }
+    if (norm === '5 Matrices:' || norm === '5 Matrices') continue;
 
     if (norm.startsWith('Emergence:')) {
       const val = norm.substring('Emergence:'.length).trim();
       if (val && val !== '---') result.matrix_emergence = val;
       continue;
     }
-
     if (norm.startsWith('Layers:')) {
       const val = norm.substring('Layers:'.length).trim();
       if (val && val !== '---') result.matrix_layers = val;
       continue;
     }
-
     if (norm.startsWith('Connections:')) {
       const val = norm.substring('Connections:'.length).trim();
       if (val && val !== '---') result.matrix_connections = val;
       continue;
     }
-
     if (norm.startsWith('Scale:')) {
       const val = norm.substring('Scale:'.length).trim();
       if (val && val !== '---') result.matrix_scale = val;
       continue;
     }
-
     if (norm.startsWith('Capacity:')) {
       const val = norm.substring('Capacity:'.length).trim();
       if (val && val !== '---') result.matrix_capacity = val;
       continue;
     }
 
-    // --- Analysis (AI-2) ---
-    if (norm.startsWith('Analysis:') && !norm.includes('Module')) {
+    if (norm.startsWith('Analysis:') && !inModuleSection) {
       const val = norm.substring('Analysis:'.length).trim();
       if (val && val !== '---' && val !== 'تحلیل') result.analysis = val;
       continue;
     }
 
-    // --- AI Errors ---
     if (norm.startsWith('AI Errors:')) {
       result.aiErrors = norm.substring('AI Errors:'.length).trim();
       continue;
     }
 
-    // --- Module Result ---
-    if (norm.startsWith('📌') || norm.includes('Module Result:')) {
+    if (norm.startsWith('Module Status:')) {
+      continue;
+    }
+
+    if (norm.startsWith('Tracking Code:')) {
+      continue;
+    }
+
+    if (norm.includes('Module Result:') || norm.startsWith('📌')) {
       inModuleSection = true;
       inObservation = false;
       continue;
@@ -505,9 +478,7 @@ function parseIssueBody(body) {
         result.moduleType = norm.substring('Type:'.length).trim();
         continue;
       }
-      if (norm.startsWith('Status:')) {
-        continue;
-      }
+      if (norm.startsWith('Status:')) continue;
       if (norm.startsWith('Results:')) {
         const val = norm.substring('Results:'.length).trim();
         result.moduleData = val.split(',').map(s => s.trim()).filter(s => s && s !== '---');
@@ -528,18 +499,16 @@ function parseIssueBody(body) {
       }
     }
 
-    // --- جمع‌آوری متن مشاهده ---
-    if (inObservation && norm && !norm.startsWith('---') && !norm.includes(':')) {
-      result.observation += norm + ' ';
-    }
-
-    // --- توقف در جداکننده اصلی ---
-    if (norm === '---' && !inModuleSection) {
-      inObservation = false;
+    if (inObservation && norm && !norm.startsWith('---')) {
+      if (norm.includes('AI Analysis:') || norm.startsWith('Selected Module:')) {
+        inObservation = false;
+      } else {
+        observationLines.push(norm);
+      }
     }
   }
 
-  result.observation = result.observation.trim();
+  result.observation = observationLines.join(' ').trim();
   if (!result.observation) {
     result.observation = body.substring(0, 200);
   }
