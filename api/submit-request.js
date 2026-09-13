@@ -56,6 +56,7 @@ module.exports = async function handler(req, res) {
         const aiErrors = [];
 
         if (openRouterKey) {
+          // اجرای AI-1 اول (چون AI-2 و AI-3 به آن نیاز دارند)
           try {
             ai1Result = await callAI1(obs.text, isPersian, openRouterKey);
           } catch (err) {
@@ -63,17 +64,23 @@ module.exports = async function handler(req, res) {
             aiErrors.push('AI1');
           }
 
-          try {
-            ai2Result = await callAI2(obs.text, ai1Result, isPersian, openRouterKey);
-          } catch (err) {
-            console.warn('AI-2 failed:', err.message);
+          // اجرای AI-2 و AI-3 به صورت موازی
+          const [ai2Outcome, ai3Outcome] = await Promise.allSettled([
+            callAI2(obs.text, ai1Result, isPersian, openRouterKey),
+            callAI3(obs.text, ai1Result, null, isPersian, openRouterKey)
+          ]);
+
+          if (ai2Outcome.status === 'fulfilled') {
+            ai2Result = ai2Outcome.value;
+          } else {
+            console.warn('AI-2 failed:', ai2Outcome.reason?.message);
             aiErrors.push('AI2');
           }
 
-          try {
-            ai3Result = await callAI3(obs.text, ai1Result, ai2Result, isPersian, openRouterKey);
-          } catch (err) {
-            console.warn('AI-3 failed:', err.message);
+          if (ai3Outcome.status === 'fulfilled') {
+            ai3Result = ai3Outcome.value;
+          } else {
+            console.warn('AI-3 failed:', ai3Outcome.reason?.message);
             aiErrors.push('AI3');
           }
         } else {
@@ -678,7 +685,7 @@ ${moduleSection}
     }
 
     // ============================================================
-    // بخش Observation Feedback (گسترش‌یافته با issueNumber و result)
+    // بخش Observation Feedback
     // ============================================================
     if (type === 'observation_feedback') {
       const { cardCode, feedback, issueNumber, trackingCode, result } = parsedBody;
@@ -696,7 +703,6 @@ ${moduleSection}
         'failed': '❌ شکست خورد'
       };
 
-      // ===== ۱. ذخیره در data/feedback/ =====
       const fileName = `observation-feedback-${Date.now()}-${Math.random().toString(36).substring(7)}.json`;
       const requestPath = `data/feedback/${fileName}`;
 
@@ -732,7 +738,6 @@ ${moduleSection}
         });
 
         if (!uploadRes.ok && uploadRes.status === 404) {
-          // پوشه وجود ندارد → با .gitkeep بساز
           await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/feedback/.gitkeep`, {
             method: 'PUT',
             headers: {
@@ -745,7 +750,6 @@ ${moduleSection}
               branch: 'main'
             })
           });
-          // تلاش دوباره
           await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${requestPath}`, {
             method: 'PUT',
             headers: {
@@ -763,7 +767,6 @@ ${moduleSection}
         console.warn('Feedback file save failed:', e.message);
       }
 
-      // ===== ۲. اضافه کردن کامنت به Issue اصلی =====
       if (issueNumber) {
         try {
           const commentBody = `
@@ -965,14 +968,9 @@ const AI1_PROMPT_FA = `تو یک «مشاهده‌گر سپهری» هستی ک�
 
 روش کار تو:
 
-۱. اول مشاهده را با دقت بخوان. ببین در متن چه چیزی «ظاهر» شده. به دنبال:
-   - ظرفیت‌هایی که در متن پنهان یا آشکار هستند
-   - موانعی که مانع تجلی ظرفیت‌ها شده‌اند
-   - گسست‌هایی میان سپهرها (فردی، اجتماعی، نهادی)
-   - ناهم‌ترازی‌هایی که در متن دیده می‌شود
-   - سپهرهایی که درگیر هستند و سپهرهایی که غایب‌اند
+۱. اول مشاهده را با دقت بخوان. ببین در متن چه چیزی «ظاهر» شده.
 
-۲. از خود پدیده شروع کن، نه از مشکل و نه از ظرفیت. بگذار خود متن، شکل تحلیل را تعیین کند.
+۲. از خود پدیده شروع کن، نه از مشکل و نه از ظرفیت.
 
 ۳. هیچ تعریف، تفسیر، نظریه یا چارچوب از پیش‌ساخته‌ای را بر مشاهده تحمیل نکن.
 
@@ -996,12 +994,7 @@ const AI1_PROMPT_EN = `You are a "Spherical Observer" within the "Sphere of Wisd
 
 Methodology:
 
-1. Read the observation carefully. Notice what has emerged. Look for:
-   - Hidden or visible capacities
-   - Obstacles preventing manifestation
-   - Fractures between spheres (individual, social, institutional)
-   - Asymmetries
-   - Spheres present and spheres absent
+1. Read the observation carefully.
 
 2. Begin from the phenomenon itself.
 
@@ -1061,11 +1054,11 @@ const AI2_PROMPT_EN = `You are a "Spherical Analyst". Task: fill the "Five-Level
 Method:
 
 1. Five matrices:
-   - Emergence: what has emerged?
-   - Layers: in which layers?
-   - Connections: with which spheres?
-   - Scale: at what scale?
-   - Capacity: what capacities?
+   - Emergence
+   - Layers
+   - Connections
+   - Scale
+   - Capacity
 
 2. Cluster:
    - human: poverty, education, health, mental health, addiction, youth, family
