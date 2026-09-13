@@ -362,8 +362,8 @@ ${moduleSection}
           module: selectedModule,
           moduleStatus: moduleStatus,
           moduleMessage: moduleMessage,
-          aiDebug: aiDebug
-                   aiAnalysis: ai1Result ? {
+          aiDebug: aiDebug,
+          aiAnalysis: ai1Result ? {
             guide_individual: ai1Result.individual || '',
             guide_network: ai1Result.social || '',
             guide_policy: ai1Result.institutional || '',
@@ -376,7 +376,7 @@ ${moduleSection}
             matrix_scale: ai2Result?.scale || '',
             matrix_capacity: ai2Result?.capacity || '',
             ai3_final: ai3Result?.final || ''
-          } : null 
+          } : null
         });
       }
 
