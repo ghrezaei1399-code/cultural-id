@@ -5,7 +5,6 @@ module.exports = async function handler(req, res) {
   const token = process.env.GH_TOKEN;
   if (!token) return res.status(500).json({ error: 'Token is not configured' });
 
-  // ===== دریافت و پارس بدنه درخواست =====
   let body = '';
   for await (const chunk of req) {
     body += chunk;
@@ -124,6 +123,7 @@ module.exports = async function handler(req, res) {
 
   // ============================================================
   // بخش مدیریت وضعیت دستاوردها (Achievements) - با کد رهگیری
+  // فقط فایل‌های achievement-*.json خوانده می‌شوند
   // ============================================================
   if (type === 'achievement') {
     if (!trackingCode) {
@@ -131,7 +131,6 @@ module.exports = async function handler(req, res) {
     }
 
     try {
-      // ===== پیدا کردن فایل درخواست دستاورد =====
       const listRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/requests`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -141,12 +140,19 @@ module.exports = async function handler(req, res) {
       }
 
       const files = await listRes.json();
+      if (!Array.isArray(files)) {
+        return res.status(500).json({ error: 'خطا در ساختار فایل‌ها' });
+      }
+
+      // ===== فقط فایل‌های achievement-*.json =====
+      const achievementFiles = files.filter(f => 
+        f.name && f.name.startsWith('achievement-') && f.name.endsWith('.json')
+      );
+
       let targetFile = null;
       let targetData = null;
 
-      for (const file of files) {
-        if (!file.name.startsWith('achievement-') || !file.name.endsWith('.json')) continue;
-        
+      for (const file of achievementFiles) {
         try {
           const fileRes = await fetch(file.url, {
             headers: { 'Authorization': `Bearer ${token}` }
@@ -154,18 +160,40 @@ module.exports = async function handler(req, res) {
           if (!fileRes.ok) continue;
           
           const fileData = await fileRes.json();
+          
+          // ===== چک کردن محتوای خالی =====
+          if (!fileData.content || fileData.content.trim() === '') {
+            console.warn('Empty file skipped:', file.name);
+            continue;
+          }
+
           const jsonString = Buffer.from(fileData.content, 'base64').toString('utf8');
-          const requestData = JSON.parse(jsonString);
+          
+          if (!jsonString || jsonString.trim() === '') {
+            console.warn('Empty JSON skipped:', file.name);
+            continue;
+          }
+
+          let requestData;
+          try {
+            requestData = JSON.parse(jsonString);
+          } catch (parseErr) {
+            console.warn('Invalid JSON skipped:', file.name, parseErr.message);
+            continue;
+          }
           
           if (requestData.trackingCode === trackingCode) {
             targetFile = file;
             targetData = requestData;
             break;
           }
-        } catch (e) { continue; }
+        } catch (e) {
+          console.warn('Error reading file:', file.name, e.message);
+          continue;
+        }
       }
 
-      if (!targetData) {
+      if (!targetData || !targetFile) {
         return res.status(404).json({ error: 'دستاوردی با این کد رهگیری یافت نشد' });
       }
 
@@ -177,7 +205,7 @@ module.exports = async function handler(req, res) {
 
       const updatedContent = Buffer.from(JSON.stringify(targetData, null, 2), 'utf8').toString('base64');
 
-      await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${targetFile.path}`, {
+      const updateFileRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${targetFile.path}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -191,6 +219,11 @@ module.exports = async function handler(req, res) {
         })
       });
 
+      if (!updateFileRes.ok) {
+        const errData = await updateFileRes.json().catch(() => ({}));
+        throw new Error(errData.message || 'خطا در به‌روزرسانی فایل دستاورد');
+      }
+
       // ===== به‌روزرسانی وضعیت در فایل کاربر =====
       const senderCode = (targetData.senderCode || targetData.cardCode || '').trim().replace(/\s+/g, '');
       const userPath = `data/active/${senderCode}.json`;
@@ -203,13 +236,13 @@ module.exports = async function handler(req, res) {
         const userDataRaw = await userRes.json();
         const userData = JSON.parse(Buffer.from(userDataRaw.content, 'base64').toString('utf8'));
 
-        if (userData.achievements) {
-         const achIndex = userData.achievements.findIndex(a => 
-  a.id === trackingCode || 
-  a.trackingCode === trackingCode ||
-  a.id === targetData.achievementId ||
-  a.fileName === targetData.fileName
-);
+        if (userData.achievements && Array.isArray(userData.achievements)) {
+          const achIndex = userData.achievements.findIndex(a => 
+            a.id === trackingCode || 
+            a.trackingCode === trackingCode ||
+            a.id === targetData.achievementId ||
+            a.fileName === targetData.fileName
+          );
           
           if (achIndex !== -1) {
             userData.achievements[achIndex].status = status;
@@ -219,24 +252,24 @@ module.exports = async function handler(req, res) {
             if (status === 'rejected') {
               userData.achievements[achIndex].rejectedAt = new Date().toISOString();
             }
+
+            const newUserContent = Buffer.from(JSON.stringify(userData, null, 2), 'utf8').toString('base64');
+
+            await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                message: `Update achievement status in user file: ${trackingCode}`,
+                content: newUserContent,
+                sha: userDataRaw.sha,
+                branch: 'main'
+              })
+            });
           }
         }
-
-        const newUserContent = Buffer.from(JSON.stringify(userData, null, 2), 'utf8').toString('base64');
-
-        await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            message: `Update achievement status in user file: ${trackingCode}`,
-            content: newUserContent,
-            sha: userDataRaw.sha,
-            branch: 'main'
-          })
-        });
       }
 
       return res.status(200).json({
