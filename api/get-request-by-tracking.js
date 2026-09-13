@@ -17,7 +17,7 @@ module.exports = async function handler(req, res) {
   const owner = 'ghrezaei1399-code';
   const repo = 'cultural-id';
 
-  // ===== اگر درخواست از نوع دستاورد (achievement) باشد =====
+  // ===== دستاورد =====
   if (type === 'achievement') {
     try {
       const listResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/requests`, {
@@ -80,7 +80,7 @@ module.exports = async function handler(req, res) {
     }
   }
 
-  // ===== اگر درخواست از نوع مشاهده (observation) باشد =====
+  // ===== مشاهده =====
   if (type === 'observation') {
     try {
       const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${trackingCode}`, {
@@ -114,8 +114,10 @@ module.exports = async function handler(req, res) {
 
       const parsed = parseIssueBody(issueData.body || '');
 
-      // ===== دریافت پاسخ‌های هم‌فرهنگ =====
+      // ===== دریافت کامنت‌ها: پاسخ‌های هم‌فرهنگ + بازخورد عضو =====
       const peerResponses = [];
+      let userFeedback = null;
+      
       try {
         const commentsRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${trackingCode}/comments`, {
           headers: {
@@ -127,6 +129,8 @@ module.exports = async function handler(req, res) {
           const comments = await commentsRes.json();
           for (const comment of comments) {
             const body = comment.body || '';
+            
+            // پاسخ هم‌فرهنگ
             if (body.includes('📝 پاسخ هم‌فرهنگ') || body.includes('Peer Response')) {
               const peerMatch = body.match(/هم‌فرهنگ:\s*(.+)/) || body.match(/Peer:\s*(.+)/);
               const resultMatch = body.match(/نتیجه:\s*(.+)/) || body.match(/Result:\s*(.+)/);
@@ -142,10 +146,33 @@ module.exports = async function handler(req, res) {
                 });
               }
             }
+            
+            // بازخورد عضو
+            if (body.includes('📊 بازخورد عضو')) {
+              const cardMatch = body.match(/کد کارت:\*\*\s*(.+)/) || body.match(/Card Code:\*\*\s*(.+)/);
+              const resultMatch = body.match(/نتیجه:\*\*\s*(.+)/);
+              const feedbackMatch = body.match(/متن بازخورد:\*\*\s*(.+)/) || body.match(/Feedback:\*\*\s*(.+)/);
+              
+              if (resultMatch && feedbackMatch) {
+                let resultValue = 'unknown';
+                const resultText = resultMatch[1].trim();
+                if (resultText.includes('موفق') || resultText.includes('Successful')) resultValue = 'success';
+                else if (resultText.includes('اصلاح') || resultText.includes('Needs Fix')) resultValue = 'revision';
+                else if (resultText.includes('شکست') || resultText.includes('Failed')) resultValue = 'failed';
+                
+                userFeedback = {
+                  cardCode: cardMatch ? cardMatch[1].trim() : '',
+                  result: resultValue,
+                  resultLabel: resultText,
+                  text: feedbackMatch[1].trim(),
+                  timestamp: comment.created_at
+                };
+              }
+            }
           }
         }
       } catch (e) {
-        console.error('Error reading peer responses:', e);
+        console.error('Error reading comments:', e);
       }
 
       return res.status(200).json({
@@ -161,6 +188,7 @@ module.exports = async function handler(req, res) {
         modulePeers: parsed.modulePeers,
         peerResponses: peerResponses,
         peerResponsesCount: peerResponses.length,
+        userFeedback: userFeedback,
         guide: parsed.guide,
         cluster: parsed.cluster,
         score: parsed.score,
@@ -183,7 +211,7 @@ module.exports = async function handler(req, res) {
     }
   }
 
-  // ===== منطق قبلی: دریافت وضعیت درخواست‌های ارتباط =====
+  // ===== درخواست‌های ارتباط =====
   try {
     const listResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/requests`, {
       headers: {
@@ -245,8 +273,7 @@ module.exports = async function handler(req, res) {
 
 
 // ============================================================
-// تابع کمکی: نرمال‌سازی خط
-// حذف ** و - از ابتدا
+// توابع کمکی پارس
 // ============================================================
 function normalizeLine(line) {
   return (line || '')
@@ -255,10 +282,6 @@ function normalizeLine(line) {
     .trim();
 }
 
-
-// ============================================================
-// تابع اصلی: پارس کردن بدنه Issue
-// ============================================================
 function parseIssueBody(body) {
   const result = {
     cardCode: '',
@@ -286,7 +309,6 @@ function parseIssueBody(body) {
 
   const lines = body.split('\n');
 
-  // ===== مرحله ۱: استخراج AI-3 (چند خطی) =====
   let ai3Start = -1;
   let ai3End = lines.length;
   for (let i = 0; i < lines.length; i++) {
@@ -323,7 +345,6 @@ function parseIssueBody(body) {
     result.ai3Final = ai3Lines.join(' ').trim();
   }
 
-  // ===== مرحله ۲: استخراج بقیه فیلدها =====
   let inObservation = false;
   let inModuleSection = false;
   const observationLines = [];
@@ -332,42 +353,30 @@ function parseIssueBody(body) {
     const norm = normalizeLine(lines[i]);
     if (!norm) continue;
 
-    // --- Card Code ---
     if (norm.startsWith('Card Code:')) {
       result.cardCode = norm.substring('Card Code:'.length).trim();
       continue;
     }
 
-    // --- Observation ---
     if (norm === 'Observation:' || norm === 'Observation') {
       inObservation = true;
       continue;
     }
 
-    // --- Selected Module ---
     if (norm.startsWith('Selected Module:')) {
       inObservation = false;
       result.module = norm.substring('Selected Module:'.length).trim();
       continue;
     }
 
-    // --- پایان مشاهده با شروع AI Analysis ---
     if (norm.includes('AI Analysis:')) {
       inObservation = false;
       continue;
     }
 
-    // --- Action Guide (تیتر) ---
-    if (norm === 'Action Guide:' || norm === 'Action Guide') {
-      continue;
-    }
+    if (norm === 'Action Guide:') continue;
+    if (norm.startsWith('Status:') && !norm.includes('Module')) continue;
 
-    // --- Status (نادیده) ---
-    if (norm.startsWith('Status:') && !norm.includes('Module')) {
-      continue;
-    }
-
-    // --- Individual / Network / Policy (AI-1) ---
     if (norm.startsWith('Individual:')) {
       const val = norm.substring('Individual:'.length).trim();
       if (val && val !== '---') result.guide.individual = val;
@@ -384,7 +393,6 @@ function parseIssueBody(body) {
       continue;
     }
 
-    // --- Cluster ---
     if (norm.startsWith('Cluster:')) {
       const clusterText = norm.substring('Cluster:'.length).trim();
       if (clusterText.includes('انسان') || clusterText.includes('Human')) result.cluster = 'human';
@@ -394,17 +402,14 @@ function parseIssueBody(body) {
       continue;
     }
 
-    // --- Suggested Score ---
     if (norm.startsWith('Suggested Score:')) {
       const match = norm.match(/\d+/);
       if (match) result.score = parseInt(match[0]);
       continue;
     }
 
-    // --- 5 Matrices (تیتر) ---
-    if (norm === '5 Matrices:' || norm === '5 Matrices') continue;
+    if (norm === '5 Matrices:') continue;
 
-    // --- ماتریس‌ها (AI-2) ---
     if (norm.startsWith('Emergence:')) {
       const val = norm.substring('Emergence:'.length).trim();
       if (val && val !== '---') result.matrix_emergence = val;
@@ -431,30 +436,20 @@ function parseIssueBody(body) {
       continue;
     }
 
-    // --- Analysis (AI-2) — فقط اگر در Module نباشیم ---
     if (norm.startsWith('Analysis:') && !inModuleSection) {
       const val = norm.substring('Analysis:'.length).trim();
       if (val && val !== '---' && val !== 'تحلیل') result.analysis = val;
       continue;
     }
 
-    // --- AI Errors ---
     if (norm.startsWith('AI Errors:')) {
       result.aiErrors = norm.substring('AI Errors:'.length).trim();
       continue;
     }
 
-    // --- Module Status (نادیده — از labels گرفته می‌شود) ---
-    if (norm.startsWith('Module Status:')) {
-      continue;
-    }
+    if (norm.startsWith('Module Status:')) continue;
+    if (norm.startsWith('Tracking Code:')) continue;
 
-    // --- Tracking Code (نادیده) ---
-    if (norm.startsWith('Tracking Code:')) {
-      continue;
-    }
-
-    // --- Module Result (شروع بخش ماژول) ---
     if (norm.includes('Module Result:') || norm.startsWith('📌')) {
       inModuleSection = true;
       inObservation = false;
@@ -487,7 +482,6 @@ function parseIssueBody(body) {
       }
     }
 
-    // --- جمع‌آوری متن مشاهده ---
     if (inObservation && norm && !norm.startsWith('---')) {
       if (norm.includes('AI Analysis:') || norm.startsWith('Selected Module:')) {
         inObservation = false;
