@@ -2,452 +2,1035 @@
 <html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Edit Information | Global Smart Cultural ID</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"/>
+    <title>Global Smart Cultural Identity Card</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', 'Vazir', sans-serif;
+            font-family: 'Segoe UI', 'Vazir', 'IRANSans', sans-serif;
             min-height: 100vh;
-            padding: 2rem 1rem;
+            padding: 0.8rem;
             background: linear-gradient(135deg, #fdf6e3 0%, #e8f4f8 50%, #f5e6d3 100%);
+            background-attachment: fixed;
             color: #2a1a0a;
         }
         body.dark {
             background: linear-gradient(135deg, #3a2f20 0%, #2a2418 50%, #4a3a28 100%);
             color: #f0e8d0;
         }
-        .container { max-width: 800px; margin: 0 auto; }
-        .page-title {
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: #8a6d1f;
-            text-align: center;
-            margin-bottom: 0.2rem;
-        }
-        body.dark .page-title { color: #f9e79f; }
-        .page-subtitle {
-            text-align: center;
-            font-size: 0.85rem;
-            color: #6a5a3a;
-            margin-bottom: 2rem;
-            border-bottom: 1px solid rgba(212,175,55,0.15);
-            padding-bottom: 1rem;
-        }
-        body.dark .page-subtitle { color: #c8b890; }
-        
-        .warning-box {
-            background: rgba(255, 140, 0, 0.1);
-            border: 2px solid #ff8c00;
+        .container { max-width: 900px; width: 100%; margin: 0 auto; }
+
+        .global-call-banner {
+            background: linear-gradient(135deg, #d4af37, #f9e79f, #d4af37);
             border-radius: 16px;
-            padding: 1rem;
-            margin-bottom: 2rem;
+            padding: 0.6rem 0.5rem;
+            margin-bottom: 0.6rem;
             text-align: center;
-            color: #b85a00;
-            font-weight: 700;
-            display: none;
+            border: 2px solid rgba(138, 109, 31, 0.3);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
         }
-        body.dark .warning-box { background: rgba(255, 140, 0, 0.05); color: #f9e79f; }
-        
-        .form-group { margin-bottom: 1.5rem; }
-        .form-group label {
-            display: block;
-            font-weight: 700;
+        .banner-slogan {
             font-size: 0.9rem;
+            font-weight: 800;
             color: #2a1a0a;
-            margin-bottom: 0.3rem;
-        }
-        body.dark .form-group label { color: #e8d8c8; }
-        .form-group input {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            border-radius: 16px;
-            border: 2px solid rgba(212,175,55,0.2);
-            background: rgba(255,255,255,0.5);
-            font-family: inherit;
-            font-size: 0.95rem;
-            color: #1a0a0a;
-            transition: all 0.3s ease;
-            outline: none;
-        }
-        body.dark .form-group input {
-            background: rgba(0,0,0,0.15);
-            color: #f0e8d0;
-            border-color: rgba(212,175,55,0.15);
-        }
-        .form-group input:focus {
-            border-color: #d4af37;
-            box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
-        }
-        
-        .value-item {
-            background: rgba(255,255,255,0.3);
-            border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border: 1px solid rgba(212,175,55,0.15);
+            margin: 0.1rem 0;
             display: flex;
             align-items: center;
-            gap: 1rem;
+            justify-content: center;
+            gap: 0.3rem;
             flex-wrap: wrap;
         }
-        body.dark .value-item { background: rgba(0,0,0,0.1); }
-        .value-item .value-label {
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: #8a6d1f;
-            min-width: 100px;
-        }
-        body.dark .value-item .value-label { color: #f9e79f; }
-        .value-item .value-input {
-            flex: 1;
-            min-width: 150px;
-            padding: 0.5rem 0.8rem;
-            border-radius: 8px;
-            border: 1px solid rgba(212,175,55,0.2);
-            background: rgba(255,255,255,0.3);
-            font-family: inherit;
-            font-size: 0.85rem;
-            color: #1a0a0a;
-            outline: none;
-        }
-        body.dark .value-item .value-input {
-            background: rgba(0,0,0,0.1);
-            color: #f0e8d0;
-            border-color: rgba(212,175,55,0.1);
-        }
-        .value-item .value-input:focus {
-            border-color: #d4af37;
-            box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
-        }
-        
-        .btn {
-            padding: 0.6rem 1.5rem;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, #d4af37, #f9e79f);
-            color: #2a1a0a;
-            box-shadow: 0 4px 15px rgba(212,175,55,0.25);
-        }
-        body.dark .btn-primary { background: linear-gradient(135deg, #8a6d1f, #d4af37); color: #fff; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(212,175,55,0.35); }
-        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-        .btn-success {
-            background: rgba(39,174,96,0.15);
-            color: #1e7a1e;
-            border: 1px solid rgba(39,174,96,0.2);
-        }
-        body.dark .btn-success { color: #82e0aa; background: rgba(39,174,96,0.05); }
-        
-        .message-box {
-            display: none;
-            padding: 1rem;
-            border-radius: 16px;
+        .banner-icon { font-size: 1rem; }
+
+        .hero-header {
             text-align: center;
-            margin-top: 1.5rem;
+            padding: 0.6rem 0.4rem;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 18px;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.08);
+            margin-bottom: 0.6rem;
         }
-        .message-box.success {
-            display: block;
-            background: rgba(50,200,50,0.05);
-            border: 1px solid rgba(50,200,50,0.05);
-            color: #0a5a0a;
+        body.dark .hero-header { background: rgba(74, 58, 40, 0.7); }
+
+        .logo-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
         }
-        body.dark .message-box.success { color: #80b080; }
-        .message-box.error {
-            display: block;
-            background: rgba(200,50,50,0.05);
-            border: 1px solid rgba(200,50,50,0.05);
-            color: #5a0a0a;
+        .logo-box img {
+            width: 180px;
+            height: 180px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.2));
+            transition: all 0.4s ease;
+            animation: logoFloat 4s ease-in-out infinite;
         }
-        body.dark .message-box.error { color: #b08080; }
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-4px); }
+        }
+        .logo-box img:hover { transform: scale(1.05); }
         
-        .back-row { display: flex; justify-content: center; margin-top: 2rem; }
-        .btn-back {
-            padding: 0.7rem 2rem;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 0.9rem;
+        .site-title-wrap { text-align: center; flex: 1; min-width: 120px; }
+        .site-title {
+            font-size: 1.2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #8a6d1f, #d4af37, #8a6d1f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+        body.dark .site-title {
+            background: linear-gradient(135deg, #f9e79f, #d4af37, #f9e79f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .site-subtitle { font-size: 0.8rem; color: #6a5a3a; letter-spacing: 0.5px; margin-top: 0.1rem; }
+        body.dark .site-subtitle { color: #c8b890; }
+
+        .lang-bar {
+            display: flex;
+            justify-content: center;
+            gap: 0.3rem;
+            margin-top: 0.4rem;
+            padding: 0.2rem;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 30px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            max-width: 200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        body.dark .lang-bar { background: rgba(0, 0, 0, 0.2); }
+        .lang-bar a {
+            padding: 0.15rem 0.8rem;
+            border-radius: 30px;
             text-decoration: none;
-            background: rgba(255,255,255,0.3);
-            color: #0a0a1a;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.3s;
-        }
-        body.dark .btn-back { color: #f0e8d0; background: rgba(0,0,0,0.1); }
-        .btn-back:hover { background: rgba(255,255,255,0.5); transform: translateY(-2px); }
-        body.dark .btn-back:hover { background: rgba(255,255,255,0.05); }
-        
-        .code-input {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            border-radius: 16px;
-            border: 2px solid rgba(212,175,55,0.2);
-            background: rgba(255,255,255,0.5);
-            font-family: monospace;
-            font-size: 1rem;
-            text-align: center;
-            letter-spacing: 1px;
-            color: #1a0a0a;
-            outline: none;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #6a5a3a;
             transition: 0.3s;
         }
-        body.dark .code-input {
-            background: rgba(0,0,0,0.15);
-            color: #f0e8d0;
-            border-color: rgba(212,175,55,0.15);
+        body.dark .lang-bar a { color: #c8b890; }
+        .lang-bar a.active {
+            background: linear-gradient(135deg, #d4af37, #f9e79f);
+            color: #2a1a0a;
+            box-shadow: 0 2px 8px rgba(212, 175, 55, 0.2);
         }
-        .code-input:focus {
-            border-color: #d4af37;
-            box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
-        }
-        
-        .result-box {
-            display: none;
-            margin-top: 1.5rem;
-            padding: 1.5rem;
-            border-radius: 16px;
-            animation: fadeIn 0.5s ease;
-        }
-        .result-box.success {
-            display: block;
-            background: rgba(39,174,96,0.08);
-            border: 2px solid rgba(39,174,96,0.3);
-        }
-        body.dark .result-box.success { background: rgba(39,174,96,0.03); border-color: rgba(39,174,96,0.15); }
-        .result-box .icon { font-size: 2rem; display: block; text-align: center; margin-bottom: 0.3rem; }
-        .result-box .title {
-            font-weight: 800;
-            font-size: 1.1rem;
-            text-align: center;
-            color: #1e7a1e;
-        }
-        body.dark .result-box .title { color: #82e0aa; }
-        .result-box .message {
-            text-align: center;
-            color: #4a3a2a;
-            font-size: 0.9rem;
-            margin-top: 0.3rem;
-            line-height: 1.8;
-        }
-        body.dark .result-box .message { color: #d0c0b0; }
-        .result-box .tracking {
-            text-align: center;
-            font-family: monospace;
-            font-size: 0.9rem;
-            color: #2874a6;
-            padding: 0.3rem;
-            background: rgba(40,116,166,0.05);
-            border-radius: 6px;
-            margin-top: 0.5rem;
-        }
-        body.dark .result-box .tracking { color: #85c1e9; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+        .slogan-scroller {
+            overflow: hidden;
+            background: rgba(212, 175, 55, 0.08);
+            border-radius: 20px;
+            padding: 0.2rem 0;
+            margin-bottom: 0.6rem;
+            border: 1px solid rgba(212, 175, 55, 0.15);
         }
+        .slogan-track {
+            display: flex;
+            gap: 1.5rem;
+            animation: scrollSlogan 20s linear infinite;
+            white-space: nowrap;
+            width: max-content;
+        }
+        .slogan-track span { font-size: 0.65rem; font-weight: 600; color: #8a6d1f; }
+        body.dark .slogan-track span { color: #f9e79f; }
+        @keyframes scrollSlogan { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.4rem;
+            margin-bottom: 0.6rem;
+        }
+        .feature-card {
+            border-radius: 12px;
+            padding: 0.5rem 0.3rem;
+            text-align: center;
+            border: 2px solid rgba(212, 175, 55, 0.12);
+            transition: 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .feature-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+        .feature-card .icon { font-size: 1.2rem; display: block; }
+        .feature-card h3 { font-size: 0.7rem; font-weight: 800; margin: 0.1rem 0; }
+        .feature-card p { font-size: 1.2rem; color: #4a3a2a; opacity: 0.8; line-height: 1.3; }
+        body.dark .feature-card p { color: #b0a8a0; }
+        .feature-card .btn-feature {
+            display: inline-block;
+            padding: 0.1rem 0.4rem;
+            border-radius: 12px;
+            font-size: 0.5rem;
+            font-weight: 700;
+            background: rgba(212, 175, 55, 0.12);
+            color: #8a6d1f;
+            border: 1px solid rgba(212, 175, 55, 0.1);
+        }
+        body.dark .feature-card .btn-feature { color: #f9e79f; }
+
+        .feature-about { background: #dbeafe; }
+        body.dark .feature-about { background: rgba(30, 60, 100, 0.3); }
+        .feature-wisdom { background: #d1fae5; }
+        body.dark .feature-wisdom { background: rgba(30, 80, 50, 0.3); }
+        .feature-radio { background: #fce7f3; }
+        body.dark .feature-radio { background: rgba(80, 40, 60, 0.3); }
+
+        .info-boxes {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.4rem;
+            margin-bottom: 0.6rem;
+        }
+        .box {
+            border-radius: 14px;
+            padding: 0.6rem 0.5rem;
+            border: 2px solid rgba(212, 175, 55, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        .box-gold { background: rgba(255, 248, 220, 0.7); }
+        body.dark .box-gold { background: rgba(74, 58, 40, 0.5); }
+        .box-blue { background: rgba(220, 240, 255, 0.7); }
+        body.dark .box-blue { background: rgba(40, 60, 80, 0.5); }
+        .box-green { background: rgba(220, 245, 220, 0.7); }
+        body.dark .box-green { background: rgba(40, 70, 40, 0.5); }
+
+        .box-title {
+            font-size: 1rem;
+            font-weight: 800;
+            margin-bottom: 0.2rem;
+            padding-bottom: 0.2rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+        }
+        .box-gold .box-title { color: #8a6d1f; }
+        body.dark .box-gold .box-title { color: #f9e79f; }
+        .box-blue .box-title { color: #2874a6; }
+        body.dark .box-blue .box-title { color: #85c1e9; }
+        .box-green .box-title { color: #1e7a1e; }
+        body.dark .box-green .box-title { color: #82e0aa; }
+
+        .box ul { list-style: none; line-height: 1.4; }
+        .box ul li {
+            font-size: 0.85rem;
+            color: #3a2a1a;
+            padding-left: 0.8rem;
+            position: relative;
+        }
+        body.dark .box ul li { color: #d0c8c0; }
+        .box-gold ul li::before { content: "✦"; color: #d4af37; position: absolute; left: 0; font-size: 0.5rem; }
+        .box-blue ul li::before { content: "◆"; color: #5dade2; position: absolute; left: 0; font-size: 0.5rem; }
+        .box-green ul li::before { content: "✓"; color: #27ae60; position: absolute; left: 0; font-size: 0.5rem; }
+
+        .principles {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.2rem;
+            margin-top: 0.2rem;
+        }
+        .principles span {
+            padding: 0.1rem 0.3rem;
+            border-radius: 12px;
+            font-size: 0.45rem;
+            font-weight: 700;
+            background: rgba(93, 173, 226, 0.1);
+            border: 1px solid rgba(93, 173, 226, 0.2);
+            color: #2874a6;
+        }
+        body.dark .principles span { color: #85c1e9; }
+
+        .card-sample-wrapper {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 0.8rem;
+            margin-bottom: 0.8rem;
+            border: 2px solid rgba(212, 175, 55, 0.15);
+            text-align: center;
+        }
+        body.dark .card-sample-wrapper { background: rgba(0, 0, 0, 0.1); }
+        .card-sample-wrapper .label { font-size: 0.65rem; color: #8a6d1f; font-weight: 700; }
+        body.dark .card-sample-wrapper .label { color: #f9e79f; }
+
+        .real-card-sample {
+            max-width: 260px;
+            margin: 0.4rem auto;
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+            border: 2px solid #d4af37;
+            border-radius: 16px;
+            padding: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2), inset 0 0 15px rgba(212,175,55,0.05);
+        }
+        .rc-logo-container {
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            border: 2px solid #d4af37;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .rc-logo { width: 32px; height: 32px; object-fit: contain; }
+        .rc-title { font-size: 0.65rem; font-weight: 800; color: #d4af37; }
+        .rc-code-box {
+            width: 100%;
+            background: rgba(212, 175, 55, 0.06);
+            border: 1px solid rgba(212,175,55,0.2);
+            border-radius: 8px;
+            padding: 0.4rem;
+        }
+        .rc-code { font-size: 0.8rem; color: #f0f0f0; font-family: monospace; direction: ltr; }
+        .rc-values { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
+        .rc-tag {
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 0.5rem;
+            color: #d4af37;
+            font-weight: 600;
+        }
+        .rc-hologram {
+            width: 40px; height: 40px;
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(212,175,55,0.05), rgba(255,255,255,0.05));
+            animation: hologramShine 3s infinite alternate;
+        }
+        @keyframes hologramShine {
+            0% { opacity: 0.5; filter: hue-rotate(0deg); }
+            100% { opacity: 1; filter: hue-rotate(20deg); }
+        }
+
+        .golden-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.4rem;
+            margin: 0.6rem 0;
+            padding: 0.6rem 0.4rem;
+            background: rgba(255, 248, 220, 0.25);
+            border-radius: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.12);
+        }
+        body.dark .golden-row { background: rgba(74, 58, 40, 0.2); }
+
+        .golden-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0.4rem 0.2rem;
+            border-radius: 16px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 900;
+            font-size: 0.6rem;
+            transition: 0.3s;
+            min-height: 55px;
+            border: none;
+            gap: 0.1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+        .golden-btn:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
+        .golden-btn .icon { font-size: 1.2rem; }
+        .golden-btn .label { font-size: 0.8rem; }
+        .golden-btn .desc { font-size: 0.8rem; opacity: 0.6; font-weight: 600; }
+
+        .btn-register { background: linear-gradient(135deg, #d4af37, #f9e79f); color: #2a1a0a; }
+        .btn-connect { background: linear-gradient(135deg, #27ae60, #82e0aa); color: #fff; }
+        .btn-achievement { background: linear-gradient(135deg, #8a6d1f, #d4af37); color: #fff; }
+        .btn-wisdom { background: linear-gradient(135deg, #2874a6, #5dade2); color: #fff; }
+        .btn-atlas { background: linear-gradient(135deg, #6a3d9a, #d2b4de); color: #fff; }
+
+        .cta-note { text-align: center; font-size: 0.5rem; color: #6a5a3a; margin: -0.3rem 0 0.5rem 0; font-weight: 600; }
+        body.dark .cta-note { color: #c8b890; }
+
+        .gallery-box {
+            border-radius: 20px;
+            padding: 0.8rem;
+            margin: 0.6rem 0;
+            border: 3px double #d4af37;
+            background: rgba(255, 253, 245, 0.6);
+        }
+        body.dark .gallery-box { background: rgba(58, 47, 32, 0.4); }
+
+        .atlas-box { border-color: #6a3d9a; background: rgba(245, 230, 240, 0.5); }
+        body.dark .atlas-box { background: rgba(58, 42, 58, 0.3); }
+
+        .gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+        .gallery-title {
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: #8a6d1f;
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+        }
+        body.dark .gallery-title { color: #f9e79f; }
+        .atlas-box .gallery-title { color: #6a3d9a; }
+        body.dark .atlas-box .gallery-title { color: #d2b4de; }
+
+        .gallery-subtitle { font-size: 0.55rem; color: #888; font-weight: 600; }
+        .filter-select {
+            padding: 0.2rem 0.5rem;
+            border-radius: 16px;
+            border: 1px solid #d4af37;
+            background: #fff;
+            color: #8a6d1f;
+            font-weight: 700;
+            font-size: 0.6rem;
+            cursor: pointer;
+            outline: none;
+        }
+        body.dark .filter-select { background: #2a2418; color: #f9e79f; border-color: #8a6d1f; }
+
+        .achievements-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .achievement-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.3rem 0.5rem;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+            border-left: 3px solid #d4af37;
+            cursor: pointer;
+            transition: 0.2s;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.3rem;
+        }
+        body.dark .achievement-item { background: rgba(0, 0, 0, 0.15); }
+        .achievement-item:hover { background: #fff; transform: translateX(3px); }
+        body.dark .achievement-item:hover { background: rgba(255, 255, 255, 0.05); }
+        
+        .item-info h4 { font-size: 0.85rem; color: #2a1a0a; }
+        body.dark .item-info h4 { color: #f0e8d0; }
+        .item-meta { font-size: 0.5rem; color: #8a6d1f; font-weight: 600; }
+
+        .module-status-badge {
+            display: inline-block;
+            padding: 0.1rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.55rem;
+            font-weight: 700;
+            margin-top: 0.2rem;
+        }
+        .module-status-badge.success { background: rgba(39,174,96,0.15); color: #1a6a3a; }
+        .module-status-badge.revision { background: rgba(243,156,18,0.15); color: #8a5a0a; }
+        .module-status-badge.failed { background: rgba(231,76,60,0.15); color: #6a1a1a; }
+        .module-status-badge.pending { background: rgba(241,196,15,0.15); color: #b7950b; }
+        .module-status-badge.no_peers { background: rgba(149,165,166,0.15); color: #5a6a6a; }
+        body.dark .module-status-badge.success { color: #82e0aa; }
+        body.dark .module-status-badge.revision { color: #f5b041; }
+        body.dark .module-status-badge.failed { color: #f1948a; }
+        body.dark .module-status-badge.pending { color: #f9e79f; }
+        body.dark .module-status-badge.no_peers { color: #aab7b8; }
+
+        .module-type-label {
+            font-size: 0.55rem;
+            color: #6a3d9a;
+            font-weight: 600;
+        }
+        body.dark .module-type-label { color: #d2b4de; }
+
+        .empty-state { text-align: center; padding: 0.5rem; color: #888; font-size: 0.7rem; }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            backdrop-filter: blur(3px);
+        }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.25s; }
+        .modal-content {
+            background: #fff;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            border-radius: 20px;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        body.dark .modal-content { background: #2a2418; color: #f0e8d0; }
+        .modal-media { width: 100%; max-height: 250px; object-fit: contain; background: #000; }
+        .modal-body { padding: 1rem; }
+        .modal-close {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(0,0,0,0.4);
+            color: #fff;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 10;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .feedback-note {
+            font-size: 0.7rem;
+            color: #8a6d1f;
+            text-align: center;
+            padding: 0.6rem;
+            background: rgba(212,175,55,0.08);
+            border-radius: 8px;
+            border: 1px dashed rgba(212,175,55,0.3);
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+        body.dark .feedback-note { color: #f9e79f; background: rgba(212,175,55,0.04); }
 
         @media (max-width: 768px) {
-            .container { padding: 1rem; }
-            .value-item { flex-direction: column; align-items: stretch; }
-            .value-item .value-label { min-width: auto; }
+            body { padding: 0.5rem; }
+            .logo-box img { width: 70px; height: 70px; }
+            .site-title { font-size: 0.95rem; }
+            .features-grid { grid-template-columns: repeat(3, 1fr); gap: 0.3rem; }
+            .info-boxes { grid-template-columns: repeat(3, 1fr); gap: 0.3rem; }
+            .golden-row { grid-template-columns: repeat(3, 1fr); gap: 0.3rem; padding: 0.4rem; }
+            .golden-btn { min-height: 45px; font-size: 0.5rem; padding: 0.3rem 0.1rem; }
+            .golden-btn .icon { font-size: 1rem; }
+            .golden-btn .label { font-size: 0.8rem; }
+            .box-title { font-size: 0.6rem; }
+            .box ul li { font-size: 0.55rem; }
+            .gallery-title { font-size: 0.75rem; }
+            .real-card-sample { max-width: 200px; padding: 0.6rem; }
+            .rc-code { font-size: 0.65rem; }
+            .rc-title { font-size: 0.55rem; }
+            .rc-tag { font-size: 0.45rem; }
+            .global-call-banner { padding: 0.4rem 0.3rem; }
+            .banner-slogan { font-size: 2rem; }
+            .slogan-track span { font-size: 0.55rem; }
+        }
+        @media (max-width: 480px) {
+            .logo-box img { width: 60px; height: 60px; }
+            .site-title { font-size: 1.68rem; }
+            .features-grid { grid-template-columns: repeat(3, 1fr); gap: 0.2rem; }
+            .feature-card { padding: 0.3rem 0.2rem; }
+            .feature-card .icon { font-size: 1rem; }
+            .feature-card h3 { font-size: 0.6rem; }
+            .feature-card p { font-size: 1rem; }
+            .info-boxes { grid-template-columns: repeat(3, 1fr); gap: 0.2rem; }
+            .box { padding: 0.4rem 0.3rem; }
+            .box-title { font-size: 1.6rem; }
+            .box ul li { font-size: 0.85rem; }
+            .golden-row { grid-template-columns: repeat(2, 1fr); gap: 0.2rem; padding: 0.3rem; }
+            .golden-btn { min-height: 40px; font-size: 0.45rem; padding: 0.2rem 0.1rem; }
+            .golden-btn .icon { font-size: 0.9rem; }
+            .real-card-sample { max-width: 160px; padding: 0.4rem; }
+            .rc-code { font-size: 0.55rem; }
+            .rc-title { font-size: 0.5rem; }
+            .gallery-title { font-size: 0.65rem; }
+            .gallery-subtitle { font-size: 0.45rem; }
+            .achievement-item { padding: 0.2rem 0.3rem; }
+            .item-info h4 { font-size: 0.6rem; }
+            .filter-select { font-size: 0.5rem; padding: 0.1rem 0.3rem; }
         }
     </style>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#d4af37">
 </head>
 <body>
-    <div class="container">
-        <h1 class="page-title">✏️ Edit Information</h1>
-        <div class="page-subtitle">Edit cultural values and communication details</div>
-        
-        <div id="globalWarning" class="warning-box">
-            ⚠️ Warning: You have only <strong>one opportunity</strong> to request an edit.
-        </div>
+<div class="container">
 
-        <div id="messageBox" class="message-box"></div>
-        
-        <!-- ===== Step 1: Code Entry ===== -->
-        <div id="step1">
-            <div class="form-group">
-                <label>🔑 Cultural Identity Card Code</label>
-                <input type="text" id="cardCode" class="code-input" placeholder="e.g., CIM-1234-5678-ABCDE" />
-            </div>
-            <button class="btn btn-primary" onclick="checkEligibility()" style="width:100%">Check Eligibility</button>
-            <div class="back-row">
-                <a href="index-en.html" class="btn-back">↩ Back to Home</a>
-            </div>
-        </div>
+    <div class="global-call-banner">
+        <div class="banner-slogan"><span class="banner-icon">🌍</span>Cultural collaborators, unite to preserve our shared heritage</div>
+        <div class="banner-slogan"><span class="banner-icon">⚠️</span>Every lost culture is a piece of the human soul that disappears forever</div>
+    </div>
 
-        <!-- ===== Step 2: Edit Form ===== -->
-        <div id="step2" style="display:none; margin-top: 2rem;">
-            <div class="form-group">
-                <label>📧 Communication Email</label>
-                <div class="value-item">
-                    <span class="value-label">Email:</span>
-                    <input type="email" id="emailInput" class="value-input" placeholder="Enter your email" />
-                    <button class="btn btn-success" onclick="requestEdit('communicationEmail')">💾 Save Email</button>
-                </div>
+    <div class="hero-header">
+        <div class="logo-row">
+            <div class="logo-box"><img src="assets/logo-fa.png" alt="Persian Logo" /></div>
+            <div class="site-title-wrap">
+                <div class="site-title">Global Smart Cultural Identity Card</div>
+                <div class="site-subtitle">کارت جهانی هویت هوشمند فرهنگی</div>
             </div>
-            
-            <div class="form-group">
-                <label>📋 Cultural Values (7 Values)</label>
-                <div id="valuesContainer"></div>
-            </div>
-            
-            <div class="back-row">
-                <a href="index-en.html" class="btn-back">↩ Back to Home</a>
-            </div>
+            <div class="logo-box"><img src="assets/logo-en.png" alt="English Logo" /></div>
         </div>
-
-        <!-- ===== Result Box ===== -->
-        <div id="resultBox" class="result-box">
-            <span class="icon" id="resultIcon">✅</span>
-            <div class="title" id="resultTitle">Edit Request Submitted</div>
-            <div class="message" id="resultMessage">Your changes have been successfully saved and are pending admin approval.</div>
-            <div class="tracking" id="resultTracking"></div>
+        <div class="lang-bar">
+            <a href="index.html">🇮🇷 فارسی</a>
+            <a href="#" class="active">🇬🇧 English</a>
         </div>
     </div>
+
+    <div class="features-grid">
+        <a href="about-en.html" class="feature-card feature-about">
+            <span class="icon">📖</span>
+            <h3>About Card</h3>
+            <p>Goals & Philosophy</p>
+            <span class="btn-feature">More →</span>
+        </a>
+        <a href="about-en.html#wisdom" class="feature-card feature-wisdom">
+            <span class="icon">🧠</span>
+            <h3>Sphere of Wisdom</h3>
+            <p>Observation & Analysis</p>
+            <span class="btn-feature">Enter →</span>
+        </a>
+        <a href="about-en.html#radio-tv" class="feature-card feature-radio">
+            <span class="icon">📡</span>
+            <h3>Radio & TV</h3>
+            <p>Cultural Networks</p>
+            <span class="btn-feature">Enter →</span>
+        </a>
+    </div>
+
+    <div class="slogan-scroller">
+        <div class="slogan-track">
+            <span>✦ Our culture, our bond, our shared future ✦</span>
+            <span>✦ Cultural identity beyond borders ✦</span>
+            <span>✦ Peace, diversity, unity ✦</span>
+            <span>✦ Our culture, our bond, our shared future ✦</span>
+            <span>✦ Cultural identity beyond borders ✦</span>
+            <span>✦ Peace, diversity, unity ✦</span>
+        </div>
+    </div>
+
+    <div class="info-boxes">
+        <div class="box box-gold">
+            <div class="box-title">📋 Card Specifications</div>
+            <ul>
+                <li>Decentralized digital identity</li>
+                <li>Register 7 cultural values</li>
+                <li>Unique code</li>
+                <li>Connect with others</li>
+            </ul>
+        </div>
+        <div class="box box-blue">
+            <div class="box-title">🎯 Card Goals</div>
+            <ul>
+                <li>Borderless network of cultural reformers</li>
+                <li>Protecting cultural diversity</li>
+                <li>Promoting peace, eliminating violence</li>
+            </ul>
+            <div class="principles">
+                <span>✧ Apolitical</span><span>Non-governmental</span>
+                <span>Non-profit</span><span>✧ Decentralized</span>
+            </div>
+        </div>
+        <div class="box box-green">
+            <div class="box-title">✅ Card Benefits</div>
+            <ul>
+                <li>Membership in a global movement</li>
+                <li>Access to like-minded people</li>
+                <li>Communication through preferred channels</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card-sample-wrapper">
+        <div class="label">🪪 Sample Issued Card</div>
+        <div class="real-card-sample">
+            <div class="rc-logo-container"><img src="assets/logo-fa.png" alt="Logo" class="rc-logo" onerror="this.style.display='none'"></div>
+            <div class="rc-title">Global Smart Cultural Identity Card</div>
+            <div class="rc-code-box"><div class="rc-code">CIM - 234 - 578 - SAMPLE</div></div>
+            <div class="rc-values">
+                <span class="rc-tag">Indigenous Values</span>
+                <span class="rc-tag">Personal Knowledge</span>
+                <span class="rc-tag">Collective Collaboration</span>
+                <span class="rc-tag">Cultural Diversity</span>
+            </div>
+            <div class="rc-hologram"><img src="assets/hologram.png" alt="Hologram" style="width:25px;height:25px;" onerror="this.style.display='none'"></div>
+        </div>
+    </div>
+
+    <div class="golden-row">
+        <a href="register-en.html" class="golden-btn btn-register">
+            <span class="icon">🪪</span>
+            <span class="label">Get Card</span>
+            <span class="desc">Register</span>
+        </a>
+        <a href="request-en.html?type=connection" class="golden-btn btn-connect">
+            <span class="icon">🤝</span>
+            <span class="label">Connect</span>
+            <span class="desc">Like-minded</span>
+        </a>
+        <a href="submit-achievement-en.html" class="golden-btn btn-achievement">
+            <span class="icon">📤</span>
+            <span class="label">Submit Achievements</span>
+            <span class="desc">Send Achievement</span>
+        </a>
+        <a href="observer-en.html" class="golden-btn btn-wisdom">
+            <span class="icon">🧠</span>
+            <span class="label">Think Together</span>
+            <span class="desc">Sphere of Wisdom</span>
+        </a>
+        <a href="atlas-gallery-en.html" class="golden-btn btn-atlas">
+            <span class="icon">🏛️</span>
+            <span class="label">Atlas of Emergence</span>
+            <span class="desc">Cultural Solutions</span>
+        </a>
+    </div>
+    <div class="cta-note">No personal info • Completely anonymous • 2 minutes</div>
+
+    <div class="gallery-box">
+        <div class="gallery-header">
+            <div class="gallery-title">🏆 Cultural Achievements Gallery - First 200 Members</div>
+            <select id="categoryFilter" class="filter-select" onchange="filterAchievements()">
+                <option value="all">All</option>
+                <option value="science">Articles</option>
+                <option value="art">Art</option>
+                <option value="media">Media</option>
+            </select>
+        </div>
+        <div id="achievementsListContainer" class="achievements-list">
+            <div class="empty-state">Loading...</div>
+        </div>
+    </div>
+
+    <div class="gallery-box atlas-box">
+        <div class="gallery-header">
+            <div class="gallery-title">🏛️ Names of Emergence Gallery</div>
+            <span class="gallery-subtitle">Cultural solutions for local problems</span>
+        </div>
+        <div id="atlasListContainer" class="achievements-list">
+            <div class="empty-state">No solutions with score 5 registered yet.</div>
+        </div>
+    </div>
+
+    <div id="detailModal" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content">
+            <button class="modal-close" onclick="document.getElementById('detailModal').classList.remove('active')">✕</button>
+            <div id="modalMediaContainer"></div>
+            <div class="modal-body">
+                <h2 id="modalTitle" style="color:#8a6d1f; margin-bottom:0.5rem; font-size:1.1rem;"></h2>
+                <div id="modalDesc" style="line-height:1.6; color:#3a2a1a; font-size:0.85rem;"></div>
+                
+                <div id="modalModule" style="margin-top:0.8rem; padding:0.6rem; background:rgba(106,61,154,0.06); border-radius:10px; border-left:3px solid #6a3d9a; display:none;">
+                    <div style="font-size:0.75rem; font-weight:700; color:#6a3d9a; margin-bottom:0.3rem;">📌 Selected Module:</div>
+                    <div id="modalModuleType" style="font-size:0.85rem; color:#2a1a0a;"></div>
+                    <div id="modalModuleStatus" style="font-size:0.75rem; margin-top:0.3rem;"></div>
+                </div>
+
+                <div id="modalGuide" style="margin-top:1rem; padding:0.8rem; background:rgba(212,175,55,0.1); border-radius:10px; display:none;">
+                    <h4 style="font-size:0.9rem; color:#8a6d1f; margin-bottom:0.5rem;">📋 Action Guide:</h4>
+                    <div id="guideContent" style="font-size:0.8rem;"></div>
+                </div>
+
+                <div id="modalFeedbackNote" class="feedback-note" style="display:none;">
+                    📊 Effectiveness Report: (Visible only after observer submits feedback)
+                </div>
+
+                <div id="modalMeta" style="margin-top:0.8rem; font-size:0.7rem; color:#888;"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+let allApproved = [];
+let allAtlasItems = [];
+let currentModalItem = null;
+
+function normalizeGuide(item) {
+    if (item.guide && (item.guide.individual || item.guide.network || item.guide.policy)) {
+        return {
+            individual: item.guide.individual || '',
+            social: item.guide.network || '',
+            institutional: item.guide.policy || ''
+        };
+    }
+    return null;
+}
+
+function normalizeMatrix(item) {
+    if (item.matrix_emergence || item.matrix_layers || item.matrix_connections ||
+        item.matrix_scale || item.matrix_capacity) {
+        return {
+            emergence: item.matrix_emergence || '',
+            layer: item.matrix_layers || '',
+            connection: item.matrix_connections || '',
+            scale: item.matrix_scale || '',
+            capacity: item.matrix_capacity || '',
+            analysis: item.analysis || '',
+            cluster: item.cluster || '',
+            score: item.score || null
+        };
+    }
+    return null;
+}
+
+function normalizeAi3(item) {
+    return item.ai3Final || '';
+}
+
+async function loadAchievements() {
+    const container = document.getElementById('achievementsListContainer');
+    try {
+        const res = await fetch('/api/get-users?t=' + new Date().getTime());
+        if (!res.ok) throw new Error('Server connection error');
+        const data = await res.json();
+        allApproved = data.achievements || [];
+        renderAchievements(allApproved);
+    } catch (e) {
+        console.error(e);
+        container.innerHTML = '<div class="empty-state">Error loading data.</div>';
+    }
+}
+
+function renderAchievements(items) {
+    const container = document.getElementById('achievementsListContainer');
+    const filter = document.getElementById('categoryFilter').value;
+    let filtered = filter === 'all' ? items : items.filter(item => item.category === filter);
+    if (filtered.length === 0) {
+        container.innerHTML = '<div class="empty-state">No approved achievements yet.</div>';
+        return;
+    }
+    container.innerHTML = filtered.map((item, index) => `
+        <div class="achievement-item" onclick="openModal(${index})">
+            <div class="item-info">
+                <h4>${item.title || 'Untitled'}</h4>
+                <span class="item-meta">${item.category === 'science' ? '📄 Article' : item.category === 'art' ? '🎨 Art' : '🎬 Media'}</span>
+            </div>
+            <span style="font-size:0.9rem; color:#d4af37;">👁️ View</span>
+        </div>
+    `).join('');
+}
+
+function filterAchievements() { renderAchievements(allApproved); }
+
+async function loadAtlas() {
+    const container = document.getElementById('atlasListContainer');
+    try {
+        const res = await fetch('/api/get-connection-requests?type=observations&t=' + new Date().getTime());
+        if (!res.ok) throw new Error('Error loading atlas');
+        const data = await res.json();
+        allAtlasItems = (data.observations || []).filter(obs => obs.status === 'approved');
+        renderAtlas(allAtlasItems);
+    } catch (e) {
+        console.error(e);
+        container.innerHTML = '<div class="empty-state">Error loading atlas.</div>';
+    }
+}
+
+function renderAtlas(items) {
+    const container = document.getElementById('atlasListContainer');
+    if (items.length === 0) {
+        container.innerHTML = '<div class="empty-state">No score 5 solutions registered yet.</div>';
+        return;
+    }
+    container.innerHTML = items.map((item, index) => {
+        const moduleStatus = item.moduleStatus || 'pending';
+        const moduleType = item.moduleType || '';
+        
+        const statusLabels = {
+            'success': '✅ Successful', 'revision': '⚠️ Needs Revision', 'failed': '❌ Failed',
+            'pending': '⏳ Pending', 'no_peers': '⚠️ No Peers Found',
+            'no_related': '⚠️ No Related Observations'
+        };
+        const statusText = statusLabels[moduleStatus] || moduleStatus;
+        const statusClass = moduleStatus === 'success' ? 'success' :
+                           moduleStatus === 'revision' ? 'revision' :
+                           moduleStatus === 'failed' ? 'failed' :
+                           moduleStatus === 'pending' ? 'pending' : 'no_peers';
+        
+        const moduleNames = {
+            'collaboration': '🤝 Collaborate',
+            'related': '👁️ Related Views',
+            'referral': '📤 Refer to 5 Peers'
+        };
+        const moduleDisplay = moduleNames[moduleType] || moduleType || '';
+        
+        const displayScore = item.adminScore || item.score || '---';
+        
+        return `
+            <div class="achievement-item" onclick="openAtlasModal(${index})">
+                <div class="item-info">
+                    <h4>${item.observation ? item.observation.substring(0, 50) + '...' : 'Observation'}</h4>
+                    <span class="item-meta">⭐ Score ${displayScore}</span>
+                    ${moduleDisplay ? `<span class="module-type-label">${moduleDisplay}</span>` : ''}
+                    <span class="module-status-badge ${statusClass}">${statusText}</span>
+                </div>
+                <span style="font-size:0.9rem; color:#6a3d9a;">🏛️ Details</span>
+            </div>
+        `;
+    }).join('');
+}
+
+function openModal(index) {
+    const item = allApproved[index];
+    if (!item) return;
+    currentModalItem = item;
+    document.getElementById('modalTitle').textContent = item.title || 'Untitled';
+    let descText = item.description || 'No description available';
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    descText = descText.replace(urlRegex, url => `<a href="${url}" target="_blank" style="color:#2874a6; text-decoration:underline;">${url}</a>`);
+    document.getElementById('modalDesc').innerHTML = descText;
+    document.getElementById('modalMeta').textContent = `Submitted by: ${item.owner}`;
+    document.getElementById('modalGuide').style.display = 'none';
+    document.getElementById('modalFeedbackNote').style.display = 'none';
+    document.getElementById('modalModule').style.display = 'none';
+    const mediaDiv = document.getElementById('modalMediaContainer');
+    const imageUrl = item.fileUrl || item.fileData;
+    if (imageUrl) {
+        mediaDiv.innerHTML = `<img src="${imageUrl}" class="modal-media" style="width:100%;max-height:250px;object-fit:contain;background:#1a1a1a;" onerror="this.outerHTML='<p style=\\'padding:1rem;text-align:center;color:#888;\\'>❌ Image not available</p>'"/>`;
+    } else {
+        mediaDiv.innerHTML = '<p style="padding:1rem;text-align:center;color:#888;">📄 No file attached</p>';
+    }
+    document.getElementById('detailModal').classList.add('active');
+}
+
+function openAtlasModal(index) {
+    const item = allAtlasItems[index];
+    if (!item) return;
+    currentModalItem = item;
     
-    <script>
-        let currentUser = null;
-        
-        function showMessage(text, type) {
-            const box = document.getElementById('messageBox');
-            box.textContent = text;
-            box.className = 'message-box ' + type;
-            box.style.display = 'block';
-        }
-        
-        function hideMessage() {
-            const box = document.getElementById('messageBox');
-            box.style.display = 'none';
-            box.className = 'message-box';
-        }
-        
-        function showResult(title, message, trackingCode) {
-            const box = document.getElementById('resultBox');
-            document.getElementById('resultTitle').textContent = title;
-            document.getElementById('resultMessage').textContent = message;
-            document.getElementById('resultTracking').textContent = trackingCode ? `🔗 Tracking Code: ${trackingCode}` : '';
-            box.className = 'result-box success';
-            box.style.display = 'block';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        
-        async function checkEligibility() {
-            const cardCode = document.getElementById('cardCode').value.trim();
-            if (!cardCode) { showMessage('❌ Please enter your card code.', 'error'); return; }
-            
-            document.getElementById('globalWarning').style.display = 'block';
-            hideMessage();
-            document.getElementById('resultBox').style.display = 'none';
+    document.getElementById('modalTitle').textContent = '🏛️ Atlas of Emergence Observation';
+    document.getElementById('modalDesc').innerHTML = item.observation || 'Observation text not available';
+    
+    const displayScore = item.adminScore || item.score || '---';
+    document.getElementById('modalMeta').textContent = `⭐ Score: ${displayScore} | Status: ${item.status === 'approved' ? '✅ Approved' : '⏳ Pending'}`;
+    
+    const mediaDiv = document.getElementById('modalMediaContainer');
+    mediaDiv.innerHTML = '';
+    
+    const moduleDiv = document.getElementById('modalModule');
+    const moduleType = item.moduleType || '';
+    const moduleStatus = item.moduleStatus || 'pending';
+    
+    const moduleNames = {
+        'collaboration': '🤝 Collaborate',
+        'related': '👁️ Related Views',
+        'referral': '📤 Refer to 5 Peers'
+    };
+    const moduleDisplay = moduleNames[moduleType] || moduleType || 'None';
+    
+    const statusLabels = {
+        'success': '✅ Successful', 'revision': '⚠️ Needs Revision', 'failed': '❌ Failed',
+        'pending': '⏳ Pending', 'no_peers': '⚠️ No Peers Found',
+        'no_related': '⚠️ No Related Observations'
+    };
+    const statusText = statusLabels[moduleStatus] || moduleStatus;
+    const statusClass = moduleStatus === 'success' ? 'success' :
+                       moduleStatus === 'revision' ? 'revision' :
+                       moduleStatus === 'failed' ? 'failed' :
+                       moduleStatus === 'pending' ? 'pending' : 'no_peers';
+    
+    if (moduleType) {
+        moduleDiv.style.display = 'block';
+        document.getElementById('modalModuleType').textContent = moduleDisplay;
+        document.getElementById('modalModuleStatus').innerHTML = `<span class="module-status-badge ${statusClass}">${statusText}</span>`;
+    } else {
+        moduleDiv.style.display = 'none';
+    }
+    
+    const guideBox = document.getElementById('modalGuide');
+    const guideContent = document.getElementById('guideContent');
+    
+    const guide = normalizeGuide(item);
+    const matrix = normalizeMatrix(item);
+    const ai3Final = normalizeAi3(item);
+    
+    const clusterNames = {
+        'human': 'Human', 'knowledge': 'Knowledge & Technology',
+        'governance': 'Governance & Civilization', 'survival': 'Survival & Future',
+        'other': 'Unknown'
+    };
+    
+    let html = '';
+    
+    html += `
+        <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(212,175,55,0.08); border-radius:10px; border-left:4px solid #d4af37;">
+            <div style="font-weight:800; font-size:0.85rem; color:#8a6d1f; margin-bottom:0.4rem;">📝 Registered Observation</div>
+            <div style="font-size:0.85rem; line-height:1.8;">${item.observation || '---'}</div>
+        </div>`;
+    
+    if (guide && (guide.individual || guide.social || guide.institutional)) {
+        html += `
+            <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(16,185,129,0.06); border-radius:10px; border-left:4px solid #10b981;">
+                <div style="font-weight:800; font-size:0.85rem; color:#047857; margin-bottom:0.4rem;">🤖 AI-1 — Three-Level Guidance</div>
+                ${guide.individual ? `<div style="margin-bottom:0.4rem; font-size:0.82rem; line-height:1.7;"><strong>📍 Individual:</strong> ${guide.individual}</div>` : ''}
+                ${guide.social ? `<div style="margin-bottom:0.4rem; font-size:0.82rem; line-height:1.7;"><strong>🌐 Social:</strong> ${guide.social}</div>` : ''}
+                ${guide.institutional ? `<div style="font-size:0.82rem; line-height:1.7;"><strong>🏛️ Institutional:</strong> ${guide.institutional}</div>` : ''}
+            </div>`;
+    }
+    
+    if (matrix && (matrix.emergence || matrix.layer || matrix.connection || matrix.scale || matrix.capacity || matrix.analysis)) {
+        html += `
+            <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(99,102,241,0.06); border-radius:10px; border-left:4px solid #6366f1;">
+                <div style="font-weight:800; font-size:0.85rem; color:#4338ca; margin-bottom:0.4rem;">
+                    🧠 AI-2 — Five-Level Matrix
+                    ${matrix.cluster ? `<span style="background:rgba(212,175,55,0.15); padding:0.1rem 0.6rem; border-radius:10px; font-size:0.7rem; margin-left:0.3rem;">📂 ${clusterNames[matrix.cluster] || matrix.cluster}</span>` : ''}
+                </div>
+                ${matrix.emergence ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 Emergence:</strong> ${matrix.emergence}</div>` : ''}
+                ${matrix.layer ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 Layers:</strong> ${matrix.layer}</div>` : ''}
+                ${matrix.connection ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 Connections:</strong> ${matrix.connection}</div>` : ''}
+                ${matrix.scale ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 Scale:</strong> ${matrix.scale}</div>` : ''}
+                ${matrix.capacity ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 Capacity:</strong> ${matrix.capacity}</div>` : ''}
+                ${matrix.analysis ? `<div style="margin-top:0.5rem; padding:0.5rem; background:rgba(255,255,255,0.5); border-radius:6px; font-size:0.82rem; line-height:1.75;"><strong>Analysis:</strong> ${matrix.analysis}</div>` : ''}
+            </div>`;
+    }
+    
+    if (ai3Final) {
+        html += `
+            <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(236,72,153,0.06); border-radius:10px; border-left:4px solid #ec4899;">
+                <div style="font-weight:800; font-size:0.85rem; color:#be185d; margin-bottom:0.4rem;">💎 AI-3 — Final Synthesis</div>
+                <div style="font-size:0.85rem; line-height:1.9;">${ai3Final}</div>
+            </div>`;
+    }
+    
+    if (!guide && !matrix && !ai3Final) {
+        html += `
+            <div style="padding:0.8rem; background:rgba(231,76,60,0.08); border-radius:10px; border-left:4px solid #e74c3c;">
+                <div style="font-weight:800; font-size:0.85rem; color:#7a1a1a;">⚠️ AI analysis not available for this observation</div>
+            </div>`;
+    }
+    
+    guideContent.innerHTML = html;
+    guideBox.style.display = 'block';
+    
+    document.getElementById('modalFeedbackNote').style.display = 'block';
+    
+    document.getElementById('detailModal').classList.add('active');
+}
 
-            try {
-                const response = await fetch('/api/get-users?t=' + new Date().getTime());
-                const data = await response.json();
-                const user = data.users.find(u => u.cardCode === cardCode);
-                
-                if (!user) throw new Error('User with this code not found.');
-                if (user.lastEditRequest) throw new Error('❌ You have already requested an edit.');
-                
-                currentUser = user;
-                document.getElementById('step1').style.display = 'none';
-                document.getElementById('step2').style.display = 'block';
-                
-                document.getElementById('emailInput').value = user.communicationEmail || '';
-                const container = document.getElementById('valuesContainer');
-                container.innerHTML = '';
-                (user.values || []).forEach((val, i) => {
-                    container.innerHTML += `
-                        <div class="value-item">
-                            <span class="value-label">Value ${i+1}:</span>
-                            <input type="text" id="v-${i}" class="value-input" value="${val}" />
-                            <button class="btn btn-success" onclick="requestEdit('value_${i}')">💾 Save</button>
-                        </div>`;
-                });
-                
-            } catch (error) {
-                showMessage(error.message, 'error');
-            }
-        }
-        
-        // ===== Edit Request (Updated) =====
-        async function requestEdit(field) {
-            if (!currentUser) return;
-            
-            const cardCode = document.getElementById('cardCode').value.trim();
-            let newValue;
-            
-            if (field === 'communicationEmail') {
-                newValue = document.getElementById('emailInput').value.trim();
-            } else {
-                const index = parseInt(field.split('_')[1]);
-                newValue = document.getElementById(`v-${index}`).value.trim();
-            }
-            
-            if (!newValue) {
-                showMessage('❌ Please enter a new value.', 'error');
-                return;
-            }
+function closeModal(e) {
+    if (e.target && e.target.id === 'detailModal') {
+        e.target.classList.remove('active');
+    }
+}
 
-            const btn = event.target;
-            btn.disabled = true;
-            btn.textContent = '⏳ Sending...';
-            hideMessage();
+document.addEventListener('DOMContentLoaded', () => {
+    loadAchievements();
+    loadAtlas();
+});
 
-            try {
-                const response = await fetch('/api/update-user', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        cardCode: cardCode,
-                        field: field,
-                        newValue: newValue
-                    })
-                });
-                
-                const result = await response.json();
-                if (!response.ok) throw new Error(result.error || 'Error saving changes');
-                
-                const fieldLabels = {
-                    'communicationEmail': 'Communication Email',
-                    'value_0': 'Value 1',
-                    'value_1': 'Value 2',
-                    'value_2': 'Value 3',
-                    'value_3': 'Value 4',
-                    'value_4': 'Value 5',
-                    'value_5': 'Value 6',
-                    'value_6': 'Value 7'
-                };
-                
-                showResult(
-                    '✅ Edit Request Submitted',
-                    `Change to "${fieldLabels[field] || field}" has been saved and is pending admin approval.`,
-                    result.trackingCode || '---'
-                );
-                
-                btn.textContent = '✅ Sent';
-                btn.disabled = true;
-                
-                document.querySelectorAll('#step2 .btn-success').forEach(b => b.disabled = true);
-                document.querySelectorAll('#step2 .value-input').forEach(i => i.disabled = true);
-                document.getElementById('emailInput').disabled = true;
-                
-                setTimeout(() => {
-                    window.location.href = 'index-en.html';
-                }, 4000);
-                
-            } catch (error) {
-                showMessage('❌ ' + error.message, 'error');
-                btn.disabled = false;
-                btn.textContent = '💾 Save';
-            }
-        }
-    </script>
+if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark');
+}
+</script>
 </body>
 </html>
