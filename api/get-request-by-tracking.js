@@ -112,11 +112,7 @@ module.exports = async function handler(req, res) {
         }
       }
 
-      // ===== پارس بدنه Issue با تابع مشترک =====
       const parsed = parseIssueBody(issueData.body || '');
-
-      // ===== تشخیص زبان =====
-      const isPersian = /[\u0600-\u06FF]/.test(issueData.body || '');
 
       // ===== دریافت پاسخ‌های هم‌فرهنگ =====
       const peerResponses = [];
@@ -152,7 +148,6 @@ module.exports = async function handler(req, res) {
         console.error('Error reading peer responses:', e);
       }
 
-      // ===== خروجی نهایی =====
       return res.status(200).json({
         status: status,
         aiStatus: 'approved',
@@ -262,7 +257,7 @@ function normalizeLine(line) {
 
 
 // ============================================================
-// تابع اصلی: پارس بدنه Issue
+// تابع اصلی: پارس کردن بدنه Issue
 // ============================================================
 function parseIssueBody(body) {
   const result = {
@@ -304,9 +299,9 @@ function parseIssueBody(body) {
   if (ai3Start !== -1) {
     for (let i = ai3Start; i < lines.length; i++) {
       const norm = normalizeLine(lines[i]);
-      if (norm === '---' || 
+      if (norm === '---' ||
           norm.startsWith('📌') ||
-          norm.startsWith('Module Result') ||
+          norm.includes('Module Result') ||
           norm.startsWith('AI Errors:') ||
           norm.startsWith('Module Status:') ||
           norm.startsWith('Tracking Code:') ||
@@ -344,7 +339,7 @@ function parseIssueBody(body) {
     }
 
     // --- Observation ---
-    if (norm === 'Observation:') {
+    if (norm === 'Observation:' || norm === 'Observation') {
       inObservation = true;
       continue;
     }
@@ -356,18 +351,23 @@ function parseIssueBody(body) {
       continue;
     }
 
-    // --- شروع AI Analysis → پایان مشاهده ---
+    // --- پایان مشاهده با شروع AI Analysis ---
     if (norm.includes('AI Analysis:')) {
       inObservation = false;
       continue;
     }
 
-    // --- Action Guide ---
-    if (norm === 'Action Guide:') {
+    // --- Action Guide (تیتر) ---
+    if (norm === 'Action Guide:' || norm === 'Action Guide') {
       continue;
     }
 
-    // --- Individual / Network / Policy ---
+    // --- Status (نادیده) ---
+    if (norm.startsWith('Status:') && !norm.includes('Module')) {
+      continue;
+    }
+
+    // --- Individual / Network / Policy (AI-1) ---
     if (norm.startsWith('Individual:')) {
       const val = norm.substring('Individual:'.length).trim();
       if (val && val !== '---') result.guide.individual = val;
@@ -401,9 +401,10 @@ function parseIssueBody(body) {
       continue;
     }
 
-    // --- 5 Matrices ---
-    if (norm === '5 Matrices:') continue;
+    // --- 5 Matrices (تیتر) ---
+    if (norm === '5 Matrices:' || norm === '5 Matrices') continue;
 
+    // --- ماتریس‌ها (AI-2) ---
     if (norm.startsWith('Emergence:')) {
       const val = norm.substring('Emergence:'.length).trim();
       if (val && val !== '---') result.matrix_emergence = val;
@@ -430,8 +431,8 @@ function parseIssueBody(body) {
       continue;
     }
 
-    // --- Analysis (AI-2) ---
-    if (norm.startsWith('Analysis:') && !norm.includes('Module')) {
+    // --- Analysis (AI-2) — فقط اگر در Module نباشیم ---
+    if (norm.startsWith('Analysis:') && !inModuleSection) {
       const val = norm.substring('Analysis:'.length).trim();
       if (val && val !== '---' && val !== 'تحلیل') result.analysis = val;
       continue;
@@ -443,8 +444,18 @@ function parseIssueBody(body) {
       continue;
     }
 
-    // --- Module Result ---
-    if (norm.includes('Module Result:')) {
+    // --- Module Status (نادیده — از labels گرفته می‌شود) ---
+    if (norm.startsWith('Module Status:')) {
+      continue;
+    }
+
+    // --- Tracking Code (نادیده) ---
+    if (norm.startsWith('Tracking Code:')) {
+      continue;
+    }
+
+    // --- Module Result (شروع بخش ماژول) ---
+    if (norm.includes('Module Result:') || norm.startsWith('📌')) {
       inModuleSection = true;
       inObservation = false;
       continue;
@@ -477,13 +488,12 @@ function parseIssueBody(body) {
     }
 
     // --- جمع‌آوری متن مشاهده ---
-    if (inObservation && !norm.startsWith('---')) {
-      observationLines.push(norm);
-    }
-
-    // --- توقف در جداکننده اصلی ---
-    if (norm === '---' && !inModuleSection && !inObservation) {
-      // ادامه می‌دهیم چون ممکن است بخش‌های بعدی هم باشد
+    if (inObservation && norm && !norm.startsWith('---')) {
+      if (norm.includes('AI Analysis:') || norm.startsWith('Selected Module:')) {
+        inObservation = false;
+      } else {
+        observationLines.push(norm);
+      }
     }
   }
 
