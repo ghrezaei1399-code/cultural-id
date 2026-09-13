@@ -45,7 +45,6 @@
             text-align: center;
             font-weight: 700;
             color: #8a6d1f;
-            animation: pulse-warning 2s infinite;
             display: flex;
             flex-wrap: wrap;
             align-items: center;
@@ -53,11 +52,6 @@
             gap: 0.5rem;
         }
         body.dark .email-warning { background: rgba(212, 175, 55, 0.05); color: #f9e79f; }
-        @keyframes pulse-warning {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.01); }
-            100% { transform: scale(1); }
-        }
         .email-warning a {
             color: #2874a6;
             text-decoration: none;
@@ -320,7 +314,6 @@
         }
         body.dark .ai-result-detail .detail-title { color: #85c1e9; }
         
-        /* ===== Module Status Section (New) ===== */
         .module-status-box {
             margin-top: 1rem;
             padding: 0.8rem 1rem;
@@ -342,33 +335,17 @@
             border-radius: 8px;
             display: inline-block;
         }
-        .module-status.pending {
-            background: rgba(241,196,15,0.15);
-            color: #b7950b;
-        }
-        .module-status.success {
-            background: rgba(39,174,96,0.15);
-            color: #1a6a3a;
-        }
-        .module-status.revision {
-            background: rgba(243,156,18,0.15);
-            color: #8a5a0a;
-        }
-        .module-status.failed {
-            background: rgba(231,76,60,0.15);
-            color: #6a1a1a;
-        }
-        .module-status.no_peers {
-            background: rgba(149,165,166,0.15);
-            color: #5a6a6a;
-        }
+        .module-status.pending { background: rgba(241,196,15,0.15); color: #b7950b; }
+        .module-status.success { background: rgba(39,174,96,0.15); color: #1a6a3a; }
+        .module-status.revision { background: rgba(243,156,18,0.15); color: #8a5a0a; }
+        .module-status.failed { background: rgba(231,76,60,0.15); color: #6a1a1a; }
+        .module-status.no_peers { background: rgba(149,165,166,0.15); color: #5a6a6a; }
         body.dark .module-status.pending { color: #f9e79f; }
         body.dark .module-status.success { color: #82e0aa; }
         body.dark .module-status.revision { color: #f5b041; }
         body.dark .module-status.failed { color: #f1948a; }
         body.dark .module-status.no_peers { color: #aab7b8; }
 
-        /* ===== Tracking Link ===== */
         .tracking-link {
             display: inline-block;
             margin-top: 0.8rem;
@@ -385,7 +362,6 @@
         body.dark .tracking-link { color: #85c1e9; background: rgba(40,116,166,0.05); }
         .tracking-link:hover { background: rgba(40,116,166,0.15); transform: translateY(-2px); }
 
-        /* ===== Feedback Module Styles ===== */
         #feedbackModule {
             display: none; 
             margin-top: 2rem; 
@@ -508,7 +484,6 @@
             </div>
         </div>
 
-        <!-- ===== Human Feedback Module (New) ===== -->
         <div id="feedbackModule">
             <h3>📊 Human Feedback Module</h3>
             <p>
@@ -615,7 +590,7 @@
         }
 
         // ============================================================
-        // Forbidden Words (Unchanged)
+        // Forbidden Words
         // ============================================================
         const FORBIDDEN_WORDS = [
             'war', 'violence', 'murder', 'kill', 'killing', 'terror', 'bomb', 'explosion',
@@ -653,7 +628,82 @@
         }
 
         // ============================================================
-        // Main Submit Function (Modified)
+        // Normalization helpers
+        // ============================================================
+        function normalizeAi1FromIssue(issue) {
+            // New structure: issue.aiAnalysis.guide_individual etc.
+            if (issue.aiAnalysis) {
+                const ai = issue.aiAnalysis;
+                if (ai.guide_individual || ai.guide_network || ai.guide_policy) {
+                    return {
+                        individual: ai.guide_individual || '',
+                        social: ai.guide_network || '',
+                        institutional: ai.guide_policy || '',
+                        error: null
+                    };
+                }
+            }
+            // Old structure: issue.ai1Guidance
+            if (issue.ai1Guidance && (issue.ai1Guidance.individual || issue.ai1Guidance.social || issue.ai1Guidance.institutional)) {
+                return {
+                    individual: issue.ai1Guidance.individual || '',
+                    social: issue.ai1Guidance.social || '',
+                    institutional: issue.ai1Guidance.institutional || '',
+                    error: issue.ai1Guidance._error || null
+                };
+            }
+            return null;
+        }
+
+        function normalizeAi2FromIssue(issue) {
+            // New structure: issue.aiAnalysis.matrix_* etc.
+            if (issue.aiAnalysis) {
+                const ai = issue.aiAnalysis;
+                if (ai.matrix_emergence || ai.matrix_layers || ai.matrix_connections ||
+                    ai.matrix_scale || ai.matrix_capacity || ai.analysis_note) {
+                    return {
+                        emergence: ai.matrix_emergence || '',
+                        layer: ai.matrix_layers || '',
+                        connection: ai.matrix_connections || '',
+                        scale: ai.matrix_scale || '',
+                        capacity: ai.matrix_capacity || '',
+                        analysis: ai.analysis_note || '',
+                        cluster: ai.cluster || 'human',
+                        score: ai.score_suggestion || null,
+                        error: null
+                    };
+                }
+            }
+            // Old structure: issue.ai2Matrix
+            if (issue.ai2Matrix && (issue.ai2Matrix.emergence || issue.ai2Matrix.layer || issue.ai2Matrix.connection || issue.ai2Matrix.scale || issue.ai2Matrix.capacity)) {
+                return {
+                    emergence: issue.ai2Matrix.emergence || '',
+                    layer: issue.ai2Matrix.layer || '',
+                    connection: issue.ai2Matrix.connection || '',
+                    scale: issue.ai2Matrix.scale || '',
+                    capacity: issue.ai2Matrix.capacity || '',
+                    analysis: issue.ai2Matrix.analysis || '',
+                    cluster: issue.ai2Matrix.cluster || 'human',
+                    score: issue.ai2Matrix.score || null,
+                    error: issue.ai2Matrix._error || null
+                };
+            }
+            return null;
+        }
+
+        function normalizeAi3FromIssue(issue) {
+            // New structure: issue.aiAnalysis.ai3_final
+            if (issue.aiAnalysis && issue.aiAnalysis.ai3_final) {
+                return { final: issue.aiAnalysis.ai3_final, error: null };
+            }
+            // Old structure: issue.finalAnalysis
+            if (issue.finalAnalysis) return { final: issue.finalAnalysis, error: null };
+            if (issue.ai3Error) return { final: '', error: issue.ai3Error };
+            return null;
+        }
+
+        // ============================================================
+        // Main Submit Function
         // ============================================================
         async function submitObservations() {
             const userCode = document.getElementById('userCode').value.trim();
@@ -700,7 +750,6 @@
             aiResultDetail.classList.remove('active');
 
             try {
-                // Filter forbidden words
                 for (let i = 0; i < observations.length; i++) {
                     const obs = observations[i];
                     const filterResult = fastFilter(obs.text);
@@ -730,13 +779,15 @@
                     throw new Error(result.error || 'Registration error');
                 }
                 
-                // ============================================================
-                // Display results with 5 matrices + module status
-                // ============================================================
                 let aiDetailsHtml = '';
+                let aiFailCount = 0;
+                let aiSuccessCount = 0;
+
                 if (result.issues && result.issues.length > 0) {
                     result.issues.forEach((issue, idx) => {
-                        const ai = issue.aiAnalysis;
+                        const ai1 = normalizeAi1FromIssue(issue);
+                        const ai2 = normalizeAi2FromIssue(issue);
+                        const ai3 = normalizeAi3FromIssue(issue);
                         const moduleStatus = issue.moduleStatus || 'pending';
                         const moduleMessage = issue.moduleMessage || '';
                         
@@ -758,51 +809,81 @@
                                            moduleStatus === 'no_peers' || moduleStatus === 'no_related' ? 'no_peers' :
                                            'pending';
                         
-                        if (ai) {
-                            const clusterNames = {
-                                'human': 'Human',
-                                'knowledge': 'Knowledge & Technology',
-                                'governance': 'Governance & Civilization',
-                                'survival': 'Survival & Future'
-                            };
-                            
-                            const moduleNames = {
-                                'collaboration': '🤝 Collaborate',
-                                'related': '👁️ Related Views',
-                                'referral': '📤 Refer to 5 Peers'
-                            };
-                            const moduleDisplay = moduleNames[issue.module] || issue.module || 'None';
-                            
+                        const clusterNames = {
+                            'human': 'Human',
+                            'knowledge': 'Knowledge & Technology',
+                            'governance': 'Governance & Civilization',
+                            'survival': 'Survival & Future',
+                            'other': 'Unknown'
+                        };
+                        
+                        const moduleNames = {
+                            'collaboration': '🤝 Collaborate',
+                            'related': '👁️ Related Views',
+                            'referral': '📤 Refer to 5 Peers'
+                        };
+                        const moduleDisplay = moduleNames[issue.module] || issue.module || 'None';
+                        
+                        const hasAi1 = ai1 && (ai1.individual || ai1.social || ai1.institutional);
+                        const hasAi2 = ai2 && (ai2.emergence || ai2.layer || ai2.connection || ai2.scale || ai2.capacity || ai2.analysis);
+                        const hasAi3 = ai3 && ai3.final;
+                        if (hasAi1) aiSuccessCount++; else aiFailCount++;
+                        if (hasAi2) aiSuccessCount++; else aiFailCount++;
+                        if (hasAi3) aiSuccessCount++; else aiFailCount++;
+
+                        aiDetailsHtml += `
+                            <div style="border-bottom:1px solid rgba(212,175,55,0.1); padding:0.8rem 0;">
+                                <strong>Observation ${idx + 1}:</strong>
+                        `;
+
+                        if (hasAi1) {
                             aiDetailsHtml += `
-                                <div style="border-bottom:1px solid rgba(212,175,55,0.1); padding:0.8rem 0;">
-                                    <strong>Observation ${idx + 1}:</strong>
-                                    <div style="font-size:0.85rem; margin-top:0.3rem;">
-                                        <span style="display:inline-block; background:rgba(212,175,55,0.1); padding:0.1rem 0.5rem; border-radius:12px; font-size:0.7rem;">
-                                            📂 ${clusterNames[ai.cluster] || ai.cluster || 'Unknown'}
-                                        </span>
-                                        <span style="display:inline-block; background:rgba(39,174,96,0.1); padding:0.1rem 0.5rem; border-radius:12px; font-size:0.7rem;">
-                                            ⭐ Suggested Score: ${ai.score_suggestion || '?'}
-                                        </span>
+                                <div style="margin-top:0.5rem; padding:0.6rem; background:rgba(16,185,129,0.06); border-radius:8px; border-left:3px solid #10b981;">
+                                    <div style="font-weight:800; font-size:0.8rem; color:#047857; margin-bottom:0.3rem;">🤖 AI-1 — Three-Level Guidance</div>
+                                    ${ai1.individual ? `<div style="font-size:0.78rem; color:#2874a6; margin-top:0.2rem;"><strong>📍 Individual:</strong> ${ai1.individual}</div>` : ''}
+                                    ${ai1.social ? `<div style="font-size:0.78rem; color:#27ae60; margin-top:0.2rem;"><strong>🌐 Social:</strong> ${ai1.social}</div>` : ''}
+                                    ${ai1.institutional ? `<div style="font-size:0.78rem; color:#8a6d1f; margin-top:0.2rem;"><strong>🏛️ Institutional:</strong> ${ai1.institutional}</div>` : ''}
+                                </div>`;
+                        } else {
+                            aiDetailsHtml += `<div style="margin-top:0.5rem; padding:0.6rem; background:rgba(231,76,60,0.08); border-radius:8px; border-left:3px solid #e74c3c;"><div style="font-weight:800; font-size:0.8rem; color:#7a1a1a;">⚠️ AI-1 not available (AI1_FAILED)</div></div>`;
+                        }
+
+                        if (hasAi2) {
+                            aiDetailsHtml += `
+                                <div style="margin-top:0.5rem; padding:0.6rem; background:rgba(99,102,241,0.06); border-radius:8px; border-left:3px solid #6366f1;">
+                                    <div style="font-weight:800; font-size:0.8rem; color:#4338ca; margin-bottom:0.3rem;">
+                                        🧠 AI-2 — Five-Level Matrix
+                                        ${ai2.cluster ? `<span style="background:rgba(212,175,55,0.15); padding:0.1rem 0.5rem; border-radius:10px; font-size:0.7rem; margin-left:0.3rem;">📂 ${clusterNames[ai2.cluster] || ai2.cluster}</span>` : ''}
+                                        ${ai2.score ? `<span style="background:rgba(39,174,96,0.15); padding:0.1rem 0.5rem; border-radius:10px; font-size:0.7rem;">⭐ Suggested: ${ai2.score}</span>` : ''}
                                     </div>
-                                    <div style="font-size:0.8rem; color:#4a3a2a; margin-top:0.3rem;">
-                                        <strong>Analysis:</strong> ${ai.analysis_note || '---'}
-                                    </div>
-                                    ${ai.guide_individual ? `<div style="font-size:0.75rem; color:#2874a6; margin-top:0.2rem;">📍 ${ai.guide_individual}</div>` : ''}
-                                    ${ai.guide_network ? `<div style="font-size:0.75rem; color:#27ae60; margin-top:0.2rem;">🌐 ${ai.guide_network}</div>` : ''}
-                                    ${ai.guide_policy ? `<div style="font-size:0.75rem; color:#8a6d1f; margin-top:0.2rem;">🏛️ ${ai.guide_policy}</div>` : ''}
-                                    ${ai.matrix_emergence ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 Emergence: ${ai.matrix_emergence}</div>` : ''}
-                                    ${ai.matrix_layers ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 Layers: ${ai.matrix_layers}</div>` : ''}
-                                    ${ai.matrix_connections ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 Connections: ${ai.matrix_connections}</div>` : ''}
-                                    ${ai.matrix_scale ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 Scale: ${ai.matrix_scale}</div>` : ''}
-                                    ${ai.matrix_capacity ? `<div style="font-size:0.75rem; color:#6a3d9a; margin-top:0.2rem;">📊 Capacity: ${ai.matrix_capacity}</div>` : ''}
-                                </div>
+                                    ${ai2.emergence ? `<div style="font-size:0.75rem; color:#4a3a2a; margin-top:0.2rem;"><strong>📊 Emergence:</strong> ${ai2.emergence}</div>` : ''}
+                                    ${ai2.layer ? `<div style="font-size:0.75rem; color:#4a3a2a; margin-top:0.2rem;"><strong>📊 Layers:</strong> ${ai2.layer}</div>` : ''}
+                                    ${ai2.connection ? `<div style="font-size:0.75rem; color:#4a3a2a; margin-top:0.2rem;"><strong>📊 Connections:</strong> ${ai2.connection}</div>` : ''}
+                                    ${ai2.scale ? `<div style="font-size:0.75rem; color:#4a3a2a; margin-top:0.2rem;"><strong>📊 Scale:</strong> ${ai2.scale}</div>` : ''}
+                                    ${ai2.capacity ? `<div style="font-size:0.75rem; color:#4a3a2a; margin-top:0.2rem;"><strong>📊 Capacity:</strong> ${ai2.capacity}</div>` : ''}
+                                    ${ai2.analysis ? `<div style="font-size:0.78rem; color:#2a1a0a; margin-top:0.3rem; padding:0.4rem; background:rgba(255,255,255,0.4); border-radius:6px;"><strong>Analysis:</strong> ${ai2.analysis}</div>` : ''}
+                                </div>`;
+                        } else {
+                            aiDetailsHtml += `<div style="margin-top:0.5rem; padding:0.6rem; background:rgba(231,76,60,0.08); border-radius:8px; border-left:3px solid #e74c3c;"><div style="font-weight:800; font-size:0.8rem; color:#7a1a1a;">⚠️ AI-2 not available (AI2_FAILED)</div></div>`;
+                        }
+
+                        if (hasAi3) {
+                            aiDetailsHtml += `
+                                <div style="margin-top:0.5rem; padding:0.6rem; background:rgba(236,72,153,0.06); border-radius:8px; border-left:3px solid #ec4899;">
+                                    <div style="font-weight:800; font-size:0.8rem; color:#be185d; margin-bottom:0.3rem;">💎 AI-3 — Final Synthesis</div>
+                                    <div style="font-size:0.8rem; line-height:1.8; color:#2a1a0a;">${ai3.final}</div>
+                                </div>`;
+                        } else {
+                            aiDetailsHtml += `<div style="margin-top:0.5rem; padding:0.6rem; background:rgba(231,76,60,0.08); border-radius:8px; border-left:3px solid #e74c3c;"><div style="font-weight:800; font-size:0.8rem; color:#7a1a1a;">⚠️ AI-3 not available (AI3_FAILED)</div></div>`;
+                        }
+
+                        aiDetailsHtml += `
                                 <div class="module-status-box">
                                     <div class="module-label">📌 Selected Module: ${moduleDisplay}</div>
                                     <div class="module-status ${statusClass}">${statusText}</div>
                                     ${moduleMessage ? `<div style="font-size:0.8rem; color:#4a3a2a; margin-top:0.3rem;">${moduleMessage}</div>` : ''}
                                 </div>
-                            `;
-                        }
+                            </div>`;
                     });
                 }
                 
@@ -811,25 +892,26 @@
                     aiResultDetail.classList.add('active');
                 }
                 
-                // ===== Show tracking code with link =====
                 const trackingCode = result.trackingCode || '---';
                 const trackingLink = trackingCode !== '---' ? 
                     `<a href="track-observation.html?code=${encodeURIComponent(trackingCode)}" class="tracking-link">🔍 Track Observation Status</a>` : '';
                 
-                resultTitle.textContent = '✅ Observations Registered & Analyzed';
+                let successMessage;
+                if (aiFailCount === 0 && aiSuccessCount > 0) successMessage = '✅ Observations Registered & Analyzed';
+                else if (aiFailCount > 0 && aiSuccessCount > 0) successMessage = '⚠️ Observations registered, but some AI analyses are incomplete';
+                else if (aiFailCount > 0) successMessage = '⚠️ Observations registered, but AI analysis is not available';
+                else successMessage = '✅ Observations Registered Successfully';
+                
+                resultTitle.textContent = successMessage;
                 resultTracking.innerHTML = `🔗 Tracking Code: ${trackingCode}<br>${trackingLink}`;
                 resultError.style.display = 'none';
                 resultBox.style.display = 'block';
-                
-                // Show Feedback Module
                 document.getElementById('feedbackModule').style.display = 'block';
-                
                 submitBtn.textContent = '✅ Submitted';
                 
                 document.querySelectorAll('.obs-text').forEach(t => t.value = '');
                 document.querySelectorAll('.box-module-btn.active').forEach(b => b.classList.remove('active'));
                 updateAddButton();
-                
                 resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 
             } catch (error) {
@@ -840,44 +922,27 @@
                 resultBox.style.display = 'block';
                 submitBtn.textContent = '📤 Try Again';
                 submitBtn.disabled = false;
-                
                 resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }
 
-        // ===== Feedback Submission Function =====
         async function submitFeedback() {
             const userCode = document.getElementById('feedbackUserCode').value.trim();
             const feedbackText = document.getElementById('feedbackText').value.trim();
-            
-            if (!userCode || !feedbackText) {
-                alert('Please enter your membership code and feedback text.');
-                return;
-            }
-
+            if (!userCode || !feedbackText) { alert('Please enter your membership code and feedback text.'); return; }
             const btn = event.target;
             btn.disabled = true;
             btn.textContent = '⏳ Sending...';
-
             try {
-                // Corrected API endpoint to submit-request
                 const response = await fetch('/api/submit-request', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        cardCode: userCode,
-                        feedback: feedbackText,
-                        type: 'observation_feedback'
-                    })
+                    body: JSON.stringify({ cardCode: userCode, feedback: feedbackText, type: 'observation_feedback' })
                 });
-
                 const result = await response.json();
-                
                 if (!response.ok) throw new Error(result.error || 'Error sending feedback');
-
-                alert('✅ Your feedback has been successfully sent to the Atlas of Emergence. Thank you!');
+                alert('✅ Your feedback has been sent to the Atlas of Emergence. Thank you!');
                 document.getElementById('feedbackModule').style.display = 'none';
-                
             } catch (error) {
                 alert('❌ Error: ' + error.message);
                 btn.disabled = false;
