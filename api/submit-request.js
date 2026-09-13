@@ -54,11 +54,9 @@ module.exports = async function handler(req, res) {
         let ai2Result = null;
         let ai3Result = null;
         const aiErrors = [];
-
-                const aiDebug = {};
+        const aiDebug = {};
 
         if (openRouterKey) {
-          // اجرای AI-1 اول (چون AI-2 و AI-3 به آن نیاز دارند)
           try {
             ai1Result = await callAI1(obs.text, isPersian, openRouterKey);
           } catch (err) {
@@ -67,13 +65,12 @@ module.exports = async function handler(req, res) {
             aiDebug.AI1 = err.message;
           }
 
-          // اجرای AI-2 و AI-3 به صورت موازی
           const [ai2Outcome, ai3Outcome] = await Promise.allSettled([
             callAI2(obs.text, ai1Result, isPersian, openRouterKey),
             callAI3(obs.text, ai1Result, null, isPersian, openRouterKey)
           ]);
 
-                    if (ai2Outcome.status === 'fulfilled') {
+          if (ai2Outcome.status === 'fulfilled') {
             ai2Result = ai2Outcome.value;
           } else {
             console.warn('AI-2 failed:', ai2Outcome.reason?.message);
@@ -88,6 +85,10 @@ module.exports = async function handler(req, res) {
             aiErrors.push('AI3');
             aiDebug.AI3 = ai3Outcome.reason?.message || 'Unknown error';
           }
+        } else {
+          aiErrors.push('AI1', 'AI2', 'AI3');
+          aiDebug.ALL = 'OPENROUTER_API_KEY is not configured';
+        }
 
         const cluster = ai2Result?.cluster || 'human';
         const suggestedScore = ai2Result?.score || null;
@@ -353,7 +354,7 @@ ${moduleSection}
           });
         }
 
-                createdIssues.push({
+        createdIssues.push({
           number: issueData.number,
           url: issueData.html_url,
           trackingCode: `OBS-${issueData.number}`,
@@ -821,18 +822,14 @@ ${moduleSection}
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const AI_MODEL = 'openai/gpt-4o-mini';
+
 async function callOpenRouter({ systemPrompt, userPrompt, apiKey, maxTokens = 1500, temperature = 0.4 }) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 18000);
 
   if (!apiKey) {
     clearTimeout(timeoutId);
-    throw new Error('API_KEY_MISSING: OPENROUTER_API_KEY is not set');
-  }
-
-  if (!apiKey.startsWith('sk-or-')) {
-    clearTimeout(timeoutId);
-    throw new Error(`API_KEY_INVALID: OPENROUTER_API_KEY does not start with "sk-or-". Current prefix: "${apiKey.substring(0, 8)}..."`);
+    throw new Error('API_KEY_MISSING');
   }
 
   try {
@@ -861,10 +858,24 @@ async function callOpenRouter({ systemPrompt, userPrompt, apiKey, maxTokens = 15
 
     if (!response.ok) {
       const errText = await response.text().catch(() => '');
-      throw new Error(`HTTP_${response.status}: ${errText.substring(0, 300)}`);
+      const cleanErr = errText.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 200);
+      throw new Error(`HTTP_${response.status}: ${cleanErr || 'Empty response'}`);
     }
 
-    const data = await response.json();
+    const responseText = await response.text();
+
+    if (responseText.trim().startsWith('<') || responseText.includes('A server error')) {
+      const cleanErr = responseText.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 200);
+      throw new Error(`HTML_RESPONSE: ${cleanErr}`);
+    }
+
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (parseErr) {
+      throw new Error(`INVALID_JSON: ${responseText.substring(0, 200)}`);
+    }
+
     const content = data.choices?.[0]?.message?.content || '{}';
 
     let jsonStr = content;
@@ -872,16 +883,20 @@ async function callOpenRouter({ systemPrompt, userPrompt, apiKey, maxTokens = 15
     const e = content.lastIndexOf('}');
     if (s !== -1 && e !== -1) jsonStr = content.substring(s, e + 1);
 
-    return JSON.parse(jsonStr);
+    try {
+      return JSON.parse(jsonStr);
+    } catch (jsonErr) {
+      throw new Error(`AI_INVALID_JSON: ${jsonStr.substring(0, 200)}`);
+    }
   } catch (err) {
     clearTimeout(timeoutId);
-    // خطا را با نام دقیق‌تر پرتاب کن
     const msg = err.name === 'AbortError' 
-      ? 'TIMEOUT_18S: OpenRouter did not respond within 18 seconds'
+      ? 'TIMEOUT_18S'
       : err.message;
     throw new Error(msg);
   }
 }
+
 
 async function callAI1(observationText, isPersian, apiKey) {
   const systemPrompt = isPersian ? AI1_PROMPT_FA : AI1_PROMPT_EN;
