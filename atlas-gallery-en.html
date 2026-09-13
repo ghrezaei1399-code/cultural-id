@@ -211,7 +211,6 @@
         body.dark .theme-toggle { color: #f9e79f; background: rgba(0,0,0,0.2); }
         .theme-toggle:hover { transform: scale(1.1); }
         
-        /* Full Profile Button Style */
         .btn-full-profile {
             margin-top: 0.5rem;
             width: 100%;
@@ -226,6 +225,19 @@
         }
         .btn-full-profile:hover { background: rgba(212,175,55,0.2); }
         body.dark .btn-full-profile { color: #f9e79f; border-color: #f9e79f; }
+
+        .feedback-note {
+            font-size: 0.7rem;
+            color: #8a6d1f;
+            text-align: center;
+            padding: 0.6rem;
+            background: rgba(212,175,55,0.08);
+            border-radius: 8px;
+            border: 1px dashed rgba(212,175,55,0.3);
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+        body.dark .feedback-note { color: #f9e79f; background: rgba(212,175,55,0.04); }
 
         @media (max-width: 768px) {
             .container { padding: 1.2rem; }
@@ -242,12 +254,12 @@
         </div>
 
         <h1 class="page-title">🏛️ Atlas of Emergence & Notable Gallery</h1>
-        <div class="page-subtitle">Selected observations with score 5 and approved notable achievements</div>
+        <div class="page-subtitle">Selected observations and approved notable achievements</div>
 
         <div class="stats-mini">
-            <div class="stat-mini"><span class="number" id="totalAtlas">۰</span><div class="label">🏛️ Atlas</div></div>
-            <div class="stat-mini"><span class="number" id="totalAchievements">۰</span><div class="label">🏆 Notable</div></div>
-            <div class="stat-mini"><span class="number" id="totalItems">۰</span><div class="label">📋 Total</div></div>
+            <div class="stat-mini"><span class="number" id="totalAtlas">0</span><div class="label">🏛️ Atlas</div></div>
+            <div class="stat-mini"><span class="number" id="totalAchievements">0</span><div class="label">🏆 Notable</div></div>
+            <div class="stat-mini"><span class="number" id="totalItems">0</span><div class="label">📋 Total</div></div>
         </div>
 
         <div class="filter-bar">
@@ -260,7 +272,8 @@
             <div class="empty-state">Loading...</div>
         </div>
     </div>
-    <script>
+
+<script>
 let allAtlasItems = [];
 let allAchievements = [];
 let currentFilter = 'all';
@@ -276,9 +289,6 @@ if (localStorage.getItem('theme') === 'dark') {
     document.getElementById('themeToggle').textContent = '☀️';
 }
 
-// ============================================================
-// Normalization helpers
-// ============================================================
 function normalizeGuide(item) {
     if (item.guide && (item.guide.individual || item.guide.network || item.guide.policy)) {
         return {
@@ -311,11 +321,7 @@ function normalizeAi3(item) {
     return item.ai3Final || '';
 }
 
-// ============================================================
-// Load data
-// ============================================================
 async function loadData() {
-    // ===== 1. Atlas observations =====
     try {
         const atlasRes = await fetch('/api/get-connection-requests?type=observations&t=' + Date.now());
         const atlasData = await atlasRes.json();
@@ -330,7 +336,6 @@ async function loadData() {
         allAtlasItems = [];
     }
 
-    // ===== 2. Notable achievements =====
     try {
         const usersRes = await fetch('/api/get-users?t=' + Date.now());
         const usersData = await usersRes.json();
@@ -376,9 +381,6 @@ function setFilter(filter) {
     renderGallery();
 }
 
-// ============================================================
-// Render gallery
-// ============================================================
 function renderGallery() {
     const grid = document.getElementById('galleryGrid');
     if (!grid) return;
@@ -390,7 +392,7 @@ function renderGallery() {
         title: obs.observation ? obs.observation.substring(0, 80) + '...' : 'Observation',
         description: obs.observation || '',
         owner: obs.cardCode || 'Unknown',
-        score: obs.score || '---',
+        score: obs.adminScore || obs.score || '---',
         date: obs.createdAt
     }));
 
@@ -434,8 +436,6 @@ function renderGallery() {
         let detailButton = '';
         if (isAtlas) {
             detailButton = `<button onclick="showAtlasDetail(${item._idx})" class="btn-full-profile">📊 View Full Emergence Profile</button>`;
-        } else if (isAchievement) {
-            detailButton = `<button onclick="showAchievementDetail(${item._idx})" class="btn-full-profile">👁️ View Details</button>`;
         }
 
         return `
@@ -457,35 +457,6 @@ function renderGallery() {
     }).join('');
 }
 
-// ============================================================
-// Achievement detail
-// ============================================================
-window.showAchievementDetail = function(idx) {
-    const item = allAchievements[idx];
-    if (!item) return;
-
-    let mediaHtml = '';
-    const imageUrl = item.fileUrl || item.fileData;
-    if (imageUrl) {
-        mediaHtml = `<img src="${imageUrl}" style="width:100%;max-height:300px;object-fit:contain;background:#1a1a1a;border-radius:8px;margin-bottom:0.8rem;" onerror="this.style.display='none'"/>`;
-    }
-
-    const html = `
-        <div style="direction:ltr; line-height:1.7;">
-            ${mediaHtml}
-            <h3 style="color:#8a6d1f; margin-bottom:0.6rem;">${item.title || 'Untitled'}</h3>
-            <p style="font-size:0.9rem; margin-bottom:0.6rem;">${item.description || 'No description'}</p>
-            <div style="font-size:0.75rem; color:#888;">
-                👤 ${item.owner || 'Unknown'} &nbsp;|&nbsp; 📅 ${item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-US') : '---'}
-            </div>
-        </div>
-    `;
-    showCustomModal('👁️ Achievement Detail', html);
-};
-
-// ============================================================
-// Atlas detail (4-section box)
-// ============================================================
 window.showAtlasDetail = function(idx) {
     const item = allAtlasItems[idx];
     if (!item) return;
@@ -502,9 +473,11 @@ window.showAtlasDetail = function(idx) {
 
     let html = `
         <div style="direction:ltr; line-height:1.8; max-height:70vh; overflow-y:auto;">
+            <h3 style="color:#8a6d1f; border-bottom:2px solid #d4af37; padding-bottom:0.5rem; margin-bottom:1rem;">
+                🏛️ Atlas Profile #${item.number}
+            </h3>
     `;
 
-    // ① Raw observation
     html += `
         <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(212,175,55,0.08); border-radius:10px; border-left:4px solid #d4af37;">
             <div style="font-weight:800; font-size:0.85rem; color:#8a6d1f; margin-bottom:0.4rem;">📝 Registered Observation</div>
@@ -512,7 +485,6 @@ window.showAtlasDetail = function(idx) {
         </div>
     `;
 
-    // ② AI-1
     if (guide && (guide.individual || guide.social || guide.institutional)) {
         html += `
             <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(16,185,129,0.06); border-radius:10px; border-left:4px solid #10b981;">
@@ -524,14 +496,12 @@ window.showAtlasDetail = function(idx) {
         `;
     }
 
-    // ③ AI-2
     if (matrix && (matrix.emergence || matrix.layer || matrix.connection || matrix.scale || matrix.capacity || matrix.analysis)) {
         html += `
             <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(99,102,241,0.06); border-radius:10px; border-left:4px solid #6366f1;">
                 <div style="font-weight:800; font-size:0.85rem; color:#4338ca; margin-bottom:0.4rem;">
                     🧠 AI-2 — Five-Level Matrix
                     ${matrix.cluster ? `<span style="background:rgba(212,175,55,0.15); padding:0.1rem 0.6rem; border-radius:10px; font-size:0.7rem; margin-left:0.3rem;">📂 ${clusterNames[matrix.cluster] || matrix.cluster}</span>` : ''}
-                    ${matrix.score ? `<span style="background:rgba(39,174,96,0.15); padding:0.1rem 0.6rem; border-radius:10px; font-size:0.7rem;">⭐ Score: ${matrix.score}</span>` : ''}
                 </div>
                 ${matrix.emergence ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 Emergence:</strong> ${matrix.emergence}</div>` : ''}
                 ${matrix.layer ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 Layers:</strong> ${matrix.layer}</div>` : ''}
@@ -543,7 +513,6 @@ window.showAtlasDetail = function(idx) {
         `;
     }
 
-    // ④ AI-3
     if (ai3Final) {
         html += `
             <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(236,72,153,0.06); border-radius:10px; border-left:4px solid #ec4899;">
@@ -553,31 +522,21 @@ window.showAtlasDetail = function(idx) {
         `;
     }
 
-    // No AI available
     if (!guide && !matrix && !ai3Final) {
         html += `
             <div style="padding:0.8rem; background:rgba(231,76,60,0.08); border-radius:10px; border-left:4px solid #e74c3c;">
                 <div style="font-weight:800; font-size:0.85rem; color:#7a1a1a;">⚠️ AI analysis not available for this observation</div>
-                <div style="font-size:0.78rem; color:#7a1a1a; margin-top:0.3rem;">This observation may have been registered before the three-layer analysis system was activated.</div>
             </div>
         `;
     }
 
-    // Copy button
-    html += `
-            <div style="margin-top:0.8rem; padding:0.6rem; text-align:center; background:rgba(100,116,139,0.08); border-radius:8px; border:1px dashed rgba(100,116,139,0.3);">
-                <button onclick="copyAtlasProfile(${idx})" style="padding:0.4rem 1rem; border-radius:20px; background:#64748b; color:#fff; border:none; font-weight:700; font-size:0.8rem; cursor:pointer;">📋 Copy Full Profile</button>
-                <span style="font-size:0.7rem; color:#64748b; margin-left:0.5rem;">For translation</span>
-            </div>
-        </div>
-    `;
+    html += `<div class="feedback-note" style="margin-top:1rem;">📊 Effectiveness Report: (Visible only after observer submits feedback)</div>`;
 
-    showCustomModal(`🏛️ Atlas of Emergence #${item.number}`, html);
+    html += `</div>`;
+
+    showCustomModal(`🏛️ Atlas Profile #${item.number}`, html);
 };
 
-// ============================================================
-// Simple modal
-// ============================================================
 function showCustomModal(title, bodyHtml) {
     let modal = document.getElementById('customAtlasModal');
     if (modal) modal.remove();
@@ -596,78 +555,8 @@ function showCustomModal(title, bodyHtml) {
     document.body.appendChild(modal);
 }
 
-// ============================================================
-// Copy full profile
-// ============================================================
-window.copyAtlasProfile = function(idx) {
-    const item = allAtlasItems[idx];
-    if (!item) return;
-
-    const guide = normalizeGuide(item);
-    const matrix = normalizeMatrix(item);
-    const ai3Final = normalizeAi3(item);
-
-    const L = [];
-    L.push('═══════════════════════════════════════════');
-    L.push(`ATLAS PROFILE #${item.number || '---'}`);
-    L.push(`Tracking Code: OBS-${item.number || '---'}`);
-    L.push(`Card Code: ${item.cardCode || '---'}`);
-    L.push(`Date: ${item.createdAt ? new Date(item.createdAt).toISOString() : '---'}`);
-    L.push(`Score: ${item.score || '---'}`);
-    L.push('═══════════════════════════════════════════');
-    L.push('');
-    L.push('▸ [1] RAW OBSERVATION:');
-    L.push(item.observation || '-');
-    L.push('');
-    if (guide) {
-        L.push('▸ [2] AI-1 — THREE-LEVEL GUIDANCE:');
-        if (guide.individual) L.push(`  📍 Individual: ${guide.individual}`);
-        if (guide.social) L.push(`  🌐 Social: ${guide.social}`);
-        if (guide.institutional) L.push(`  🏛️ Institutional: ${guide.institutional}`);
-        L.push('');
-    }
-    if (matrix) {
-        L.push('▸ [3] AI-2 — FIVE-LEVEL MATRIX:');
-        if (matrix.emergence) L.push(`  📊 Emergence: ${matrix.emergence}`);
-        if (matrix.layer) L.push(`  📊 Layers: ${matrix.layer}`);
-        if (matrix.connection) L.push(`  📊 Connections: ${matrix.connection}`);
-        if (matrix.scale) L.push(`  📊 Scale: ${matrix.scale}`);
-        if (matrix.capacity) L.push(`  📊 Capacity: ${matrix.capacity}`);
-        if (matrix.analysis) { L.push(''); L.push(`  Analysis: ${matrix.analysis}`); }
-        L.push('');
-    }
-    if (ai3Final) {
-        L.push('▸ [4] AI-3 — FINAL SYNTHESIS:');
-        L.push(ai3Final);
-        L.push('');
-    }
-    L.push('═══════════════════════════════════════════');
-
-    const text = L.join('\n');
-    if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text).then(() => alert('✅ Full profile copied')).catch(() => fallbackCopy(text));
-    } else {
-        fallbackCopy(text);
-    }
-};
-
-function fallbackCopy(text) {
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    try { document.execCommand('copy'); alert('✅ Full profile copied'); }
-    catch (e) { alert('❌ Copy error'); }
-    document.body.removeChild(ta);
-}
-
-// ============================================================
-// Init
-// ============================================================
 loadData();
 setInterval(loadData, 60000);
-</script>  
+</script>
 </body>
 </html>
