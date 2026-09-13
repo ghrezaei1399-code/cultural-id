@@ -14,7 +14,7 @@ module.exports = async function handler(req, res) {
   const repo = 'cultural-id';
 
   try {
-    // ===== دریافت پاسخ‌های هم‌فرهنگ برای یک Issue خاص =====
+    // ===== پاسخ‌های هم‌فرهنگ =====
     if (type === 'peer-responses' && issueNumber) {
       const commentsRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/comments`, {
         headers: {
@@ -23,9 +23,7 @@ module.exports = async function handler(req, res) {
         }
       });
 
-      if (!commentsRes.ok) {
-        throw new Error('خطا در دریافت کامنت‌ها از گیت‌هاب');
-      }
+      if (!commentsRes.ok) throw new Error('خطا در دریافت کامنت‌ها');
 
       const comments = await commentsRes.json();
       const peerResponses = [];
@@ -56,7 +54,7 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    // ===== دریافت نتیجه ماژول برای یک Issue خاص =====
+    // ===== نتیجه ماژول =====
     if (type === 'module-result' && issueNumber) {
       const issueRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}`, {
         headers: {
@@ -65,9 +63,7 @@ module.exports = async function handler(req, res) {
         }
       });
 
-      if (!issueRes.ok) {
-        throw new Error('خطا در دریافت اطلاعات Issue');
-      }
+      if (!issueRes.ok) throw new Error('خطا در دریافت Issue');
 
       const issue = await issueRes.json();
       const body = issue.body || '';
@@ -93,7 +89,7 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    // ===== دریافت مشاهدات (Observations) =====
+    // ===== مشاهدات =====
     if (type === 'observations') {
       const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues?labels=observation&state=all&per_page=100`, {
         headers: {
@@ -102,9 +98,7 @@ module.exports = async function handler(req, res) {
         }
       });
 
-      if (!response.ok) {
-        throw new Error('خطا در دریافت مشاهدات از گیت‌هاب');
-      }
+      if (!response.ok) throw new Error('خطا در دریافت مشاهدات');
 
       const issues = await response.json();
       const observations = [];
@@ -112,7 +106,6 @@ module.exports = async function handler(req, res) {
       for (const issue of issues) {
         const labels = issue.labels.map(l => l.name);
         let status = 'pending';
-        let score = null;
         
         if (labels.includes('approved')) status = 'approved';
         else if (labels.includes('rejected')) status = 'rejected';
@@ -127,13 +120,51 @@ module.exports = async function handler(req, res) {
 
         const parsed = parseIssueBody(issue.body || '');
 
+        // ===== خواندن امتیاز ادمین از کامنت‌ها =====
+        let adminScore = null;
+        let feedbackResult = null;
+        try {
+          const commentsRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issue.number}/comments`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Accept': 'application/vnd.github.v3+json'
+            }
+          });
+          if (commentsRes.ok) {
+            const comments = await commentsRes.json();
+            for (const comment of comments) {
+              const cBody = comment.body || '';
+              // امتیاز ادمین
+              if (cBody.includes('⭐ امتیاز ادمین') || cBody.includes('Admin Score:')) {
+                const scoreMatch = cBody.match(/امتیاز نهایی:\*\*\s*(\d+)/) || cBody.match(/Admin Score:\*\*\s*(\d+)/);
+                if (scoreMatch) adminScore = parseInt(scoreMatch[1]);
+              }
+              // بازخورد عضو
+              if (cBody.includes('📊 بازخورد عضو')) {
+                const resultMatch = cBody.match(/نتیجه:\*\*\s*(.+)/);
+                if (resultMatch) {
+                  const resultText = resultMatch[1].trim();
+                  if (resultText.includes('موفق')) feedbackResult = 'success';
+                  else if (resultText.includes('اصلاح')) feedbackResult = 'revision';
+                  else if (resultText.includes('شکست')) feedbackResult = 'failed';
+                }
+              }
+            }
+          }
+        } catch (e) {
+          console.warn('Error reading comments for issue', issue.number, e.message);
+        }
+
         observations.push({
           number: issue.number,
           cardCode: parsed.cardCode || 'ناشناس',
           observation: parsed.observation,
           module: parsed.module,
           status: status,
-          score: parsed.score || score,
+          score: adminScore || parsed.score || null,
+          adminScore: adminScore,
+          aiScore: parsed.score,
+          feedbackResult: feedbackResult,
           cluster: parsed.cluster,
           analysis: parsed.analysis,
           matrix_emergence: parsed.matrix_emergence,
@@ -158,7 +189,7 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ observations });
     }
 
-    // ===== دریافت درخواست‌های دستاورد (Achievements) =====
+    // ===== دستاوردها =====
     if (type === 'achievements') {
       const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/requests`, {
         headers: {
@@ -167,9 +198,7 @@ module.exports = async function handler(req, res) {
         }
       });
 
-      if (!response.ok) {
-        throw new Error('خطا در دریافت درخواست‌های دستاورد');
-      }
+      if (!response.ok) throw new Error('خطا در دریافت درخواست‌های دستاورد');
 
       const files = await response.json();
       const achievements = [];
@@ -213,7 +242,7 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ achievements });
     }
 
-    // ===== دریافت درخواست‌های ارتباط =====
+    // ===== درخواست‌های ارتباط =====
     const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/requests`, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -221,9 +250,7 @@ module.exports = async function handler(req, res) {
       }
     });
 
-    if (!response.ok) {
-      throw new Error('خطا در دریافت درخواست‌ها از گیت‌هاب');
-    }
+    if (!response.ok) throw new Error('خطا در دریافت درخواست‌ها');
 
     const files = await response.json();
     const requests = [];
@@ -274,7 +301,7 @@ module.exports = async function handler(req, res) {
 
 
 // ============================================================
-// تابع کمکی: نرمال‌سازی خط
+// توابع کمکی پارس
 // ============================================================
 function normalizeLine(line) {
   return (line || '')
@@ -283,10 +310,6 @@ function normalizeLine(line) {
     .trim();
 }
 
-
-// ============================================================
-// تابع اصلی: پارس کردن بدنه Issue
-// ============================================================
 function parseIssueBody(body) {
   const result = {
     cardCode: '',
@@ -314,7 +337,7 @@ function parseIssueBody(body) {
 
   const lines = body.split('\n');
 
-  // ===== مرحله ۱: استخراج AI-3 (چند خطی) =====
+  // ===== AI-3 =====
   let ai3Start = -1;
   let ai3End = lines.length;
   for (let i = 0; i < lines.length; i++) {
@@ -351,7 +374,7 @@ function parseIssueBody(body) {
     result.ai3Final = ai3Lines.join(' ').trim();
   }
 
-  // ===== مرحله ۲: استخراج بقیه فیلدها =====
+  // ===== بقیه فیلدها =====
   let inObservation = false;
   let inModuleSection = false;
   const observationLines = [];
@@ -381,13 +404,8 @@ function parseIssueBody(body) {
       continue;
     }
 
-    if (norm === 'Action Guide:' || norm === 'Action Guide') {
-      continue;
-    }
-
-    if (norm.startsWith('Status:') && !norm.includes('Module')) {
-      continue;
-    }
+    if (norm === 'Action Guide:') continue;
+    if (norm.startsWith('Status:') && !norm.includes('Module')) continue;
 
     if (norm.startsWith('Individual:')) {
       const val = norm.substring('Individual:'.length).trim();
@@ -420,7 +438,7 @@ function parseIssueBody(body) {
       continue;
     }
 
-    if (norm === '5 Matrices:' || norm === '5 Matrices') continue;
+    if (norm === '5 Matrices:') continue;
 
     if (norm.startsWith('Emergence:')) {
       const val = norm.substring('Emergence:'.length).trim();
@@ -459,13 +477,8 @@ function parseIssueBody(body) {
       continue;
     }
 
-    if (norm.startsWith('Module Status:')) {
-      continue;
-    }
-
-    if (norm.startsWith('Tracking Code:')) {
-      continue;
-    }
+    if (norm.startsWith('Module Status:')) continue;
+    if (norm.startsWith('Tracking Code:')) continue;
 
     if (norm.includes('Module Result:') || norm.startsWith('📌')) {
       inModuleSection = true;
