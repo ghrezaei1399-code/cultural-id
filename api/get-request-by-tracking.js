@@ -53,18 +53,18 @@ module.exports = async function handler(req, res) {
           
           if (requestData.trackingCode === trackingCode) {
             return res.status(200).json({
-    request: {
-        status: requestData.status || 'pending',
-        trackingCode: requestData.trackingCode || trackingCode,
-        connections: requestData.connections || [],
-        connectionsCount: (requestData.connections || []).length,
-      senderEmail: requestData.senderEmail || '',
-        senderEmail: requestData.senderEmail || '',
-        createdAt: requestData.createdAt || requestData.requestDate || new Date().toISOString(),
-        approvedAt: requestData.approvedAt || null,
-        rejectedAt: requestData.rejectedAt || null
-    }
-});
+              request: {
+                status: requestData.status || 'pending',
+                trackingCode: requestData.trackingCode || trackingCode,
+                title: requestData.title,
+                description: requestData.description,
+                category: requestData.category,
+                fileUrl: requestData.fileUrl,
+                createdAt: requestData.createdAt,
+                approvedAt: requestData.approvedAt || null,
+                rejectedAt: requestData.rejectedAt || null
+              }
+            });
           }
         } catch (e) {
           console.error('Error reading request file:', file.name, e);
@@ -114,7 +114,6 @@ module.exports = async function handler(req, res) {
 
       const parsed = parseIssueBody(issueData.body || '');
 
-      // ===== دریافت کامنت‌ها: پاسخ‌های هم‌فرهنگ + بازخورد عضو =====
       const peerResponses = [];
       let userFeedback = null;
       
@@ -130,7 +129,6 @@ module.exports = async function handler(req, res) {
           for (const comment of comments) {
             const body = comment.body || '';
             
-            // پاسخ هم‌فرهنگ
             if (body.includes('📝 پاسخ هم‌فرهنگ') || body.includes('Peer Response')) {
               const peerMatch = body.match(/هم‌فرهنگ:\s*(.+)/) || body.match(/Peer:\s*(.+)/);
               const resultMatch = body.match(/نتیجه:\s*(.+)/) || body.match(/Result:\s*(.+)/);
@@ -147,7 +145,6 @@ module.exports = async function handler(req, res) {
               }
             }
             
-            // بازخورد عضو
             if (body.includes('📊 بازخورد عضو')) {
               const cardMatch = body.match(/کد کارت:\*\*\s*(.+)/) || body.match(/Card Code:\*\*\s*(.+)/);
               const resultMatch = body.match(/نتیجه:\*\*\s*(.+)/);
@@ -230,7 +227,7 @@ module.exports = async function handler(req, res) {
     }
 
     for (const file of files) {
-     if (!file.name || !file.name.startsWith('connection-') || !file.name.endsWith('.json')) continue;
+      if (!file.name || !file.name.startsWith('connection-') || !file.name.endsWith('.json')) continue;
       
       try {
         const fileRes = await fetch(file.url, {
@@ -251,6 +248,7 @@ module.exports = async function handler(req, res) {
               trackingCode: requestData.trackingCode || trackingCode,
               connections: requestData.connections || [],
               connectionsCount: (requestData.connections || []).length,
+              senderEmail: requestData.senderEmail || '',
               createdAt: requestData.createdAt || requestData.requestDate || new Date().toISOString(),
               approvedAt: requestData.approvedAt || null,
               rejectedAt: requestData.rejectedAt || null
