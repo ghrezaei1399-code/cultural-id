@@ -459,7 +459,7 @@ ${moduleSection}
         return res.status(userRes.status).json({ error: 'Error fetching user data' });
       }
 
-     const userData = await (await fetch(userDataRaw.download_url)).json();
+   const userData = await (await fetch(`https://raw.githubusercontent.com/${owner}/${repo}/main/${userPath}`)).json();
 
       if (!userData.communicationEmail || userData.communicationEmail.length < 5) {
         return res.status(400).json({ 
