@@ -654,8 +654,7 @@
                     return;
                 }
 
-              const email = data.email || '—';
-const senderEmail = data.senderEmail || '—';
+             const senderEmail = data.senderEmail || data.email || '—';
                 const count = (typeof data.count === 'number') ? data.count : 0;
 
                 const card = document.createElement('div');
@@ -725,10 +724,11 @@ const senderEmail = data.senderEmail || '—';
                     } catch (e) {}
 
                     renderResult({
-                        ok: true,
-                        email: email || '—',
-                        count: count
-                    });
+    ok: true,
+    senderEmail: req.senderEmail || '—',
+    email: req.senderEmail || '—',
+    count: count
+});
 
                 } catch (e) {
                     result.style.color = '#c00';
