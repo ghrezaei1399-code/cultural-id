@@ -312,7 +312,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ===== Tracking Box Styles (NEW) ===== */
+        /* ===== Tracking Box Styles ===== */
         #tracking-box {
             display: none;
             margin-top: 1.5rem;
@@ -436,7 +436,7 @@
             </div>
         </form>
 
-        <!-- ===== Tracking Code Box (NEW) ===== -->
+        <!-- ===== Tracking Code Box ===== -->
         <section id="tracking-box">
             <div class="tracking-title">🔎 Track by Code</div>
             <div class="tracking-hint">Enter your tracking code to see your email and the number of like-minded peers.</div>
@@ -444,15 +444,14 @@
                 <input
                     id="tracking-input"
                     type="text"
-                    inputmode="numeric"
+                    inputmode="text"
                     autocomplete="off"
-                    placeholder="e.g. 123456"
+                    placeholder="e.g. CON-MU16SMQJ-ZT6P"
                 >
                 <button id="tracking-btn" type="button">Check</button>
             </div>
             <div id="tracking-result"></div>
         </section>
-        <!-- ===== End Tracking Box ===== -->
 
         <!-- ===== Connection Result ===== -->
         <div id="connectionsResult" class="connections-result">
@@ -637,7 +636,7 @@
         });
     </script>
 
-    <!-- ===== Tracking Box Script (NEW & ISOLATED) ===== -->
+    <!-- ===== Tracking Box Script (ISOLATED) ===== -->
     <script>
     (function () {
         if (window.__trackingBoxLoaded) return;
@@ -649,7 +648,6 @@
             const result = document.getElementById('tracking-result');
             if (!input || !btn || !result) return;
 
-            // Skip in delete mode
             const params = new URLSearchParams(window.location.search);
             if (params.get('type') === 'delete') return;
 
@@ -662,7 +660,7 @@
                     return;
                 }
 
-                const email = data.email || '—';
+                const senderEmail = data.senderEmail || data.email || '—';
                 const count = (typeof data.count === 'number') ? data.count : 0;
 
                 const card = document.createElement('div');
@@ -670,7 +668,7 @@
 
                 const row1 = document.createElement('div');
                 row1.className = 'row';
-                row1.innerHTML = '<span class="label">📧 Email:</span> <strong style="direction:ltr;display:inline-block;">' + email + '</strong>';
+                row1.innerHTML = '<span class="label">📧 Your Email:</span> <strong style="direction:ltr;display:inline-block;">' + senderEmail + '</strong>';
 
                 const row2 = document.createElement('div');
                 row2.className = 'row';
@@ -696,19 +694,39 @@
                 btn.disabled = true;
 
                 try {
-                    let data;
-                    try {
-                        const res = await fetch('/api/tracking?code=' + encodeURIComponent(code));
-                        if (res.ok) {
-                            data = await res.json();
-                        } else {
-                            data = { ok: false, message: 'Tracking code not found or system is still being completed.' };
-                        }
-                    } catch (netErr) {
-                        data = { ok: false, message: 'The like-minded finder system is being completed. Please try again later.' };
+                    const res = await fetch(
+                        '/api/get-request-by-tracking?type=connection&trackingCode=' + encodeURIComponent(code)
+                    );
+
+                    if (!res.ok) {
+                        let msg = 'Tracking code not found.';
+                        try {
+                            const errData = await res.json();
+                            if (errData && errData.error) msg = errData.error;
+                        } catch (e) {}
+                        renderResult({ ok: false, message: msg });
+                        return;
                     }
 
-                    renderResult(data);
+                    const data = await res.json();
+                    const req = data && data.request ? data.request : null;
+
+                    if (!req) {
+                        renderResult({ ok: false, message: 'Invalid server response.' });
+                        return;
+                    }
+
+                    const count = (typeof req.connectionsCount === 'number')
+                        ? req.connectionsCount
+                        : ((req.connections || []).length);
+
+                    renderResult({
+                        ok: true,
+                        senderEmail: req.senderEmail || '—',
+                        email: req.senderEmail || '—',
+                        count: count
+                    });
+
                 } catch (e) {
                     result.style.color = '#c00';
                     result.textContent = '❌ Server error. Please try again.';
