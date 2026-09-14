@@ -448,7 +448,7 @@ ${moduleSection}
       }
 
       const userPath = `data/active/${cardCode}.json`;
-      const userRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
+    const userRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}?ref=main`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
