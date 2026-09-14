@@ -229,7 +229,7 @@ module.exports = async function handler(req, res) {
     }
 
     for (const file of files) {
-      if (!file.name || !file.name.startsWith('request-') || !file.name.endsWith('.json')) continue;
+     if (!file.name || !file.name.startsWith('connection-') || !file.name.endsWith('.json')) continue;
       
       try {
         const fileRes = await fetch(file.url, {
