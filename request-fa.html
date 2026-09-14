@@ -654,7 +654,8 @@
                     return;
                 }
 
-                const email = data.email || '—';
+              const email = data.email || '—';
+const senderEmail = data.senderEmail || '—';
                 const count = (typeof data.count === 'number') ? data.count : 0;
 
                 const card = document.createElement('div');
@@ -662,7 +663,7 @@
 
                 const row1 = document.createElement('div');
                 row1.className = 'row';
-                row1.innerHTML = '<span class="label">📧 ایمیل:</span> <strong style="direction:ltr;display:inline-block;">' + email + '</strong>';
+              row1.innerHTML = '<span class="label">📧 ایمیل شما:</span> <strong style="direction:ltr;display:inline-block;">' + senderEmail + '</strong>';
 
                 const row2 = document.createElement('div');
                 row2.className = 'row';
