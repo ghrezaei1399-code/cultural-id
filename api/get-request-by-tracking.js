@@ -53,18 +53,17 @@ module.exports = async function handler(req, res) {
           
           if (requestData.trackingCode === trackingCode) {
             return res.status(200).json({
-              request: {
-                status: requestData.status || 'pending',
-                trackingCode: requestData.trackingCode,
-                title: requestData.title,
-                description: requestData.description,
-                category: requestData.category,
-                fileUrl: requestData.fileUrl,
-                createdAt: requestData.createdAt,
-                approvedAt: requestData.approvedAt || null,
-                rejectedAt: requestData.rejectedAt || null
-              }
-            });
+    request: {
+        status: requestData.status || 'pending',
+        trackingCode: requestData.trackingCode || trackingCode,
+        connections: requestData.connections || [],
+        connectionsCount: (requestData.connections || []).length,
+        senderEmail: requestData.senderEmail || '',
+        createdAt: requestData.createdAt || requestData.requestDate || new Date().toISOString(),
+        approvedAt: requestData.approvedAt || null,
+        rejectedAt: requestData.rejectedAt || null
+    }
+});
           }
         } catch (e) {
           console.error('Error reading request file:', file.name, e);
