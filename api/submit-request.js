@@ -459,8 +459,7 @@ ${moduleSection}
         return res.status(userRes.status).json({ error: 'Error fetching user data' });
       }
 
-      const userDataRaw = await userRes.json();
-      const userData = JSON.parse(Buffer.from(userDataRaw.content, 'base64').toString('utf8'));
+     const userData = await (await fetch(userDataRaw.download_url)).json();
 
       if (!userData.communicationEmail || userData.communicationEmail.length < 5) {
         return res.status(400).json({ 
