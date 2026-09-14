@@ -215,7 +215,6 @@
         .theme-toggle:hover { transform: scale(1.1); }
         @font-face { font-family: 'Vazir'; src: local('Vazir'), local('IRANSans'); }
 
-        /* ===== استایل نتیجه هم‌فکران ===== */
         .connections-result {
             display: none;
             margin-top: 1.5rem;
@@ -312,7 +311,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ===== استایل باکس پیگیری کد (جدید) ===== */
         #tracking-box {
             display: none;
             margin-top: 1.5rem;
@@ -347,7 +345,7 @@
         }
         #tracking-input {
             flex: 1;
-            min-width: 140px;
+            min-width: 160px;
             padding: 0.6rem 0.9rem;
             border-radius: 12px;
             border: 1px solid rgba(40, 116, 166, 0.2);
@@ -409,7 +407,6 @@
 
         <div id="messageBox" class="message-box"></div>
 
-        <!-- ===== باکس نیاز به ایمیل ===== -->
         <div id="emailRequiredBox" class="email-required-box">
             <span class="icon">📧</span>
             <h3>برای استفاده از این بخش، ابتدا ایمیل خود را ثبت کنید</h3>
@@ -436,7 +433,6 @@
             </div>
         </form>
 
-        <!-- ===== باکس پیگیری کد رهگیری (جدید) ===== -->
         <section id="tracking-box">
             <div class="tracking-title">🔎 پیگیری با کد رهگیری</div>
             <div class="tracking-hint">کد پیگیری خود را وارد کنید تا ایمیل و تعداد هم‌فکران نمایش داده شود.</div>
@@ -444,17 +440,15 @@
                 <input
                     id="tracking-input"
                     type="text"
-                    inputmode="numeric"
+                    inputmode="text"
                     autocomplete="off"
-                    placeholder="مثلاً: 123456"
+                    placeholder="مثلاً: CON-MU16SMQJ-ZT6P"
                 >
                 <button id="tracking-btn" type="button">بررسی</button>
             </div>
             <div id="tracking-result"></div>
         </section>
-        <!-- ===== پایان باکس پیگیری ===== -->
 
-        <!-- ===== نتیجه هم‌فکران ===== -->
         <div id="connectionsResult" class="connections-result">
             <div class="title" id="resultTitle">✅ هم‌فکران شما</div>
             <div class="tracking-code" id="resultTracking">کد پیگیری: ---</div>
@@ -511,7 +505,6 @@
                 submitBtn.textContent = '🚪 ثبت درخواست انصراف';
                 submitBtn.className = 'btn btn-danger';
                 document.getElementById('connectionsResult').style.display = 'none';
-                // در حالت انصراف، باکس پیگیری هم مخفی می‌شود
                 const tb = document.getElementById('tracking-box');
                 if (tb) tb.style.display = 'none';
             } else {
@@ -522,7 +515,6 @@
                 descInput.placeholder = 'توضیح دهید که چه نوع ارتباطی مد نظر دارید...';
                 submitBtn.textContent = '📨 ارسال درخواست';
                 submitBtn.className = 'btn btn-primary';
-                // در حالت ارتباط، باکس پیگیری نمایش داده می‌شود
                 const tb = document.getElementById('tracking-box');
                 if (tb) tb.style.display = 'block';
             }
@@ -589,7 +581,6 @@
                     throw new Error('لطفاً کد کارت خود را وارد کنید.');
                 }
 
-                // ===== ارسال به API جدید =====
                 const response = await fetch('/api/submit-request', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -603,7 +594,6 @@
                 const result = await response.json();
 
                 if (!response.ok) {
-                    // ===== بررسی خطای نیاز به ایمیل =====
                     if (result.emailRequired && result.redirect) {
                         document.getElementById('emailRequiredBox').style.display = 'block';
                         showMessage('⚠️ برای استفاده از بخش ارتباط با هم‌فکران، ابتدا ایمیل خود را ثبت کنید.', 'info');
@@ -615,7 +605,6 @@
                     throw new Error(result.error || 'خطا در ارسال درخواست');
                 }
 
-                // ===== نمایش نتیجه =====
                 if (requestType === 'connection') {
                     showConnections(result);
                     showMessage('✅ درخواست شما با موفقیت پردازش شد.', 'success');
@@ -642,7 +631,6 @@
         });
     </script>
 
-    <!-- ===== اسکریپت باکس پیگیری کد (جدید و ایزوله) ===== -->
     <script>
     (function () {
         if (window.__trackingBoxLoaded) return;
@@ -654,7 +642,6 @@
             const result = document.getElementById('tracking-result');
             if (!input || !btn || !result) return;
 
-            // جلوگیری از فعال بودن در حالت انصراف
             const params = new URLSearchParams(window.location.search);
             if (params.get('type') === 'delete') return;
 
@@ -701,20 +688,47 @@
                 btn.disabled = true;
 
                 try {
-                    // اتصال به API داخلی سیستم
-                    let data;
-                    try {
-                        const res = await fetch('/api/tracking?code=' + encodeURIComponent(code));
-                        if (res.ok) {
-                            data = await res.json();
-                        } else {
-                            data = { ok: false, message: 'کد پیگیری یافت نشد یا سیستم در حال تکمیل است.' };
-                        }
-                    } catch (netErr) {
-                        data = { ok: false, message: 'سیستم یافتن هم‌فکران در حال تکمیل است. لطفاً بعداً تلاش کنید.' };
+                    const res = await fetch(
+                        '/api/get-request-by-tracking?type=connection&trackingCode=' + encodeURIComponent(code)
+                    );
+
+                    if (!res.ok) {
+                        let msg = 'کد پیگیری یافت نشد.';
+                        try {
+                            const errData = await res.json();
+                            if (errData && errData.error) msg = errData.error;
+                        } catch (e) {}
+                        renderResult({ ok: false, message: msg });
+                        return;
                     }
 
-                    renderResult(data);
+                    const data = await res.json();
+                    const req = data && data.request ? data.request : null;
+
+                    if (!req) {
+                        renderResult({ ok: false, message: 'پاسخ نامعتبر از سرور.' });
+                        return;
+                    }
+
+                    const count = (typeof req.connectionsCount === 'number')
+                        ? req.connectionsCount
+                        : ((req.connections || []).length);
+
+                    let email = '';
+                    try {
+                        const raw = localStorage.getItem('userData') || localStorage.getItem('user');
+                        if (raw) {
+                            const u = JSON.parse(raw);
+                            email = u.communicationEmail || u.email || '';
+                        }
+                    } catch (e) {}
+
+                    renderResult({
+                        ok: true,
+                        email: email || '—',
+                        count: count
+                    });
+
                 } catch (e) {
                     result.style.color = '#c00';
                     result.textContent = '❌ خطا در ارتباط با سرور. دوباره تلاش کنید.';
