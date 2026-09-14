@@ -311,6 +311,93 @@
             from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        /* ===== استایل باکس پیگیری کد (جدید) ===== */
+        #tracking-box {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.2rem;
+            background: rgba(40, 116, 166, 0.05);
+            border: 1px solid rgba(40, 116, 166, 0.15);
+            border-radius: 16px;
+            animation: fadeIn 0.5s ease;
+        }
+        body.dark #tracking-box {
+            background: rgba(40, 116, 166, 0.02);
+            border-color: rgba(40, 116, 166, 0.1);
+        }
+        #tracking-box .tracking-title {
+            font-weight: 800;
+            font-size: 1rem;
+            color: #2874a6;
+            margin-bottom: 0.4rem;
+        }
+        body.dark #tracking-box .tracking-title { color: #85c1e9; }
+        #tracking-box .tracking-hint {
+            font-size: 0.8rem;
+            color: #4a3a2a;
+            opacity: 0.85;
+            margin-bottom: 0.8rem;
+        }
+        body.dark #tracking-box .tracking-hint { color: #d0c0b0; }
+        #tracking-box .tracking-row {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        #tracking-input {
+            flex: 1;
+            min-width: 140px;
+            padding: 0.6rem 0.9rem;
+            border-radius: 12px;
+            border: 1px solid rgba(40, 116, 166, 0.2);
+            background: rgba(255, 255, 255, 0.4);
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #1a0a0a;
+            outline: none;
+            direction: ltr;
+            text-align: center;
+        }
+        body.dark #tracking-input {
+            background: rgba(0, 0, 0, 0.15);
+            color: #e8d8c8;
+            border-color: rgba(133, 193, 233, 0.2);
+        }
+        #tracking-btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(40, 116, 166, 0.2);
+            background: rgba(40, 116, 166, 0.1);
+            color: #2874a6;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        body.dark #tracking-btn { color: #85c1e9; background: rgba(40, 116, 166, 0.08); }
+        #tracking-btn:hover { background: rgba(40, 116, 166, 0.2); transform: scale(1.02); }
+        #tracking-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        #tracking-result {
+            margin-top: 0.8rem;
+            font-size: 0.88rem;
+            line-height: 1.8;
+            color: #1a0a0a;
+            min-height: 20px;
+        }
+        body.dark #tracking-result { color: #e8d8c8; }
+        #tracking-result .tracking-card {
+            padding: 0.9rem;
+            border-radius: 12px;
+            background: rgba(39, 174, 96, 0.08);
+            border: 1px solid rgba(39, 174, 96, 0.2);
+        }
+        body.dark #tracking-result .tracking-card {
+            background: rgba(39, 174, 96, 0.03);
+            border-color: rgba(39, 174, 96, 0.1);
+        }
+        #tracking-result .tracking-card .row { margin-bottom: 0.2rem; }
+        #tracking-result .tracking-card .label { opacity: 0.7; }
     </style>
 </head>
 <body>
@@ -348,6 +435,24 @@
                 <a href="index.html" class="btn btn-secondary">↩ بازگشت</a>
             </div>
         </form>
+
+        <!-- ===== باکس پیگیری کد رهگیری (جدید) ===== -->
+        <section id="tracking-box">
+            <div class="tracking-title">🔎 پیگیری با کد رهگیری</div>
+            <div class="tracking-hint">کد پیگیری خود را وارد کنید تا ایمیل و تعداد هم‌فکران نمایش داده شود.</div>
+            <div class="tracking-row">
+                <input
+                    id="tracking-input"
+                    type="text"
+                    inputmode="numeric"
+                    autocomplete="off"
+                    placeholder="مثلاً: 123456"
+                >
+                <button id="tracking-btn" type="button">بررسی</button>
+            </div>
+            <div id="tracking-result"></div>
+        </section>
+        <!-- ===== پایان باکس پیگیری ===== -->
 
         <!-- ===== نتیجه هم‌فکران ===== -->
         <div id="connectionsResult" class="connections-result">
@@ -406,6 +511,9 @@
                 submitBtn.textContent = '🚪 ثبت درخواست انصراف';
                 submitBtn.className = 'btn btn-danger';
                 document.getElementById('connectionsResult').style.display = 'none';
+                // در حالت انصراف، باکس پیگیری هم مخفی می‌شود
+                const tb = document.getElementById('tracking-box');
+                if (tb) tb.style.display = 'none';
             } else {
                 titleEl.textContent = '🤝 درخواست ارتباط با هم‌فکران';
                 subtitleEl.textContent = 'ارتباط با دیگران بر اساس ارزش‌های فرهنگی مشترک';
@@ -414,6 +522,9 @@
                 descInput.placeholder = 'توضیح دهید که چه نوع ارتباطی مد نظر دارید...';
                 submitBtn.textContent = '📨 ارسال درخواست';
                 submitBtn.className = 'btn btn-primary';
+                // در حالت ارتباط، باکس پیگیری نمایش داده می‌شود
+                const tb = document.getElementById('tracking-box');
+                if (tb) tb.style.display = 'block';
             }
         }
 
@@ -529,6 +640,102 @@
                 submitBtn.textContent = requestType === 'delete' ? '🚪 ثبت درخواست انصراف' : '📨 ارسال درخواست';
             }
         });
+    </script>
+
+    <!-- ===== اسکریپت باکس پیگیری کد (جدید و ایزوله) ===== -->
+    <script>
+    (function () {
+        if (window.__trackingBoxLoaded) return;
+        window.__trackingBoxLoaded = true;
+
+        function initTracking() {
+            const input  = document.getElementById('tracking-input');
+            const btn    = document.getElementById('tracking-btn');
+            const result = document.getElementById('tracking-result');
+            if (!input || !btn || !result) return;
+
+            // جلوگیری از فعال بودن در حالت انصراف
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('type') === 'delete') return;
+
+            function renderResult(data) {
+                result.innerHTML = '';
+
+                if (!data || data.ok === false) {
+                    result.style.color = '#b45309';
+                    result.textContent = 'ℹ️ ' + (data && data.message ? data.message : 'نتیجه‌ای یافت نشد.');
+                    return;
+                }
+
+                const email = data.email || '—';
+                const count = (typeof data.count === 'number') ? data.count : 0;
+
+                const card = document.createElement('div');
+                card.className = 'tracking-card';
+
+                const row1 = document.createElement('div');
+                row1.className = 'row';
+                row1.innerHTML = '<span class="label">📧 ایمیل:</span> <strong style="direction:ltr;display:inline-block;">' + email + '</strong>';
+
+                const row2 = document.createElement('div');
+                row2.className = 'row';
+                row2.innerHTML = '<span class="label">🤝 تعداد هم‌فکران:</span> <strong>' + count + '</strong> نفر';
+
+                card.appendChild(row1);
+                card.appendChild(row2);
+                result.style.color = '';
+                result.appendChild(card);
+            }
+
+            async function checkTrackingCode() {
+                const code = (input.value || '').trim();
+
+                if (!code) {
+                    result.style.color = '#c00';
+                    result.textContent = 'لطفاً کد رهگیری را وارد کنید.';
+                    return;
+                }
+
+                result.style.color = '#333';
+                result.textContent = '⏳ در حال بررسی...';
+                btn.disabled = true;
+
+                try {
+                    // اتصال به API داخلی سیستم
+                    let data;
+                    try {
+                        const res = await fetch('/api/tracking?code=' + encodeURIComponent(code));
+                        if (res.ok) {
+                            data = await res.json();
+                        } else {
+                            data = { ok: false, message: 'کد پیگیری یافت نشد یا سیستم در حال تکمیل است.' };
+                        }
+                    } catch (netErr) {
+                        data = { ok: false, message: 'سیستم یافتن هم‌فکران در حال تکمیل است. لطفاً بعداً تلاش کنید.' };
+                    }
+
+                    renderResult(data);
+                } catch (e) {
+                    result.style.color = '#c00';
+                    result.textContent = '❌ خطا در ارتباط با سرور. دوباره تلاش کنید.';
+                    console.error('[tracking]', e);
+                } finally {
+                    btn.disabled = false;
+                }
+            }
+
+            btn.addEventListener('click', checkTrackingCode);
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') checkTrackingCode();
+            });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initTracking);
+        } else {
+            initTracking();
+        }
+    })();
     </script>
 </body>
 </html>
