@@ -13,7 +13,6 @@
             justify-content: center;
             align-items: center;
             padding: 2rem 1rem;
-            /* پس‌زمینه متحرک و مدرن */
             background: linear-gradient(-45deg, #fdf6e3, #e8f4f8, #f5e6d3, #e0f7fa);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
@@ -66,7 +65,6 @@
         }
         body.dark .subtitle { color: #c8b890; }
 
-        /* زیباسازی کارت هویت */
         .real-card-sample {
             width: 100%; 
             background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
@@ -124,7 +122,6 @@
             flex: 1;
         }
         
-        /* دکمه کپی کد */
         .copy-btn {
             background: #d4af37;
             color: #1a1a1a;
@@ -175,7 +172,6 @@
         #qrcode { background: white; padding: 5px; border-radius: 8px; }
         .qr-label { font-size: 0.6rem; color: #d4af37; opacity: 0.9; }
 
-        /* دکمه‌های متحرک */
         .btn-group { display: flex; gap: 1rem; margin-top: 2.5rem; flex-wrap: wrap; }
         .btn {
             flex: 1;
@@ -242,7 +238,6 @@
             
             <div class="rc-code-section">
                 <div class="rc-code" id="cardCodeDisplay">CIM - .... - .... - ....</div>
-                <!-- دکمه کپی کد -->
                 <button class="copy-btn" onclick="copyCode()" title="کپی کردن کد">
                     📋 کپی
                 </button>
@@ -276,7 +271,6 @@
     </div>
 
     <script>
-        // Theme Toggle Logic
         (function() {
             const toggle = document.getElementById('themeToggle');
             const body = document.body;
@@ -296,7 +290,6 @@
             });
         })();
 
-        // Copy Code Function
         function copyCode() {
             const codeText = document.getElementById('cardCodeDisplay').textContent;
             navigator.clipboard.writeText(codeText).then(() => {
@@ -323,7 +316,6 @@
                 return;
             }
 
-            // تنظیم لینک پویا برای پشت کارت
             const backLink = document.getElementById('backCardLink');
             if (backLink) {
                 backLink.href = `card-back-fa.html?code=${encodeURIComponent(code)}`;
@@ -339,11 +331,16 @@
                 correctLevel : QRCode.CorrectLevel.H
             });
 
-                  if (data.user && data.user.cardCode) {
-    displayElement.textContent = data.user.cardCode;
-} else {
-    displayElement.textContent = code;
-}
+            fetch(`/api/get-user?code=${encodeURIComponent(code)}`)
+                .then(res => res.json())
+                .then(data => {
+                    const displayElement = document.getElementById('cardCodeDisplay');
+                    if (data.user && data.user.cardCode) {
+                        displayElement.textContent = data.user.cardCode;
+                    } else {
+                        displayElement.textContent = code;
+                    }
+                })
                 .catch(err => {
                     console.error('Error:', err);
                     document.getElementById('cardCodeDisplay').textContent = code;
