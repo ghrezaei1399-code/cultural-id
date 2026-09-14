@@ -339,16 +339,11 @@
                 correctLevel : QRCode.CorrectLevel.H
             });
 
-                        fetch(`/api/get-user?code=${encodeURIComponent(code)}`)
-                .then(res => res.json())
-                .then(data => {
-                    const displayElement = document.getElementById('cardCodeDisplay');
-                    // Display code exactly as stored (no extra spaces)
-                    if (data.user && data.user.cardCode) {
-                        displayElement.textContent = data.user.cardCode;
-                    } else {
-                        displayElement.textContent = code;
-                    }
+                      if (data.user && data.user.cardCode) {
+    displayElement.textContent = data.user.cardCode;
+} else {
+    displayElement.textContent = code;
+}
                 })
                 .catch(err => {
                     console.error('Error:', err);
