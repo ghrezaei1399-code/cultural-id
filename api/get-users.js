@@ -62,7 +62,7 @@ module.exports = async function handler(req, res) {
     });
 
     // ===== ۴. محاسبه آمار و نشان‌ها =====
-    let stats = { total: activeUsers.length, golden: 0, silver: 0, bronze: 0 };
+    const stats = { total: activeUsers.length, golden: 0, silver: 0, bronze: 0 };
     const galleryAllowedIds = new Set();
 
     activeUsers.forEach((u, index) => {
@@ -122,15 +122,60 @@ module.exports = async function handler(req, res) {
         }
       }
     } catch (e) { /* ignore */ }
-      // ================================================================
-    // ===== ۷. دریافت دستاوردهای تاییدشده (همه کاربران + پوشه achievements) =====
+
     // ================================================================
-    const achievements = [];
+    // ===== ۷. دریافت دستاوردهای تاییدشده =====
+    // ================================================================
+    // نقشه‌ی trackingCode → دستاورد تاییدشده از data/requests
+    // این نقشه به ما کمک می‌کند تا دستاوردهایی که فایل کاربرشان آپدیت نشده را هم نمایش دهیم
+    const approvedFromRequests = new Map();
     
+    try {
+      const listRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/requests`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (listRes.ok) {
+        const files = await listRes.json();
+        const achievementFiles = files.filter(f => 
+          f.type === 'file' && f.name.startsWith('achievement-') && f.name.endsWith('.json')
+        );
+        
+        for (const file of achievementFiles) {
+          try {
+            const contentRes = await fetch(file.url, { headers: { 'Authorization': `Bearer ${token}` } });
+            if (!contentRes.ok) continue;
+            
+            const fileData = await contentRes.json();
+            if (!fileData.content || fileData.content.trim() === '') continue;
+            
+            const jsonString = Buffer.from(fileData.content, 'base64').toString('utf8');
+            if (!jsonString || jsonString.trim() === '') continue;
+            
+            let achData;
+            try {
+              achData = JSON.parse(jsonString);
+            } catch (parseErr) {
+              continue;
+            }
+            
+            // فقط دستاوردهای تاییدشده
+            if (achData.status === 'approved' && achData.trackingCode) {
+              approvedFromRequests.set(achData.trackingCode, achData);
+            }
+          } catch (e) { /* ignore single file error */ }
+        }
+      }
+    } catch (e) { console.warn('Error reading requests folder:', e.message); }
+
+    // ===== حالا دستاوردها را از دو منبع ترکیب می‌کنیم =====
+    const achievements = [];
+    const seenTrackingCodes = new Set();
+
     // الف) دریافت از پروفایل کاربران
     allUsers.forEach(u => {
       if (u.achievements && Array.isArray(u.achievements)) {
         u.achievements.forEach(ach => {
+          // اگر در فایل کاربر approved بود، نمایش بده
           if (ach.status === 'approved') {
             const isGolden = galleryAllowedIds.has(u.cardCode);
             achievements.push({
@@ -140,47 +185,52 @@ module.exports = async function handler(req, res) {
               ownerBadge: isGolden ? 'golden' : (u.badge || 'bronze'),
               isGolden: isGolden
             });
+            if (ach.id) seenTrackingCodes.add(ach.id);
+            if (ach.trackingCode) seenTrackingCodes.add(ach.trackingCode);
+          }
+          // اگر در فایل کاربر pending بود، ببین در requests تأیید شده یا نه
+          else if ((ach.status === 'pending' || !ach.status) && ach.id) {
+            const approvedVersion = approvedFromRequests.get(ach.id);
+            if (approvedVersion) {
+              // در requests تأیید شده — پس نمایش بده
+              const isGolden = galleryAllowedIds.has(u.cardCode);
+              achievements.push({
+                ...ach,
+                ...approvedVersion,  // اطلاعات از requests (شامل fileUrl و approvedAt)
+                status: 'approved',   // قطعاً approved
+                owner: u.cardCode,
+                ownerRank: u.rank || 0,
+                ownerBadge: isGolden ? 'golden' : (u.badge || 'bronze'),
+                isGolden: isGolden
+              });
+              seenTrackingCodes.add(ach.id);
+              if (approvedVersion.trackingCode) seenTrackingCodes.add(approvedVersion.trackingCode);
+            }
           }
         });
       }
     });
 
-    // ب) دریافت از پوشه data/achievements (فایل‌های جداگانه)
-    try {
-      const achPath = 'data/achievements';
-      const listRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${achPath}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+    // ب) دستاوردهایی که در requests تأیید شده‌اند اما در هیچ فایل کاربری نیستند
+    // (مثلاً اگر فایل کاربر آپدیت نشده باشد یا دستاورد از فایل کاربر پاک شده باشد)
+    for (const [trackingCode, achData] of approvedFromRequests) {
+      if (seenTrackingCodes.has(trackingCode)) continue;
       
-      if (listRes.ok) {
-        const files = await listRes.json();
-        const jsonFiles = files.filter(f => f.type === 'file' && f.name.endsWith('.json'));
-        
-        for (const file of jsonFiles) {
-          try {
-            const contentRes = await fetch(file.url, { headers: { 'Authorization': `Bearer ${token}` } });
-            if (contentRes.ok) {
-              const fileData = await contentRes.json();
-              const achData = JSON.parse(Buffer.from(fileData.content, 'base64').toString('utf8'));
-              
-              if (achData.status === 'approved') {
-                // پیدا کردن اطلاعات کاربر برای نمایش رتبه و نشان
-                const ownerUser = allUsers.find(u => u.cardCode === achData.senderCode);
-                const isGolden = ownerUser ? galleryAllowedIds.has(ownerUser.cardCode) : false;
-                
-                achievements.push({
-                  ...achData,
-                  owner: achData.senderCode,
-                  ownerRank: ownerUser ? ownerUser.rank : 0,
-                  ownerBadge: isGolden ? 'golden' : (ownerUser ? ownerUser.badge : 'bronze'),
-                  isGolden: isGolden
-                });
-              }
-            }
-          } catch (e) { /* ignore single file error */ }
-        }
-      }
-    } catch (e) { /* ignore folder error */ }
+      // پیدا کردن صاحبش
+      const ownerUser = allUsers.find(u => u.cardCode === achData.senderCode);
+      if (!ownerUser) continue;  // اگر کاربر پیدا نشد، نمایش نده
+      
+      const isGolden = galleryAllowedIds.has(ownerUser.cardCode);
+      achievements.push({
+        ...achData,
+        id: achData.achievementId || achData.trackingCode,
+        owner: ownerUser.cardCode,
+        ownerRank: ownerUser.rank || 0,
+        ownerBadge: isGolden ? 'golden' : (ownerUser.badge || 'bronze'),
+        isGolden: isGolden
+      });
+    }
+
     // ===== ۸. دریافت مشاهدات =====
     let observations = [];
     try {
@@ -201,8 +251,8 @@ module.exports = async function handler(req, res) {
           let cardCode = 'ناشناس';
           const bodyLines = issue.body?.split('\n') || [];
           for (const line of bodyLines) {
-            if (line.includes('**کد کارت:**')) {
-              cardCode = line.replace('**کد کارت:**', '').trim();
+            if (line.includes('**کد کارت:**') || line.includes('**Card Code:**')) {
+              cardCode = line.replace('**کد کارت:**', '').replace('**Card Code:**', '').trim();
               break;
             }
           }
