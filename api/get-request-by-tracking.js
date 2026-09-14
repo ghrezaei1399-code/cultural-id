@@ -58,6 +58,7 @@ module.exports = async function handler(req, res) {
         trackingCode: requestData.trackingCode || trackingCode,
         connections: requestData.connections || [],
         connectionsCount: (requestData.connections || []).length,
+      senderEmail: requestData.senderEmail || '',
         senderEmail: requestData.senderEmail || '',
         createdAt: requestData.createdAt || requestData.requestDate || new Date().toISOString(),
         approvedAt: requestData.approvedAt || null,
