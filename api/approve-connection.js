@@ -188,7 +188,7 @@ ${guide.policy}
           });
         }
 
-       await updateIssueLabels(issueNumber, newLabels, token, 'open');
+        await updateIssueLabels(issueNumber, newLabels, token, 'open');
 
         return res.status(200).json({
           success: true,
@@ -258,7 +258,6 @@ ${guide.policy}
           body: JSON.stringify({ body: adminScoreComment })
         });
 
-        // ===== حذف لیبل pending-review =====
         newLabels = newLabels.filter(l => l !== 'pending-review');
         
         await updateIssueLabels(issueNumber, newLabels, token);
