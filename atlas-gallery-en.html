@@ -275,6 +275,7 @@
 
 <script>
 let allAtlasItems = [];
+let allGalleryItems = [];
 let allAchievements = [];
 let currentFilter = 'all';
 
@@ -322,20 +323,36 @@ function normalizeAi3(item) {
 }
 
 async function loadData() {
+    // ===== Atlas + Gallery observations =====
     try {
         const atlasRes = await fetch('/api/get-connection-requests?type=observations&t=' + Date.now());
         const atlasData = await atlasRes.json();
         if (atlasRes.ok) {
-            allAtlasItems = (atlasData.observations || []).filter(obs => obs.status === 'approved' && obs.score === 5);
+            const observations = atlasData.observations || [];
+            // Atlas: approved + label "atlas"
+            allAtlasItems = observations.filter(obs =>
+                obs.status === 'approved' &&
+                Array.isArray(obs.labels) &&
+                obs.labels.includes('atlas')
+            );
+            // Gallery observations: approved + label "gallery"
+            allGalleryItems = observations.filter(obs =>
+                obs.status === 'approved' &&
+                Array.isArray(obs.labels) &&
+                obs.labels.includes('gallery')
+            );
         } else {
             console.error('Atlas error:', atlasData.error);
             allAtlasItems = [];
+            allGalleryItems = [];
         }
     } catch (e) {
         console.error('Atlas fetch error:', e);
         allAtlasItems = [];
+        allGalleryItems = [];
     }
 
+    // ===== Achievements =====
     try {
         const usersRes = await fetch('/api/get-users?t=' + Date.now());
         const usersData = await usersRes.json();
@@ -368,9 +385,10 @@ async function loadData() {
 }
 
 function updateStats() {
-    document.getElementById('totalAtlas').textContent = allAtlasItems.length;
+    const atlasCount = allAtlasItems.length + allGalleryItems.length;
+    document.getElementById('totalAtlas').textContent = atlasCount;
     document.getElementById('totalAchievements').textContent = allAchievements.length;
-    document.getElementById('totalItems').textContent = allAtlasItems.length + allAchievements.length;
+    document.getElementById('totalItems').textContent = atlasCount + allAchievements.length;
 }
 
 function setFilter(filter) {
@@ -396,6 +414,17 @@ function renderGallery() {
         date: obs.createdAt
     }));
 
+    const galleryObservationItems = allGalleryItems.map((obs, idx) => ({
+        type: 'atlas',
+        _idx: allAtlasItems.length + idx,
+        id: obs.number,
+        title: obs.observation ? obs.observation.substring(0, 80) + '...' : 'Observation',
+        description: obs.observation || '',
+        owner: obs.cardCode || 'Unknown',
+        score: obs.adminScore || obs.score || '---',
+        date: obs.createdAt
+    }));
+
     const achievementItems = allAchievements.map((ach, idx) => ({
         type: 'achievement',
         _idx: idx,
@@ -409,9 +438,9 @@ function renderGallery() {
     }));
 
     let items = [];
-    if (currentFilter === 'all') items = [...atlasItems, ...achievementItems];
+    if (currentFilter === 'all') items = [...atlasItems, ...galleryObservationItems, ...achievementItems];
     else if (currentFilter === 'atlas') items = atlasItems;
-    else if (currentFilter === 'achievement') items = achievementItems;
+    else if (currentFilter === 'achievement') items = [...galleryObservationItems, ...achievementItems];
 
     items.sort((a, b) => new Date(b.date) - new Date(a.date));
 
@@ -458,7 +487,8 @@ function renderGallery() {
 }
 
 window.showAtlasDetail = function(idx) {
-    const item = allAtlasItems[idx];
+    const allItems = [...allAtlasItems, ...allGalleryItems];
+    const item = allItems[idx];
     if (!item) return;
 
     const guide = normalizeGuide(item);
