@@ -325,17 +325,7 @@ async function loadData() {
 
     // ===== گالری نام‌آوران: از API با فیلتر gallery =====
     try {
-        const galleryRes = await fetch('/api/get-connection-requests?type=observations&filter=gallery&t=' + Date.now());
-        const galleryData = await galleryRes.json();
-        if (galleryRes.ok) {
-            allGalleryItems = (galleryData.observations || []).filter(obs => obs.status === 'approved');
-        } else {
-            allGalleryItems = [];
-        }
-    } catch (e) {
-        console.error('Gallery fetch error:', e);
-        allGalleryItems = [];
-    }
+      let allGalleryItems = [];
 
     // ===== دستاوردها =====
     try {
