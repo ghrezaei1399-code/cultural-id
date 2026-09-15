@@ -40,6 +40,8 @@
             border-right: 4px solid #2874a6; padding-right: 10px;
         }
         body.dark .section h2 { color: #85c1e9; border-right-color: #85c1e9; }
+        .section h3 { color: #8a6d1f; margin: 1.2rem 0 0.6rem 0; font-size: 1rem; }
+        body.dark .section h3 { color: #f9e79f; }
         .section p { font-size: 0.95rem; color: #3a2a1a; margin-bottom: 1rem; }
         body.dark .section p { color: #e8dcc0; }
         .section ul { list-style: none; padding-right: 1.5rem; }
@@ -210,19 +212,6 @@
         }
         body.dark .radio-card .tag { color: #f9e79f; background: rgba(212, 175, 55, 0.2); }
         
-        .radio-player {
-            background: rgba(0, 0, 0, 0.03);
-            border-radius: 12px;
-            padding: 1rem;
-            margin-top: 0.8rem;
-        }
-        body.dark .radio-player { background: rgba(0, 0, 0, 0.1); }
-        .radio-player audio, .radio-player video {
-            width: 100%;
-            max-width: 400px;
-            border-radius: 8px;
-        }
-        
         .channel-desc {
             margin-bottom: 2rem;
             padding: 1.5rem;
@@ -246,7 +235,6 @@
         }
         body.dark .coming-soon { color: #c8b890; }
 
-        /* ===== جدید: بخش‌های اضافه‌شده ===== */
         .privacy-box {
             background: rgba(212, 175, 55, 0.08);
             border-radius: 12px;
@@ -256,6 +244,21 @@
         }
         body.dark .privacy-box { background: rgba(212, 175, 55, 0.03); }
         .privacy-box p { margin: 0; font-size: 0.9rem; }
+
+        .card-preview {
+            background: linear-gradient(135deg, #fdf6e3, #f5e6d3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border: 2px solid #d4af37;
+            text-align: center;
+        }
+        body.dark .card-preview { background: linear-gradient(135deg, #3a2f20, #2a2418); }
+        .card-preview .card-icon { font-size: 3rem; display: block; margin-bottom: 0.5rem; }
+        .card-preview .card-title { font-weight: 800; color: #8a6d1f; font-size: 1.1rem; }
+        body.dark .card-preview .card-title { color: #f9e79f; }
+        .card-preview .card-desc { font-size: 0.85rem; color: #4a3a2a; margin-top: 0.3rem; }
+        body.dark .card-preview .card-desc { color: #d0c0b0; }
 
         @media (max-width: 768px) {
             .container { padding: 1rem; }
@@ -271,14 +274,50 @@
     <h1>📖 درباره پروژه</h1>
     <div class="subtitle">فلسفه‌ی غیرمتمرکز و اهداف فرهنگی</div>
 
-    <!-- ===== بخش ۱: درباره پروژه ===== -->
     <div class="section">
         <h2>چرا کارت هویت فرهنگی؟</h2>
         <p>در عصری که مرزهای جغرافیایی پررنگ شده‌اند اما ارتباطات انسانی عمیق‌تر از همیشه مورد نیاز است، ما به هویتی فراتر از نام و ملیت نیاز داریم. این کارت، ابزاری برای شناسایی «هم‌فرهنگان» بر اساس ارزش‌های مشترک است، نه پیشینه‌ی سیاسی یا اقتصادی.</p>
         <p>هدف ما ایجاد شبکه‌ای از مصلحان فرهنگی است که بدون وابستگی به نهادها، بر اساس خرد جمعی و ارزش‌های انسان‌محور با یکدیگر ارتباط برقرار کنند.</p>
     </div>
 
-    <!-- ===== بخش ۲: اصول بنیادین ===== -->
+    <div class="section" style="border-color: #d4af37; border-width: 2px;">
+        <h2 style="color: #8a6d1f; border-right-color: #d4af37;">💳 کارت هویت فرهنگی و کیو آر کد</h2>
+        <p>هنگام ثبت‌نام، هر عضو یک <strong>کارت دیجیتال</strong> با کد یکتای خود دریافت می‌کند. این کارت شامل:</p>
+        <ul>
+            <li><strong>کد کارت</strong> — شناسه‌ی یکتای عضو</li>
+            <li><strong>۷ ارزش فرهنگی</strong> که خود عضو انتخاب کرده است</li>
+            <li><strong>کیو آر کد</strong> — برای اشتراک‌گذاری سریع کارت</li>
+            <li><strong>شعار پروژه</strong> — «تنوع فرهنگی حفظ شود؛ انسان‌ها خودشان اشتراکات فرهنگی‌شان را پیدا کنند.»</li>
+        </ul>
+
+        <div class="card-preview">
+            <span class="card-icon">🪪</span>
+            <div class="card-title">کارت جهانی هویت هوشمند فرهنگی</div>
+            <div class="card-desc">هیچ اطلاعات هویتی (نام، شماره، آدرس) روی کارت نیست.</div>
+        </div>
+
+        <h3>🔗 کیو آر کد به کجا وصل می‌شود؟</h3>
+        <p>کیو آر کد هر عضو، به <strong>صفحه‌ی عمومی کارت خود او</strong> وصل است. این صفحه فقط شامل:</p>
+        <ul>
+            <li>کد کارت</li>
+            <li>۷ ارزش فرهنگی انتخاب‌شده</li>
+            <li>هیچ اطلاعات هویتی دیگری</li>
+        </ul>
+        <div class="privacy-box">
+            <p><strong>🔒 نکته:</strong> کیو آر کد هرگز به ایمیل، نام، یا اطلاعات شخصی وصل نیست. هر کسی که کیو آر کد را اسکن کند، فقط کارت فرهنگی عمومی را می‌بیند.</p>
+        </div>
+
+        <h3>✨ مزایای داشتن کارت</h3>
+        <ul>
+            <li>شناسایی هم‌فکران بر اساس ارزش‌های مشترک</li>
+            <li>امکان ارتباط با اعضای هم‌فرهنگ در سراسر جهان</li>
+            <li>آپلود دستاوردهای فرهنگی و نمایش در گالری جهانی</li>
+            <li>ثبت مشاهده در «آزمایشگاه سپهر خردمندی» و دریافت تحلیل سه‌لایه</li>
+            <li>پیگیری درخواست‌ها با کد رهگیری</li>
+            <li>شرکت در شبکه‌های فرهنگی و رادیوتلویزیون هوشمند</li>
+        </ul>
+    </div>
+
     <div class="section">
         <h2>اصول بنیادین</h2>
         <ul>
@@ -288,21 +327,38 @@
         </ul>
     </div>
 
-    <!-- ===== بخش ۳: ایمیل و حریم‌خصوصی (جدید) ===== -->
     <div class="section" style="border-color: #d4af37; border-width: 2px;">
         <h2 style="color: #8a6d1f; border-right-color: #d4af37;">🔒 ایمیل و حریم‌خصوصی</h2>
         <p>ثبت ایمیل <strong>کاملاً داوطلبانه</strong> است و فقط برای این اهداف استفاده می‌شود:</p>
         <ul>
             <li>ارتباط با هم‌فرهنگانی که <strong>حداقل ۵ ارزش مشترک</strong> با شما دارند</li>
             <li>دریافت لیست هم‌فکران و هم‌فرهنگان</li>
-            <li>پیگیری درخواست‌های ارتباط با کد پیگیری</li>
+            <li>پیگیری درخواست‌های ارتباط با کد رهگیری</li>
         </ul>
         <div class="privacy-box">
+            <p><strong>🔒 ایمیل در هیچ‌کجا منتشر نمی‌شود.</strong> ایمیل‌ها فقط زمانی در اختیار یک کاربر قرار می‌گیرند که خودش درخواست ارتباط با هم‌فکران داده باشد. در آن صورت، سیستم به‌صورت خودکار هم‌فکران او را پیدا می‌کند و ایمیل‌ها را فقط به خود او نشان می‌دهد. هیچ‌کس دیگری به ایمیل‌ها دسترسی ندارد.</p>
+        </div>
+        <div class="privacy-box" style="margin-top:0.5rem;">
             <p><strong>🔒 هیچ اطلاعات هویتی</strong> (نام، شماره، آدرس، موقعیت مکانی) دریافت یا نمایش داده نمی‌شود. گالری‌ها و دستاوردها <strong>کاملاً ناشناس</strong> هستند.</p>
+        </div>
+        <div class="privacy-box" style="margin-top:0.5rem;">
+            <p><strong>💡 نکته درباره ایمیل:</strong> ایمیل کاملاً اختیاری است. هر عضو می‌تواند ایمیل واقعی، ایمیل روزانه، یا حتی ایمیل خالی بدهد. اگر کسی ایمیل واقعی بدهد، می‌پذیرد که ممکن است در جریان ارتباط با هم‌فکران، آن را ببینند. هر عضو می‌تواند در هر زمان ایمیلش را ویرایش کند.</p>
         </div>
     </div>
 
-    <!-- ===== بخش ۴: پشتوانه نظری ===== -->
+    <div class="section" style="border-color: #2874a6; border-width: 2px;">
+        <h2>🔎 پیگیری درخواست با کد رهگیری</h2>
+        <p>هر درخواست ارتباط (یا حذف حساب) یک <strong>کد رهگیری یکتا</strong> دریافت می‌کند. با وارد کردن این کد در صفحه‌ی درخواست، می‌توانید:</p>
+        <ul>
+            <li><strong>ایمیل خود</strong> را ببینید</li>
+            <li><strong>تعداد هم‌فکران</strong> خود را ببینید (کسانی که حداقل ۵ ارزش مشترک با شما دارند)</li>
+            <li>وضعیت درخواست خود را پیگیری کنید</li>
+        </ul>
+        <div class="privacy-box">
+            <p><strong>💡 نکته:</strong> باکس پیگیری در صفحه‌های درخواست فارسی و انگلیسی قرار دارد. فقط کسی که کد رهگیری را دارد، می‌تواند نتیجه را ببیند.</p>
+        </div>
+    </div>
+
     <div class="section">
         <h2>پشتوانه‌ی نظری پروژه</h2>
         <p>این پلتفرم خروجی عملیاتی بیش از دو دهه پژوهش در حوزه‌ی «گذار تمدنی»، «هوش مصنوعی انسان‌محور» و «مهندسی فرهنگی نامرئی» است. معماری این سامانه بر پایه‌ی چارچوب‌های نظری ثبت‌شده‌ی بین‌المللی بنا شده است که هدفشان گذار از عصر اطلاعات به عصر خرد است.</p>
@@ -315,7 +371,6 @@
         </div>
     </div>
 
-    <!-- ===== بخش ۵: چگونه هم‌فکران پیدا می‌شوند (جدید) ===== -->
     <div class="section">
         <h2>🤝 چگونه هم‌فکران پیدا می‌شوند؟</h2>
         <p>سیستم به‌صورت خودکار:</p>
@@ -330,7 +385,6 @@
         </div>
     </div>
 
-    <!-- ===== بخش ۶: گالری‌ها (جدید) ===== -->
     <div class="section">
         <h2>🏆 گالری‌ها</h2>
         <ul>
@@ -342,7 +396,6 @@
         </div>
     </div>
 
-    <!-- ===== بخش ۷: سپهر خردمندی ===== -->
     <div id="wisdom" class="section" style="border-color: #8a6d1f; border-width: 2px;">
         <h2 style="color: #8a6d1f; border-right-color: #d4af37;">🧠 آشنایی با سپهر خردمندی</h2>
         
@@ -436,7 +489,6 @@
         </div>
     </div>
 
-    <!-- ===== بخش ۸: رادیوتلویزیون هوشمند ===== -->
     <div id="radio-tv" class="section" style="border-color: #d4af37; border-width: 2px;">
         <h2 style="color: #8a6d1f; border-right-color: #d4af37;">📡 رادیوتلویزیون هوشمند فرهنگی</h2>
         <p style="text-align: center; font-size: 0.95rem; color: #6a5a3a;">شبکه‌های فرهنگی و محتوای گروهی</p>
@@ -455,28 +507,14 @@
                 <img src="assets/PRINGTIN.png" alt="PRINGTIN" class="poster" onerror="this.style.display='none'"/>
                 <h3>🎵 شبکه PRINGTIN</h3>
                 <p>شبکه فرهنگی، هنری و موسیقی محلی</p>
-                <span class="tag">📡 پخش زنده</span>
-                <div class="radio-player">
-                    <p style="font-size:0.7rem; color:#888;">🔴 در حال پخش...</p>
-                    <audio controls>
-                        <source src="#" type="audio/mpeg">
-                        مرورگر شما از پخش صدا پشتیبانی نمی‌کند.
-                    </audio>
-                </div>
+                <span class="tag">📡 به زودی</span>
             </div>
 
             <div class="radio-card">
                 <img src="assets/Retirees Society.png" alt="Retirees Society" class="poster" onerror="this.style.display='none'"/>
                 <h3>👴 شبکه Retirees Society</h3>
                 <p>جامعه بازنشستگان، تجربه‌ها و میراث فرهنگی</p>
-                <span class="tag">🎙️ گفتگوهای تخصصی</span>
-                <div class="radio-player">
-                    <p style="font-size:0.7rem; color:#888;">🎙️ پخش برنامه...</p>
-                    <audio controls>
-                        <source src="#" type="audio/mpeg">
-                        مرورگر شما از پخش صدا پشتیبانی نمی‌کند.
-                    </audio>
-                </div>
+                <span class="tag">🎙️ به زودی</span>
             </div>
 
             <div class="radio-card">
@@ -484,13 +522,6 @@
                 <h3>شبکه میراث جهانی</h3>
                 <p>مستندهای فرهنگی، تاریخ شفاهی و آموزش</p>
                 <span class="tag">📺 به زودی</span>
-                <div class="radio-player">
-                    <p style="font-size:0.7rem; color:#888;">🎬 به زودی...</p>
-                    <video controls>
-                        <source src="#" type="video/mp4">
-                        مرورگر شما از پخش ویدئو پشتیبانی نمی‌کند.
-                    </video>
-                </div>
             </div>
         </div>
 
@@ -505,7 +536,6 @@
 </div>
 
 <script>
-    // Theme
     if (localStorage.getItem('theme') === 'dark') {
         document.body.classList.add('dark');
     }
