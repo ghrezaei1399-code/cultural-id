@@ -124,6 +124,25 @@
             margin-top: 0.5rem;
         }
         body.dark .poster-caption { color: #c8b890; }
+
+        .poster-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .poster-grid .poster-container {
+            margin: 0;
+            padding: 1rem;
+        }
+        .poster-grid .poster-container img {
+            max-height: 500px;
+            width: 100%;
+            object-fit: contain;
+        }
+        @media (max-width: 768px) {
+            .poster-grid { grid-template-columns: 1fr; }
+        }
         
         .steps-list {
             list-style: none;
@@ -260,12 +279,107 @@
         .card-preview .card-desc { font-size: 0.85rem; color: #4a3a2a; margin-top: 0.3rem; }
         body.dark .card-preview .card-desc { color: #d0c0b0; }
 
+        .cobuilders-box {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(249, 231, 159, 0.1));
+            border: 2px solid #d4af37;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: boxPulse 3s ease-in-out infinite;
+        }
+        body.dark .cobuilders-box {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.08), rgba(138, 109, 31, 0.05));
+            border-color: #8a6d1f;
+        }
+        @keyframes boxPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(212, 175, 55, 0.4); }
+        }
+        .cobuilders-box::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #d4af37, #f9e79f, #d4af37, transparent);
+            background-size: 200% 100%;
+            animation: shimmer 3s linear infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .cobuilders-box .cb-icon {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 0.5rem;
+            animation: iconBounce 2s ease-in-out infinite;
+        }
+        @keyframes iconBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .cobuilders-box .cb-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #8a6d1f;
+            margin-bottom: 0.8rem;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 4px rgba(212, 175, 55, 0.2);
+        }
+        body.dark .cobuilders-box .cb-title { color: #f9e79f; }
+        .cobuilders-box .cb-subtitle {
+            font-size: 0.95rem;
+            color: #4a3a2a;
+            margin-bottom: 1.5rem;
+            line-height: 2;
+        }
+        body.dark .cobuilders-box .cb-subtitle { color: #e8dcc0; }
+        .cobuilders-box .cb-list {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            max-width: 550px;
+            margin: 0 auto 1.5rem;
+        }
+        .cobuilders-box .cb-list li {
+            font-size: 0.92rem;
+            color: #3a2a1a;
+            padding: 0.5rem 1rem;
+            margin-bottom: 0.4rem;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 10px;
+            border-left: 3px solid #d4af37;
+            transition: all 0.3s;
+        }
+        body.dark .cobuilders-box .cb-list li { color: #e8dcc0; background: rgba(0, 0, 0, 0.2); border-left-color: #8a6d1f; }
+        .cobuilders-box .cb-list li:hover {
+            background: rgba(212, 175, 55, 0.2);
+            transform: translateX(5px);
+        }
+        .cobuilders-box .cb-footer {
+            font-size: 0.9rem;
+            color: #8a6d1f;
+            font-weight: 700;
+            line-height: 2;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            border-top: 2px dashed #d4af37;
+        }
+        body.dark .cobuilders-box .cb-footer { color: #f9e79f; background: rgba(0, 0, 0, 0.2); border-top-color: #8a6d1f; }
+
         @media (max-width: 768px) {
             .container { padding: 1rem; }
             .radio-grid { grid-template-columns: 1fr; }
             .wisdom-grid { grid-template-columns: 1fr; }
             .poster-container img { max-height: 300px; }
             .section { padding: 1rem; }
+            .cobuilders-box { padding: 1.2rem; }
+            .cobuilders-box .cb-title { font-size: 1.15rem; }
+            .cobuilders-box .cb-icon { font-size: 2.2rem; }
         }
     </style>
 </head>
@@ -356,6 +470,24 @@
         </ul>
         <div class="privacy-box">
             <p><strong>💡 Note:</strong> The tracking box is located on the Persian and English request pages. Only the person who has the tracking code can see the result.</p>
+        </div>
+    </div>
+
+    <div class="cobuilders-box">
+        <span class="cb-icon">🤝</span>
+        <div class="cb-title">From Like-Minded to Co-Builders</div>
+        <div class="cb-subtitle">
+            When a like-minded cluster reaches 50 members, that cluster can request the site's dedicated version guide from the admin. Then the cluster can:
+        </div>
+        <ul class="cb-list">
+            <li>🌐 Launch its own independent site with its own name and brand.</li>
+            <li>📍 Develop its cultural network in its own region or language.</li>
+            <li>👥 Attract new members from its own community.</li>
+            <li>📡 Publish its cultural content on the Smart Radio &amp; TV.</li>
+        </ul>
+        <div class="cb-footer">
+            This cycle continues. Each 50-member cluster creates a new site and a new network.<br>
+            This is how the project grows beyond 10,000 members and reaches hundreds of thousands.
         </div>
     </div>
 
@@ -452,9 +584,15 @@
         </div>
 
         <h3 style="color: #2874a6; margin: 1.5rem 0 0.5rem 0; font-size: 1.05rem;">🗺️ The Sphere of Wisdom Roadmap</h3>
-        <div class="poster-container">
-            <img src="assets/The Sphere of Wisdom Roadmap.png" alt="The Sphere of Wisdom Roadmap" onerror="this.style.display='none'; this.parentElement.innerHTML='<p style=\'padding:1rem;color:#888;\'>Roadmap image not loaded.</p>'" />
-            <div class="poster-caption">The Sphere of Wisdom Roadmap - From Observation to Cultural Action</div>
+        <div class="poster-grid">
+            <div class="poster-container">
+                <img src="assets/The Sphere of Wisdom Roadmap.png" alt="The Sphere of Wisdom Roadmap" onerror="this.style.display='none'; this.parentElement.innerHTML='<p style=\'padding:1rem;color:#888;\'>Roadmap image not loaded.</p>'" />
+                <div class="poster-caption">The Sphere of Wisdom Roadmap</div>
+            </div>
+            <div class="poster-container">
+                <img src="assets/EN.png" alt="The Sphere of Wisdom Poster" onerror="this.style.display='none'; this.parentElement.innerHTML='<p style=\'padding:1rem;color:#888;\'>Image not loaded.</p>'" />
+                <div class="poster-caption">The Sphere of Wisdom Poster</div>
+            </div>
         </div>
 
         <h3 style="color: #2874a6; margin: 1.5rem 0 0.5rem 0; font-size: 1.05rem;">🛠️ How to Use This Framework?</h3>
