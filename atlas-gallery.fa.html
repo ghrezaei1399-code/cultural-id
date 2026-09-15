@@ -104,14 +104,12 @@
             background: rgba(255,255,255,0.05);
             border-radius: 18px;
             overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.06);
+            border: 1px solid rgba(212,175,55,0.3);
             transition: 0.3s;
         }
         body.dark .gallery-card { background: rgba(0,0,0,0.15); }
         .gallery-card:hover { transform: translateY(-4px); background: rgba(255,255,255,0.08); }
         body.dark .gallery-card:hover { background: rgba(255,255,255,0.02); }
-        .gallery-card.atlas { border-color: rgba(212,175,55,0.3); }
-        .gallery-card.achievement { border-color: rgba(40,116,166,0.3); }
         .card-media {
             height: 180px;
             background: rgba(0,0,0,0.1);
@@ -121,11 +119,6 @@
             overflow: hidden;
         }
         body.dark .card-media { background: rgba(0,0,0,0.2); }
-        .card-media img, .card-media video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
         .card-media .no-media {
             font-size: 3rem;
             color: #888;
@@ -155,48 +148,14 @@
         }
         .card-meta .card-owner { font-weight: 700; color: #2874a6; }
         body.dark .card-meta .card-owner { color: #85c1e9; }
-        .badge {
-            display: inline-block;
-            padding: 0.15rem 0.6rem;
-            border-radius: 30px;
-            font-size: 0.6rem;
-            font-weight: 700;
-        }
-        .badge-atlas { background: rgba(212,175,55,0.2); color: #8a6d1f; }
-        .badge-achievement { background: rgba(40,116,166,0.15); color: #2874a6; }
+        .badge-atlas { background: rgba(212,175,55,0.2); color: #8a6d1f; display: inline-block; padding: 0.15rem 0.6rem; border-radius: 30px; font-size: 0.6rem; font-weight: 700; }
         body.dark .badge-atlas { color: #f9e79f; background: rgba(212,175,55,0.1); }
-        body.dark .badge-achievement { color: #85c1e9; background: rgba(40,116,166,0.05); }
         .empty-state {
             text-align: center;
             padding: 3rem;
             color: #888;
             grid-column: 1 / -1;
         }
-        .filter-bar {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-bottom: 1.2rem;
-            justify-content: center;
-        }
-        .filter-btn {
-            padding: 0.4rem 1.2rem;
-            border-radius: 30px;
-            border: 1px solid rgba(212,175,55,0.15);
-            background: rgba(255,255,255,0.03);
-            color: #0a0a1a;
-            font-weight: 700;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        body.dark .filter-btn { color: #f0e8d0; }
-        .filter-btn:hover { background: rgba(212,175,55,0.05); }
-        .filter-btn.active {
-            background: rgba(212,175,55,0.12);
-            border-color: #d4af37;
-        }
-        body.dark .filter-btn.active { background: rgba(212,175,55,0.08); }
         .theme-toggle {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.1);
@@ -240,400 +199,205 @@
             <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
         </div>
 
-        <h1 class="page-title">🏛️ اطلس ظهور </h1>
+        <h1 class="page-title">🏛️ اطلس ظهور</h1>
         <div class="page-subtitle">مشاهدات برگزیده برای اطلس ظهور</div>
 
         <div class="stats-mini">
             <div class="stat-mini"><span class="number" id="totalAtlas">۰</span><div class="label">🏛️ اطلس ظهور</div></div>
-            <div class="stat-mini"><span class="number" id="totalAchievements">۰</span><div class="label">🏆 نام‌آوران</div></div>
             <div class="stat-mini"><span class="number" id="totalItems">۰</span><div class="label">📋 مجموع</div></div>
-        </div>
-
-        <div class="filter-bar">
-            <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">📋 همه</button>
-            <button class="filter-btn" data-filter="atlas" onclick="setFilter('atlas')">🏛️ اطلس ظهور</button>
-            <button class="filter-btn" data-filter="achievement" onclick="setFilter('achievement')">🏆 نام‌آوران</button>
         </div>
 
         <div id="galleryGrid" class="gallery-grid">
             <div class="empty-state">در حال بارگذاری...</div>
         </div>
     </div>
-  <script>
-let allAtlasItems = [];
-let allGalleryItems = [];
-let allAchievements = [];
-let currentFilter = 'all';
 
-function toggleTheme() {
-    document.body.classList.toggle('dark');
-    const btn = document.getElementById('themeToggle');
-    btn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
-    localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-}
-if (localStorage.getItem('theme') === 'dark') {
-    document.body.classList.add('dark');
-    document.getElementById('themeToggle').textContent = '☀️';
-}
+    <script>
+        let allAtlasItems = [];
 
-function normalizeGuide(item) {
-    if (item.guide && (item.guide.individual || item.guide.network || item.guide.policy)) {
-        return {
-            individual: item.guide.individual || '',
-            social: item.guide.network || '',
-            institutional: item.guide.policy || ''
-        };
-    }
-    return null;
-}
-
-function normalizeMatrix(item) {
-    if (item.matrix_emergence || item.matrix_layers || item.matrix_connections ||
-        item.matrix_scale || item.matrix_capacity) {
-        return {
-            emergence: item.matrix_emergence || '',
-            layer: item.matrix_layers || '',
-            connection: item.matrix_connections || '',
-            scale: item.matrix_scale || '',
-            capacity: item.matrix_capacity || '',
-            analysis: item.analysis || '',
-            cluster: item.cluster || '',
-            score: item.score || null
-        };
-    }
-    return null;
-}
-
-function normalizeAi3(item) {
-    return item.ai3Final || '';
-}
-
-async function loadData() {
-    // ===== اطلس ظهور: از API با فیلتر atlas =====
-    try {
-        const atlasRes = await fetch('/api/get-connection-requests?type=observations&filter=atlas&t=' + Date.now());
-        const atlasData = await atlasRes.json();
-        if (atlasRes.ok) {
-            allAtlasItems = (atlasData.observations || []).filter(obs => obs.status === 'approved');
-        } else {
-            allAtlasItems = [];
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            const btn = document.getElementById('themeToggle');
+            btn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+            localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
         }
-    } catch (e) {
-        console.error('Atlas fetch error:', e);
-        allAtlasItems = [];
-    }
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark');
+            document.getElementById('themeToggle').textContent = '☀️';
+        }
 
-    // ===== گالری نام‌آوران: از API با فیلتر gallery =====
-    try {
-      let allGalleryItems = [];
-
-    // ===== دستاوردها =====
-    try {
-        const usersRes = await fetch('/api/get-users?t=' + Date.now());
-        const usersData = await usersRes.json();
-        if (usersRes.ok) {
-            allAchievements = [];
-            if (usersData.users) {
-                usersData.users.forEach(user => {
-                    if (user.achievements && Array.isArray(user.achievements)) {
-                        user.achievements.forEach(ach => {
-                            if (ach.section === 'emergence' && ach.status === 'approved') {
-                                allAchievements.push({
-                                    ...ach,
-                                    owner: user.cardCode,
-                                    ownerEmail: user.communicationEmail || '',
-                                    ownerRank: user.rank || 0
-                                });
-                            }
-                        });
-                    }
-                });
+        function normalizeGuide(item) {
+            if (item.guide && (item.guide.individual || item.guide.network || item.guide.policy)) {
+                return {
+                    individual: item.guide.individual || '',
+                    social: item.guide.network || '',
+                    institutional: item.guide.policy || ''
+                };
             }
-        }
-    } catch (e) {
-        console.error('Users fetch error:', e);
-        allAchievements = [];
-    }
-
-    updateStats();
-    renderGallery();
-}
-
-function updateStats() {
-    const atlasCount = allAtlasItems.length + allGalleryItems.length;
-    document.getElementById('totalAtlas').textContent = atlasCount.toLocaleString('fa-IR');
-    document.getElementById('totalAchievements').textContent = allAchievements.length.toLocaleString('fa-IR');
-    document.getElementById('totalItems').textContent = (atlasCount + allAchievements.length).toLocaleString('fa-IR');
-}
-
-function setFilter(filter) {
-    currentFilter = filter;
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.filter === filter);
-    });
-    renderGallery();
-}
-
-function renderGallery() {
-    const grid = document.getElementById('galleryGrid');
-    if (!grid) return;
-
-    const atlasItems = allAtlasItems.map((obs, idx) => ({
-        type: 'atlas',
-        _idx: idx,
-        id: obs.number,
-        title: obs.observation ? obs.observation.substring(0, 80) + '...' : 'مشاهده',
-        description: obs.observation || '',
-        owner: obs.cardCode || 'ناشناس',
-        score: obs.score || '---',
-        date: obs.createdAt,
-        category: 'atlas'
-    }));
-
-    const galleryObservationItems = allGalleryItems.map((obs, idx) => ({
-        type: 'atlas',
-        _idx: allAtlasItems.length + idx,
-        id: obs.number,
-        title: obs.observation ? obs.observation.substring(0, 80) + '...' : 'مشاهده',
-        description: obs.observation || '',
-        owner: obs.cardCode || 'ناشناس',
-        score: obs.score || '---',
-        date: obs.createdAt,
-        category: 'atlas'
-    }));
-
-    const achievementItems = allAchievements.map((ach, idx) => ({
-        type: 'achievement',
-        _idx: idx,
-        id: ach.id || ach.fileName || 'unknown',
-        title: ach.title || 'بدون عنوان',
-        description: ach.description || '',
-        owner: ach.owner || 'ناشناس',
-        date: ach.createdAt || ach.uploadDate,
-        category: ach.category || 'other',
-        fileUrl: ach.fileUrl || ach.fileData || ''
-    }));
-
-    let items = [];
-    if (currentFilter === 'all') items = [...atlasItems, ...galleryObservationItems, ...achievementItems];
-    else if (currentFilter === 'atlas') items = atlasItems;
-    else if (currentFilter === 'achievement') items = [...galleryObservationItems, ...achievementItems];
-
-    items.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-    if (items.length === 0) {
-        grid.innerHTML = `<div class="empty-state">هیچ موردی در این دسته وجود ندارد</div>`;
-        return;
-    }
-
-    grid.innerHTML = items.map(item => {
-        const isAtlas = item.type === 'atlas';
-        const isAchievement = item.type === 'achievement';
-
-        let mediaHtml = '';
-        if (isAchievement && item.fileUrl) {
-            mediaHtml = `<img src="${item.fileUrl}" alt="${item.title}" onerror="this.parentElement.innerHTML='<span class=\\'no-media\\'>📄</span>'" />`;
-        } else {
-            mediaHtml = `<span class="no-media">${isAtlas ? '🏛️' : '📄'}</span>`;
+            return null;
         }
 
-        const date = item.date ? new Date(item.date).toLocaleString('fa-IR') : '---';
-
-        let detailButton = '';
-        if (isAtlas) {
-            detailButton = `<button onclick="showAtlasDetail(${item._idx})" class="btn-full-profile">📊 مشاهده پرونده کامل ظهور</button>`;
+        function normalizeMatrix(item) {
+            if (item.matrix_emergence || item.matrix_layers || item.matrix_connections ||
+                item.matrix_scale || item.matrix_capacity) {
+                return {
+                    emergence: item.matrix_emergence || '',
+                    layer: item.matrix_layers || '',
+                    connection: item.matrix_connections || '',
+                    scale: item.matrix_scale || '',
+                    capacity: item.matrix_capacity || '',
+                    analysis: item.analysis || '',
+                    cluster: item.cluster || '',
+                    score: item.score || null
+                };
+            }
+            return null;
         }
 
-        return `
-            <div class="gallery-card ${isAtlas ? 'atlas' : 'achievement'}">
-                <div class="card-media">${mediaHtml}</div>
-                <div class="card-content">
-                    <div class="card-title">${item.title}</div>
-                    <div class="card-desc">${item.description ? item.description.substring(0, 120) + (item.description.length > 120 ? '...' : '') : '---'}</div>
-                    <div class="card-meta">
-                        <span class="card-owner">👤 ${item.owner}</span>
-                        <span class="card-date">${date}</span>
+        function normalizeAi3(item) {
+            return item.ai3Final || '';
+        }
+
+        async function loadData() {
+            try {
+                const atlasRes = await fetch('/api/get-connection-requests?type=observations&filter=atlas&t=' + Date.now());
+                const atlasData = await atlasRes.json();
+                if (atlasRes.ok) {
+                    allAtlasItems = (atlasData.observations || []).filter(obs => obs.status === 'approved');
+                } else {
+                    allAtlasItems = [];
+                }
+            } catch (e) {
+                console.error('Atlas fetch error:', e);
+                allAtlasItems = [];
+            }
+
+            updateStats();
+            renderGallery();
+        }
+
+        function updateStats() {
+            document.getElementById('totalAtlas').textContent = allAtlasItems.length.toLocaleString('fa-IR');
+            document.getElementById('totalItems').textContent = allAtlasItems.length.toLocaleString('fa-IR');
+        }
+
+        function renderGallery() {
+            const grid = document.getElementById('galleryGrid');
+            if (!grid) return;
+
+            if (allAtlasItems.length === 0) {
+                grid.innerHTML = `<div class="empty-state">هیچ مشاهده‌ای در اطلس ظهور وجود ندارد</div>`;
+                return;
+            }
+
+            grid.innerHTML = allAtlasItems.map((obs, idx) => {
+                const date = obs.createdAt ? new Date(obs.createdAt).toLocaleString('fa-IR') : '---';
+                return `
+                    <div class="gallery-card">
+                        <div class="card-media"><span class="no-media">🏛️</span></div>
+                        <div class="card-content">
+                            <div class="card-title">${obs.observation ? obs.observation.substring(0, 80) + '...' : 'مشاهده'}</div>
+                            <div class="card-desc">${obs.observation || '---'}</div>
+                            <div class="card-meta">
+                                <span class="card-owner">👤 ${obs.cardCode || 'ناشناس'}</span>
+                                <span class="card-date">${date}</span>
+                            </div>
+                            <span class="badge-atlas">🏛️ اطلس ظهور</span>
+                            <button onclick="showAtlasDetail(${idx})" class="btn-full-profile">📊 مشاهده پرونده کامل ظهور</button>
+                        </div>
                     </div>
-                    ${isAtlas ? `<span class="badge badge-atlas">🏛️ اطلس ظهور</span>` : ''}
-                    ${isAchievement ? `<span class="badge badge-achievement">🏆 نام‌آور</span>` : ''}
-                    ${detailButton}
+                `;
+            }).join('');
+        }
+
+        window.showAtlasDetail = function(idx) {
+            const item = allAtlasItems[idx];
+            if (!item) return;
+
+            const guide = normalizeGuide(item);
+            const matrix = normalizeMatrix(item);
+            const ai3Final = normalizeAi3(item);
+
+            const clusterNames = {
+                'human': 'انسان', 'knowledge': 'دانش و فناوری',
+                'governance': 'حکمرانی و تمدن', 'survival': 'بقا و آینده', 'other': 'نامشخص'
+            };
+
+            let html = `
+                <div style="text-align:right; direction:rtl; line-height:1.8; max-height:70vh; overflow-y:auto;">
+                    <h3 style="color:#8a6d1f; border-bottom:2px solid #d4af37; padding-bottom:0.5rem; margin-bottom:1rem;">
+                        🏛️ پرونده ظهور #${item.number}
+                    </h3>
+            `;
+
+            html += `
+                <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(212,175,55,0.08); border-radius:10px; border-right:4px solid #d4af37;">
+                    <div style="font-weight:800; font-size:0.85rem; color:#8a6d1f; margin-bottom:0.4rem;">📝 مشاهده ثبت‌شده</div>
+                    <div style="font-size:0.85rem; line-height:1.8;">${item.observation || '---'}</div>
                 </div>
-            </div>
-        `;
-    }).join('');
-}
+            `;
 
-window.showAtlasDetail = function(idx) {
-    const allItems = [...allAtlasItems, ...allGalleryItems];
-    const item = allItems[idx];
-    if (!item) return;
+            if (guide && (guide.individual || guide.social || guide.institutional)) {
+                html += `
+                    <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(16,185,129,0.06); border-radius:10px; border-right:4px solid #10b981;">
+                        <div style="font-weight:800; font-size:0.85rem; color:#047857; margin-bottom:0.4rem;">🤖 راهنمای سه‌سطحی (AI-1)</div>
+                        ${guide.individual ? `<div style="margin-bottom:0.4rem; font-size:0.82rem; line-height:1.7;"><strong>📍 سطح فردی:</strong> ${guide.individual}</div>` : ''}
+                        ${guide.social ? `<div style="margin-bottom:0.4rem; font-size:0.82rem; line-height:1.7;"><strong>🌐 سطح اجتماعی:</strong> ${guide.social}</div>` : ''}
+                        ${guide.institutional ? `<div style="font-size:0.82rem; line-height:1.7;"><strong>🏛️ سطح نهادی:</strong> ${guide.institutional}</div>` : ''}
+                    </div>
+                `;
+            }
 
-    const guide = normalizeGuide(item);
-    const matrix = normalizeMatrix(item);
-    const ai3Final = normalizeAi3(item);
+            if (matrix && (matrix.emergence || matrix.layer || matrix.connection || matrix.scale || matrix.capacity || matrix.analysis)) {
+                html += `
+                    <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(99,102,241,0.06); border-radius:10px; border-right:4px solid #6366f1;">
+                        <div style="font-weight:800; font-size:0.85rem; color:#4338ca; margin-bottom:0.4rem;">
+                            🧠 ماتریس ۵ سطحی (AI-2)
+                            ${matrix.cluster ? `<span style="background:rgba(212,175,55,0.15); padding:0.1rem 0.6rem; border-radius:10px; font-size:0.7rem; margin-right:0.3rem;">📂 ${clusterNames[matrix.cluster] || matrix.cluster}</span>` : ''}
+                        </div>
+                        ${matrix.emergence ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 ظهورها:</strong> ${matrix.emergence}</div>` : ''}
+                        ${matrix.layer ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 لایه‌ها:</strong> ${matrix.layer}</div>` : ''}
+                        ${matrix.connection ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 ارتباطات:</strong> ${matrix.connection}</div>` : ''}
+                        ${matrix.scale ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 مقیاس:</strong> ${matrix.scale}</div>` : ''}
+                        ${matrix.capacity ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 ظرفیت:</strong> ${matrix.capacity}</div>` : ''}
+                        ${matrix.analysis ? `<div style="margin-top:0.5rem; padding:0.5rem; background:rgba(255,255,255,0.5); border-radius:6px; font-size:0.82rem; line-height:1.75;"><strong>تحلیل:</strong> ${matrix.analysis}</div>` : ''}
+                    </div>
+                `;
+            }
 
-    const clusterNames = {
-        'human': 'انسان', 'knowledge': 'دانش و فناوری',
-        'governance': 'حکمرانی و تمدن', 'survival': 'بقا و آینده', 'other': 'نامشخص'
-    };
+            if (ai3Final) {
+                html += `
+                    <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(236,72,153,0.06); border-radius:10px; border-right:4px solid #ec4899;">
+                        <div style="font-weight:800; font-size:0.85rem; color:#be185d; margin-bottom:0.4rem;">💎 تحلیل نهایی (AI-3)</div>
+                        <div style="font-size:0.85rem; line-height:1.9;">${ai3Final}</div>
+                    </div>
+                `;
+            }
 
-    let html = `
-        <div style="text-align:right; direction:rtl; line-height:1.8; max-height:70vh; overflow-y:auto;">
-            <h3 style="color:#8a6d1f; border-bottom:2px solid #d4af37; padding-bottom:0.5rem; margin-bottom:1rem;">
-                🏛️ پرونده ظهور #${item.number}
-            </h3>
-    `;
+            html += `</div>`;
+            showCustomModal(`🏛️ پرونده ظهور #${item.number}`, html);
+        };
 
-    html += `
-        <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(212,175,55,0.08); border-radius:10px; border-right:4px solid #d4af37;">
-            <div style="font-weight:800; font-size:0.85rem; color:#8a6d1f; margin-bottom:0.4rem;">📝 مشاهده ثبت‌شده</div>
-            <div style="font-size:0.85rem; line-height:1.8;">${item.observation || '---'}</div>
-        </div>
-    `;
+        function showCustomModal(title, bodyHtml) {
+            let modal = document.getElementById('customAtlasModal');
+            if (modal) modal.remove();
 
-    if (guide && (guide.individual || guide.social || guide.institutional)) {
-        html += `
-            <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(16,185,129,0.06); border-radius:10px; border-right:4px solid #10b981;">
-                <div style="font-weight:800; font-size:0.85rem; color:#047857; margin-bottom:0.4rem;">🤖 راهنمای سه‌سطحی (AI-1)</div>
-                ${guide.individual ? `<div style="margin-bottom:0.4rem; font-size:0.82rem; line-height:1.7;"><strong>📍 سطح فردی:</strong> ${guide.individual}</div>` : ''}
-                ${guide.social ? `<div style="margin-bottom:0.4rem; font-size:0.82rem; line-height:1.7;"><strong>🌐 سطح اجتماعی:</strong> ${guide.social}</div>` : ''}
-                ${guide.institutional ? `<div style="font-size:0.82rem; line-height:1.7;"><strong>🏛️ سطح نهادی:</strong> ${guide.institutional}</div>` : ''}
-            </div>
-        `;
-    }
-
-    if (matrix && (matrix.emergence || matrix.layer || matrix.connection || matrix.scale || matrix.capacity || matrix.analysis)) {
-        html += `
-            <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(99,102,241,0.06); border-radius:10px; border-right:4px solid #6366f1;">
-                <div style="font-weight:800; font-size:0.85rem; color:#4338ca; margin-bottom:0.4rem;">
-                    🧠 ماتریس ۵ سطحی (AI-2)
-                    ${matrix.cluster ? `<span style="background:rgba(212,175,55,0.15); padding:0.1rem 0.6rem; border-radius:10px; font-size:0.7rem; margin-right:0.3rem;">📂 ${clusterNames[matrix.cluster] || matrix.cluster}</span>` : ''}
-                    ${matrix.score ? `<span style="background:rgba(39,174,96,0.15); padding:0.1rem 0.6rem; border-radius:10px; font-size:0.7rem;">⭐ امتیاز: ${matrix.score}</span>` : ''}
+            modal = document.createElement('div');
+            modal.id = 'customAtlasModal';
+            modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(3px);';
+            modal.innerHTML = `
+                <div style="background:#fff;color:#2a1a0a;max-width:780px;width:100%;max-height:90vh;overflow-y:auto;border-radius:20px;padding:1.5rem;position:relative;box-shadow:0 20px 40px rgba(0,0,0,0.3);">
+                    <button onclick="document.getElementById('customAtlasModal').remove()" style="position:absolute;top:0.5rem;left:0.5rem;background:rgba(0,0,0,0.1);border:none;width:32px;height:32px;border-radius:50%;font-size:1.2rem;cursor:pointer;">✕</button>
+                    <h2 style="color:#8a6d1f;margin-bottom:1rem;font-size:1.1rem;padding-left:2.5rem;">${title}</h2>
+                    <div>${bodyHtml}</div>
                 </div>
-                ${matrix.emergence ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 ظهورها:</strong> ${matrix.emergence}</div>` : ''}
-                ${matrix.layer ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 لایه‌ها:</strong> ${matrix.layer}</div>` : ''}
-                ${matrix.connection ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 ارتباطات:</strong> ${matrix.connection}</div>` : ''}
-                ${matrix.scale ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 مقیاس:</strong> ${matrix.scale}</div>` : ''}
-                ${matrix.capacity ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 ظرفیت:</strong> ${matrix.capacity}</div>` : ''}
-                ${matrix.analysis ? `<div style="margin-top:0.5rem; padding:0.5rem; background:rgba(255,255,255,0.5); border-radius:6px; font-size:0.82rem; line-height:1.75;"><strong>تحلیل:</strong> ${matrix.analysis}</div>` : ''}
-            </div>
-        `;
-    }
+            `;
+            modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+            document.body.appendChild(modal);
+        }
 
-    if (ai3Final) {
-        html += `
-            <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(236,72,153,0.06); border-radius:10px; border-right:4px solid #ec4899;">
-                <div style="font-weight:800; font-size:0.85rem; color:#be185d; margin-bottom:0.4rem;">💎 تحلیل نهایی (AI-3)</div>
-                <div style="font-size:0.85rem; line-height:1.9;">${ai3Final}</div>
-            </div>
-        `;
-    }
-
-    if (!guide && !matrix && !ai3Final) {
-        html += `
-            <div style="padding:0.8rem; background:rgba(231,76,60,0.08); border-radius:10px; border-right:4px solid #e74c3c;">
-                <div style="font-weight:800; font-size:0.85rem; color:#7a1a1a;">⚠️ تحلیل هوش مصنوعی برای این مشاهده موجود نیست</div>
-                <div style="font-size:0.78rem; color:#7a1a1a; margin-top:0.3rem;">ممکن است این مشاهده قبل از فعال‌سازی سیستم تحلیل سه‌لایه ثبت شده باشد.</div>
-            </div>
-        `;
-    }
-
-    html += `
-            <div style="margin-top:0.8rem; padding:0.6rem; text-align:center; background:rgba(100,116,139,0.08); border-radius:8px; border:1px dashed rgba(100,116,139,0.3);">
-                <button onclick="copyAtlasProfile(${idx})" style="padding:0.4rem 1rem; border-radius:20px; background:#64748b; color:#fff; border:none; font-weight:700; font-size:0.8rem; cursor:pointer;">📋 کپی کل پرونده</button>
-            </div>
-        </div>
-    `;
-
-    showCustomModal(`🏛️ پرونده ظهور #${item.number}`, html);
-};
-
-function showCustomModal(title, bodyHtml) {
-    let modal = document.getElementById('customAtlasModal');
-    if (modal) modal.remove();
-
-    modal = document.createElement('div');
-    modal.id = 'customAtlasModal';
-    modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(3px);';
-    modal.innerHTML = `
-        <div style="background:#fff;color:#2a1a0a;max-width:780px;width:100%;max-height:90vh;overflow-y:auto;border-radius:20px;padding:1.5rem;position:relative;box-shadow:0 20px 40px rgba(0,0,0,0.3);">
-            <button onclick="document.getElementById('customAtlasModal').remove()" style="position:absolute;top:0.5rem;left:0.5rem;background:rgba(0,0,0,0.1);border:none;width:32px;height:32px;border-radius:50%;font-size:1.2rem;cursor:pointer;">✕</button>
-            <h2 style="color:#8a6d1f;margin-bottom:1rem;font-size:1.1rem;padding-left:2.5rem;">${title}</h2>
-            <div>${bodyHtml}</div>
-        </div>
-    `;
-    modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
-    document.body.appendChild(modal);
-}
-
-window.copyAtlasProfile = function(idx) {
-    const allItems = [...allAtlasItems, ...allGalleryItems];
-    const item = allItems[idx];
-    if (!item) return;
-
-    const guide = normalizeGuide(item);
-    const matrix = normalizeMatrix(item);
-    const ai3Final = normalizeAi3(item);
-
-    const L = [];
-    L.push('═══════════════════════════════════════════');
-    L.push(`ATLAS PROFILE #${item.number || '---'}`);
-    L.push(`Tracking Code: OBS-${item.number || '---'}`);
-    L.push(`Card Code: ${item.cardCode || '---'}`);
-    L.push(`Date: ${item.createdAt ? new Date(item.createdAt).toISOString() : '---'}`);
-    L.push(`Score: ${item.score || '---'}`);
-    L.push('═══════════════════════════════════════════');
-    L.push('');
-    L.push('▸ [1] RAW OBSERVATION:');
-    L.push(item.observation || '-');
-    L.push('');
-    if (guide) {
-        L.push('▸ [2] AI-1 — THREE-LEVEL GUIDANCE:');
-        if (guide.individual) L.push(`  📍 Individual: ${guide.individual}`);
-        if (guide.social) L.push(`  🌐 Social: ${guide.social}`);
-        if (guide.institutional) L.push(`  🏛️ Institutional: ${guide.institutional}`);
-        L.push('');
-    }
-    if (matrix) {
-        L.push('▸ [3] AI-2 — FIVE-LEVEL MATRIX:');
-        if (matrix.emergence) L.push(`  📊 Emergence: ${matrix.emergence}`);
-        if (matrix.layer) L.push(`  📊 Layers: ${matrix.layer}`);
-        if (matrix.connection) L.push(`  📊 Connections: ${matrix.connection}`);
-        if (matrix.scale) L.push(`  📊 Scale: ${matrix.scale}`);
-        if (matrix.capacity) L.push(`  📊 Capacity: ${matrix.capacity}`);
-        if (matrix.analysis) { L.push(''); L.push(`  Analysis: ${matrix.analysis}`); }
-        L.push('');
-    }
-    if (ai3Final) {
-        L.push('▸ [4] AI-3 — FINAL SYNTHESIS:');
-        L.push(ai3Final);
-        L.push('');
-    }
-    L.push('═══════════════════════════════════════════');
-
-    const text = L.join('\n');
-    if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text).then(() => alert('✅ کل پرونده کپی شد')).catch(() => fallbackCopy(text));
-    } else {
-        fallbackCopy(text);
-    }
-};
-
-function fallbackCopy(text) {
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    try { document.execCommand('copy'); alert('✅ کل پرونده کپی شد'); }
-    catch (e) { alert('❌ خطا در کپی'); }
-    document.body.removeChild(ta);
-}
-
-loadData();
-setInterval(loadData, 60000);
-</script>
-    
+        loadData();
+        setInterval(loadData, 60000);
+    </script>
 </body>
 </html>
