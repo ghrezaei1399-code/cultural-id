@@ -251,10 +251,7 @@ ${guide.policy}
           body: JSON.stringify({ body: adminScoreComment })
         });
 
-        if (score === 5) {
-          if (!newLabels.includes('gallery')) newLabels.push('gallery');
-        }
-        
+           
         newLabels = newLabels.filter(l => l !== 'pending-review');
         
         await updateIssueLabels(issueNumber, newLabels, token);
