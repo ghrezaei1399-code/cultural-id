@@ -91,6 +91,7 @@ module.exports = async function handler(req, res) {
 
     // ===== مشاهدات =====
     if (type === 'observations') {
+      const filterType = req.query.filter || 'all';
       const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues?labels=observation&state=open&per_page=100`, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -187,7 +188,14 @@ module.exports = async function handler(req, res) {
         });
       }
 
-      return res.status(200).json({ observations });
+      // ===== فیلتر بر اساس نوع گالری =====
+      let filtered = observations;
+      if (filterType === 'atlas') {
+        filtered = observations.filter(o => Array.isArray(o.labels) && o.labels.includes('atlas'));
+      } else if (filterType === 'gallery') {
+        filtered = observations.filter(o => Array.isArray(o.labels) && o.labels.includes('gallery'));
+      }
+      return res.status(200).json({ observations: filtered });
     }
 
     // ===== دستاوردها =====
