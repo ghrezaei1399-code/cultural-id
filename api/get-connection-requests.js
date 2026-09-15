@@ -189,11 +189,12 @@ module.exports = async function handler(req, res) {
       }
 
       // ===== فیلتر بر اساس نوع گالری =====
+            // ===== فیلتر بر اساس امتیاز =====
       let filtered = observations;
       if (filterType === 'atlas') {
-        filtered = observations.filter(o => Array.isArray(o.labels) && o.labels.includes('atlas'));
+        filtered = observations.filter(o => o.status === 'approved' && o.score !== 5);
       } else if (filterType === 'gallery') {
-        filtered = observations.filter(o => Array.isArray(o.labels) && o.labels.includes('gallery'));
+        filtered = observations.filter(o => o.status === 'approved' && o.score === 5);
       }
       return res.status(200).json({ observations: filtered });
     }
