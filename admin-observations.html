@@ -60,7 +60,6 @@
 
         .observations-list { display: flex; flex-direction: column; gap: 1.8rem; }
 
-        /* ===== کارت واحد ===== */
         .obs-card {
             background: rgba(255,255,255,0.06); border-radius: 18px;
             padding: 1.5rem; border: 2px solid rgba(255,255,255,0.08);
@@ -89,7 +88,6 @@
         }
         body.dark .tracking-code { background: rgba(99,102,241,0.08); color: #a5b4fc; }
 
-        /* ===== باکس واحد ===== */
         .unified-box {
             background: rgba(255,255,255,0.55);
             border-radius: 14px;
@@ -131,7 +129,6 @@
         .sec-body { font-size: 0.87rem; line-height: 1.85; }
         body.dark .sec-body { color: #d0d0e0; }
 
-        /* زیربلوک‌های AI-1 */
         .ai1-level {
             padding: 0.5rem 0.7rem; margin-bottom: 0.4rem;
             background: rgba(255,255,255,0.5); border-radius: 6px;
@@ -145,7 +142,6 @@
         }
         body.dark .ai1-level .level-head { color: #6ee7b7; }
 
-        /* ماتریس AI-2 */
         .matrix-grid {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
             gap: 0.5rem; margin-bottom: 0.5rem;
@@ -169,7 +165,6 @@
         }
         body.dark .ai2-analysis { background: rgba(99,102,241,0.05); }
 
-        /* AI-3 */
         .ai3-final {
             padding: 0.7rem 0.9rem;
             border-radius: 8px;
@@ -180,7 +175,6 @@
         }
         body.dark .ai3-final { background: rgba(236,72,153,0.05); }
 
-        /* AI error banner */
         .ai-error-banner {
             padding: 0.6rem 0.9rem;
             border-radius: 8px;
@@ -193,7 +187,6 @@
         }
         body.dark .ai-error-banner { color: #f1948a; background: rgba(231,76,60,0.06); }
 
-        /* نوار کپی */
         .copy-toolbar {
             display: flex; gap: 0.5rem; flex-wrap: wrap;
             margin: 1rem 0; padding: 0.8rem;
@@ -212,7 +205,6 @@
         .btn-copy.save:hover { background: #0284c7; }
         .copy-hint { font-size: 0.72rem; color: #64748b; margin-right: auto; }
 
-        /* ماژول ترتیبی */
         .modules-container {
             margin-top: 1.2rem; padding: 1.2rem;
             background: linear-gradient(135deg, rgba(212,175,55,0.07), rgba(99,102,241,0.05));
@@ -421,13 +413,11 @@
         // ===== نرمال‌سازی سه هوش مصنوعی =====
         // ============================================================
         function normalizeAi1(obs) {
-            // API جدید: ai1Guidance (در پاسخ مستقیم submit-request)
-            // API لیست: guide.individual / guide.network / guide.policy
             if (obs.guide && (obs.guide.individual || obs.guide.network || obs.guide.policy)) {
                 return {
                     individual: obs.guide.individual || '',
-                    social: obs.guide.network || '',      // Network → social
-                    institutional: obs.guide.policy || '' // Policy → institutional
+                    social: obs.guide.network || '',
+                    institutional: obs.guide.policy || ''
                 };
             }
             const src = obs.ai1Guidance || obs.analysis?.ai1Guidance || obs.ai1 || null;
@@ -440,7 +430,6 @@
         }
 
         function normalizeAi2(obs) {
-            // API جدید: matrix_emergence, matrix_layers, ... در ریشه
             if (obs.matrix_emergence || obs.matrix_layers || obs.matrix_connections ||
                 obs.matrix_scale || obs.matrix_capacity || obs.analysis) {
                 return {
@@ -471,13 +460,11 @@
         }
 
         function normalizeAi3(obs) {
-            // API جدید: ai3Final (فیلد مستقیم)
             if (obs.ai3Final) {
                 return { final: obs.ai3Final, error: obs.ai3Error || null };
             }
             const src = obs.finalAnalysis || obs.ai3 || null;
             if (!src) {
-                // اگر خطای AI-3 موجود بود، برگردان
                 if (obs.ai3Error) return { final: '', error: obs.ai3Error };
                 return null;
             }
@@ -485,7 +472,6 @@
             return { final: src.final || '', error: null };
         }
 
-        // بررسی خطاهای AI از فیلد aiErrors
         function getAiErrors(obs) {
             if (!obs.aiErrors) return [];
             if (Array.isArray(obs.aiErrors)) return obs.aiErrors;
@@ -557,7 +543,9 @@
 
                 allObservations = data.observations || [];
 
+                // ✅ اصلاح ۱: امتیاز پیشنهادی AI را خودکار در localState قرار بده
                 allObservations.forEach(o => {
+                    const ai2 = normalizeAi2(o);
                     if (o.analysis?.savedScore) {
                         localState[o.number] = {
                             score: o.analysis.savedScore,
@@ -566,6 +554,8 @@
                         };
                     } else if (o.status && o.status !== 'pending') {
                         localState[o.number] = { finalized: true, saved: true, score: o.score || null };
+                    } else if (o.status === 'pending' && ai2?.suggestedScore) {
+                        localState[o.number] = { score: ai2.suggestedScore, saved: false };
                     }
                 });
 
@@ -641,14 +631,12 @@
             else if (obs.status === 'approved') cardClass += ' approved';
             else if (obs.status === 'rejected') cardClass += ' rejected';
 
-            // ===== ① مشاهده خام =====
             const sec1 = `
                 <div class="unified-section sec-obs">
                     <div class="sec-title">📝 ① مشاهده ثبت‌شده توسط عضو</div>
                     <div class="sec-body">${escapeHtml(obs.observation || 'متن مشاهده موجود نیست')}</div>
                 </div>`;
 
-            // ===== ② AI-1 =====
             let sec2;
             if (ai1 && (ai1.individual || ai1.social || ai1.institutional)) {
                 sec2 = `
@@ -670,7 +658,6 @@
                     </div>`;
             }
 
-            // ===== ③ AI-2 =====
             let sec3;
             if (ai2 && (ai2.emergence || ai2.layer || ai2.connection || ai2.scale || ai2.capacity || ai2.analysis)) {
                 const cell = (label, val) => {
@@ -701,7 +688,6 @@
                     </div>`;
             }
 
-            // ===== ④ AI-3 =====
             let sec4;
             if (ai3 && ai3.final) {
                 sec4 = `
@@ -721,7 +707,6 @@
                     </div>`;
             }
 
-            // ===== باکس واحد =====
             const unifiedBox = `
                 <div class="unified-box" id="unified-${obs.number}">
                     ${sec1}
@@ -730,7 +715,6 @@
                     ${sec4}
                 </div>`;
 
-            // ===== نوار کپی =====
             const copyToolbar = `
                 <div class="copy-toolbar">
                     <button class="btn-copy" onclick="copyUnified('${obs.number}')">📋 کپی همه (۴ بخش)</button>
@@ -741,17 +725,22 @@
             // ===== State =====
             const st = localState[obs.number] || {};
             const isPending = obs.status === 'pending';
-            const currentScore = st.score || obs.score || ai2?.suggestedScore || '';
+
+            // ✅ اصلاح ۲: محاسبه‌ی دقیق‌تر امتیاز فعلی (تا ۰ و false اشتباه گرفته نشود)
+            const currentScore = (st.score !== undefined && st.score !== null && st.score !== '')
+                ? st.score
+                : ((obs.score !== undefined && obs.score !== null && obs.score !== '')
+                    ? obs.score
+                    : (ai2?.suggestedScore || ''));
+
             const isSaved = !!st.saved;
             const isFinalized = !!st.finalized || !isPending;
 
-            // بررسی آماده بودن AI-ها برای اجازه عملیات نهایی
             const ai1Ready = ai1 && (ai1.individual || ai1.social || ai1.institutional);
             const ai2Ready = ai2 && (ai2.emergence || ai2.layer || ai2.connection || ai2.scale || ai2.capacity);
             const ai3Ready = ai3 && ai3.final;
             const allAiReady = ai1Ready && ai2Ready && ai3Ready;
 
-            // ===== ماژول ترتیبی =====
             const step1Class = isFinalized ? 'completed' : (isPending ? 'active' : 'locked');
             const step2Class = isFinalized ? 'completed' : (isPending && currentScore ? 'active' : 'locked');
             const step3Class = isFinalized ? 'completed' : (isPending && isSaved ? 'active' : 'locked');
@@ -836,7 +825,7 @@
                             ${scoreBadge}
                             ${clusterBadge}
                         </div>
-                        <div class="obs-meta">${obs.createdAt ? new Date(obs.createdAt).toLocaleString('fa-IR') : ''}</div>
+                        <div class="obs-meta">${obs.createdAt ? new Date(obs.createdAt).toLocaleDateString('fa-IR') : ''}</div>
                     </div>
 
                     ${unifiedBox}
@@ -921,9 +910,6 @@
             } catch (error) { showToast('❌ خطا: ' + error.message, 'error'); }
         };
 
-        // ============================================================
-        // ===== کپی متن یکپارچه =====
-        // ============================================================
         window.copyUnified = async function(issueNumber, saveMode = false) {
             const obs = allObservations.find(o => String(o.number) === String(issueNumber));
             if (!obs) { showToast('مشاهده یافت نشد.', 'error'); return; }
@@ -931,9 +917,6 @@
             await copyToClipboard(text, saveMode ? 'متن در کلیپ‌بورد ذخیره شد' : 'متن یکپارچه کپی شد');
         };
 
-        // ============================================================
-        // ===== رندر مجدد یک کارت =====
-        // ============================================================
         function rerenderCard(issueNumber) {
             const obs = allObservations.find(o => String(o.number) === String(issueNumber));
             if (!obs) return;
@@ -944,7 +927,6 @@
             oldCard.replaceWith(temp.firstElementChild);
         }
 
-        // ============================================================
         loadObservations();
     </script>
 </body>
