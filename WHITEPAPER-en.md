@@ -1,8 +1,8 @@
 # Comprehensive Project Document: "Global Smart Cultural Identity Card"
 
-**Version:** 2.1 (Reference Version for Replication and Development)  
-**Date:** 2026-08-21  
-**Author:** Gholamreza Rezaei (Initiator & Initial Architect)  
+**Version:** 2.2 (Reference Version for Replication and Development)
+**Date:** 2026-09-15
+**Author:** Gholamreza Rezaei (Initiator & Initial Architect)
 **Status:** Reference Version in GitHub Repository
 
 ---
@@ -14,8 +14,9 @@ The "Global Smart Cultural Identity Card" is a decentralized, voluntary, and hum
 - Define their cultural identity based on their own values, knowledge, and interests (not nationality, race, or religion).
 - Connect with like-minded people worldwide (without revealing personal information).
 - Form cultural networks and, through the "Public Smart Radio-Television," produce and share group content.
+- Share cultural achievements in a global gallery.
 
-**Main Slogan:**  
+**Main Slogan:**
 *"Preserve cultural diversity; let people find their own cultural commonalities."*
 
 ---
@@ -65,10 +66,87 @@ The "Global Smart Cultural Identity Card" is a decentralized, voluntary, and hum
 | Technology | Purpose |
 | :--- | :--- |
 | **HTML, CSS, JavaScript** | Website development (no frameworks) |
-| **GitHub Pages** | Free and global hosting |
-| **GitHub Issues / Actions** | Request management and automation |
+| **Vercel** | Hosting and Serverless Functions |
+| **GitHub API** | Data storage and retrieval |
 | **JSON Files** | Data storage with limited access |
 | **QR Code (JS-generated)** | QR code generation for each card |
+| **OpenRouter AI** | Three-layer AI analysis (optional) |
+
+---
+
+### 3-2. System Modules
+
+| Module | Description |
+| :--- | :--- |
+| **Registration & Card Issuance** | Users select 7 cultural values and receive a digital identity card. |
+| **User Management (Admin)** | View, search, approve, and reject registered users. |
+| **Cultural Achievements** | Users can upload achievements (with files) and admins can approve/reject them. |
+| **Connection Requests** | Users can request connections with other members based on shared values. |
+| **Tracking System** | Each request receives a unique tracking code for status checking. |
+| **Tracking Lookup Box** | Users can enter their tracking code and see their email and number of like-minded peers. |
+| **Achievements Gallery** | Public display of approved achievements with category filters. |
+| **Smart Radio-Television** | Platform for group content publishing and cultural networks. |
+
+---
+
+### 3-3. Security and Privacy
+
+| Feature | Description |
+| :--- | :--- |
+| **No Cookies** | No cookies or tracking on the site. |
+| **No Third-Party Services** | No external analytics or tracking services. |
+| **Limited Access** | User data is accessible only through secure APIs with token authentication. |
+| **Deletable** | Users can request deletion of their data at any time. |
+| **Private Emails** | User emails are only shared if a connection request is approved. |
+
+---
+
+### 3-4. Request Management Flow
+
+| Step | Description |
+| :--- | :--- |
+| **1** | User submits a connection (or deletion) request. |
+| **2** | System generates a unique tracking code and stores the request in `data/requests/`. |
+| **3** | Admin reviews the request in the management panel. |
+| **4** | If approved, the list of like-minded emails is stored in the user's file. |
+| **5** | User can track the request status using the tracking code. |
+| **6** | User can also use the Tracking Lookup Box to see their email and number of like-minded peers. |
+
+**Update (Version 2.2):** In `request-fa.html` and `request-en.html`, a **Tracking Code Box** has been added. Users can enter their tracking code and immediately see their **own email** and the **number of like-minded peers**. This box connects to the `get-request-by-tracking` API and is automatically hidden in delete mode (`?type=delete`).
+
+---
+
+### 3-5. Main APIs
+
+| File | Endpoint | Description |
+| :--- | :--- | :--- |
+| `get-users.js` | `/api/get-users` | Get list of all users |
+| `register.js` | `/api/register` | Register a new user |
+| `upload-achievement.js` | `/api/upload-achievement` | Upload a new achievement |
+| `submit-request.js` | `/api/submit-request` | Submit connection or deletion request |
+| `approve-connection.js` | `/api/approve-connection` | Approve/reject request by admin |
+| `get-connection-requests.js` | `/api/get-connection-requests` | Get list of all requests |
+| `get-request-by-tracking.js` | `/api/get-request-by-tracking` | Get request status by tracking code |
+| `update-user-status.js` | `/api/update-user-status` | Update user status by admin |
+
+**Update (Version 2.2):**
+
+- `get-request-by-tracking.js` now reads `connection-*.json` files in the connection request section (previously only read `request-*.json`).
+- The `senderEmail` field was added to this API's response so the tracking code owner's email can be displayed.
+- In `submit-request.js`, the connection section now reads the user file from `raw.githubusercontent.com` instead of the GitHub Contents API, so large files (over 1 MB, containing Base64 images) can be read successfully.
+
+---
+
+### 3-6. Smart Radio-Television Architecture
+
+| Feature | Description |
+| :--- | :--- |
+| **Platform Type** | Decentralized content publishing for cultural groups |
+| **Capabilities** | Text, audio, image, video |
+| **Channels** | Each group (min 5 members) gets a dedicated channel |
+| **Content Management** | Managed by the group itself |
+| **AI Role** | Content suggestion, not human decision-making |
+| **Card Integration** | Users participate in channels with their cultural identity |
 
 ---
 
@@ -83,15 +161,26 @@ The "Global Smart Cultural Identity Card" is a decentralized, voluntary, and hum
 | 3 | 10,000+ | Full handover to the community |
 
 ### 4-2. Control Transition Mechanism (After 10,000 Members)
-1. Temporary council formed (top 5 active users).  
-2. Admin access transferred to the council.  
-3. Permanent successor elected by community vote.  
-4. Founder steps down from management role.  
+1. Temporary council formed (top 5 active users).
+2. Admin access transferred to the council.
+3. Permanent successor elected by community vote.
+4. Founder steps down from management role.
 5. All steps transparently recorded in GitHub.
 
 ---
 
-**This document is the reference version of the "Global Smart Cultural Identity Card" project.**  
-**Version 2.1 - Date: 2026-08-21**  
-**Initiator:** Gholamreza Rezaei  
+## 📌 Appendix: International Outreach Guide
+
+### Key Messages
+1. This is not an identification system; it's a voluntary cultural map.
+2. No personal identifying information is collected.
+3. No culture is superior to another.
+4. All activities are optional.
+5. The project has no owner and will ultimately be handed over to the community.
+
+---
+
+**This document is the reference version of the "Global Smart Cultural Identity Card" project.**
+**Version 2.2 - Date: 2026-09-15**
+**Initiator:** Gholamreza Rezaei
 **Status:** Ready for replication and development by independent cultural networks.
