@@ -263,6 +263,7 @@
   <script>
 let allAtlasItems = [];
 let allAchievements = [];
+ let allGalleryItems = [];     
 let currentFilter = 'all';
 
 function toggleTheme() {
@@ -322,7 +323,8 @@ async function loadData() {
         const atlasRes = await fetch('/api/get-connection-requests?type=observations&t=' + Date.now());
         const atlasData = await atlasRes.json();
         if (atlasRes.ok) {
-          allAtlasItems = (atlasData.observations || []).filter(obs => obs.status === 'approved' && obs.score === 5);
+         allAtlasItems = (atlasData.observations || []).filter(obs => obs.status === 'approved' && obs.labels && obs.labels.includes('atlas'));
+allGalleryItems = (atlasData.observations || []).filter(obs => obs.status === 'approved' && obs.labels && obs.labels.includes('gallery'));;
         } else {
             console.error('Atlas error:', atlasData.error);
             allAtlasItems = [];
@@ -365,7 +367,7 @@ async function loadData() {
 }
 
 function updateStats() {
-    document.getElementById('totalAtlas').textContent = allAtlasItems.length.toLocaleString('fa-IR');
+   document.getElementById('totalAtlas').textContent = (allAtlasItems.length + allGalleryItems.length).toLocaleString('fa-IR');
     document.getElementById('totalAchievements').textContent = allAchievements.length.toLocaleString('fa-IR');
     document.getElementById('totalItems').textContent = (allAtlasItems.length + allAchievements.length).toLocaleString('fa-IR');
 }
@@ -385,7 +387,19 @@ function renderGallery() {
         return;
     }
 
-    const atlasItems = allAtlasItems.map((obs, idx) => ({
+    const galleryObservationItems = allGalleryItems.map((obs, idx) => ({
+    type: 'atlas',
+    _idx: allAtlasItems.indexOf(obs),
+    id: obs.number,
+    title: obs.observation ? obs.observation.substring(0, 80) + '...' : 'مشاهده',
+    description: obs.observation || '',
+    owner: obs.cardCode || 'ناشناس',
+    score: obs.score || '---',
+    date: obs.createdAt,
+    category: 'atlas'
+}));
+
+const atlasItems = allAtlasItems.map((obs, idx) => ({
         type: 'atlas',
         _idx: idx,
         id: obs.number,
@@ -412,7 +426,7 @@ function renderGallery() {
     let items = [];
     if (currentFilter === 'all') items = [...atlasItems, ...achievementItems];
     else if (currentFilter === 'atlas') items = atlasItems;
-    else if (currentFilter === 'achievement') items = achievementItems;
+    else if (currentFilter === 'achievement') items = [...galleryObservationItems, ...achievementItems];
 
     items.sort((a, b) => new Date(b.date) - new Date(a.date));
 
