@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Achievements Gallery | Global Smart Cultural Identity</title>
+    <title>Notable Gallery | Global Smart Cultural Identity</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -35,7 +35,7 @@
             padding-bottom: 1rem;
         }
         body.dark .page-subtitle { color: #c8b890; }
-        
+
         .stats-bar {
             display: flex;
             gap: 1.5rem;
@@ -63,40 +63,25 @@
             color: #6a5a3a;
         }
         body.dark .stat-item .label { color: #c8b890; }
-        
-        .filter-bar {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-bottom: 1.5rem;
-            justify-content: center;
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #8a6d1f;
+            margin: 2rem 0 1rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid rgba(212,175,55,0.2);
         }
-        .filter-btn {
-            padding: 0.4rem 1.2rem;
-            border-radius: 30px;
-            border: 1px solid rgba(212,175,55,0.15);
-            background: rgba(255,255,255,0.03);
-            color: #0a0a1a;
-            font-weight: 700;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        body.dark .filter-btn { color: #f0e8d0; }
-        .filter-btn:hover { background: rgba(212,175,55,0.05); }
-        .filter-btn.active {
-            background: rgba(212,175,55,0.12);
-            border-color: #d4af37;
-        }
-        body.dark .filter-btn.active { background: rgba(212,175,55,0.08); }
-        
+        body.dark .section-title { color: #f9e79f; }
+
         .gallery-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 1.5rem;
+            margin-bottom: 1rem;
         }
-        
-        .ach-card {
+
+        .ach-card, .obs-card {
             background: rgba(255,255,255,0.6);
             border-radius: 20px;
             overflow: hidden;
@@ -104,13 +89,55 @@
             transition: 0.3s;
             position: relative;
         }
-        body.dark .ach-card { background: rgba(0,0,0,0.15); border-color: rgba(212,175,55,0.1); }
-        .ach-card:hover {
+        body.dark .ach-card, body.dark .obs-card { background: rgba(0,0,0,0.15); border-color: rgba(212,175,55,0.1); }
+        .ach-card:hover, .obs-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 8px 30px rgba(212,175,55,0.12);
         }
-        body.dark .ach-card:hover { box-shadow: 0 8px 30px rgba(212,175,55,0.05); }
-        
+        body.dark .ach-card:hover, body.dark .obs-card:hover { box-shadow: 0 8px 30px rgba(212,175,55,0.05); }
+
+        .obs-card { border-color: rgba(212,175,55,0.4); }
+        .obs-card .obs-header {
+            padding: 1rem 1.5rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .obs-card .obs-number {
+            font-weight: 800;
+            color: #8a6d1f;
+            font-size: 0.9rem;
+        }
+        body.dark .obs-card .obs-number { color: #f9e79f; }
+        .obs-card .obs-score {
+            background: rgba(39,174,96,0.15);
+            color: #0a6a0a;
+            padding: 0.15rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        body.dark .obs-card .obs-score { color: #82e0aa; background: rgba(39,174,96,0.08); }
+
+        .obs-card .obs-body {
+            padding: 1rem 1.5rem 1.5rem;
+        }
+        .obs-card .obs-text {
+            font-size: 0.85rem;
+            color: #4a3a2a;
+            line-height: 1.6;
+            margin-bottom: 0.8rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        body.dark .obs-card .obs-text { color: #d0c0b0; }
+        .obs-card .obs-meta {
+            font-size: 0.7rem;
+            color: #888;
+        }
+
         .ach-media {
             height: 200px;
             background: rgba(0,0,0,0.05);
@@ -129,7 +156,7 @@
             font-size: 3rem;
             color: #888;
         }
-        
+
         .ach-content { padding: 1.5rem; }
         .ach-title {
             font-size: 1.1rem;
@@ -150,7 +177,7 @@
             color: #888;
             margin-bottom: 0.5rem;
         }
-        
+
         .badge {
             display: inline-block;
             padding: 0.15rem 0.6rem;
@@ -158,13 +185,10 @@
             font-size: 0.65rem;
             font-weight: 700;
         }
-        .badge-approved { background: rgba(50,200,50,0.15); color: #0a6a0a; }
-        .badge-pending { background: rgba(255,200,50,0.15); color: #8a7a0a; }
-        .badge-rejected { background: rgba(200,50,50,0.15); color: #6a1a1a; }
         .badge-golden { background: rgba(212,175,55,0.2); color: #8a6d1f; }
         .badge-silver { background: rgba(192,192,192,0.2); color: #4a4a5a; }
         .badge-bronze { background: rgba(205,127,50,0.2); color: #6a4a0a; }
-        
+
         .category-tag {
             display: inline-block;
             padding: 0.15rem 0.6rem;
@@ -176,14 +200,14 @@
             border: 1px solid rgba(40,116,166,0.15);
         }
         body.dark .category-tag { color: #85c1e9; background: rgba(40,116,166,0.05); }
-        
+
         .empty-state {
             text-align: center;
-            padding: 3rem;
+            padding: 2rem;
             color: #888;
             grid-column: 1 / -1;
         }
-        
+
         .back-row { display: flex; justify-content: center; margin-top: 2rem; gap: 1rem; flex-wrap: wrap; }
         .btn-back {
             padding: 0.7rem 2rem;
@@ -199,7 +223,23 @@
         body.dark .btn-back { color: #f0e8d0; background: rgba(0,0,0,0.1); }
         .btn-back:hover { background: rgba(255,255,255,0.5); transform: translateY(-2px); }
         body.dark .btn-back:hover { background: rgba(255,255,255,0.05); }
-        
+
+        .btn-detail {
+            margin-top: 0.5rem;
+            width: 100%;
+            padding: 0.5rem;
+            background: rgba(212,175,55,0.1);
+            border: 1px solid #d4af37;
+            border-radius: 8px;
+            color: #8a6d1f;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+        .btn-detail:hover { background: rgba(212,175,55,0.2); }
+        body.dark .btn-detail { color: #f9e79f; border-color: #f9e79f; }
+
         @media (max-width: 768px) {
             .container { padding: 1rem; }
             .gallery-grid { grid-template-columns: 1fr; }
@@ -210,10 +250,14 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="page-title">🏆 Achievements Gallery</h1>
-        <div class="page-subtitle">Approved cultural achievements • Global Cultural Ambassadors</div>
-        
+        <h1 class="page-title">🏆 Notable Gallery</h1>
+        <div class="page-subtitle">Approved cultural achievements and selected observations • Global Cultural Ambassadors</div>
+
         <div class="stats-bar">
+            <div class="stat-item">
+                <span class="number" id="totalObs">0</span>
+                <span class="label">Selected Observations</span>
+            </div>
             <div class="stat-item">
                 <span class="number" id="totalCount">0</span>
                 <span class="label">Total Achievements</span>
@@ -223,28 +267,26 @@
                 <span class="label">Golden Badge</span>
             </div>
         </div>
-        
-        <div class="filter-bar">
-            <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">📋 All</button>
-            <button class="filter-btn" data-filter="art" onclick="setFilter('art')">🎨 Art</button>
-            <button class="filter-btn" data-filter="science" onclick="setFilter('science')">📄 Science</button>
-            <button class="filter-btn" data-filter="cultural" onclick="setFilter('cultural')">🌍 Cultural</button>
-            <button class="filter-btn" data-filter="media" onclick="setFilter('media')">🎬 Media</button>
+
+        <h2 class="section-title">🏛️ Selected Observations (Atlas - Score 5)</h2>
+        <div id="observationsGrid" class="gallery-grid">
+            <div class="empty-state">Loading...</div>
         </div>
-        
+
+        <h2 class="section-title">🏆 Notable Achievements</h2>
         <div id="galleryGrid" class="gallery-grid">
             <div class="empty-state">Loading...</div>
         </div>
-        
+
         <div class="back-row">
             <a href="index-en.html" class="btn-back">↩ Back to Home</a>
         </div>
     </div>
-    
+
     <script>
         let allAchievements = [];
-        let currentFilter = 'all';
-        
+        let allObservations = [];
+
         const categoryLabels = {
             'art': '🎨 Art',
             'science': '📄 Science',
@@ -252,21 +294,37 @@
             'media': '🎬 Media',
             'other': '📌 Other'
         };
-        
+
         const badgeLabels = {
             'golden': '🌟 Golden',
             'silver': '🥈 Silver',
             'bronze': '🥉 Bronze'
         };
-        
+
+        async function loadObservations() {
+            try {
+                const res = await fetch('/api/get-connection-requests?type=observations&filter=gallery&t=' + Date.now());
+                const data = await res.json();
+                if (res.ok) {
+                    allObservations = (data.observations || []).filter(o => o.status === 'approved');
+                } else {
+                    allObservations = [];
+                }
+            } catch (e) {
+                console.error('Observations fetch error:', e);
+                allObservations = [];
+            }
+            renderObservations();
+        }
+
         async function loadGallery() {
             try {
                 const response = await fetch('/api/get-users?t=' + new Date().getTime());
                 if (!response.ok) throw new Error('Error loading data');
-                
+
                 const data = await response.json();
                 const users = data.users || [];
-                
+
                 allAchievements = [];
                 users.forEach(user => {
                     if (user.achievements && Array.isArray(user.achievements)) {
@@ -282,45 +340,54 @@
                         });
                     }
                 });
-                
+
                 updateStats();
                 renderGallery();
             } catch (error) {
                 console.error('Error:', error);
-                document.getElementById('galleryGrid').innerHTML = 
+                document.getElementById('galleryGrid').innerHTML =
                     `<div class="empty-state" style="color:red;">Error: ${error.message}</div>`;
             }
         }
-        
+
         function updateStats() {
+            document.getElementById('totalObs').textContent = allObservations.length;
             const total = allAchievements.length;
             const golden = allAchievements.filter(a => a.ownerBadge === 'golden').length;
             document.getElementById('totalCount').textContent = total;
             document.getElementById('goldenCount').textContent = golden;
         }
-        
-        function setFilter(filter) {
-            currentFilter = filter;
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.filter === filter);
-            });
-            renderGallery();
-        }
-        
-        function renderGallery() {
-            const container = document.getElementById('galleryGrid');
-            
-            let filtered = allAchievements;
-            if (currentFilter !== 'all') {
-                filtered = filtered.filter(a => a.category === currentFilter);
-            }
-            
-            if (filtered.length === 0) {
-                container.innerHTML = `<div class="empty-state">No achievements found in this category.</div>`;
+
+        function renderObservations() {
+            const container = document.getElementById('observationsGrid');
+            if (!allObservations || allObservations.length === 0) {
+                container.innerHTML = `<div class="empty-state">No selected observations yet.</div>`;
                 return;
             }
-            
-            container.innerHTML = filtered.map(ach => {
+            container.innerHTML = allObservations.map((obs, idx) => `
+                <div class="obs-card">
+                    <div class="obs-header">
+                        <span class="obs-number">🏛️ Observation #${obs.number}</span>
+                        <span class="obs-score">⭐ Score ${obs.score || '---'}</span>
+                    </div>
+                    <div class="obs-body">
+                        <div class="obs-text">${obs.observation || '---'}</div>
+                        <div class="obs-meta">👤 ${obs.cardCode || 'Unknown'} • ${obs.createdAt ? new Date(obs.createdAt).toLocaleDateString('en-US') : '---'}</div>
+                        <button class="btn-detail" onclick="showObservationDetail(${idx})">📊 View Full Emergence Profile</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderGallery() {
+            const container = document.getElementById('galleryGrid');
+
+            if (allAchievements.length === 0) {
+                container.innerHTML = `<div class="empty-state">No achievements found.</div>`;
+                return;
+            }
+
+            container.innerHTML = allAchievements.map(ach => {
                 let mediaHtml = '';
                 if (ach.fileUrl) {
                     const ext = ach.fileName ? ach.fileName.split('.').pop().toLowerCase() : '';
@@ -334,11 +401,11 @@
                 } else {
                     mediaHtml = `<span class="no-media">📄</span>`;
                 }
-                
-                const badgeClass = ach.ownerBadge === 'golden' ? 'badge-golden' : 
+
+                const badgeClass = ach.ownerBadge === 'golden' ? 'badge-golden' :
                                    ach.ownerBadge === 'silver' ? 'badge-silver' : 'badge-bronze';
                 const badgeLabel = badgeLabels[ach.ownerBadge] || '🥉 Bronze';
-                
+
                 return `
                     <div class="ach-card">
                         <div class="ach-media">${mediaHtml}</div>
@@ -356,8 +423,99 @@
                 `;
             }).join('');
         }
-        
+
+        function showObservationDetail(idx) {
+            const item = allObservations[idx];
+            if (!item) return;
+
+            const clusterNames = {
+                'human': 'Human', 'knowledge': 'Knowledge & Technology',
+                'governance': 'Governance & Civilization', 'survival': 'Survival & Future',
+                'other': 'Unknown'
+            };
+
+            const guide = item.guide || {};
+            const matrix = {
+                emergence: item.matrix_emergence,
+                layer: item.matrix_layers,
+                connection: item.matrix_connections,
+                scale: item.matrix_scale,
+                capacity: item.matrix_capacity
+            };
+
+            let html = `
+                <div style="direction:ltr; line-height:1.8; max-height:70vh; overflow-y:auto;">
+                    <h3 style="color:#8a6d1f; border-bottom:2px solid #d4af37; padding-bottom:0.5rem; margin-bottom:1rem;">
+                        🏛️ Atlas Profile #${item.number}
+                    </h3>
+                    <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(212,175,55,0.08); border-radius:10px; border-left:4px solid #d4af37;">
+                        <div style="font-weight:800; font-size:0.85rem; color:#8a6d1f; margin-bottom:0.4rem;">📝 Registered Observation</div>
+                        <div style="font-size:0.85rem; line-height:1.8;">${item.observation || '---'}</div>
+                    </div>
+            `;
+
+            if (guide.individual || guide.network || guide.policy) {
+                html += `
+                    <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(16,185,129,0.06); border-radius:10px; border-left:4px solid #10b981;">
+                        <div style="font-weight:800; font-size:0.85rem; color:#047857; margin-bottom:0.4rem;">🤖 AI-1 — Three-Level Guidance</div>
+                        ${guide.individual ? `<div style="margin-bottom:0.4rem; font-size:0.82rem; line-height:1.7;"><strong>📍 Individual:</strong> ${guide.individual}</div>` : ''}
+                        ${guide.network ? `<div style="margin-bottom:0.4rem; font-size:0.82rem; line-height:1.7;"><strong>🌐 Social:</strong> ${guide.network}</div>` : ''}
+                        ${guide.policy ? `<div style="font-size:0.82rem; line-height:1.7;"><strong>🏛️ Institutional:</strong> ${guide.policy}</div>` : ''}
+                    </div>
+                `;
+            }
+
+            if (matrix.emergence || matrix.layer || matrix.connection || matrix.scale || matrix.capacity) {
+                html += `
+                    <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(99,102,241,0.06); border-radius:10px; border-left:4px solid #6366f1;">
+                        <div style="font-weight:800; font-size:0.85rem; color:#4338ca; margin-bottom:0.4rem;">
+                            🧠 AI-2 — Five-Level Matrix
+                            ${item.cluster ? `<span style="background:rgba(212,175,55,0.15); padding:0.1rem 0.6rem; border-radius:10px; font-size:0.7rem; margin-left:0.3rem;">📂 ${clusterNames[item.cluster] || item.cluster}</span>` : ''}
+                        </div>
+                        ${matrix.emergence ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 Emergence:</strong> ${matrix.emergence}</div>` : ''}
+                        ${matrix.layer ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 Layers:</strong> ${matrix.layer}</div>` : ''}
+                        ${matrix.connection ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 Connections:</strong> ${matrix.connection}</div>` : ''}
+                        ${matrix.scale ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 Scale:</strong> ${matrix.scale}</div>` : ''}
+                        ${matrix.capacity ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 Capacity:</strong> ${matrix.capacity}</div>` : ''}
+                    </div>
+                `;
+            }
+
+            if (item.ai3Final) {
+                html += `
+                    <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(236,72,153,0.06); border-radius:10px; border-left:4px solid #ec4899;">
+                        <div style="font-weight:800; font-size:0.85rem; color:#be185d; margin-bottom:0.4rem;">💎 AI-3 — Final Synthesis</div>
+                        <div style="font-size:0.85rem; line-height:1.9;">${item.ai3Final}</div>
+                    </div>
+                `;
+            }
+
+            html += `</div>`;
+
+            showCustomModal(`🏛️ Atlas Profile #${item.number}`, html);
+        }
+
+        function showCustomModal(title, bodyHtml) {
+            let modal = document.getElementById('customModal');
+            if (modal) modal.remove();
+
+            modal = document.createElement('div');
+            modal.id = 'customModal';
+            modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(3px);';
+            modal.innerHTML = `
+                <div style="background:#fff;color:#2a1a0a;max-width:780px;width:100%;max-height:90vh;overflow-y:auto;border-radius:20px;padding:1.5rem;position:relative;box-shadow:0 20px 40px rgba(0,0,0,0.3);">
+                    <button onclick="document.getElementById('customModal').remove()" style="position:absolute;top:0.5rem;right:0.5rem;background:rgba(0,0,0,0.1);border:none;width:32px;height:32px;border-radius:50%;font-size:1.2rem;cursor:pointer;">✕</button>
+                    <h2 style="color:#8a6d1f;margin-bottom:1rem;font-size:1.1rem;padding-right:2.5rem;">${title}</h2>
+                    <div>${bodyHtml}</div>
+                </div>
+            `;
+            modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+            document.body.appendChild(modal);
+        }
+
+        loadObservations();
         loadGallery();
+        setInterval(loadObservations, 60000);
         setInterval(loadGallery, 60000);
     </script>
 </body>
