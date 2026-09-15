@@ -323,32 +323,31 @@ function normalizeAi3(item) {
 }
 
 async function loadData() {
-    // ===== Atlas + Gallery observations =====
+    // ===== Atlas: API filter=atlas =====
     try {
-        const atlasRes = await fetch('/api/get-connection-requests?type=observations&t=' + Date.now());
+        const atlasRes = await fetch('/api/get-connection-requests?type=observations&filter=atlas&t=' + Date.now());
         const atlasData = await atlasRes.json();
         if (atlasRes.ok) {
-            const observations = atlasData.observations || [];
-            // Atlas: approved + label "atlas"
-            allAtlasItems = observations.filter(obs =>
-                obs.status === 'approved' &&
-                Array.isArray(obs.labels) &&
-                obs.labels.includes('atlas')
-            );
-            // Gallery observations: approved + label "gallery"
-            allGalleryItems = observations.filter(obs =>
-                obs.status === 'approved' &&
-                Array.isArray(obs.labels) &&
-                obs.labels.includes('gallery')
-            );
+            allAtlasItems = (atlasData.observations || []).filter(obs => obs.status === 'approved');
         } else {
-            console.error('Atlas error:', atlasData.error);
             allAtlasItems = [];
-            allGalleryItems = [];
         }
     } catch (e) {
         console.error('Atlas fetch error:', e);
         allAtlasItems = [];
+    }
+
+    // ===== Gallery: API filter=gallery =====
+    try {
+        const galleryRes = await fetch('/api/get-connection-requests?type=observations&filter=gallery&t=' + Date.now());
+        const galleryData = await galleryRes.json();
+        if (galleryRes.ok) {
+            allGalleryItems = (galleryData.observations || []).filter(obs => obs.status === 'approved');
+        } else {
+            allGalleryItems = [];
+        }
+    } catch (e) {
+        console.error('Gallery fetch error:', e);
         allGalleryItems = [];
     }
 
