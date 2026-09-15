@@ -181,6 +181,7 @@ module.exports = async function handler(req, res) {
           moduleData: parsed.moduleData,
           moduleAnalysis: parsed.moduleAnalysis,
           modulePeers: parsed.modulePeers,
+          labels: labels,
           createdAt: issue.created_at,
           issueUrl: issue.html_url
         });
