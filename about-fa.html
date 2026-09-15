@@ -142,17 +142,6 @@
             object-fit: contain;
         }
         /* ===== Real Card Sample ===== */
-.card-sample-wrapper {
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 16px;
-    padding: 1rem;
-    margin: 1rem 0;
-    border: 2px solid rgba(212, 175, 55, 0.15);
-    text-align: center;
-}
-body.dark .card-sample-wrapper { background: rgba(0, 0, 0, 0.1); }
-.card-sample-wrapper .label { font-size: 0.75rem; color: #8a6d1f; font-weight: 700; margin-bottom: 0.5rem; }
-body.dark .card-sample-wrapper .label { color: #f9e79f; }
 
 .real-card-sample {
     max-width: 280px;
@@ -504,11 +493,80 @@ body.dark .radio-poster-card .tag { color: #f9e79f; background: rgba(212, 175, 5
             .cobuilders-box .cb-title { font-size: 1.15rem; }
             .cobuilders-box .cb-icon { font-size: 2.2rem; }
         }
+        /* ===== Back to Top Button ===== */
+.back-to-top {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #d4af37, #f9e79f);
+    color: #2a1a0a;
+    border: 2px solid #8a6d1f;
+    font-size: 1.3rem;
+    font-weight: 900;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+    transition: all 0.3s;
+    z-index: 999;
+}
+.back-to-top:hover {
+    transform: translateY(-3px) scale(1.1);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.6);
+}
+.back-to-top.show { display: flex; }
+
+body.dark .back-to-top {
+    background: linear-gradient(135deg, #8a6d1f, #d4af37);
+    color: #fff;
+    border-color: #f9e79f;
+}
+
+/* ===== Top Back Button ===== */
+.top-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.5rem 1rem;
+    background: rgba(212, 175, 55, 0.15);
+    color: #8a6d1f;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+}
+.top-back-btn:hover {
+    background: rgba(212, 175, 55, 0.3);
+    transform: scale(1.05);
+}
+body.dark .top-back-btn { color: #f9e79f; }
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .back-to-top { bottom: 1rem; left: 1rem; width: 40px; height: 40px; font-size: 1.1rem; }
+}
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>📖 درباره پروژه</h1>
+    <div class="top-bar">
+    <h1 style="border-bottom: none; margin-bottom: 0; padding-bottom: 0; text-align: right; flex: 1;">📖 درباره پروژه</h1>
+    <a href="index.html" class="top-back-btn">↩ بازگشت به صفحه اصلی</a>
+</div>
     <div class="subtitle">فلسفه‌ی غیرمتمرکز و اهداف فرهنگی</div>
 
     <div class="section">
@@ -528,12 +586,6 @@ body.dark .radio-poster-card .tag { color: #f9e79f; background: rgba(212, 175, 5
         </ul>
 
         <div class="card-preview">
-            <span class="card-icon">🪪</span>
-            <div class="card-title">کارت جهانی هویت هوشمند فرهنگی</div>
-            <div class="card-desc">هیچ اطلاعات هویتی (نام، شماره، آدرس) روی کارت نیست.</div>
-        </div>
-<div class="card-sample-wrapper">
-    <div class="label">🪪 نمونه کارت صادر شده</div>
     <div class="real-card-sample">
         <div class="rc-logo-container"><img src="assets/logo-fa.png" alt="لوگو" class="rc-logo" onerror="this.style.display='none'"></div>
         <div class="rc-title">کارت جهانی هویت هوشمند فرهنگی</div>
@@ -546,6 +598,8 @@ body.dark .radio-poster-card .tag { color: #f9e79f; background: rgba(212, 175, 5
         </div>
         <div class="rc-hologram"><img src="assets/hologram.png" alt="Hologram" style="width:25px;height:25px;" onerror="this.style.display='none'"></div>
     </div>
+    <div class="card-title" style="margin-top: 1rem;">کارت جهانی هویت هوشمند فرهنگی</div>
+    <div class="card-desc">هیچ اطلاعات هویتی (نام، شماره، آدرس) روی کارت نیست.</div>
 </div>
         <h3>🔗 کیو آر کد به کجا وصل می‌شود؟</h3>
         <p>کیو آر کد هر عضو، به <strong>صفحه‌ی عمومی کارت خود او</strong> وصل است. این صفحه فقط شامل:</p>
@@ -806,10 +860,24 @@ body.dark .radio-poster-card .tag { color: #f9e79f; background: rgba(212, 175, 5
     </div>
 </div>
 
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">↑</button>
+
 <script>
     if (localStorage.getItem('theme') === 'dark') {
         document.body.classList.add('dark');
     }
+    
+    window.addEventListener('scroll', function() {
+        const btn = document.getElementById('backToTop');
+        if (btn) {
+            if (window.scrollY > 300) {
+                btn.classList.add('show');
+            } else {
+                btn.classList.remove('show');
+            }
+        }
+    });
 </script>
+    
 </body>
 </html>
