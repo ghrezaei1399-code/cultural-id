@@ -40,6 +40,8 @@
             border-left: 4px solid #2874a6; padding-left: 10px;
         }
         body.dark .section h2 { color: #85c1e9; border-left-color: #85c1e9; }
+        .section h3 { color: #8a6d1f; margin: 1.2rem 0 0.6rem 0; font-size: 1rem; }
+        body.dark .section h3 { color: #f9e79f; }
         .section p { font-size: 0.95rem; color: #3a2a1a; margin-bottom: 1rem; }
         body.dark .section p { color: #e8dcc0; }
         .section ul { list-style: none; padding-left: 1.5rem; }
@@ -210,19 +212,6 @@
         }
         body.dark .radio-card .tag { color: #f9e79f; background: rgba(212, 175, 55, 0.2); }
         
-        .radio-player {
-            background: rgba(0, 0, 0, 0.03);
-            border-radius: 12px;
-            padding: 1rem;
-            margin-top: 0.8rem;
-        }
-        body.dark .radio-player { background: rgba(0, 0, 0, 0.1); }
-        .radio-player audio, .radio-player video {
-            width: 100%;
-            max-width: 400px;
-            border-radius: 8px;
-        }
-        
         .channel-desc {
             margin-bottom: 2rem;
             padding: 1.5rem;
@@ -256,6 +245,21 @@
         body.dark .privacy-box { background: rgba(212, 175, 55, 0.03); }
         .privacy-box p { margin: 0; font-size: 0.9rem; }
 
+        .card-preview {
+            background: linear-gradient(135deg, #fdf6e3, #f5e6d3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border: 2px solid #d4af37;
+            text-align: center;
+        }
+        body.dark .card-preview { background: linear-gradient(135deg, #3a2f20, #2a2418); }
+        .card-preview .card-icon { font-size: 3rem; display: block; margin-bottom: 0.5rem; }
+        .card-preview .card-title { font-weight: 800; color: #8a6d1f; font-size: 1.1rem; }
+        body.dark .card-preview .card-title { color: #f9e79f; }
+        .card-preview .card-desc { font-size: 0.85rem; color: #4a3a2a; margin-top: 0.3rem; }
+        body.dark .card-preview .card-desc { color: #d0c0b0; }
+
         @media (max-width: 768px) {
             .container { padding: 1rem; }
             .radio-grid { grid-template-columns: 1fr; }
@@ -268,12 +272,50 @@
 <body>
 <div class="container">
     <h1>📖 About Project</h1>
-    <div class="subtitle">Decentralized Philosophy & Cultural Goals</div>
+    <div class="subtitle">Decentralized Philosophy &amp; Cultural Goals</div>
 
     <div class="section">
         <h2>Why a Cultural Identity Card?</h2>
         <p>In an era where geographical borders are reinforced but deep human connections are more needed than ever, we need an identity beyond name and nationality. This card is a tool for identifying "cultural kin" based on shared values, not political or economic background.</p>
         <p>Our goal is to create a network of cultural reformers who connect with each other based on collective wisdom and human-centric values, independent of institutions.</p>
+    </div>
+
+    <div class="section" style="border-color: #d4af37; border-width: 2px;">
+        <h2 style="color: #8a6d1f; border-left-color: #d4af37;">💳 Cultural Identity Card &amp; QR Code</h2>
+        <p>When registering, each member receives a <strong>digital card</strong> with their unique code. This card includes:</p>
+        <ul>
+            <li><strong>Card Code</strong> — the member's unique identifier</li>
+            <li><strong>7 Cultural Values</strong> chosen by the member</li>
+            <li><strong>QR Code</strong> — for quickly sharing the card</li>
+            <li><strong>Project Slogan</strong> — "Preserve cultural diversity; let people find their own cultural commonalities."</li>
+        </ul>
+
+        <div class="card-preview">
+            <span class="card-icon">🪪</span>
+            <div class="card-title">Global Smart Cultural Identity Card</div>
+            <div class="card-desc">No personal information (name, number, address) is on the card.</div>
+        </div>
+
+        <h3>🔗 Where Does the QR Code Link To?</h3>
+        <p>The QR code of each member links to <strong>their own public card page</strong>. This page only includes:</p>
+        <ul>
+            <li>The Card Code</li>
+            <li>The 7 chosen cultural values</li>
+            <li>No other personal information</li>
+        </ul>
+        <div class="privacy-box">
+            <p><strong>🔒 Note:</strong> The QR code is never linked to email, name, or personal information. Anyone who scans the QR code only sees the public cultural card.</p>
+        </div>
+
+        <h3>✨ Benefits of Having a Card</h3>
+        <ul>
+            <li>Identifying like-minded people based on shared values</li>
+            <li>Connecting with cultural kin worldwide</li>
+            <li>Uploading cultural achievements and displaying them in the global gallery</li>
+            <li>Submitting observations in the "Sphere of Wisdom Laboratory" and receiving three-layer analysis</li>
+            <li>Tracking requests with a tracking code</li>
+            <li>Participating in cultural networks and the Smart Radio &amp; TV</li>
+        </ul>
     </div>
 
     <div class="section">
@@ -285,9 +327,8 @@
         </ul>
     </div>
 
-    <!-- ===== NEW: Privacy Section ===== -->
     <div class="section" style="border-color: #d4af37; border-width: 2px;">
-        <h2 style="color: #8a6d1f; border-left-color: #d4af37;">🔒 Email & Privacy</h2>
+        <h2 style="color: #8a6d1f; border-left-color: #d4af37;">🔒 Email &amp; Privacy</h2>
         <p>Providing an email address is <strong>completely voluntary</strong> and is used only for:</p>
         <ul>
             <li>Connecting with like-minded individuals who share <strong>at least 5 common values</strong></li>
@@ -295,7 +336,26 @@
             <li>Tracking connection requests with a tracking code</li>
         </ul>
         <div class="privacy-box">
+            <p><strong>🔒 Email is never published anywhere.</strong> Emails are only provided to a user when they themselves have requested a connection with like-minded people. In that case, the system automatically finds their like-minded peers and shows the emails only to them. No one else has access to the emails.</p>
+        </div>
+        <div class="privacy-box" style="margin-top:0.5rem;">
             <p><strong>🔒 No personal information</strong> (name, phone number, address, location) is collected or displayed. Galleries and achievements are <strong>completely anonymous</strong>.</p>
+        </div>
+        <div class="privacy-box" style="margin-top:0.5rem;">
+            <p><strong>💡 Note about email:</strong> Email is completely voluntary. Each member can provide a real email, a temporary email, or even leave it empty. If someone provides a real email, they accept that it may be seen by others during like-minded connections. Each member can edit their email at any time.</p>
+        </div>
+    </div>
+
+    <div class="section" style="border-color: #2874a6; border-width: 2px;">
+        <h2>🔎 Track Requests with a Tracking Code</h2>
+        <p>Each connection request (or account deletion request) receives a <strong>unique tracking code</strong>. By entering this code on the request page, you can:</p>
+        <ul>
+            <li>See <strong>your own email</strong></li>
+            <li>See the <strong>number of like-minded peers</strong> (those who share at least 5 common values with you)</li>
+            <li>Track the status of your request</li>
+        </ul>
+        <div class="privacy-box">
+            <p><strong>💡 Note:</strong> The tracking box is located on the Persian and English request pages. Only the person who has the tracking code can see the result.</p>
         </div>
     </div>
 
@@ -311,7 +371,6 @@
         </div>
     </div>
 
-    <!-- ===== NEW: How Like-Minded People Are Found ===== -->
     <div class="section">
         <h2>🤝 How Are Like-Minded People Found?</h2>
         <p>The system automatically:</p>
@@ -326,7 +385,6 @@
         </div>
     </div>
 
-    <!-- ===== NEW: Galleries Section ===== -->
     <div class="section">
         <h2>🏆 Galleries</h2>
         <ul>
@@ -338,7 +396,6 @@
         </div>
     </div>
 
-    <!-- ===== Wisdom Section ===== -->
     <div id="wisdom" class="section" style="border-color: #8a6d1f; border-width: 2px;">
         <h2 style="color: #8a6d1f; border-left-color: #d4af37;">🧠 Introduction to the Sphere of Wisdom</h2>
         
@@ -422,7 +479,7 @@
             <div class="ex-title">Example 2: Water Resource Management</div>
             <div class="ex-desc">
                 <strong>Raw Observation:</strong> "Despite sufficient water resources in the region, farmers' access to water is not properly managed and cultivated area decreases each year."<br>
-                <strong>Cluster:</strong> Survival & Future / Governance<br>
+                <strong>Cluster:</strong> Survival &amp; Future / Governance<br>
                 <strong>Suggested Action:</strong> Form a local network for participatory water management
             </div>
         </div>
@@ -432,7 +489,6 @@
         </div>
     </div>
 
-    <!-- ===== Radio & TV Section ===== -->
     <div id="radio-tv" class="section" style="border-color: #d4af37; border-width: 2px;">
         <h2 style="color: #8a6d1f; border-left-color: #d4af37;">📡 Smart Cultural Radio &amp; TV</h2>
         <p style="text-align: center; font-size: 0.95rem; color: #6a5a3a;">Cultural networks and group content</p>
@@ -451,28 +507,14 @@
                 <img src="assets/PRINGTIN.png" alt="PRINGTIN" class="poster" onerror="this.style.display='none'"/>
                 <h3>🎵 PRINGTIN Network</h3>
                 <p>Cultural, artistic, and local music network</p>
-                <span class="tag">📡 Live Stream</span>
-                <div class="radio-player">
-                    <p style="font-size:0.7rem; color:#888;">🔴 Now Playing...</p>
-                    <audio controls>
-                        <source src="#" type="audio/mpeg">
-                        Your browser does not support audio playback.
-                    </audio>
-                </div>
+                <span class="tag">📡 Coming Soon</span>
             </div>
 
             <div class="radio-card">
                 <img src="assets/Retirees Society.png" alt="Retirees Society" class="poster" onerror="this.style.display='none'"/>
                 <h3>👴 Retirees Society Network</h3>
                 <p>Retirees community, experiences, and cultural heritage</p>
-                <span class="tag">🎙️ Expert Talks</span>
-                <div class="radio-player">
-                    <p style="font-size:0.7rem; color:#888;">🎙️ Broadcasting...</p>
-                    <audio controls>
-                        <source src="#" type="audio/mpeg">
-                        Your browser does not support audio playback.
-                    </audio>
-                </div>
+                <span class="tag">🎙️ Coming Soon</span>
             </div>
 
             <div class="radio-card">
@@ -480,13 +522,6 @@
                 <h3>World Heritage Network</h3>
                 <p>Cultural documentaries, oral history, and education</p>
                 <span class="tag">📺 Coming Soon</span>
-                <div class="radio-player">
-                    <p style="font-size:0.7rem; color:#888;">🎬 Coming Soon...</p>
-                    <video controls>
-                        <source src="#" type="video/mp4">
-                        Your browser does not support video playback.
-                    </video>
-                </div>
             </div>
         </div>
 
