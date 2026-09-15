@@ -188,7 +188,7 @@ ${guide.policy}
           });
         }
 
-        await updateIssueLabels(issueNumber, newLabels, token, action === 'approve_all' ? 'open' : 'closed');
+       await updateIssueLabels(issueNumber, newLabels, token, 'open');
 
         return res.status(200).json({
           success: true,
