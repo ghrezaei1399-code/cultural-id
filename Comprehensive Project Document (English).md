@@ -1,8 +1,8 @@
 # Comprehensive Project Document: "Global Smart Cultural Identity Card"
 
-**Version:** 2.1 (Updated for Current Architecture)  
-**Date:** 2026-09-01  
-**Author:** Gholamreza Rezaei (Initiator & Initial Architect)  
+**Version:** 2.2 (Updated for Current Architecture)
+**Date:** 2026-09-15
+**Author:** Gholamreza Rezaei (Initiator & Initial Architect)
 **Status:** Reference Version in GitHub Repository
 
 ---
@@ -16,7 +16,7 @@ The "Global Smart Cultural Identity Card" is a decentralized, voluntary, and hum
 - Form cultural networks and, through the "Public Smart Radio-Television," produce and share group content.
 - Share cultural achievements in a global gallery.
 
-**Main Slogan:**  
+**Main Slogan:**
 *"Preserve cultural diversity; let people find their own cultural commonalities."*
 
 ---
@@ -109,6 +109,8 @@ The "Global Smart Cultural Identity Card" is a decentralized, voluntary, and hum
 | **4** | If approved, the list of like-minded emails is stored in the user's file. |
 | **5** | User can track the request status using the tracking code. |
 
+**Update (Version 2.2):** In `request-fa.html` and `request-en.html`, a **Tracking Code Box** has been added. Users can enter their tracking code and immediately see their **own email** and the **number of like-minded peers**. This box connects to the `get-request-by-tracking` API and is automatically hidden in delete mode (`?type=delete`).
+
 ---
 
 ### 3-5. Main APIs
@@ -123,6 +125,12 @@ The "Global Smart Cultural Identity Card" is a decentralized, voluntary, and hum
 | `get-connection-requests.js` | `/api/get-connection-requests` | Get list of all requests |
 | `get-request-by-tracking.js` | `/api/get-request-by-tracking` | Get request status by tracking code |
 | `update-user-status.js` | `/api/update-user-status` | Update user status by admin |
+
+**Update (Version 2.2):**
+
+- `get-request-by-tracking.js` now reads `connection-*.json` files in the connection request section (previously only read `request-*.json`).
+- The `senderEmail` field was added to this API's response so the tracking code owner's email can be displayed.
+- In `submit-request.js`, the connection section now reads the user file from `raw.githubusercontent.com` instead of the GitHub Contents API, so large files (over 1 MB, containing Base64 images) can be read successfully.
 
 ---
 
@@ -150,10 +158,10 @@ The "Global Smart Cultural Identity Card" is a decentralized, voluntary, and hum
 | 3 | 10,000+ | Full handover to the community |
 
 ### 4-2. Control Transition Mechanism (After 10,000 Members)
-1. Temporary council formed (top 5 active users).  
-2. Admin access transferred to the council.  
-3. Permanent successor elected by community vote.  
-4. Founder steps down from management role.  
+1. Temporary council formed (top 5 active users).
+2. Admin access transferred to the council.
+3. Permanent successor elected by community vote.
+4. Founder steps down from management role.
 5. All steps transparently recorded in GitHub.
 
 ---
@@ -161,15 +169,15 @@ The "Global Smart Cultural Identity Card" is a decentralized, voluntary, and hum
 ## 📌 Appendix: International Outreach Guide
 
 ### Key Messages
-1. This is not an identification system; it's a voluntary cultural map.  
-2. No personal identifying information is collected.  
-3. No culture is superior to another.  
-4. All activities are optional.  
+1. This is not an identification system; it's a voluntary cultural map.
+2. No personal identifying information is collected.
+3. No culture is superior to another.
+4. All activities are optional.
 5. The project has no owner and will ultimately be handed over to the community.
 
 ---
 
-**This document is the reference version of the "Global Smart Cultural Identity Card" project.**  
-**Version 2.1 - Date: 2026-09-01**  
-**Initiator:** Gholamreza Rezaei  
+**This document is the reference version of the "Global Smart Cultural Identity Card" project.**
+**Version 2.2 - Date: 2026-09-15**
+**Initiator:** Gholamreza Rezaei
 **Status:** Ready for replication and development by independent cultural networks.
