@@ -11,7 +11,7 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: 'Token is not configured' });
   }
 
-  const { fileName, action, issueNumber, type, moduleType, analysis, score, selected, observation, userCountry, feedbackText, feedbackId } = req.body;
+  const { fileName, action, issueNumber, type, moduleType, analysis, score, selected, observation, userCountry, feedbackText, feedbackId, target } = req.body;
   const owner = 'ghrezaei1399-code';
   const repo = 'cultural-id';
 
@@ -95,6 +95,13 @@ module.exports = async function handler(req, res) {
         if (action === 'approve_all') {
           newLabels.push('approved');
           newLabels.push('observation');
+
+          // ===== افزودن لیبل بر اساس هدف =====
+          if (target === 'gallery') {
+            if (!newLabels.includes('gallery')) newLabels.push('gallery');
+          } else if (target === 'atlas') {
+            if (!newLabels.includes('atlas')) newLabels.push('atlas');
+          }
           
           const guide = generateGuide(issueData.body);
           const commentBody = `
@@ -251,7 +258,7 @@ ${guide.policy}
           body: JSON.stringify({ body: adminScoreComment })
         });
 
-           
+        // ===== حذف لیبل pending-review =====
         newLabels = newLabels.filter(l => l !== 'pending-review');
         
         await updateIssueLabels(issueNumber, newLabels, token);
