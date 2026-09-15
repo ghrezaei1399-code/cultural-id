@@ -276,9 +276,6 @@ if (localStorage.getItem('theme') === 'dark') {
     document.getElementById('themeToggle').textContent = '☀️';
 }
 
-// ============================================================
-// نرمال‌سازی
-// ============================================================
 function normalizeGuide(item) {
     if (item.guide && (item.guide.individual || item.guide.network || item.guide.policy)) {
         return {
@@ -311,42 +308,36 @@ function normalizeAi3(item) {
     return item.ai3Final || '';
 }
 
-// ============================================================
-// بارگذاری داده
-// ============================================================
 async function loadData() {
-    const grid = document.getElementById('galleryGrid');
-
-    // ===== ۱. مشاهدات (اطلس + گالری) =====
+    // ===== اطلس ظهور: از API با فیلتر atlas =====
     try {
-        const atlasRes = await fetch('/api/get-connection-requests?type=observations&t=' + Date.now());
+        const atlasRes = await fetch('/api/get-connection-requests?type=observations&filter=atlas&t=' + Date.now());
         const atlasData = await atlasRes.json();
         if (atlasRes.ok) {
-            const observations = atlasData.observations || [];
-            // فقط مشاهدات تأیید شده با برچسب atlas
-            allAtlasItems = observations.filter(obs =>
-                obs.status === 'approved' &&
-                Array.isArray(obs.labels) &&
-                obs.labels.includes('atlas')
-            );
-            // فقط مشاهدات تأیید شده با برچسب gallery
-            allGalleryItems = observations.filter(obs =>
-                obs.status === 'approved' &&
-                Array.isArray(obs.labels) &&
-                obs.labels.includes('gallery')
-            );
+            allAtlasItems = (atlasData.observations || []).filter(obs => obs.status === 'approved');
         } else {
-            console.error('Atlas error:', atlasData.error);
             allAtlasItems = [];
-            allGalleryItems = [];
         }
     } catch (e) {
         console.error('Atlas fetch error:', e);
         allAtlasItems = [];
+    }
+
+    // ===== گالری نام‌آوران: از API با فیلتر gallery =====
+    try {
+        const galleryRes = await fetch('/api/get-connection-requests?type=observations&filter=gallery&t=' + Date.now());
+        const galleryData = await galleryRes.json();
+        if (galleryRes.ok) {
+            allGalleryItems = (galleryData.observations || []).filter(obs => obs.status === 'approved');
+        } else {
+            allGalleryItems = [];
+        }
+    } catch (e) {
+        console.error('Gallery fetch error:', e);
         allGalleryItems = [];
     }
 
-    // ===== ۲. دستاوردها =====
+    // ===== دستاوردها =====
     try {
         const usersRes = await fetch('/api/get-users?t=' + Date.now());
         const usersData = await usersRes.json();
@@ -395,12 +386,8 @@ function setFilter(filter) {
 
 function renderGallery() {
     const grid = document.getElementById('galleryGrid');
-    if (!grid) {
-        console.error('galleryGrid not found');
-        return;
-    }
+    if (!grid) return;
 
-    // مشاهدات اطلس
     const atlasItems = allAtlasItems.map((obs, idx) => ({
         type: 'atlas',
         _idx: idx,
@@ -413,7 +400,6 @@ function renderGallery() {
         category: 'atlas'
     }));
 
-    // مشاهدات گالری (که در تب «نام‌آوران» نمایش داده می‌شوند)
     const galleryObservationItems = allGalleryItems.map((obs, idx) => ({
         type: 'atlas',
         _idx: allAtlasItems.length + idx,
@@ -487,9 +473,6 @@ function renderGallery() {
     }).join('');
 }
 
-// ============================================================
-// نمایش جزئیات پرونده ظهور
-// ============================================================
 window.showAtlasDetail = function(idx) {
     const allItems = [...allAtlasItems, ...allGalleryItems];
     const item = allItems[idx];
