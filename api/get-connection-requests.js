@@ -188,9 +188,7 @@ module.exports = async function handler(req, res) {
         });
       }
 
-      // ===== فیلتر بر اساس نوع گالری =====
-            // ===== فیلتر بر اساس امتیاز =====
-          // ===== فیلتر بر اساس برچسب =====
+      // ===== فیلتر بر اساس برچسب =====
       let filtered = observations;
       if (filterType === 'atlas') {
         filtered = observations.filter(o => Array.isArray(o.labels) && o.labels.includes('atlas'));
