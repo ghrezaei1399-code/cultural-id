@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <title>پاکسازی دیپلوی‌های قدیمی | کارت جهانی هویت هوشمند فرهنگی</title>
+    <style>
+        body { font-family: 'Vazir', sans-serif; background: #fdf6e3; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 1rem; }
+        .card { background: #fff; padding: 2.5rem; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); text-align: center; max-width: 600px; width: 100%; }
+        h1 { color: #8a6d1f; margin-bottom: 1rem; }
+        p { color: #6a5a3a; line-height: 1.8; margin-bottom: 1.5rem; }
+        button { background: linear-gradient(135deg, #d4af37, #f9e79f); color: #2a1a0a; border: none; padding: 1rem 3rem; border-radius: 50px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { transform: scale(1.05); box-shadow: 0 10px 20px rgba(212,175,55,0.3); }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
+        #log { margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 15px; font-size: 0.85rem; white-space: pre-wrap; display: none; max-height: 400px; overflow-y: auto; direction: ltr; text-align: left; }
+        .success { color: #27ae60; font-weight: bold; }
+        .error { color: #c0392b; font-weight: bold; }
+        .info { color: #2874a6; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>🧹 پاکسازی دیپلوی‌های قدیمی</h1>
+    <p>این ابزار دیپلوی‌های قدیمی‌تر از ۷ روز را از Vercel پاک می‌کند تا حجم ذخیره‌سازی آزاد شود.</p>
+    <button id="cleanBtn" onclick="runCleanup()">شروع پاکسازی</button>
+    <div id="log"></div>
+</div>
+
+<script>
+    async function runCleanup() {
+        const btn = document.getElementById('cleanBtn');
+        const log = document.getElementById('log');
+        btn.disabled = true;
+        btn.textContent = '⏳ در حال پاکسازی...';
+        log.style.display = 'block';
+        log.textContent = 'شروع...\n';
+
+        try {
+            const response = await fetch('/api/cleanup-deployments', { method: 'POST' });
+            const result = await response.json();
+
+            if (response.ok) {
+                log.innerHTML += `<span class="success">✅ ${result.message}</span>\n`;
+                log.innerHTML += `تعداد پاک‌شده: ${result.deleted}\n`;
+                log.innerHTML += `تعداد کل بررسی‌شده: ${result.total}\n`;
+                btn.textContent = '✅ پاکسازی انجام شد';
+            } else {
+                throw new Error(result.error || 'خطای ناشناخته');
+            }
+        } catch (error) {
+            log.innerHTML += `<span class="error">❌ خطا: ${error.message}</span>`;
+            btn.disabled = false;
+            btn.textContent = 'تلاش مجدد';
+        }
+    }
+</script>
+</body>
+</html>
