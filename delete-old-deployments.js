@@ -28,7 +28,7 @@ async function deleteDeployment(id) {
 }
 
 async function main() {
-  const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
+  const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
   let totalDeleted = 0;
   let page = 0;
 
@@ -38,7 +38,7 @@ async function main() {
 
     if (deployments.length === 0) break;
 
-    const oldOnes = deployments.filter(d => d.created < thirtyDaysAgo);
+   const oldOnes = deployments.filter(d => d.created < sevenDaysAgo);
 
     if (oldOnes.length === 0) break;
 
