@@ -1,0 +1,14 @@
+name: Cleanup Old Deployments
+
+on:
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Delete old deployments
+        run: node delete-old-deployments.js
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
