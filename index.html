@@ -830,7 +830,7 @@ async function loadAtlas() {
         const res = await fetch('/api/get-connection-requests?type=observations&t=' + new Date().getTime());
         if (!res.ok) throw new Error('خطا در دریافت اطلاعات');
         const data = await res.json();
-        allAtlasItems = (data.observations || []).filter(obs => obs.status === 'approved');
+        allAtlasItems = (data.observations || []).filter(obs => obs.status === 'approved' && obs.labels && obs.labels.includes('gallery'));
         renderAtlas(allAtlasItems);
     } catch (e) {
         console.error(e);
