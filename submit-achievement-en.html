@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Submit Achievement | Sphere of Wisdom</title>
+    <title>Submit Emergence Achievements | Global Smart Cultural ID</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -251,6 +251,21 @@
         .code-input:focus { border-color: #d4af37; outline: none; background: #fff; }
         body.dark .code-input { background: rgba(0,0,0,0.3); color: #f0e8d0; border-color: rgba(255,255,255,0.1); }
 
+        .tracking-code-box {
+            direction: ltr;
+            font-family: monospace;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #8a6d1f;
+            background: rgba(212, 175, 55, 0.1);
+            padding: 0.5rem 1.2rem;
+            border-radius: 12px;
+            display: inline-block;
+            margin: 0.5rem 0;
+            border: 1px dashed rgba(212, 175, 55, 0.3);
+        }
+        body.dark .tracking-code-box { color: #ffd700; background: rgba(212, 175, 55, 0.05); }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -259,12 +274,12 @@
 
     <div class="container">
         <div id="codeCheckSection">
-            <h1>🔐 Identity Verification</h1>
-            <div class="subtitle">Enter your card code to submit your achievement</div>
+            <h1>🔐 Emergence Achiever Verification</h1>
+            <div class="subtitle">Enter your card code to submit your emergence achievements</div>
             
             <div class="code-check-box">
                 <input type="text" id="memberCode" class="code-input" placeholder="Card Code (e.g., CIM-XXXX-XXXX-XXXX)" />
-                <button onclick="verifyCode()" class="btn btn-primary" style="width:100%">Verify & Enter</button>
+                <button onclick="verifyCode()" class="btn btn-primary" id="verifyBtn" style="width:100%">Verify & Enter</button>
                 <div id="errorMsg" class="error-msg"></div>
                 
                 <div class="btn-group" style="margin-top: 1.5rem;">
@@ -278,7 +293,7 @@
         </div>
 
         <div id="uploadSection" class="hidden">
-            <h1>📤 Submit Your Achievement</h1>
+            <h1>📤 Submit Emergence Achievements</h1>
             <div class="subtitle">Document your cultural achievements</div>
 
             <div id="statusBox" class="status-msg"></div>
@@ -315,7 +330,7 @@
 
                 <div class="helper-text">
                     💡 <strong>Guideline:</strong> Your achievement must be documented and verifiable. 
-                    After submission, it will be reviewed by the admin and displayed in the Achievements Gallery if approved.
+                    After submission, it will be reviewed by the admin and displayed in the Notable Gallery if approved.
                 </div>
 
                 <div class="btn-group">
@@ -338,6 +353,7 @@
             toggle.addEventListener('click', () => {
                 body.classList.toggle('dark');
                 toggle.textContent = body.classList.contains('dark') ? '☀️' : '🌙';
+                localStorage.setItem('theme', body.classList.contains('dark') ? 'dark' : 'light');
             });
         }
 
@@ -353,10 +369,40 @@
             });
         }
 
+        function copyTrackingCode(code) {
+            if (!code) return;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(code).then(() => {
+                    alert('✅ Tracking code copied: ' + code);
+                }).catch(() => fallbackCopy(code));
+            } else {
+                fallbackCopy(code);
+            }
+        }
+        function fallbackCopy(code) {
+            const input = document.createElement('input');
+            input.value = code;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            document.body.removeChild(input);
+            alert('✅ Tracking code copied: ' + code);
+        }
+        function saveTrackingCode(code) {
+            if (!code) return;
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `tracking-code-${code}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
         async function verifyCode() {
             const codeInput = document.getElementById('memberCode').value.trim();
             const errorMsg = document.getElementById('errorMsg');
-            const verifyBtn = document.querySelector('#codeCheckSection .btn-primary');
+            const verifyBtn = document.getElementById('verifyBtn');
             
             if (!codeInput) {
                 errorMsg.textContent = '❌ Please enter your card code.';
@@ -373,9 +419,12 @@
                 if (!response.ok) throw new Error('Server connection error');
                 
                 const data = await response.json();
-               const normalize = (s) => (s || '').replace(/[\s\-]/g, '').replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).toUpperCase();
-const normalizedInput = normalize(codeInput);
-const user = data.users.find(u => normalize(u.cardCode) === normalizedInput);
+                const normalize = (s) => (s || '')
+                    .replace(/[\s\-]/g, '')
+                    .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+                    .toUpperCase();
+                const normalizedInput = normalize(codeInput);
+                const user = data.users.find(u => normalize(u.cardCode) === normalizedInput);
 
                 if (!user) throw new Error('❌ Card code not found.');
                 if (user.status !== 'approved') throw new Error('❌ Your account has not been approved yet.');
@@ -426,7 +475,8 @@ const user = data.users.find(u => normalize(u.cardCode) === normalizedInput);
                     description: document.getElementById('description').value,
                     category: document.getElementById('category').value,
                     fileData: fileData,
-                    fileName: fileName
+                    fileName: fileName,
+                    section: 'emergence'
                 };
 
                 const response = await fetch('/api/upload-achievement', {
@@ -443,14 +493,24 @@ const user = data.users.find(u => normalize(u.cardCode) === normalizedInput);
 
                 if(statusBox) {
                     statusBox.className = 'status-msg success';
-                    statusBox.textContent = '✅ Achievement submitted successfully. Tracking Code: ' + (result.trackingCode || '---');
+                    statusBox.innerHTML = `
+                        ✅ Your achievement has been submitted successfully.
+                        <br>
+                        <strong>🔑 Tracking Code:</strong>
+                        <span class="tracking-code-box">${result.trackingCode || '---'}</span>
+                        <br>
+                        <button onclick="copyTrackingCode('${result.trackingCode}')" style="background: rgba(40,116,166,0.1); border: none; padding: 0.4rem 1rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem; margin: 0.3rem;">
+                            📋 Copy Code
+                        </button>
+                        <button onclick="saveTrackingCode('${result.trackingCode}')" style="background: rgba(40,116,166,0.1); border: none; padding: 0.4rem 1rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem; margin: 0.3rem;">
+                            💾 Save Code
+                        </button>
+                        <br>
+                        <small style="color: #888;">After admin approval, your achievement will be displayed in the Notable Gallery.</small>
+                    `;
                     statusBox.style.display = 'block';
                 }
                 btn.textContent = '✅ Submitted';
-                
-                setTimeout(() => {
-                    window.location.href = 'index-en.html';
-                }, 3000);
 
             } catch (error) {
                 if(statusBox) {
