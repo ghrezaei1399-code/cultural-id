@@ -879,17 +879,7 @@ function renderAtlas(items) {
             thumbHtml = `<span style="font-size:0.9rem; color:#6a3d9a;">🏛️</span>`;
         }
 
-                const isAchievement = item.labels && item.labels.includes('achievement');
-        const title = isAchievement && item.title ? item.title : (item.observation ? item.observation.substring(0, 50) + '...' : 'مشاهده');
-
-        let thumbHtml = '';
-        if (isAchievement && item.fileUrl) {
-            thumbHtml = `<img src="${item.fileUrl}" style="width:50px; height:50px; border-radius:8px; object-fit:cover; margin-left:0.5rem;" onerror="this.style.display='none'" />`;
-        } else {
-            thumbHtml = `<span style="font-size:0.9rem; color:#6a3d9a;">🏛️</span>`;
-        }
-
-        return `
+                  return `
             <div class="achievement-item" onclick="openAtlasModal(${index})" style="display:flex; align-items:center; gap:0.5rem;">
                 ${thumbHtml}
                 <div class="item-info" style="flex:1;">
