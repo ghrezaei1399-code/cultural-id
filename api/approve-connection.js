@@ -92,6 +92,45 @@ module.exports = async function handler(req, res) {
 
       // ===== تایید/رد کل مشاهده =====
       if (action === 'approve_all' || action === 'reject_all') {
+                // ===== بررسی: آیا این Issue یک دستاورد است؟ =====
+        const isAchievement = currentLabels.includes('achievement');
+
+        if (isAchievement) {
+          if (action === 'approve_all') {
+            newLabels.push('approved');
+            newLabels.push('achievement');
+            newLabels = newLabels.filter(l => l !== 'pending-review');
+
+            // ===== به‌روزرسانی وضعیت دستاورد در فایل کاربر =====
+            const trackingCode = extractTrackingCode(issueData.body);
+            if (trackingCode) {
+              await updateAchievementStatusInUserFile(trackingCode, 'approved', token, owner, repo);
+            }
+
+            await updateIssueLabels(issueNumber, newLabels, token, 'open');
+
+            return res.status(200).json({
+              success: true,
+              message: '✅ دستاورد نام‌آور تأیید شد.'
+            });
+          } else {
+            newLabels.push('rejected');
+            newLabels.push('achievement');
+            newLabels = newLabels.filter(l => l !== 'pending-review');
+
+            const trackingCode = extractTrackingCode(issueData.body);
+            if (trackingCode) {
+              await updateAchievementStatusInUserFile(trackingCode, 'rejected', token, owner, repo);
+            }
+
+            await updateIssueLabels(issueNumber, newLabels, token, 'open');
+
+            return res.status(200).json({
+              success: true,
+              message: '❌ دستاورد نام‌آور رد شد.'
+            });
+          }
+        }
         if (action === 'approve_all') {
           newLabels.push('approved');
           newLabels.push('observation');
@@ -654,7 +693,65 @@ async function saveModuleResult(issueNumber, moduleResult, token) {
     console.error('Error saving module result:', e);
   }
 }
+function extractTrackingCode(body) {
+  const lines = (body || '').split('\n');
+  for (const line of lines) {
+    if (line.includes('**Tracking Code:**') || line.includes('**کد رهگیری:**')) {
+      return line.replace('**Tracking Code:**', '').replace('**کد رهگیری:**', '').trim();
+    }
+  }
+  return '';
+}
 
+async function updateAchievementStatusInUserFile(trackingCode, newStatus, token, owner, repo) {
+  try {
+    const listRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/active`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!listRes.ok) return;
+
+    const files = await listRes.json();
+    for (const file of files) {
+      if (!file.name.endsWith('.json')) continue;
+      try {
+        const userRes = await fetch(file.download_url);
+        const userData = await userRes.json();
+        if (!userData.achievements || !Array.isArray(userData.achievements)) continue;
+
+        const idx = userData.achievements.findIndex(a => a.id === trackingCode);
+        if (idx === -1) continue;
+
+        userData.achievements[idx].status = newStatus;
+        if (newStatus === 'approved') userData.achievements[idx].approvedAt = new Date().toISOString();
+        if (newStatus === 'rejected') userData.achievements[idx].rejectedAt = new Date().toISOString();
+
+        const content = Buffer.from(JSON.stringify(userData, null, 2), 'utf8').toString('base64');
+
+        const fileRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${file.path}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const fileData = await fileRes.json();
+
+        await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${file.path}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: `Update achievement status: ${trackingCode} → ${newStatus}`,
+            content: content,
+            sha: fileData.sha,
+            branch: 'main'
+          })
+        });
+        return;
+      } catch (e) { continue; }
+    }
+  } catch (e) {
+    console.error('Error updating achievement in user file:', e);
+  }
+}
 function generateGuide(issueBody) {
   const text = issueBody.toLowerCase();
   let cluster = 'انسان';
