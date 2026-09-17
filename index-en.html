@@ -432,7 +432,6 @@
         body.dark .item-info h4 { color: #f0e8d0; }
         .item-meta { font-size: 0.6rem; color: #8a6d1f; font-weight: 600; }
 
-        /* ====== Larger thumbnails for Atlas gallery ====== */
         .atlas-thumb {
             width: 140px;
             height: 140px;
@@ -459,7 +458,6 @@
             border: 3px dashed rgba(212, 175, 55, 0.5);
         }
 
-        /* ===== Large image in modal ===== */
         .atlas-modal-image {
             width: 100%;
             max-height: 400px;
@@ -565,6 +563,180 @@
         .modal-close:hover { background: rgba(0,0,0,0.85); }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
+        /* ================================================================ */
+        /* ====== Cultural Exchange Box ====== */
+        /* ================================================================ */
+        .exchange-box {
+            border-radius: 20px;
+            padding: 0.8rem;
+            margin: 0.6rem 0;
+            border: 3px double #16a085;
+            background: rgba(230, 250, 245, 0.6);
+        }
+        body.dark .exchange-box { background: rgba(20, 60, 55, 0.3); }
+
+        .exchange-box .gallery-title { color: #16a085; }
+        body.dark .exchange-box .gallery-title { color: #76d7c4; }
+
+        .exchange-tabs {
+            display: flex;
+            gap: 0.4rem;
+            margin-bottom: 0.8rem;
+            background: rgba(255,255,255,0.5);
+            padding: 0.3rem;
+            border-radius: 30px;
+            border: 1px solid rgba(22,160,133,0.2);
+        }
+        body.dark .exchange-tabs { background: rgba(0,0,0,0.2); }
+        .exchange-tab-btn {
+            flex: 1;
+            padding: 0.6rem 0.4rem;
+            border-radius: 25px;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 0.75rem;
+            color: #4a6a5a;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        body.dark .exchange-tab-btn { color: #a0c8b8; }
+        .exchange-tab-btn.active {
+            background: linear-gradient(135deg, #16a085, #48c9b0);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(22,160,133,0.3);
+        }
+
+        .exchange-panel { display: none; }
+        .exchange-panel.active { display: block; animation: fadeIn 0.25s; }
+
+        .exchange-form-group { margin-bottom: 0.8rem; }
+        .exchange-form-group label {
+            display: block;
+            font-weight: 700;
+            font-size: 0.75rem;
+            color: #2a4a3a;
+            margin-bottom: 0.3rem;
+        }
+        body.dark .exchange-form-group label { color: #c8e0d0; }
+        .exchange-form-group input,
+        .exchange-form-group textarea {
+            width: 100%;
+            padding: 0.7rem;
+            border-radius: 12px;
+            border: 2px solid rgba(22,160,133,0.15);
+            background: rgba(255,255,255,0.7);
+            font-family: inherit;
+            font-size: 0.85rem;
+            color: #2a1a0a;
+            outline: none;
+            transition: 0.3s;
+        }
+        body.dark .exchange-form-group input,
+        body.dark .exchange-form-group textarea {
+            background: rgba(0,0,0,0.3);
+            color: #f0e8d0;
+            border-color: rgba(22,160,133,0.2);
+        }
+        .exchange-form-group input:focus,
+        .exchange-form-group textarea:focus {
+            border-color: #16a085;
+            box-shadow: 0 4px 15px rgba(22,160,133,0.15);
+            background: #fff;
+        }
+        body.dark .exchange-form-group input:focus,
+        body.dark .exchange-form-group textarea:focus {
+            background: rgba(0,0,0,0.5);
+        }
+
+        .exchange-btn {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 25px;
+            border: none;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.3s;
+            background: linear-gradient(135deg, #16a085, #48c9b0);
+            color: #fff;
+            box-shadow: 0 6px 20px rgba(22,160,133,0.25);
+        }
+        .exchange-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(22,160,133,0.35); }
+        .exchange-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .exchange-result {
+            padding: 1rem;
+            border-radius: 14px;
+            margin-top: 0.8rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+            line-height: 1.7;
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+        .exchange-result.success { background: rgba(50,200,50,0.1); color: #0a5a0a; border: 2px solid rgba(50,200,50,0.25); }
+        .exchange-result.error { background: rgba(200,50,50,0.1); color: #8a1a1a; border: 2px solid rgba(200,50,50,0.25); }
+        .exchange-result.info { background: rgba(22,160,133,0.1); color: #0a5a4a; border: 2px solid rgba(22,160,133,0.25); }
+        .exchange-result.pending { background: rgba(241,196,15,0.12); color: #8a5a0a; border: 2px solid rgba(241,196,15,0.3); }
+        .exchange-result.approved { background: rgba(50,200,50,0.12); color: #0a5a0a; border: 2px solid rgba(50,200,50,0.3); }
+        .exchange-result.rejected { background: rgba(200,50,50,0.12); color: #8a1a1a; border: 2px solid rgba(200,50,50,0.3); }
+        body.dark .exchange-result.success { color: #82e0aa; }
+        body.dark .exchange-result.error { color: #f1948a; }
+        body.dark .exchange-result.info { color: #76d7c4; }
+        body.dark .exchange-result.pending { color: #f9e79f; }
+        body.dark .exchange-result.approved { color: #82e0aa; }
+        body.dark .exchange-result.rejected { color: #f1948a; }
+
+        .exchange-code-box {
+            direction: ltr;
+            font-family: monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #16a085;
+            background: rgba(22,160,133,0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            display: inline-block;
+            margin: 0.4rem 0;
+            border: 1px dashed rgba(22,160,133,0.4);
+        }
+        body.dark .exchange-code-box { color: #76d7c4; background: rgba(22,160,133,0.08); }
+
+        .exchange-request-item {
+            padding: 0.7rem;
+            margin-bottom: 0.5rem;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.6);
+            border-left: 3px solid #16a085;
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+        body.dark .exchange-request-item { background: rgba(0,0,0,0.2); }
+        .exchange-request-item .req-title { font-weight: 800; color: #16a085; margin-bottom: 0.3rem; }
+        .exchange-request-item .req-msg { color: #2a4a3a; }
+        body.dark .exchange-request-item .req-msg { color: #c8e0d0; }
+        .exchange-request-item .req-actions { margin-top: 0.5rem; display: flex; gap: 0.4rem; }
+        .exchange-request-item .req-actions button {
+            flex: 1;
+            padding: 0.4rem;
+            border-radius: 8px;
+            border: none;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .exchange-request-item .req-actions .btn-approve { background: rgba(50,200,50,0.15); color: #0a5a0a; border: 1px solid rgba(50,200,50,0.3); }
+        .exchange-request-item .req-actions .btn-approve:hover { background: rgba(50,200,50,0.3); }
+        .exchange-request-item .req-actions .btn-reject { background: rgba(200,50,50,0.1); color: #8a1a1a; border: 1px solid rgba(200,50,50,0.3); }
+        .exchange-request-item .req-actions .btn-reject:hover { background: rgba(200,50,50,0.2); }
+        body.dark .exchange-request-item .req-actions .btn-approve { color: #82e0aa; }
+        body.dark .exchange-request-item .req-actions .btn-reject { color: #f1948a; }
+
         @media (max-width: 768px) {
             body { padding: 0.5rem; }
             .logo-box img { width: 70px; height: 70px; }
@@ -588,6 +760,7 @@
             .atlas-thumb { width: 110px; height: 110px; }
             .atlas-thumb-icon { width: 110px; height: 110px; font-size: 2.5rem; }
             .atlas-modal-image { max-height: 320px; }
+            .exchange-tab-btn { font-size: 0.65rem; padding: 0.5rem 0.3rem; }
         }
         @media (max-width: 480px) {
             .logo-box img { width: 60px; height: 60px; }
@@ -615,6 +788,7 @@
             .atlas-thumb { width: 90px; height: 90px; }
             .atlas-thumb-icon { width: 90px; height: 90px; font-size: 2rem; }
             .atlas-modal-image { max-height: 250px; }
+            .exchange-tab-btn { font-size: 0.55rem; padding: 0.4rem 0.2rem; }
         }
     </style>
     <link rel="manifest" href="/manifest.json">
@@ -752,21 +926,80 @@
     </div>
     <div class="cta-note">No personal info • Completely anonymous • 2 minutes</div>
 
+    <!-- ====== Cultural Achievements & Industries Gallery ====== -->
     <div class="gallery-box">
         <div class="gallery-header">
-            <div class="gallery-title">🏆 Cultural Achievements Gallery - First 200 Members</div>
+            <div class="gallery-title">🏆 Cultural Achievements & Industries Gallery</div>
             <select id="categoryFilter" class="filter-select" onchange="filterAchievements()">
                 <option value="all">All</option>
                 <option value="science">Articles</option>
                 <option value="art">Art</option>
                 <option value="media">Media</option>
+                <option value="cultural">Cultural</option>
             </select>
+        </div>
+        <div style="text-align:center; margin-bottom:0.6rem;">
+            <span class="gallery-subtitle">For the First 200 Members</span>
         </div>
         <div id="achievementsListContainer" class="achievements-list">
             <div class="empty-state">Loading...</div>
         </div>
     </div>
 
+    <!-- ====== Cultural Exchange Box ====== -->
+    <div class="exchange-box">
+        <div class="gallery-header">
+            <div class="gallery-title">🌟 Cultural Exchange</div>
+            <span class="gallery-subtitle">Request, Track, Respond — Among Verified Members</span>
+        </div>
+
+        <div class="exchange-tabs">
+            <button class="exchange-tab-btn active" id="excTab1" onclick="switchExchangeTab('send')">📨 Send Request</button>
+            <button class="exchange-tab-btn" id="excTab2" onclick="switchExchangeTab('track')">🔍 Track</button>
+            <button class="exchange-tab-btn" id="excTab3" onclick="switchExchangeTab('respond')">📬 Respond to Requests</button>
+        </div>
+
+        <!-- Tab 1: Send Request -->
+        <div class="exchange-panel active" id="excPanel-send">
+            <div class="exchange-form-group">
+                <label>Your Card Code (Requester)</label>
+                <input type="text" id="excMyCode" placeholder="CIM-XXXX-XXXX-XXXX" />
+            </div>
+            <div class="exchange-form-group">
+                <label>Creator's Card Code</label>
+                <input type="text" id="excTargetAch" placeholder="CIM-XXXX-XXXX-XXXX" />
+            </div>
+            <div class="exchange-form-group">
+                <label>Your Message to the Creator</label>
+                <textarea id="excMessage" rows="3" placeholder="Hello. I am interested in your work. Would you be open to cultural exchange or collaboration?"></textarea>
+            </div>
+            <button class="exchange-btn" id="excSendBtn" onclick="submitExchangeRequest()">📨 Send Request</button>
+            <div id="excSendResult" class="exchange-result"></div>
+        </div>
+
+        <!-- Tab 2: Track -->
+        <div class="exchange-panel" id="excPanel-track">
+            <div class="exchange-form-group">
+                <label>Request Tracking Code</label>
+                <input type="text" id="excTrackCode" placeholder="EXC-XXXXXXXX-XXXX" />
+            </div>
+            <button class="exchange-btn" id="excTrackBtn" onclick="trackExchangeRequest()">🔍 Track Request</button>
+            <div id="excTrackResult" class="exchange-result"></div>
+        </div>
+
+        <!-- Tab 3: Respond to Requests -->
+        <div class="exchange-panel" id="excPanel-respond">
+            <div class="exchange-form-group">
+                <label>Your Card Code (Creator)</label>
+                <input type="text" id="excOwnerCode" placeholder="CIM-XXXX-XXXX-XXXX" />
+            </div>
+            <button class="exchange-btn" id="excLoadBtn" onclick="loadIncomingRequests()">📬 View Received Requests</button>
+            <div id="excRespondResult" class="exchange-result"></div>
+            <div id="excIncomingList" style="margin-top:0.8rem;"></div>
+        </div>
+    </div>
+
+    <!-- ====== Names of Emergence Gallery ====== -->
     <div class="gallery-box atlas-box">
         <div class="gallery-header">
             <div class="gallery-title">🏛️ Names of Emergence Gallery</div>
@@ -777,6 +1010,7 @@
         </div>
     </div>
 
+    <!-- ====== Modal ====== -->
     <div id="detailModal" class="modal-overlay" onclick="closeModal(event)">
         <div class="modal-content">
             <button class="modal-close" onclick="document.getElementById('detailModal').classList.remove('active')">✕</button>
@@ -785,7 +1019,6 @@
                 <h2 id="modalTitle" style="color:#8a6d1f; margin-bottom:0.5rem; font-size:1.1rem;"></h2>
                 <div id="modalDesc" style="line-height:1.6; color:#3a2a1a; font-size:0.85rem;"></div>
                 
-                <!-- ===== Module Section ===== -->
                 <div id="modalModule" style="margin-top:0.8rem; padding:0.6rem; background:rgba(106,61,154,0.06); border-radius:10px; border-left:3px solid #6a3d9a; display:none;">
                     <div style="font-size:0.75rem; font-weight:700; color:#6a3d9a; margin-bottom:0.3rem;">📌 Selected Module:</div>
                     <div id="modalModuleType" style="font-size:0.85rem; color:#2a1a0a;"></div>
@@ -892,7 +1125,7 @@ function renderAchievements(items) {
             ${thumbHtml}
             <div class="item-info" style="flex:1; min-width:0;">
                 <h4>${item.title || 'Untitled'}</h4>
-                <span class="item-meta">${item.category === 'science' ? '📄 Article' : item.category === 'art' ? '🎨 Art' : '🎬 Media'}</span>
+                <span class="item-meta">${item.category === 'science' ? '📄 Article' : item.category === 'art' ? '🎨 Art' : item.category === 'media' ? '🎬 Media' : '🌍 Cultural'}</span>
             </div>
             <span style="font-size:1.2rem; color:#d4af37;">👁️</span>
         </div>
@@ -966,7 +1199,6 @@ function renderAtlas(items) {
             title = item.observation.substring(0, 50) + (item.observation.length > 50 ? '...' : '');
         }
         
-        // ===== Larger thumbnail (140x140) =====
         let thumbHtml = '';
         const imageUrl = item.fileUrl || item.fileData || item.imageUrl;
         if (isAchievement && imageUrl) {
@@ -1021,11 +1253,9 @@ function openAtlasModal(index) {
     if (!item) return;
     currentModalItem = item;
     
-    // ===== Determine item type =====
     const isAchievement = (item.labels && item.labels.includes('achievement')) || !!item.title;
     const imageUrl = item.fileUrl || item.fileData || item.imageUrl;
     
-    // ===== Show large image in modal =====
     const mediaDiv = document.getElementById('modalMediaContainer');
     mediaDiv.innerHTML = '';
     
@@ -1042,7 +1272,6 @@ function openAtlasModal(index) {
         }
     }
     
-    // ===== Title and description =====
     if (isAchievement && item.title) {
         document.getElementById('modalTitle').textContent = '🏆 ' + item.title;
         let descText = item.description || item.observation || 'No description available';
@@ -1057,7 +1286,6 @@ function openAtlasModal(index) {
     const displayScore = item.adminScore || item.score || '---';
     document.getElementById('modalMeta').textContent = `⭐ Score: ${displayScore} | Status: ${item.status === 'approved' ? '✅ Approved' : '⏳ Pending'}`;
     
-    // ===== Module =====
     const moduleDiv = document.getElementById('modalModule');
     const moduleType = item.moduleType || '';
     const moduleStatus = item.moduleStatus || 'pending';
@@ -1089,7 +1317,6 @@ function openAtlasModal(index) {
         moduleDiv.style.display = 'none';
     }
     
-    // ===== Action Guide =====
     const guideBox = document.getElementById('modalGuide');
     const guideContent = document.getElementById('guideContent');
     
@@ -1228,6 +1455,381 @@ function closeModal(e) {
     if (e.target && e.target.id === 'detailModal') {
         e.target.classList.remove('active');
     }
+}
+
+/* ================================================================ */
+/* ====== Cultural Exchange ====== */
+/* ================================================================ */
+
+function switchExchangeTab(tab) {
+    document.querySelectorAll('.exchange-tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.exchange-panel').forEach(p => p.classList.remove('active'));
+    
+    if (tab === 'send') {
+        document.getElementById('excTab1').classList.add('active');
+        document.getElementById('excPanel-send').classList.add('active');
+    } else if (tab === 'track') {
+        document.getElementById('excTab2').classList.add('active');
+        document.getElementById('excPanel-track').classList.add('active');
+    } else if (tab === 'respond') {
+        document.getElementById('excTab3').classList.add('active');
+        document.getElementById('excPanel-respond').classList.add('active');
+    }
+}
+
+function showExcResult(targetId, type, html) {
+    const el = document.getElementById(targetId);
+    el.className = 'exchange-result ' + type;
+    el.innerHTML = html;
+    el.style.display = 'block';
+}
+
+function normalizeCode(s) {
+    return (s || '')
+        .replace(/[\s\-]/g, '')
+        .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+        .toUpperCase();
+}
+
+async function submitExchangeRequest() {
+    const btn = document.getElementById('excSendBtn');
+    const myCode = document.getElementById('excMyCode').value.trim();
+    const targetCode = document.getElementById('excTargetAch').value.trim();
+    const message = document.getElementById('excMessage').value.trim();
+    
+    if (!myCode || !targetCode || !message) {
+        showExcResult('excSendResult', 'error', '❌ Please fill in all fields.');
+        return;
+    }
+    if (message.length < 10) {
+        showExcResult('excSendResult', 'error', '❌ Message must be at least 10 characters.');
+        return;
+    }
+    
+    btn.disabled = true;
+    btn.textContent = '⏳ Sending...';
+    
+    try {
+        const usersRes = await fetch('/api/get-users?t=' + Date.now());
+        const usersData = await usersRes.json();
+        const nCode = normalizeCode(myCode);
+        const me = (usersData.users || []).find(u => normalizeCode(u.cardCode) === nCode);
+        
+        if (!me) {
+            showExcResult('excSendResult', 'error', '❌ Your card code was not found.');
+            btn.disabled = false; btn.textContent = '📨 Send Request';
+            return;
+        }
+        if (me.status !== 'approved') {
+            showExcResult('excSendResult', 'error', '❌ Your account has not been approved yet.');
+            btn.disabled = false; btn.textContent = '📨 Send Request';
+            return;
+        }
+        if (!me.communicationEmail || me.communicationEmail.length < 5) {
+            showExcResult('excSendResult', 'error', '❌ To submit a request, please register your email in your profile first. <a href="edit-en.html" style="color:#8a1a1a;text-decoration:underline;">Register Email</a>');
+            btn.disabled = false; btn.textContent = '📨 Send Request';
+            return;
+        }
+        
+        const nTarget = normalizeCode(targetCode);
+        const targetUser = (usersData.users || []).find(u => normalizeCode(u.cardCode) === nTarget);
+        if (!targetUser) {
+            showExcResult('excSendResult', 'error', '❌ Creator card code not found. Please use the correct code.');
+            btn.disabled = false; btn.textContent = '📨 Send Request';
+            return;
+        }
+        if (nTarget === nCode) {
+            showExcResult('excSendResult', 'error', '❌ You cannot send a request to yourself.');
+            btn.disabled = false; btn.textContent = '📨 Send Request';
+            return;
+        }
+        
+        const exchangeTracking = `EXC-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2,6).toUpperCase()}`;
+        const reason = `🌍 مبادله فرهنگی | کد رهگیری: ${exchangeTracking} | کد عضویت صاحب اثر: ${targetUser.cardCode} | پیام: ${message}`;
+        
+        const res = await fetch('/api/submit-request', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                cardCode: myCode,
+                type: 'connection',
+                description: reason
+            })
+        });
+        
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.error || 'Error submitting request');
+        
+        const finalTracking = result.trackingCode || exchangeTracking;
+        
+        showExcResult('excSendResult', 'success', `
+            ✅ <strong>Your request has been submitted!</strong>
+            <br><br>
+            🔑 <strong>Exchange Tracking Code:</strong>
+            <span class="exchange-code-box">${finalTracking}</span>
+            <br>
+            <button onclick="copyExcCode('${finalTracking}')" style="background:rgba(22,160,133,0.15);border:none;padding:0.3rem 0.8rem;border-radius:8px;cursor:pointer;font-size:0.8rem;margin:0.3rem;font-weight:700;">📋 Copy Code</button>
+            <button onclick="saveExcCode('${finalTracking}')" style="background:rgba(22,160,133,0.15);border:none;padding:0.3rem 0.8rem;border-radius:8px;cursor:pointer;font-size:0.8rem;margin:0.3rem;font-weight:700;">💾 Save Code</button>
+            <br>
+            <small style="display:block;margin-top:0.5rem;">The creator will respond soon. Use the "🔍 Track" tab to see the result.</small>
+        `);
+        
+        document.getElementById('excMyCode').value = '';
+        document.getElementById('excTargetAch').value = '';
+        document.getElementById('excMessage').value = '';
+        
+    } catch (err) {
+        showExcResult('excSendResult', 'error', '❌ ' + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '📨 Send Request';
+    }
+}
+
+async function trackExchangeRequest() {
+    const btn = document.getElementById('excTrackBtn');
+    const code = document.getElementById('excTrackCode').value.trim();
+    
+    if (!code) {
+        showExcResult('excTrackResult', 'error', '❌ Please enter your tracking code.');
+        return;
+    }
+    
+    btn.disabled = true;
+    btn.textContent = '⏳ Searching...';
+    
+    try {
+        const res = await fetch('/api/get-connection-requests?t=' + Date.now());
+        const data = await res.json();
+        const requests = data.requests || [];
+        
+        const nCode = normalizeCode(code);
+        const found = requests.find(r => {
+            if (r.reason && r.reason.includes(code)) return true;
+            if (r.trackingCode && normalizeCode(r.trackingCode) === nCode) return true;
+            return false;
+        });
+        
+        if (!found) {
+            showExcResult('excTrackResult', 'error', '❓ Tracking code not found. Please verify the code.');
+            btn.disabled = false; btn.textContent = '🔍 Track Request';
+            return;
+        }
+        
+        const responses = requests.filter(r => 
+            r.reason && r.reason.includes(code) && 
+            (r.reason.includes('APPROVED') || r.reason.includes('REJECTED'))
+        );
+        
+        if (responses.length > 0) {
+            const lastResponse = responses[responses.length - 1];
+            const respReason = lastResponse.reason || '';
+            
+            if (respReason.includes('REJECTED')) {
+                showExcResult('excTrackResult', 'rejected', `
+                    ❌ <strong>The creator rejected your request.</strong>
+                    <br><br>
+                    Don't worry — you can send requests for other works.
+                `);
+            } else if (respReason.includes('APPROVED')) {
+                let ownerEmail = '';
+                let ownerMessage = '';
+                
+                const emailMatch = respReason.match(/ایمیل صاحب اثر:\s*([^\s|]+)/);
+                if (emailMatch) ownerEmail = emailMatch[1];
+                
+                const msgMatch = respReason.match(/💬 پاسخ صاحب اثر:\s*(.+?)(\||$)/);
+                if (msgMatch) ownerMessage = msgMatch[1].trim();
+                
+                let html = `✅ <strong>The creator approved your request!</strong><br><br>`;
+                if (ownerMessage) {
+                    html += `<strong>💬 Their message:</strong> ${ownerMessage}<br><br>`;
+                }
+                if (ownerEmail) {
+                    html += `
+                        <strong>📧 Creator's Email:</strong>
+                        <br>
+                        <span class="exchange-code-box">${ownerEmail}</span>
+                        <br>
+                        <button onclick="copyExcCode('${ownerEmail}')" style="background:rgba(22,160,133,0.15);border:none;padding:0.3rem 0.8rem;border-radius:8px;cursor:pointer;font-size:0.8rem;margin:0.3rem;font-weight:700;">📋 Copy Email</button>
+                        <br>
+                        <small style="display:block;margin-top:0.5rem;">You can now reach out from your own email for cultural exchange.</small>
+                    `;
+                } else {
+                    html += `<small>The creator responded but did not share their email.</small>`;
+                }
+                showExcResult('excTrackResult', 'approved', html);
+            }
+        } else {
+            showExcResult('excTrackResult', 'pending', `
+                ⏳ <strong>Waiting for the creator's response</strong>
+                <br><br>
+                Your request has reached the creator. Please check back later.
+            `);
+        }
+        
+    } catch (err) {
+        showExcResult('excTrackResult', 'error', '❌ ' + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '🔍 Track Request';
+    }
+}
+
+async function loadIncomingRequests() {
+    const btn = document.getElementById('excLoadBtn');
+    const listEl = document.getElementById('excIncomingList');
+    const myCode = document.getElementById('excOwnerCode').value.trim();
+    
+    if (!myCode) {
+        showExcResult('excRespondResult', 'error', '❌ Please enter your card code.');
+        return;
+    }
+    
+    btn.disabled = true;
+    btn.textContent = '⏳ Loading...';
+    listEl.innerHTML = '';
+    
+    try {
+        const usersRes = await fetch('/api/get-users?t=' + Date.now());
+        const usersData = await usersRes.json();
+        const nCode = normalizeCode(myCode);
+        const me = (usersData.users || []).find(u => normalizeCode(u.cardCode) === nCode);
+        
+        if (!me) {
+            showExcResult('excRespondResult', 'error', '❌ Card code not found.');
+            btn.disabled = false; btn.textContent = '📬 View Received Requests';
+            return;
+        }
+        
+        const reqRes = await fetch('/api/get-connection-requests?t=' + Date.now());
+        const reqData = await reqRes.json();
+        const requests = reqData.requests || [];
+        
+        const incoming = requests.filter(r => {
+            const reason = r.reason || '';
+            return reason.includes('🌍 مبادله فرهنگی') && 
+                   reason.includes('کد عضویت صاحب اثر:') &&
+                   normalizeCode(reason).includes(nCode);
+        });
+        
+        if (incoming.length === 0) {
+            showExcResult('excRespondResult', 'info', '📭 No requests received yet. Check back regularly.');
+            btn.disabled = false; btn.textContent = '📬 View Received Requests';
+            return;
+        }
+        
+        showExcResult('excRespondResult', 'info', `📬 ${incoming.length} request(s) received:`);
+        
+        listEl.innerHTML = incoming.map((r, idx) => {
+            const reason = r.reason || '';
+            const sender = r.senderCode || 'Unknown';
+            const msgMatch = reason.match(/پیام:\s*(.+?)(\||$)/);
+            const msg = msgMatch ? msgMatch[1].trim() : reason.substring(0, 100);
+            const trackingMatch = reason.match(/EXC-[A-Z0-9]+-[A-Z0-9]+/i);
+            const tracking = trackingMatch ? trackingMatch[0] : `REQ-${idx}`;
+            
+            const alreadyResponded = requests.some(resp => 
+                resp.reason && 
+                resp.reason.includes(tracking) && 
+                (resp.reason.includes('APPROVED') || resp.reason.includes('REJECTED'))
+            );
+            
+            return `
+                <div class="exchange-request-item">
+                    <div class="req-title">📨 Request from: ${sender}</div>
+                    <div class="req-msg">
+                        <strong>Message:</strong> ${msg}
+                    </div>
+                    <div style="font-size:0.7rem;color:#888;margin-top:0.3rem;direction:ltr;font-family:monospace;">${tracking}</div>
+                    ${alreadyResponded ? 
+                        `<div style="margin-top:0.4rem;color:#16a085;font-weight:700;">✅ Already responded</div>` :
+                        `<div class="req-actions">
+                            <button class="btn-approve" onclick="respondToRequest('${sender}', '${tracking}', 'approve', '${myCode}')">✅ Approve — Share my email</button>
+                            <button class="btn-reject" onclick="respondToRequest('${sender}', '${tracking}', 'reject', '${myCode}')">❌ Reject</button>
+                        </div>`
+                    }
+                </div>
+            `;
+        }).join('');
+        
+    } catch (err) {
+        showExcResult('excRespondResult', 'error', '❌ ' + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '📬 View Received Requests';
+    }
+}
+
+async function respondToRequest(senderCode, trackingCode, action, myCode) {
+    const actionLabel = action === 'approve' ? 'approving' : 'rejecting';
+    if (!confirm(`Are you sure about ${actionLabel} the request from ${senderCode}?`)) return;
+    
+    try {
+        const usersRes = await fetch('/api/get-users?t=' + Date.now());
+        const usersData = await usersRes.json();
+        const nCode = normalizeCode(myCode);
+        const me = (usersData.users || []).find(u => normalizeCode(u.cardCode) === nCode);
+        
+        if (action === 'approve' && (!me || !me.communicationEmail || me.communicationEmail.length < 5)) {
+            alert('❌ To approve, please register your email in your profile first.');
+            return;
+        }
+        
+        const responseText = action === 'approve' 
+            ? `APPROVED | 💬 پاسخ صاحب اثر: موافقم | ایمیل صاحب اثر: ${me.communicationEmail} | کد رهگیری: ${trackingCode}`
+            : `REJECTED | کد رهگیری: ${trackingCode}`;
+        
+        const res = await fetch('/api/submit-request', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                cardCode: myCode,
+                type: 'connection',
+                description: responseText
+            })
+        });
+        
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.error || 'Error submitting response');
+        
+        alert(`✅ Your response has been recorded.\n\nTracking Code: ${trackingCode}\n\nThe requester can view your response with this code.`);
+        
+        loadIncomingRequests();
+        
+    } catch (err) {
+        alert('❌ ' + err.message);
+    }
+}
+
+function copyExcCode(code) {
+    if (!code) return;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(() => {
+            alert('✅ Copied: ' + code);
+        }).catch(() => fallbackExcCopy(code));
+    } else {
+        fallbackExcCopy(code);
+    }
+}
+function fallbackExcCopy(code) {
+    const input = document.createElement('input');
+    input.value = code;
+    document.body.appendChild(input);
+    input.select();
+    document.execCommand('copy');
+    document.body.removeChild(input);
+    alert('✅ Copied: ' + code);
+}
+function saveExcCode(code) {
+    if (!code) return;
+    const blob = new Blob([code], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `exchange-code-${code}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
