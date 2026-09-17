@@ -1552,7 +1552,7 @@ async function submitExchangeRequest() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 cardCode: myCode,
-                type: 'connection',
+                                type: 'exchange',
                 description: reason
             })
         });
@@ -1785,7 +1785,7 @@ async function respondToRequest(senderCode, trackingCode, action, myCode) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 cardCode: myCode,
-                type: 'connection',
+                                type: 'exchange',
                 description: responseText
             })
         });
