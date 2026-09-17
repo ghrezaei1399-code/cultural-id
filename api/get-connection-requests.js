@@ -163,7 +163,10 @@ module.exports = async function handler(req, res) {
         }
 
         observations.push({
-          number: issue.number,
+                             number: issue.number,
+           fileUrl: extractFieldFromBody(issue.body, 'File URL'),
+          title: extractFieldFromBody(issue.body, 'Title'),
+          description: extractFieldFromBody(issue.body, 'Description'),
           cardCode: parsed.cardCode || 'ناشناس',
           observation: parsed.observation,
           module: parsed.module,
@@ -312,7 +315,17 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: error.message });
   }
 };
-
+function extractFieldFromBody(body, fieldName) {
+  if (!body) return '';
+  const lines = body.split('\n');
+  for (const line of lines) {
+    const norm = line.replace(/\*\*/g, '').trim();
+    if (norm.startsWith(fieldName + ':')) {
+      return norm.substring(fieldName.length + 1).trim();
+    }
+  }
+  return '';
+}
 
 // ============================================================
 // توابع کمکی پارس
