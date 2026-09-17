@@ -89,7 +89,8 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    // ===== مشاهدات =====    if (type === 'observations') {
+    // ===== مشاهدات =====
+    if (type === 'observations') {
       const filterType = req.query.filter || 'all';
 
       const fetchIssues = async (labels) => {
