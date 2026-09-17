@@ -487,6 +487,7 @@
         function buildUnifiedText(obs) {
             const ai1 = normalizeAi1(obs);
             const ai2 = normalizeAi2(obs);
+            const isAchievement = obs.labels && obs.labels.includes('achievement');
             const ai3 = normalizeAi3(obs);
             const clusterKey = ai2?.cluster || obs.cluster || detectCluster(obs.observation);
             const clusterLabel = getClusterLabel(clusterKey);
@@ -752,7 +753,26 @@
                     <br>لطفاً از عضو بخواهید مشاهده را دوباره ثبت کند، یا خودتان تحلیل را دستی بررسی کنید.
                 </div>` : '';
 
-            const modulesHtml = isPending ? `
+            const modulesHtml = isAchievement ? `
+    <div class="modules-container">
+        <div class="modules-title">⚙️ عملیات دستاورد نام‌آور</div>
+        <div class="module-step active">
+            <div class="step-number">۱</div>
+            <div class="step-content">
+                <label>🎯 عملیات:</label>
+                <button class="btn-action btn-atlas"
+                        onclick="finalizeObservation('${obs.number}', 'approve')"
+                        ${isFinalized ? 'disabled' : ''}>
+                    ✅ تأیید دستاورد
+                </button>
+                <button class="btn-action btn-reject"
+                        onclick="finalizeObservation('${obs.number}', 'reject')"
+                        ${isFinalized ? 'disabled' : ''}>
+                    ❌ رد دستاورد
+                </button>
+            </div>
+        </div>
+    </div>` : (isPending ? `
                 <div class="modules-container">
                     <div class="modules-title">⚙️ ماژول عملیات (به ترتیب انجام دهید)</div>
 
@@ -811,7 +831,7 @@
                             </button>
                         </div>
                     </div>
-                </div>` : '';
+                </div>` : '');
 
             const trackingCode = obs.trackingCode || obs.cardCode
                 ? `<span class="tracking-code">🔗 ${escapeHtml(obs.trackingCode || 'OBS-' + obs.number)}</span>` : '';
@@ -880,35 +900,61 @@
             }
         };
 
-        window.finalizeObservation = async function(issueNumber, target) {
-            const st = localState[issueNumber];
-            if (!st || !st.saved) { showToast('ابتدا باید تحلیل را ذخیره کنید.', 'error'); return; }
+       window.finalizeObservation = async function(issueNumber, target) {
+    const obs = allObservations.find(o => String(o.number) === String(issueNumber));
+    const isAchievement = obs && obs.labels && obs.labels.includes('achievement');
 
-            const targetNames = { atlas: 'اطلس ظهور', gallery: 'گالری نام‌آوران', reject: 'رد' };
-            const confirmMsg = target === 'reject'
-                ? 'آیا از رد این مشاهده اطمینان دارید؟'
-                : `آیا از تایید این مشاهده برای ${targetNames[target]} اطمینان دارید؟`;
-            if (!confirm(confirmMsg)) return;
+    if (isAchievement) {
+        const confirmMsg = target === 'reject'
+            ? 'آیا از رد این دستاورد اطمینان دارید؟'
+            : 'آیا از تأیید این دستاورد اطمینان دارید؟';
+        if (!confirm(confirmMsg)) return;
 
-            try {
-                let action, extra = {};
-                if (target === 'reject') action = 'reject_all';
-                else { action = 'approve_all'; extra.target = target; }
+        try {
+            let action = target === 'reject' ? 'reject_all' : 'approve_all';
+            const response = await fetch('/api/approve-connection', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ issueNumber, action, type: 'observation' })
+            });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error || 'خطا در عملیات');
 
-                const response = await fetch('/api/approve-connection', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ issueNumber, action, type: 'observation', ...extra })
-                });
-                const result = await response.json();
-                if (!response.ok) throw new Error(result.error || 'خطا در عملیات نهایی');
+            showToast(target === 'reject' ? '❌ دستاورد رد شد.' : '✅ دستاورد تأیید شد.', 'success');
+            loadObservations();
+        } catch (error) { showToast('❌ خطا: ' + error.message, 'error'); }
+        return;
+    }
 
-                localState[issueNumber].finalized = true;
-                showToast(`✅ عملیات «${targetNames[target]}» با موفقیت انجام شد.`, 'success');
-                loadObservations();
-            } catch (error) { showToast('❌ خطا: ' + error.message, 'error'); }
-        };
+    const st = localState[issueNumber];
+    if (!st || !st.saved) { showToast('ابتدا باید تحلیل را ذخیره کنید.', 'error'); return; }
+
+    const targetNames = { atlas: 'اطلس ظهور', gallery: 'گالری نام‌آوران', reject: 'رد' };
+    const confirmMsg = target === 'reject'
+        ? 'آیا از رد این مشاهده اطمینان دارید؟'
+        : `آیا از تایید این مشاهده برای ${targetNames[target]} اطمینان دارید؟`;
+    if (!confirm(confirmMsg)) return;
+
+    try {
+        let action, extra = {};
+        if (target === 'reject') action = 'reject_all';
+        else { action = 'approve_all'; extra.target = target; }
+
+        const response = await fetch('/api/approve-connection', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ issueNumber, action, type: 'observation', ...extra })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || 'خطا در عملیات نهایی');
+
+        localState[issueNumber].finalized = true;
+        showToast(`✅ عملیات «${targetNames[target]}» با موفقیت انجام شد.`, 'success');
+        loadObservations();
+    } catch (error) { showToast('❌ خطا: ' + error.message, 'error'); }
+};
 
         window.copyUnified = async function(issueNumber, saveMode = false) {
             const obs = allObservations.find(o => String(o.number) === String(issueNumber));
