@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>ثبت دستاورد | سپهر خردمندی</title>
+    <title>ثبت آثار نام‌آوران | کارت جهانی هویت هوشمند فرهنگی</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -251,6 +251,21 @@
         .code-input:focus { border-color: #d4af37; outline: none; background: #fff; }
         body.dark .code-input { background: rgba(0,0,0,0.3); color: #f0e8d0; border-color: rgba(255,255,255,0.1); }
 
+        .tracking-code-box {
+            direction: ltr;
+            font-family: monospace;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #8a6d1f;
+            background: rgba(212, 175, 55, 0.1);
+            padding: 0.5rem 1.2rem;
+            border-radius: 12px;
+            display: inline-block;
+            margin: 0.5rem 0;
+            border: 1px dashed rgba(212, 175, 55, 0.3);
+        }
+        body.dark .tracking-code-box { color: #ffd700; background: rgba(212, 175, 55, 0.05); }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -259,12 +274,12 @@
 
     <div class="container">
         <div id="codeCheckSection">
-            <h1>🔐 تأیید هویت</h1>
-            <div class="subtitle">برای ثبت دستاورد، کد کارت خود را وارد کنید</div>
+            <h1>🔐 احراز هویت نام‌آور</h1>
+            <div class="subtitle">برای ثبت آثار نام‌آوران، کد کارت خود را وارد کنید</div>
             
             <div class="code-check-box">
                 <input type="text" id="memberCode" class="code-input" placeholder="کد کارت (مثلاً CIM-XXXX-XXXX-XXXX)" />
-                <button onclick="verifyCode()" class="btn btn-primary" style="width:100%">تأیید و ورود</button>
+                <button onclick="verifyCode()" class="btn btn-primary" id="verifyBtn" style="width:100%">تأیید و ورود</button>
                 <div id="errorMsg" class="error-msg"></div>
                 
                 <div class="btn-group" style="margin-top: 1.5rem;">
@@ -278,7 +293,7 @@
         </div>
 
         <div id="uploadSection" class="hidden">
-            <h1>📤 ثبت دستاورد شما</h1>
+            <h1>📤 ثبت آثار نام‌آوران</h1>
             <div class="subtitle">دستاوردهای فرهنگی خود را مستند کنید</div>
 
             <div id="statusBox" class="status-msg"></div>
@@ -293,7 +308,7 @@
 
             <form id="uploadForm">
                 <div class="form-group">
-                    <label>عنوان</label>
+                    <label>عنوان اثر</label>
                     <input type="text" id="title" placeholder="مثلاً: تشکیل شبکه محلی برای حفظ میراث شفاهی" required />
                 </div>
 
@@ -314,8 +329,8 @@
                 </div>
 
                 <div class="helper-text">
-                    💡 <strong>راهنما:</strong> دستاورد شما باید مستند و قابل راستی‌آزمایی باشد. 
-                    پس از ارسال، توسط مدیر بررسی و در صورت تأیید در گالری دستاوردها نمایش داده می‌شود.
+                    💡 <strong>راهنما:</strong> اثر شما باید مستند و قابل راستی‌آزمایی باشد. 
+                    پس از ارسال، توسط مدیر بررسی و در صورت تأیید در گالری نام‌آوران نمایش داده می‌شود.
                 </div>
 
                 <div class="btn-group">
@@ -354,10 +369,40 @@
             });
         }
 
+        function copyTrackingCode(code) {
+            if (!code) return;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(code).then(() => {
+                    alert('✅ کد رهگیری کپی شد: ' + code);
+                }).catch(() => fallbackCopy(code));
+            } else {
+                fallbackCopy(code);
+            }
+        }
+        function fallbackCopy(code) {
+            const input = document.createElement('input');
+            input.value = code;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            document.body.removeChild(input);
+            alert('✅ کد رهگیری کپی شد: ' + code);
+        }
+        function saveTrackingCode(code) {
+            if (!code) return;
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `tracking-code-${code}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
         async function verifyCode() {
             const codeInput = document.getElementById('memberCode').value.trim();
             const errorMsg = document.getElementById('errorMsg');
-            const verifyBtn = document.querySelector('#codeCheckSection .btn-primary');
+            const verifyBtn = document.getElementById('verifyBtn');
             
             if (!codeInput) {
                 errorMsg.textContent = '❌ لطفاً کد کارت خود را وارد کنید.';
@@ -430,7 +475,8 @@
                     description: document.getElementById('description').value,
                     category: document.getElementById('category').value,
                     fileData: fileData,
-                    fileName: fileName
+                    fileName: fileName,
+                    section: 'emergence'
                 };
 
                 const response = await fetch('/api/upload-achievement', {
@@ -447,14 +493,24 @@
 
                 if(statusBox) {
                     statusBox.className = 'status-msg success';
-                    statusBox.textContent = '✅ دستاورد با موفقیت ثبت شد. کد رهگیری: ' + (result.trackingCode || '---');
+                    statusBox.innerHTML = `
+                        ✅ اثر شما با موفقیت ثبت شد.
+                        <br>
+                        <strong>🔑 کد رهگیری:</strong>
+                        <span class="tracking-code-box">${result.trackingCode || '---'}</span>
+                        <br>
+                        <button onclick="copyTrackingCode('${result.trackingCode}')" style="background: rgba(40,116,166,0.1); border: none; padding: 0.4rem 1rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem; margin: 0.3rem;">
+                            📋 کپی کد
+                        </button>
+                        <button onclick="saveTrackingCode('${result.trackingCode}')" style="background: rgba(40,116,166,0.1); border: none; padding: 0.4rem 1rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem; margin: 0.3rem;">
+                            💾 ذخیره کد
+                        </button>
+                        <br>
+                        <small style="color: #888;">پس از تأیید ادمین، اثر شما در گالری نام‌آوران نمایش داده می‌شود.</small>
+                    `;
                     statusBox.style.display = 'block';
                 }
                 btn.textContent = '✅ ارسال شد';
-                
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 3000);
 
             } catch (error) {
                 if(statusBox) {
