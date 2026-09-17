@@ -830,7 +830,11 @@ async function loadAtlas() {
         const res = await fetch('/api/get-connection-requests?type=observations&t=' + new Date().getTime());
         if (!res.ok) throw new Error('خطا در دریافت اطلاعات');
         const data = await res.json();
-        allAtlasItems = (data.observations || []).filter(obs => obs.status === 'approved' && obs.labels && obs.labels.includes('gallery'));
+        allAtlasItems = (data.observations || []).filter(obs => 
+            obs.status === 'approved' && 
+            obs.labels && 
+            (obs.labels.includes('gallery') || obs.labels.includes('achievement'))
+        );
         renderAtlas(allAtlasItems);
     } catch (e) {
         console.error(e);
@@ -844,46 +848,72 @@ function renderAtlas(items) {
         container.innerHTML = '<div class="empty-state">هنوز راه‌حلی با امتیاز ۵ ثبت نشده است.</div>';
         return;
     }
+    
     container.innerHTML = items.map((item, index) => {
-        const moduleStatus = item.moduleStatus || 'pending';
-        const moduleType = item.moduleType || '';
+        // ===== تشخیص نوع آیتم =====
+        const isAchievement = (item.labels && item.labels.includes('achievement')) || !!item.title;
+        
+        // ===== تعیین وضعیت =====
+        let moduleStatus = item.moduleStatus || 'pending';
+        if (item.status === 'approved' && (!item.moduleStatus || item.moduleStatus === 'pending')) {
+            moduleStatus = 'approved';
+        }
         
         const statusLabels = {
-            'success': '✅ موفق', 'revision': '⚠️ نیاز به اصلاح', 'failed': '❌ شکست',
-            'pending': '⏳ در انتظار', 'no_peers': '⚠️ هم‌فرهنگی یافت نشد',
-            'no_related': '⚠️ مشاهده مرتبط یافت نشد'
+            'success': '✅ موفق',
+            'revision': '⚠️ نیاز به اصلاح',
+            'failed': '❌ شکست',
+            'pending': '⏳ در انتظار',
+            'no_peers': '⚠️ هم‌فرهنگی یافت نشد',
+            'no_related': '⚠️ مشاهده مرتبط یافت نشد',
+            'approved': '✅ تأیید شده',
+            'rejected': '❌ رد شده'
         };
         const statusText = statusLabels[moduleStatus] || moduleStatus;
-        const statusClass = moduleStatus === 'success' ? 'success' :
+        
+        const statusClass = (moduleStatus === 'success' || moduleStatus === 'approved') ? 'success' :
                            moduleStatus === 'revision' ? 'revision' :
-                           moduleStatus === 'failed' ? 'failed' :
+                           (moduleStatus === 'failed' || moduleStatus === 'rejected') ? 'failed' :
                            moduleStatus === 'pending' ? 'pending' : 'no_peers';
         
+        // ===== نام ماژول =====
         const moduleNames = {
             'collaboration': '🤝 همفکری',
             'related': '👁️ مشاهدات مرتبط',
             'referral': '📤 ارجاع به ۵ همفرهنگ'
         };
-        const moduleDisplay = moduleNames[moduleType] || moduleType || '';
+        const moduleDisplay = moduleNames[item.moduleType] || '';
         
-        // نمایش امتیاز ادمین (اگر موجود باشد) وگرنه امتیاز AI
+        // ===== امتیاز =====
         const displayScore = item.adminScore || item.score || '---';
         
-             const isAchievement = item.labels && item.labels.includes('achievement');
-        const title = isAchievement && item.title ? item.title : (item.observation ? item.observation.substring(0, 50) + '...' : 'مشاهده');
-
-        let thumbHtml = '';
-        if (isAchievement && item.fileUrl) {
-            thumbHtml = `<img src="${item.fileUrl}" style="width:50px; height:50px; border-radius:8px; object-fit:cover; margin-left:0.5rem;" onerror="this.style.display='none'" />`;
-        } else {
-            thumbHtml = `<span style="font-size:0.9rem; color:#6a3d9a;">🏛️</span>`;
+        // ===== عنوان =====
+        let title = 'مشاهده';
+        if (isAchievement && item.title) {
+            title = item.title;
+        } else if (item.observation) {
+            title = item.observation.substring(0, 50) + (item.observation.length > 50 ? '...' : '');
         }
-
-                  return `
-            <div class="achievement-item" onclick="openAtlasModal(${index})" style="display:flex; align-items:center; gap:0.5rem;">
+        
+        // ===== تصویر بندانگشتی =====
+        let thumbHtml = '';
+        const imageUrl = item.fileUrl || item.fileData || item.imageUrl;
+        if (isAchievement && imageUrl) {
+            thumbHtml = `<img src="${imageUrl}" 
+                            style="width:50px; height:50px; border-radius:8px; object-fit:cover; margin-left:0.5rem; flex-shrink:0;" 
+                            onerror="this.outerHTML='<span style=\\'font-size:1.2rem;color:#6a3d9a;margin-left:0.5rem;\\'>🏆</span>'" />`;
+        } else if (isAchievement) {
+            thumbHtml = `<span style="font-size:1.2rem; margin-left:0.5rem;">🏆</span>`;
+        } else {
+            thumbHtml = `<span style="font-size:1.2rem; margin-left:0.5rem; color:#6a3d9a;">🏛️</span>`;
+        }
+        
+        return `
+            <div class="achievement-item" onclick="openAtlasModal(${index})" 
+                 style="display:flex; align-items:center; gap:0.5rem; flex-direction:row;">
                 ${thumbHtml}
-                <div class="item-info" style="flex:1;">
-                    <h4>${title}</h4>
+                <div class="item-info" style="flex:1; min-width:0;">
+                    <h4 style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${title}</h4>
                     <span class="item-meta">⭐ امتیاز ${displayScore}</span>
                     ${moduleDisplay ? `<span class="module-type-label">${moduleDisplay}</span>` : ''}
                     <span class="module-status-badge ${statusClass}">${statusText}</span>
@@ -1024,7 +1054,6 @@ function openAtlasModal(index) {
     guideContent.innerHTML = html;
     guideBox.style.display = 'block';
     
-    // ===== نمایش پیام راهنمای بازخورد =====
     document.getElementById('modalFeedbackNote').style.display = 'block';
     
     document.getElementById('detailModal').classList.add('active');
