@@ -358,25 +358,43 @@
             document.getElementById('goldenCount').textContent = golden.toLocaleString('fa-IR');
         }
 
-        function renderObservations() {
+              function renderObservations() {
             const container = document.getElementById('observationsGrid');
             if (!allObservations || allObservations.length === 0) {
                 container.innerHTML = `<div class="empty-state">هیچ مشاهده‌ی برگزیده‌ای وجود ندارد.</div>`;
                 return;
             }
-            container.innerHTML = allObservations.map((obs, idx) => `
+            container.innerHTML = allObservations.map((obs, idx) => {
+                const isAchievement = obs.labels && obs.labels.includes('achievement');
+                const title = isAchievement && obs.title ? obs.title : ('مشاهده #' + obs.number);
+                const text = isAchievement && obs.description ? obs.description : (obs.observation || '---');
+
+                let mediaHtml = '';
+                if (isAchievement && obs.fileUrl) {
+                    const ext = (obs.fileUrl || '').split('.').pop().toLowerCase();
+                    if (['mp4', 'webm', 'ogg', 'mov'].includes(ext)) {
+                        mediaHtml = `<video controls src="${obs.fileUrl}" style="width:100%; border-radius:10px; margin-bottom:0.6rem;"></video>`;
+                    } else {
+                        mediaHtml = `<img src="${obs.fileUrl}" alt="${title}" style="width:100%; border-radius:10px; margin-bottom:0.6rem;" onerror="this.style.display='none'" />`;
+                    }
+                }
+
+                return `
                 <div class="obs-card">
                     <div class="obs-header">
-                        <span class="obs-number">🏛️ مشاهده #${obs.number}</span>
+                        <span class="obs-number">🏛️ ${isAchievement ? 'دستاورد' : 'مشاهده'} #${obs.number}</span>
                         <span class="obs-score">⭐ امتیاز ${obs.score || '---'}</span>
                     </div>
                     <div class="obs-body">
-                        <div class="obs-text">${obs.observation || '---'}</div>
+                        ${mediaHtml}
+                        <div class="obs-text">${title}</div>
+                        <div class="obs-text" style="font-size:0.85rem; opacity:0.8;">${text}</div>
                         <div class="obs-meta">👤 ${obs.cardCode || 'ناشناس'} • ${obs.createdAt ? new Date(obs.createdAt).toLocaleDateString('fa-IR') : '---'}</div>
-                        <button class="btn-detail" onclick="showObservationDetail(${idx})">📊 مشاهده پرونده کامل ظهور</button>
+                        <button class="btn-detail" onclick="showObservationDetail(${idx})">📊 مشاهده پرونده کامل</button>
                     </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
         }
 
         function renderGallery() {
