@@ -201,7 +201,7 @@ module.exports = async function handler(req, res) {
         filtered = observations.filter(o => Array.isArray(o.labels) && o.labels.includes('gallery'));
       }
       return res.status(200).json({ observations: filtered });
-      }
+    }
 
     // ===== دستاوردها =====
     if (type === 'achievements') {
