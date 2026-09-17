@@ -226,7 +226,7 @@ ${guide.policy}
             })
           });
         }
-
+newLabels.push('gallery');
         await updateIssueLabels(issueNumber, newLabels, token, 'open');
 
         return res.status(200).json({
