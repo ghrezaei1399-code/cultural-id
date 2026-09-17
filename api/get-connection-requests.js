@@ -89,28 +89,36 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    // ===== مشاهدات =====
-    if (type === 'observations') {
+    // ===== مشاهدات =====    if (type === 'observations') {
       const filterType = req.query.filter || 'all';
-      const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues?labels=observation,achievement&state=open&per_page=100`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/vnd.github.v3+json'
-        }
-      });
 
-      if (!response.ok) throw new Error('خطا در دریافت مشاهدات');
+      const fetchIssues = async (labels) => {
+        const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues?labels=${labels}&state=open&per_page=100`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+        if (!res.ok) return [];
+        return await res.json();
+      };
 
-      const issues = await response.json();
+      const obsIssues = await fetchIssues('observation');
+      const achIssues = await fetchIssues('achievement');
+
+      const allIssuesMap = new Map();
+      [...obsIssues, ...achIssues].forEach(i => allIssuesMap.set(i.number, i));
+      const issues = Array.from(allIssuesMap.values());
+
       const observations = [];
 
       for (const issue of issues) {
         const labels = issue.labels.map(l => l.name);
         let status = 'pending';
-        
+
         if (labels.includes('approved')) status = 'approved';
         else if (labels.includes('rejected')) status = 'rejected';
-        
+
         let moduleStatus = 'pending';
         for (const label of labels) {
           if (label.startsWith('module-')) {
@@ -121,7 +129,6 @@ module.exports = async function handler(req, res) {
 
         const parsed = parseIssueBody(issue.body || '');
 
-        // ===== خواندن امتیاز ادمین از کامنت‌ها =====
         let adminScore = null;
         let feedbackResult = null;
         try {
@@ -135,12 +142,10 @@ module.exports = async function handler(req, res) {
             const comments = await commentsRes.json();
             for (const comment of comments) {
               const cBody = comment.body || '';
-              // امتیاز ادمین
               if (cBody.includes('⭐ امتیاز ادمین') || cBody.includes('Admin Score:')) {
                 const scoreMatch = cBody.match(/امتیاز نهایی:\*\*\s*(\d+)/) || cBody.match(/Admin Score:\*\*\s*(\d+)/);
                 if (scoreMatch) adminScore = parseInt(scoreMatch[1]);
               }
-              // بازخورد عضو
               if (cBody.includes('📊 بازخورد عضو')) {
                 const resultMatch = cBody.match(/نتیجه:\*\*\s*(.+)/);
                 if (resultMatch) {
@@ -188,7 +193,6 @@ module.exports = async function handler(req, res) {
         });
       }
 
-      // ===== فیلتر بر اساس برچسب =====
       let filtered = observations;
       if (filterType === 'atlas') {
         filtered = observations.filter(o => Array.isArray(o.labels) && o.labels.includes('atlas'));
@@ -196,7 +200,7 @@ module.exports = async function handler(req, res) {
         filtered = observations.filter(o => Array.isArray(o.labels) && o.labels.includes('gallery'));
       }
       return res.status(200).json({ observations: filtered });
-    }
+      }
 
     // ===== دستاوردها =====
     if (type === 'achievements') {
