@@ -92,7 +92,7 @@ module.exports = async function handler(req, res) {
     // ===== مشاهدات =====
     if (type === 'observations') {
       const filterType = req.query.filter || 'all';
-      const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues?labels=observation&state=open&per_page=100`, {
+      const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues?labels=observation,achievement&state=open&per_page=100`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/vnd.github.v3+json'
