@@ -403,7 +403,7 @@
             <div class="subtitle">کد رهگیری اثر خود را وارد کنید</div>
 
             <div class="code-check-box">
-                <input type="text" id="trackingCode" class="code-input" placeholder="کد رهگیری (مثلاً CIM-XXXXXXXX-XXXX)" />
+                <input type="text" id="trackingCode" class="code-input" placeholder="کد رهگیری (مثلاً ACH-XXXXXXXX-XXXX)" />
                 <button onclick="trackCode()" class="btn btn-primary" id="trackBtn" style="width:100%">🔍 پیگیری</button>
                 <div id="trackErrorMsg" class="error-msg"></div>
                 <div id="trackResult" class="track-result"></div>
@@ -641,18 +641,61 @@
             resultBox.style.display = 'none';
 
             try {
-                const res = await fetch('/api/get-connection-requests?type=observations&t=' + new Date().getTime());
-                if (!res.ok) throw new Error('خطا در ارتباط با سرور');
-                const data = await res.json();
-
                 const normalize = (s) => (s || '').replace(/[\s\-]/g, '').toUpperCase();
                 const normalizedInput = normalize(codeInput);
 
-                const allItems = (data.observations || []).concat(data.achievements || []).concat(data.requests || []);
-                const found = allItems.find(item => {
-                    const codes = [item.trackingCode, item.code, item.id].filter(Boolean);
-                    return codes.some(c => normalize(c) === normalizedInput);
-                });
+                let found = null;
+
+                // ۱) جستجو در کاربران و دستاوردهایشان
+                try {
+                    const resUsers = await fetch('/api/get-users?t=' + new Date().getTime());
+                    if (resUsers.ok) {
+                        const dataUsers = await resUsers.json();
+                        const users = dataUsers.users || [];
+                        for (const u of users) {
+                            if (u.achievements && Array.isArray(u.achievements)) {
+                                for (const ach of u.achievements) {
+                                    const codes = [ach.trackingCode, ach.code, ach.id].filter(Boolean);
+                                    if (codes.some(c => normalize(c) === normalizedInput)) {
+                                        found = { ...ach, owner: u.cardCode };
+                                        break;
+                                    }
+                                }
+                            }
+                            if (found) break;
+                        }
+                    }
+                } catch (e) { console.error('users fetch error:', e); }
+
+                // ۲) اگر پیدا نشد، در observations جستجو کن
+                if (!found) {
+                    try {
+                        const resObs = await fetch('/api/get-connection-requests?type=observations&t=' + new Date().getTime());
+                        if (resObs.ok) {
+                            const dataObs = await resObs.json();
+                            const allItems = (dataObs.observations || []).concat(dataObs.achievements || []).concat(dataObs.requests || []);
+                            found = allItems.find(item => {
+                                const codes = [item.trackingCode, item.code, item.id].filter(Boolean);
+                                return codes.some(c => normalize(c) === normalizedInput);
+                            });
+                        }
+                    } catch (e) { console.error('obs fetch error:', e); }
+                }
+
+                // ۳) اگر پیدا نشد، در لیست کلی requests جستجو کن
+                if (!found) {
+                    try {
+                        const resAll = await fetch('/api/get-connection-requests?t=' + new Date().getTime());
+                        if (resAll.ok) {
+                            const dataAll = await resAll.json();
+                            const allItems = (dataAll.observations || []).concat(dataAll.achievements || []).concat(dataAll.requests || []);
+                            found = allItems.find(item => {
+                                const codes = [item.trackingCode, item.code, item.id].filter(Boolean);
+                                return codes.some(c => normalize(c) === normalizedInput);
+                            });
+                        }
+                    } catch (e) { console.error('all fetch error:', e); }
+                }
 
                 if (!found) {
                     resultBox.className = 'track-result notfound';
