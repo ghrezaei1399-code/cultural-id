@@ -72,8 +72,8 @@ module.exports = async function handler(req, res) {
       return res.status(404).json({ error: 'اطلاعات کاربر یافت نشد' });
     }
 
-    const userDataRaw = await userRes.json();
-    const userData = JSON.parse(Buffer.from(userDataRaw.content, 'base64').toString('utf8'));
+   const userDataRaw = await userRes.json();
+const userData = await (await fetch(userDataRaw.download_url)).json();
 
     // ===== ایجاد شناسه منحصربه‌فرد برای دستاورد =====
     const achievementId = `ach-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
