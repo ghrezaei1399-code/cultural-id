@@ -869,15 +869,35 @@ function renderAtlas(items) {
         // نمایش امتیاز ادمین (اگر موجود باشد) وگرنه امتیاز AI
         const displayScore = item.adminScore || item.score || '---';
         
+             const isAchievement = item.labels && item.labels.includes('achievement');
+        const title = isAchievement && item.title ? item.title : (item.observation ? item.observation.substring(0, 50) + '...' : 'مشاهده');
+
+        let thumbHtml = '';
+        if (isAchievement && item.fileUrl) {
+            thumbHtml = `<img src="${item.fileUrl}" style="width:50px; height:50px; border-radius:8px; object-fit:cover; margin-left:0.5rem;" onerror="this.style.display='none'" />`;
+        } else {
+            thumbHtml = `<span style="font-size:0.9rem; color:#6a3d9a;">🏛️</span>`;
+        }
+
+                const isAchievement = item.labels && item.labels.includes('achievement');
+        const title = isAchievement && item.title ? item.title : (item.observation ? item.observation.substring(0, 50) + '...' : 'مشاهده');
+
+        let thumbHtml = '';
+        if (isAchievement && item.fileUrl) {
+            thumbHtml = `<img src="${item.fileUrl}" style="width:50px; height:50px; border-radius:8px; object-fit:cover; margin-left:0.5rem;" onerror="this.style.display='none'" />`;
+        } else {
+            thumbHtml = `<span style="font-size:0.9rem; color:#6a3d9a;">🏛️</span>`;
+        }
+
         return `
-            <div class="achievement-item" onclick="openAtlasModal(${index})">
-                <div class="item-info">
-                    <h4>${item.observation ? item.observation.substring(0, 50) + '...' : 'مشاهده'}</h4>
+            <div class="achievement-item" onclick="openAtlasModal(${index})" style="display:flex; align-items:center; gap:0.5rem;">
+                ${thumbHtml}
+                <div class="item-info" style="flex:1;">
+                    <h4>${title}</h4>
                     <span class="item-meta">⭐ امتیاز ${displayScore}</span>
                     ${moduleDisplay ? `<span class="module-type-label">${moduleDisplay}</span>` : ''}
                     <span class="module-status-badge ${statusClass}">${statusText}</span>
                 </div>
-                <span style="font-size:0.9rem; color:#6a3d9a;">🏛️</span>
             </div>
         `;
     }).join('');
