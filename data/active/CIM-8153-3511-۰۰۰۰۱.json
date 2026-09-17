@@ -60,6 +60,18 @@
       "fileUrl": "https://raw.githubusercontent.com/ghrezaei1399-code/cultural-id/main/uploads/ACH-MU5EIXTQ-ZUTL-پوستر اولیه.png",
       "section": "emergence",
       "issueNumber": 99
+    },
+    {
+      "id": "ACH-MU5FDS7V-CA0M",
+      "title": "فرهنگ",
+      "description": "حل مشکل خشونت فرهنگی",
+      "category": "cultural",
+      "status": "pending",
+      "createdAt": "2026-09-17T11:07:29.723Z",
+      "fileName": "نماد صلح.jpg",
+      "fileUrl": "https://raw.githubusercontent.com/ghrezaei1399-code/cultural-id/main/uploads/ACH-MU5FDS7V-CA0M-نماد صلح.jpg",
+      "section": "emergence",
+      "issueNumber": 100
     }
   ]
 }
