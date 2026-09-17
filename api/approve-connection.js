@@ -99,6 +99,7 @@ module.exports = async function handler(req, res) {
           if (action === 'approve_all') {
             newLabels.push('approved');
             newLabels.push('achievement');
+            newLabels.push('gallery');
             newLabels = newLabels.filter(l => l !== 'pending-review');
 
             // ===== به‌روزرسانی وضعیت دستاورد در فایل کاربر =====
@@ -226,7 +227,6 @@ ${guide.policy}
             })
           });
         }
-newLabels.push('gallery');
         await updateIssueLabels(issueNumber, newLabels, token, 'open');
 
         return res.status(200).json({
