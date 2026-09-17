@@ -54,25 +54,25 @@
       "title": "بلیئسدل",
       "description": "بتیایل",
       "category": "science",
-      "status": "pending",
+      "status": "approved",
       "createdAt": "2026-09-17T10:43:31.595Z",
       "fileName": "پوستر اولیه.png",
       "fileUrl": "https://raw.githubusercontent.com/ghrezaei1399-code/cultural-id/main/uploads/ACH-MU5EIXTQ-ZUTL-پوستر اولیه.png",
       "section": "emergence",
-      "issueNumber": 99
+      "issueNumber": 99,
+      "approvedAt": "2026-09-17T12:13:01.325Z"
     },
     {
       "id": "ACH-MU5FDS7V-CA0M",
       "title": "فرهنگ",
       "description": "حل مشکل خشونت فرهنگی",
       "category": "cultural",
-      "status": "approved",
+      "status": "pending",
       "createdAt": "2026-09-17T11:07:29.723Z",
       "fileName": "نماد صلح.jpg",
       "fileUrl": "https://raw.githubusercontent.com/ghrezaei1399-code/cultural-id/main/uploads/ACH-MU5FDS7V-CA0M-نماد صلح.jpg",
       "section": "emergence",
-      "issueNumber": 100,
-      "approvedAt": "2026-09-17T12:12:48.259Z"
+      "issueNumber": 100
     },
     {
       "id": "ACH-MU5G9QFQ-QLF5",
