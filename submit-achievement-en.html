@@ -266,6 +266,59 @@
         }
         body.dark .tracking-code-box { color: #ffd700; background: rgba(212, 175, 55, 0.05); }
 
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            background: rgba(255,255,255,0.4);
+            padding: 0.4rem;
+            border-radius: 40px;
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+        body.dark .tabs { background: rgba(0,0,0,0.2); }
+        .tab-btn {
+            flex: 1;
+            padding: 0.8rem 0.5rem;
+            border-radius: 30px;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 0.95rem;
+            color: #6a5a3a;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        body.dark .tab-btn { color: #c8b890; }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #d4af37, #f9e79f);
+            color: #2a1a0a;
+            box-shadow: 0 4px 15px rgba(212,175,55,0.3);
+        }
+
+        .track-result {
+            padding: 1.5rem;
+            border-radius: 20px;
+            margin-top: 1.5rem;
+            text-align: center;
+            display: none;
+            font-weight: 700;
+            animation: fadeIn 0.5s ease;
+            line-height: 1.8;
+        }
+        .track-result.pending { background: rgba(241,196,15,0.12); color: #8a5a0a; border: 2px solid rgba(241,196,15,0.3); }
+        .track-result.approved { background: rgba(50, 200, 50, 0.12); color: #0a5a0a; border: 2px solid rgba(50, 200, 50, 0.3); }
+        .track-result.rejected { background: rgba(200, 50, 50, 0.12); color: #8a1a1a; border: 2px solid rgba(200, 50, 50, 0.3); }
+        .track-result.revision { background: rgba(243,156,18,0.12); color: #8a5a0a; border: 2px solid rgba(243,156,18,0.3); }
+        .track-result.notfound { background: rgba(149,165,166,0.15); color: #5a6a6a; border: 2px solid rgba(149,165,166,0.3); }
+        body.dark .track-result.pending { color: #f9e79f; }
+        body.dark .track-result.approved { color: #82e0aa; }
+        body.dark .track-result.rejected { color: #f1948a; }
+        body.dark .track-result.revision { color: #f5b041; }
+        body.dark .track-result.notfound { color: #aab7b8; }
+        .track-result .status-icon { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
+        .track-result .status-title { font-size: 1.1rem; font-weight: 900; display: block; margin-bottom: 0.6rem; }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -275,8 +328,13 @@
     <div class="container">
         <div id="codeCheckSection">
             <h1>🔐 Emergence Achiever Verification</h1>
-            <div class="subtitle">Enter your card code to submit your emergence achievements</div>
-            
+            <div class="subtitle">Submit a new achievement or track a submitted one</div>
+
+            <div class="tabs">
+                <button class="tab-btn active" id="tabNew" onclick="switchTab('new')">📤 Submit New</button>
+                <button class="tab-btn" id="tabTrack" onclick="switchTab('track')">🔍 Track Code</button>
+            </div>
+
             <div class="code-check-box">
                 <input type="text" id="memberCode" class="code-input" placeholder="Card Code (e.g., CIM-XXXX-XXXX-XXXX)" />
                 <button onclick="verifyCode()" class="btn btn-primary" id="verifyBtn" style="width:100%">Verify & Enter</button>
@@ -288,7 +346,7 @@
                 </div>
             </div>
             <div class="note">
-                This section is open to all approved members. Your submission will be reviewed by the admin.
+                This section is open to all approved members.
             </div>
         </div>
 
@@ -329,8 +387,7 @@
                 </div>
 
                 <div class="helper-text">
-                    💡 <strong>Guideline:</strong> Your achievement must be documented and verifiable. 
-                    After submission, it will be reviewed by the admin and displayed in the Notable Gallery if approved.
+                    💡 <strong>Guideline:</strong> Your achievement must be documented and verifiable.
                 </div>
 
                 <div class="btn-group">
@@ -339,6 +396,26 @@
                     <a href="register-en.html" class="btn btn-secondary">📝 Register</a>
                 </div>
             </form>
+        </div>
+
+        <div id="trackSection" class="hidden">
+            <h1>🔍 Track Your Submission</h1>
+            <div class="subtitle">Enter your tracking code to see the status</div>
+
+            <div class="code-check-box">
+                <input type="text" id="trackingCode" class="code-input" placeholder="Tracking Code (e.g., CIM-XXXXXXXX-XXXX)" />
+                <button onclick="trackCode()" class="btn btn-primary" id="trackBtn" style="width:100%">🔍 Track</button>
+                <div id="trackErrorMsg" class="error-msg"></div>
+                <div id="trackResult" class="track-result"></div>
+
+                <div class="btn-group" style="margin-top: 1.5rem;">
+                    <button onclick="switchTab('new')" class="btn btn-secondary">📤 Submit New</button>
+                    <a href="index-en.html" class="btn btn-secondary">🏠 Back to Home</a>
+                </div>
+            </div>
+            <div class="note">
+                The tracking code was shown to you after submission.
+            </div>
         </div>
     </div>
 
@@ -367,6 +444,28 @@
                     if(nameDisplay) nameDisplay.textContent = "✅ " + e.target.files[0].name;
                 }
             });
+        }
+
+        function switchTab(tab) {
+            const tabNew = document.getElementById('tabNew');
+            const tabTrack = document.getElementById('tabTrack');
+            const codeCheck = document.getElementById('codeCheckSection');
+            const uploadSec = document.getElementById('uploadSection');
+            const trackSec = document.getElementById('trackSection');
+
+            if (tab === 'track') {
+                tabTrack.classList.add('active');
+                tabNew.classList.remove('active');
+                codeCheck.classList.add('hidden');
+                uploadSec.classList.add('hidden');
+                trackSec.classList.remove('hidden');
+            } else {
+                tabNew.classList.add('active');
+                tabTrack.classList.remove('active');
+                codeCheck.classList.remove('hidden');
+                uploadSec.classList.add('hidden');
+                trackSec.classList.add('hidden');
+            }
         }
 
         function copyTrackingCode(code) {
@@ -506,7 +605,7 @@
                             💾 Save Code
                         </button>
                         <br>
-                        <small style="color: #888;">After admin approval, your achievement will be displayed in the Notable Gallery.</small>
+                        <small style="color: #888;">Keep this code to track the status of your submission later.</small>
                     `;
                     statusBox.style.display = 'block';
                 }
@@ -522,6 +621,80 @@
                 btn.textContent = '📤 Try Again';
             }
         });
+
+        async function trackCode() {
+            const codeInput = document.getElementById('trackingCode').value.trim();
+            const errorMsg = document.getElementById('trackErrorMsg');
+            const resultBox = document.getElementById('trackResult');
+            const trackBtn = document.getElementById('trackBtn');
+
+            if (!codeInput) {
+                errorMsg.textContent = '❌ Please enter your tracking code.';
+                errorMsg.style.display = 'block';
+                resultBox.style.display = 'none';
+                return;
+            }
+
+            trackBtn.disabled = true;
+            trackBtn.textContent = '⏳ Searching...';
+            errorMsg.style.display = 'none';
+            resultBox.style.display = 'none';
+
+            try {
+                const res = await fetch('/api/get-connection-requests?type=observations&t=' + new Date().getTime());
+                if (!res.ok) throw new Error('Server connection error');
+                const data = await res.json();
+
+                const normalize = (s) => (s || '').replace(/[\s\-]/g, '').toUpperCase();
+                const normalizedInput = normalize(codeInput);
+
+                const allItems = (data.observations || []).concat(data.achievements || []).concat(data.requests || []);
+                const found = allItems.find(item => {
+                    const codes = [item.trackingCode, item.code, item.id].filter(Boolean);
+                    return codes.some(c => normalize(c) === normalizedInput);
+                });
+
+                if (!found) {
+                    resultBox.className = 'track-result notfound';
+                    resultBox.innerHTML = `
+                        <span class="status-icon">❓</span>
+                        <span class="status-title">Tracking code not found</span>
+                        Please make sure the code is correct. If you lost your code, contact support.
+                    `;
+                    resultBox.style.display = 'block';
+                    return;
+                }
+
+                const status = (found.status || 'pending').toLowerCase();
+                const statusMap = {
+                    'pending':  { cls: 'pending',  icon: '⏳', title: 'Pending admin review' },
+                    'approved': { cls: 'approved', icon: '✅', title: 'Approved and displayed in gallery' },
+                    'rejected': { cls: 'rejected', icon: '❌', title: 'Rejected' },
+                    'revision': { cls: 'revision', icon: '⚠️', title: 'Needs revision' }
+                };
+                const s = statusMap[status] || statusMap['pending'];
+
+                resultBox.className = 'track-result ' + s.cls;
+                resultBox.innerHTML = `
+                    <span class="status-icon">${s.icon}</span>
+                    <span class="status-title">${s.title}</span>
+                    <div style="font-size:0.85rem;">
+                        <strong>Title:</strong> ${found.title || found.observation?.substring(0,80) || '---'}<br>
+                        <strong>Tracking Code:</strong> <span style="font-family:monospace; direction:ltr; display:inline-block;">${found.trackingCode || found.code || codeInput}</span><br>
+                        <strong>Submitted:</strong> ${found.createdAt ? new Date(found.createdAt).toLocaleDateString() : '---'}
+                        ${found.reason ? `<br><strong>Admin note:</strong> ${found.reason}` : ''}
+                    </div>
+                `;
+                resultBox.style.display = 'block';
+
+            } catch (error) {
+                errorMsg.textContent = '❌ ' + error.message;
+                errorMsg.style.display = 'block';
+            } finally {
+                trackBtn.disabled = false;
+                trackBtn.textContent = '🔍 Track';
+            }
+        }
     </script>
 </body>
 </html>
