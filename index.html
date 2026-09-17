@@ -356,7 +356,6 @@
         .cta-note { text-align: center; font-size: 0.5rem; color: #6a5a3a; margin: -0.3rem 0 0.5rem 0; font-weight: 600; }
         body.dark .cta-note { color: #c8b890; }
 
-        /* ====== گالری و اطلس ====== */
         .gallery-box {
             border-radius: 20px;
             padding: 0.8rem;
@@ -496,7 +495,6 @@
 
         .empty-state { text-align: center; padding: 0.5rem; color: #888; font-size: 0.7rem; }
 
-        /* ====== مودال ====== */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -957,8 +955,8 @@
                 <input type="text" id="excMyCode" placeholder="CIM-XXXX-XXXX-XXXX" />
             </div>
             <div class="exchange-form-group">
-                <label>کد رهگیری اثر مورد علاقه</label>
-                <input type="text" id="excTargetAch" placeholder="ACH-XXXXXXXX-XXXX" />
+                <label>کد عضویت صاحب اثر</label>
+                <input type="text" id="excTargetAch" placeholder="CIM-XXXX-XXXX-XXXX" />
             </div>
             <div class="exchange-form-group">
                 <label>پیام شما به صاحب اثر</label>
@@ -1395,7 +1393,6 @@ function closeModal(e) {
 /* ====== باکس مبادله فرهنگی ====== */
 /* ================================================================ */
 
-// تغییر تب
 function switchExchangeTab(tab) {
     document.querySelectorAll('.exchange-tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.exchange-panel').forEach(p => p.classList.remove('active'));
@@ -1412,7 +1409,6 @@ function switchExchangeTab(tab) {
     }
 }
 
-// نمایش پیام
 function showExcResult(targetId, type, html) {
     const el = document.getElementById(targetId);
     el.className = 'exchange-result ' + type;
@@ -1420,7 +1416,6 @@ function showExcResult(targetId, type, html) {
     el.style.display = 'block';
 }
 
-// نرمال‌سازی کد
 function normalizeCode(s) {
     return (s || '')
         .replace(/[\s\-]/g, '')
@@ -1432,10 +1427,10 @@ function normalizeCode(s) {
 async function submitExchangeRequest() {
     const btn = document.getElementById('excSendBtn');
     const myCode = document.getElementById('excMyCode').value.trim();
-    const targetAch = document.getElementById('excTargetAch').value.trim();
+    const targetCode = document.getElementById('excTargetAch').value.trim();
     const message = document.getElementById('excMessage').value.trim();
     
-    if (!myCode || !targetAch || !message) {
+    if (!myCode || !targetCode || !message) {
         showExcResult('excSendResult', 'error', '❌ لطفاً همه فیلدها را پر کنید.');
         return;
     }
@@ -1448,7 +1443,7 @@ async function submitExchangeRequest() {
     btn.textContent = '⏳ در حال ارسال...';
     
     try {
-        // بررسی صحت کد کارت + وجود ایمیل
+        // بررسی صحت کد کارت من
         const usersRes = await fetch('/api/get-users?t=' + Date.now());
         const usersData = await usersRes.json();
         const nCode = normalizeCode(myCode);
@@ -1470,9 +1465,23 @@ async function submitExchangeRequest() {
             return;
         }
         
+        // بررسی صحت کد عضویت صاحب اثر
+        const nTarget = normalizeCode(targetCode);
+        const targetUser = (usersData.users || []).find(u => normalizeCode(u.cardCode) === nTarget);
+        if (!targetUser) {
+            showExcResult('excSendResult', 'error', '❌ کد عضویت صاحب اثر یافت نشد. لطفاً از کد صحیح استفاده کنید.');
+            btn.disabled = false; btn.textContent = '📨 ارسال درخواست';
+            return;
+        }
+        if (nTarget === nCode) {
+            showExcResult('excSendResult', 'error', '❌ نمی‌توانید به خودتان درخواست بفرستید.');
+            btn.disabled = false; btn.textContent = '📨 ارسال درخواست';
+            return;
+        }
+        
         // ارسال به API
         const exchangeTracking = `EXC-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2,6).toUpperCase()}`;
-        const reason = `🌍 مبادله فرهنگی | کد رهگیری: ${exchangeTracking} | اثر هدف: ${targetAch} | پیام: ${message}`;
+        const reason = `🌍 مبادله فرهنگی | کد رهگیری: ${exchangeTracking} | کد عضویت صاحب اثر: ${targetUser.cardCode} | پیام: ${message}`;
         
         const res = await fetch('/api/submit-request', {
             method: 'POST',
@@ -1544,53 +1553,55 @@ async function trackExchangeRequest() {
             return;
         }
         
-        // بررسی پاسخ صاحب اثر
         const reasonText = found.reason || '';
-        const statusText = found.status || 'pending';
-        
-        // استخراج اطلاعات از reason
-        const isApproved = statusText === 'completed' || reasonText.includes('APPROVED');
+        const isApproved = reasonText.includes('APPROVED');
         const isRejected = reasonText.includes('REJECTED');
-        const hasResponse = reasonText.includes('💬 پاسخ صاحب اثر:');
         
-        if (isRejected) {
-            showExcResult('excTrackResult', 'rejected', `
-                ❌ <strong>صاحب اثر درخواست شما را رد کرد.</strong>
-                <br><br>
-                نگران نباشید — می‌توانید برای آثار دیگری درخواست بفرستید.
-            `);
-        } else if (isApproved || hasResponse) {
-            // استخراج پاسخ صاحب اثر
-            let ownerEmail = '';
-            let ownerMessage = '';
+        // پیدا کردن پاسخ‌های صاحب اثر (درخواست‌های بعدی با همان کد رهگیری)
+        const responses = requests.filter(r => 
+            r.reason && r.reason.includes(code) && 
+            (r.reason.includes('APPROVED') || r.reason.includes('REJECTED'))
+        );
+        
+        if (responses.length > 0) {
+            const lastResponse = responses[responses.length - 1];
+            const respReason = lastResponse.reason || '';
             
-            const emailMatch = reasonText.match(/ایمیل صاحب اثر:\s*([^\s|]+)/);
-            if (emailMatch) ownerEmail = emailMatch[1];
-            
-            const msgMatch = reasonText.match(/💬 پاسخ صاحب اثر:\s*(.+?)(\||$)/);
-            if (msgMatch) ownerMessage = msgMatch[1].trim();
-            
-            let html = `
-                ✅ <strong>صاحب اثر با درخواست شما موافقت کرد!</strong>
-                <br><br>
-            `;
-            if (ownerMessage) {
-                html += `<strong>💬 پیام او:</strong> ${ownerMessage}<br><br>`;
+            if (respReason.includes('REJECTED')) {
+                showExcResult('excTrackResult', 'rejected', `
+                    ❌ <strong>صاحب اثر درخواست شما را رد کرد.</strong>
+                    <br><br>
+                    نگران نباشید — می‌توانید برای آثار دیگری درخواست بفرستید.
+                `);
+            } else if (respReason.includes('APPROVED')) {
+                let ownerEmail = '';
+                let ownerMessage = '';
+                
+                const emailMatch = respReason.match(/ایمیل صاحب اثر:\s*([^\s|]+)/);
+                if (emailMatch) ownerEmail = emailMatch[1];
+                
+                const msgMatch = respReason.match(/💬 پاسخ صاحب اثر:\s*(.+?)(\||$)/);
+                if (msgMatch) ownerMessage = msgMatch[1].trim();
+                
+                let html = `✅ <strong>صاحب اثر با درخواست شما موافقت کرد!</strong><br><br>`;
+                if (ownerMessage) {
+                    html += `<strong>💬 پیام او:</strong> ${ownerMessage}<br><br>`;
+                }
+                if (ownerEmail) {
+                    html += `
+                        <strong>📧 ایمیل صاحب اثر:</strong>
+                        <br>
+                        <span class="exchange-code-box">${ownerEmail}</span>
+                        <br>
+                        <button onclick="copyExcCode('${ownerEmail}')" style="background:rgba(22,160,133,0.15);border:none;padding:0.3rem 0.8rem;border-radius:8px;cursor:pointer;font-size:0.8rem;margin:0.3rem;font-weight:700;">📋 کپی ایمیل</button>
+                        <br>
+                        <small style="display:block;margin-top:0.5rem;">اکنون می‌توانید از ایمیل خودتان برای مبادله فرهنگی پیام بفرستید.</small>
+                    `;
+                } else {
+                    html += `<small>صاحب اثر پاسخ داد ولی ایمیل خود را به‌اشتراک نگذاشت.</small>`;
+                }
+                showExcResult('excTrackResult', 'approved', html);
             }
-            if (ownerEmail) {
-                html += `
-                    <strong>📧 ایمیل صاحب اثر:</strong>
-                    <br>
-                    <span class="exchange-code-box">${ownerEmail}</span>
-                    <br>
-                    <button onclick="copyExcCode('${ownerEmail}')" style="background:rgba(22,160,133,0.15);border:none;padding:0.3rem 0.8rem;border-radius:8px;cursor:pointer;font-size:0.8rem;margin:0.3rem;font-weight:700;">📋 کپی ایمیل</button>
-                    <br>
-                    <small style="display:block;margin-top:0.5rem;">اکنون می‌توانید از ایمیل خودتان برای مبادله فرهنگی پیام بفرستید.</small>
-                `;
-            } else {
-                html += `<small>صاحب اثر پاسخ داد ولی ایمیل خود را به‌اشتراک نگذاشت. لطفاً از طریق ادمین پیگیری کنید.</small>`;
-            }
-            showExcResult('excTrackResult', 'approved', html);
         } else {
             showExcResult('excTrackResult', 'pending', `
                 ⏳ <strong>در انتظار پاسخ صاحب اثر</strong>
@@ -1623,7 +1634,6 @@ async function loadIncomingRequests() {
     listEl.innerHTML = '';
     
     try {
-        // ۱. بررسی صحت کد کارت
         const usersRes = await fetch('/api/get-users?t=' + Date.now());
         const usersData = await usersRes.json();
         const nCode = normalizeCode(myCode);
@@ -1635,59 +1645,49 @@ async function loadIncomingRequests() {
             return;
         }
         
-        // ۲. یافتن دستاوردهای من
-        const myAchievements = (usersData.achievements || []).filter(a => 
-            normalizeCode(a.owner) === nCode
-        );
-        const myTrackingCodes = myAchievements.map(a => a.id || a.trackingCode).filter(Boolean);
-        
-        if (myTrackingCodes.length === 0) {
-            showExcResult('excRespondResult', 'info', '📭 هنوز اثری در گالری ندارید.');
-            btn.disabled = false; btn.textContent = '📬 مشاهده درخواست‌های دریافتی';
-            return;
-        }
-        
-        // ۳. یافتن درخواست‌های مربوط به آثار من
         const reqRes = await fetch('/api/get-connection-requests?t=' + Date.now());
         const reqData = await reqRes.json();
         const requests = reqData.requests || [];
         
+        // درخواست‌های مبادله که کد عضویت من در آن‌ها ذکر شده
         const incoming = requests.filter(r => {
             const reason = r.reason || '';
-            return myTrackingCodes.some(code => reason.includes(code));
+            return reason.includes('🌍 مبادله فرهنگی') && 
+                   reason.includes('کد عضویت صاحب اثر:') &&
+                   normalizeCode(reason).includes(nCode);
         });
         
         if (incoming.length === 0) {
-            showExcResult('excRespondResult', 'info', '📭 هنوز درخواستی برای آثار شما ثبت نشده است. مرتب به این صفحه سر بزنید.');
+            showExcResult('excRespondResult', 'info', '📭 هنوز درخواستی برای شما ثبت نشده است. مرتب به این صفحه سر بزنید.');
             btn.disabled = false; btn.textContent = '📬 مشاهده درخواست‌های دریافتی';
             return;
         }
         
-        // ۴. نمایش درخواست‌ها
         showExcResult('excRespondResult', 'info', `📬 ${incoming.length} درخواست دریافت‌شده:`);
         
         listEl.innerHTML = incoming.map((r, idx) => {
             const reason = r.reason || '';
-            const senderMatch = reason.match(/کد من:\s*([^\s|]+)/) || reason.match(/sender:\s*([^\s|]+)/);
-            const sender = r.senderCode || (senderMatch ? senderMatch[1] : 'ناشناس');
+            const sender = r.senderCode || 'ناشناس';
             const msgMatch = reason.match(/پیام:\s*(.+?)(\||$)/);
             const msg = msgMatch ? msgMatch[1].trim() : reason.substring(0, 100);
-            const targetMatch = reason.match(/اثر هدف:\s*([^\s|]+)/);
-            const target = targetMatch ? targetMatch[1] : '---';
             const trackingMatch = reason.match(/EXC-[A-Z0-9]+-[A-Z0-9]+/i);
             const tracking = trackingMatch ? trackingMatch[0] : `REQ-${idx}`;
             
-            const isHandled = reason.includes('APPROVED') || reason.includes('REJECTED');
+            // بررسی اینکه قبلاً پاسخ داده شده یا نه
+            const alreadyResponded = requests.some(resp => 
+                resp.reason && 
+                resp.reason.includes(tracking) && 
+                (resp.reason.includes('APPROVED') || resp.reason.includes('REJECTED'))
+            );
             
             return `
                 <div class="exchange-request-item">
                     <div class="req-title">📨 درخواست از: ${sender}</div>
                     <div class="req-msg">
-                        <strong>اثر:</strong> ${target}<br>
                         <strong>پیام:</strong> ${msg}
                     </div>
                     <div style="font-size:0.7rem;color:#888;margin-top:0.3rem;direction:ltr;font-family:monospace;">${tracking}</div>
-                    ${isHandled ? 
+                    ${alreadyResponded ? 
                         `<div style="margin-top:0.4rem;color:#16a085;font-weight:700;">✅ قبلاً پاسخ داده‌اید</div>` :
                         `<div class="req-actions">
                             <button class="btn-approve" onclick="respondToRequest('${sender}', '${tracking}', 'approve', '${myCode}')">✅ موافقم — ایمیل من داده شود</button>
@@ -1712,7 +1712,6 @@ async function respondToRequest(senderCode, trackingCode, action, myCode) {
     if (!confirm(`آیا از ${actionLabel} با درخواست ${senderCode} مطمئن هستید؟`)) return;
     
     try {
-        // بررسی ایمیل من
         const usersRes = await fetch('/api/get-users?t=' + Date.now());
         const usersData = await usersRes.json();
         const nCode = normalizeCode(myCode);
@@ -1742,7 +1741,6 @@ async function respondToRequest(senderCode, trackingCode, action, myCode) {
         
         alert(`✅ پاسخ شما ثبت شد.\n\nکد رهگیری درخواست: ${trackingCode}\n\nدرخواست‌کننده می‌تواند با این کد، پاسخ شما را ببیند.`);
         
-        // بارگذاری مجدد
         loadIncomingRequests();
         
     } catch (err) {
