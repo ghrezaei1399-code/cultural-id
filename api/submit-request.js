@@ -29,6 +29,59 @@ module.exports = async function handler(req, res) {
     const repo = 'cultural-id';
 
     // ============================================================
+    // بخش Cultural Exchange (مبادله فرهنگی)
+    // ============================================================
+    if (type === 'exchange') {
+      if (!cardCode) {
+        return res.status(400).json({ error: 'کد کارت الزامی است' });
+      }
+      if (!description || description.length < 5) {
+        return res.status(400).json({ error: 'متن درخواست الزامی است' });
+      }
+
+      const exchangeTracking = `EXC-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+      const fileName = `exchange-${Date.now()}-${Math.random().toString(36).substring(7)}.json`;
+      const requestPath = `data/requests/${fileName}`;
+
+      const requestData = {
+        fileName: fileName,
+        trackingCode: exchangeTracking,
+        senderCode: cardCode,
+        type: 'exchange',
+        reason: description,
+        status: 'pending',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      const newContent = Buffer.from(JSON.stringify(requestData, null, 2), 'utf8').toString('base64');
+
+      const uploadRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${requestPath}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: `Exchange request from ${cardCode} - ${exchangeTracking}`,
+          content: newContent,
+          branch: 'main'
+        })
+      });
+
+      if (!uploadRes.ok) {
+        const errData = await uploadRes.json().catch(() => ({}));
+        throw new Error(errData.message || 'خطا در ثبت درخواست');
+      }
+
+      return res.status(200).json({
+        success: true,
+        trackingCode: exchangeTracking,
+        message: 'درخواست مبادله فرهنگی با موفقیت ثبت شد.'
+      });
+    }
+
+    // ============================================================
     // بخش Observations - سه هوش مصنوعی جداگانه
     // ============================================================
     if (type === 'observations' && observations && observations.length > 0) {
@@ -39,7 +92,7 @@ module.exports = async function handler(req, res) {
       const moduleNames = {
         'collaboration': 'همفکری با دیگران',
         'related': 'مشاهدات مرتبط دیگران',
-        'referral': 'ارجاع به ۵ همفرهنگ'
+        'referral': 'ارجاع به ۵ هم‌فرهنگ'
       };
 
       const createdIssues = [];
