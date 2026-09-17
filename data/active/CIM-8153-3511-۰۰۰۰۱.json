@@ -157,6 +157,18 @@
       "fileUrl": null,
       "section": "emergence",
       "issueNumber": 107
+    },
+    {
+      "id": "ACH-MU5SDRMR-EU68",
+      "title": "تست کد دوگانه",
+      "description": "بررسی تفاوت کد نمایشی و کد ذخیره‌شده",
+      "category": "other",
+      "status": "pending",
+      "createdAt": "2026-09-17T17:11:23.041Z",
+      "fileName": null,
+      "fileUrl": null,
+      "section": "emergence",
+      "issueNumber": 108
     }
   ]
 }
