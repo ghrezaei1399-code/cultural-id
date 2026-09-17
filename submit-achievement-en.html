@@ -622,6 +622,7 @@
             }
         });
 
+        // ===== Track via GitHub Issues =====
         async function trackCode() {
             const codeInput = document.getElementById('trackingCode').value.trim();
             const errorMsg = document.getElementById('trackErrorMsg');
@@ -641,96 +642,56 @@
             resultBox.style.display = 'none';
 
             try {
-                // ===== Normalize input =====
-                const normalize = (s) => (s || '')
-                    .replace(/[\s\-]/g, '')
-                    .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
-                    .toLowerCase();
+                const normalize = (s) => (s || '').replace(/[\s\-]/g, '').toLowerCase();
                 const normalizedInput = normalize(codeInput);
 
-                let found = null;
+                const resIssues = await fetch('https://api.github.com/repos/ghrezaei1399-code/cultural-id/issues?state=all&per_page=100&t=' + Date.now());
+                if (!resIssues.ok) throw new Error('Error fetching from GitHub');
+                const issues = await resIssues.json();
 
-                // ===== 1) Search in achievements =====
-                try {
-                    const resAch = await fetch('/api/get-connection-requests?type=achievements&t=' + Date.now());
-                    if (resAch.ok) {
-                        const dataAch = await resAch.json();
-                        const list = dataAch.achievements || [];
-                        found = list.find(item => {
-                            const codes = [item.trackingCode, item.code, item.id].filter(Boolean);
-                            return codes.some(c => normalize(c) === normalizedInput);
-                        });
-                    }
-                } catch (e) { console.error('achievements fetch error:', e); }
+                const found = issues.find(iss => {
+                    const title = iss.title || '';
+                    const match = title.match(/ACH-[A-Z0-9]+-[A-Z0-9]+/i);
+                    return match && normalize(match[0]) === normalizedInput;
+                });
 
-                // ===== 2) If not found, search in observations =====
-                if (!found) {
-                    try {
-                        const resObs = await fetch('/api/get-connection-requests?type=observations&t=' + Date.now());
-                        if (resObs.ok) {
-                            const dataObs = await resObs.json();
-                            const list = (dataObs.observations || []).concat(dataObs.achievements || []);
-                            found = list.find(item => {
-                                const codes = [item.trackingCode, item.code, item.id].filter(Boolean);
-                                return codes.some(c => normalize(c) === normalizedInput);
-                            });
-                        }
-                    } catch (e) { console.error('observations fetch error:', e); }
-                }
-
-                // ===== 3) If not found, search in users =====
-                if (!found) {
-                    try {
-                        const resUsers = await fetch('/api/get-users?t=' + Date.now());
-                        if (resUsers.ok) {
-                            const dataUsers = await resUsers.json();
-                            const users = dataUsers.users || [];
-                            for (const u of users) {
-                                if (u.achievements && Array.isArray(u.achievements)) {
-                                    for (const ach of u.achievements) {
-                                        const codes = [ach.trackingCode, ach.code, ach.id].filter(Boolean);
-                                        if (codes.some(c => normalize(c) === normalizedInput)) {
-                                            found = { ...ach, owner: u.cardCode };
-                                            break;
-                                        }
-                                    }
-                                }
-                                if (found) break;
-                            }
-                        }
-                    } catch (e) { console.error('users fetch error:', e); }
-                }
-
-                // ===== Result =====
                 if (!found) {
                     resultBox.className = 'track-result notfound';
                     resultBox.innerHTML = `
                         <span class="status-icon">❓</span>
                         <span class="status-title">Tracking code not found</span>
-                        Please make sure the code is correct. If you lost your code, contact support.
+                        Please make sure the code is correct.
                     `;
                     resultBox.style.display = 'block';
                     return;
                 }
 
-                const status = (found.status || 'pending').toLowerCase();
+                const labels = (found.labels || []).map(l => (l.name || '').toLowerCase());
+                let statusKey = 'pending';
+                if (labels.includes('approved')) statusKey = 'approved';
+                else if (labels.includes('rejected')) statusKey = 'rejected';
+                else if (labels.includes('revision')) statusKey = 'revision';
+
                 const statusMap = {
                     'pending':  { cls: 'pending',  icon: '⏳', title: 'Pending admin review' },
                     'approved': { cls: 'approved', icon: '✅', title: 'Approved and displayed in gallery' },
                     'rejected': { cls: 'rejected', icon: '❌', title: 'Rejected' },
                     'revision': { cls: 'revision', icon: '⚠️', title: 'Needs revision' }
                 };
-                const s = statusMap[status] || statusMap['pending'];
+                const s = statusMap[statusKey];
+
+                let titleMatch = (found.body || '').match(/\*\*Title:\*\*\s*(.+)/);
+                let title = titleMatch ? titleMatch[1].trim() : '---';
 
                 resultBox.className = 'track-result ' + s.cls;
                 resultBox.innerHTML = `
                     <span class="status-icon">${s.icon}</span>
                     <span class="status-title">${s.title}</span>
                     <div style="font-size:0.85rem;">
-                        <strong>Title:</strong> ${found.title || found.observation?.substring(0,80) || '---'}<br>
-                        <strong>Tracking Code:</strong> <span style="font-family:monospace; direction:ltr; display:inline-block;">${found.trackingCode || found.code || codeInput}</span><br>
-                        <strong>Submitted:</strong> ${found.createdAt ? new Date(found.createdAt).toLocaleDateString() : '---'}
-                        ${found.reason ? `<br><strong>Admin note:</strong> ${found.reason}` : ''}
+                        <strong>Title:</strong> ${title}<br>
+                        <strong>Tracking Code:</strong> <span style="font-family:monospace; direction:ltr; display:inline-block;">${codeInput}</span><br>
+                        <strong>Issue:</strong> #${found.number}<br>
+                        <strong>Submitted:</strong> ${found.created_at ? new Date(found.created_at).toLocaleDateString() : '---'}
                     </div>
                 `;
                 resultBox.style.display = 'block';
