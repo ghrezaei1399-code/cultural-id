@@ -356,6 +356,7 @@
         .cta-note { text-align: center; font-size: 0.5rem; color: #6a5a3a; margin: -0.3rem 0 0.5rem 0; font-weight: 600; }
         body.dark .cta-note { color: #c8b890; }
 
+        /* ====== گالری و اطلس ====== */
         .gallery-box {
             border-radius: 20px;
             padding: 0.8rem;
@@ -429,7 +430,6 @@
         body.dark .item-info h4 { color: #f0e8d0; }
         .item-meta { font-size: 0.6rem; color: #8a6d1f; font-weight: 600; }
 
-        /* ====== عکس‌های بزرگ‌تر برای گالری اطلس ====== */
         .atlas-thumb {
             width: 140px;
             height: 140px;
@@ -456,7 +456,6 @@
             border: 3px dashed rgba(212, 175, 55, 0.5);
         }
 
-        /* ===== عکس بزرگ در مودال ===== */
         .atlas-modal-image {
             width: 100%;
             max-height: 400px;
@@ -497,6 +496,7 @@
 
         .empty-state { text-align: center; padding: 0.5rem; color: #888; font-size: 0.7rem; }
 
+        /* ====== مودال ====== */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -554,6 +554,180 @@
         }
         body.dark .feedback-note { color: #f9e79f; background: rgba(212,175,55,0.04); }
 
+        /* ================================================================ */
+        /* ====== باکس مبادله فرهنگی ====== */
+        /* ================================================================ */
+        .exchange-box {
+            border-radius: 20px;
+            padding: 0.8rem;
+            margin: 0.6rem 0;
+            border: 3px double #16a085;
+            background: rgba(230, 250, 245, 0.6);
+        }
+        body.dark .exchange-box { background: rgba(20, 60, 55, 0.3); }
+
+        .exchange-box .gallery-title { color: #16a085; }
+        body.dark .exchange-box .gallery-title { color: #76d7c4; }
+
+        .exchange-tabs {
+            display: flex;
+            gap: 0.4rem;
+            margin-bottom: 0.8rem;
+            background: rgba(255,255,255,0.5);
+            padding: 0.3rem;
+            border-radius: 30px;
+            border: 1px solid rgba(22,160,133,0.2);
+        }
+        body.dark .exchange-tabs { background: rgba(0,0,0,0.2); }
+        .exchange-tab-btn {
+            flex: 1;
+            padding: 0.6rem 0.4rem;
+            border-radius: 25px;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 0.75rem;
+            color: #4a6a5a;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        body.dark .exchange-tab-btn { color: #a0c8b8; }
+        .exchange-tab-btn.active {
+            background: linear-gradient(135deg, #16a085, #48c9b0);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(22,160,133,0.3);
+        }
+
+        .exchange-panel { display: none; }
+        .exchange-panel.active { display: block; animation: fadeIn 0.25s; }
+
+        .exchange-form-group { margin-bottom: 0.8rem; }
+        .exchange-form-group label {
+            display: block;
+            font-weight: 700;
+            font-size: 0.75rem;
+            color: #2a4a3a;
+            margin-bottom: 0.3rem;
+        }
+        body.dark .exchange-form-group label { color: #c8e0d0; }
+        .exchange-form-group input,
+        .exchange-form-group textarea {
+            width: 100%;
+            padding: 0.7rem;
+            border-radius: 12px;
+            border: 2px solid rgba(22,160,133,0.15);
+            background: rgba(255,255,255,0.7);
+            font-family: inherit;
+            font-size: 0.85rem;
+            color: #2a1a0a;
+            outline: none;
+            transition: 0.3s;
+        }
+        body.dark .exchange-form-group input,
+        body.dark .exchange-form-group textarea {
+            background: rgba(0,0,0,0.3);
+            color: #f0e8d0;
+            border-color: rgba(22,160,133,0.2);
+        }
+        .exchange-form-group input:focus,
+        .exchange-form-group textarea:focus {
+            border-color: #16a085;
+            box-shadow: 0 4px 15px rgba(22,160,133,0.15);
+            background: #fff;
+        }
+        body.dark .exchange-form-group input:focus,
+        body.dark .exchange-form-group textarea:focus {
+            background: rgba(0,0,0,0.5);
+        }
+
+        .exchange-btn {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 25px;
+            border: none;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.3s;
+            background: linear-gradient(135deg, #16a085, #48c9b0);
+            color: #fff;
+            box-shadow: 0 6px 20px rgba(22,160,133,0.25);
+        }
+        .exchange-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(22,160,133,0.35); }
+        .exchange-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .exchange-result {
+            padding: 1rem;
+            border-radius: 14px;
+            margin-top: 0.8rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+            line-height: 1.7;
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+        .exchange-result.success { background: rgba(50,200,50,0.1); color: #0a5a0a; border: 2px solid rgba(50,200,50,0.25); }
+        .exchange-result.error { background: rgba(200,50,50,0.1); color: #8a1a1a; border: 2px solid rgba(200,50,50,0.25); }
+        .exchange-result.info { background: rgba(22,160,133,0.1); color: #0a5a4a; border: 2px solid rgba(22,160,133,0.25); }
+        .exchange-result.pending { background: rgba(241,196,15,0.12); color: #8a5a0a; border: 2px solid rgba(241,196,15,0.3); }
+        .exchange-result.approved { background: rgba(50,200,50,0.12); color: #0a5a0a; border: 2px solid rgba(50,200,50,0.3); }
+        .exchange-result.rejected { background: rgba(200,50,50,0.12); color: #8a1a1a; border: 2px solid rgba(200,50,50,0.3); }
+        body.dark .exchange-result.success { color: #82e0aa; }
+        body.dark .exchange-result.error { color: #f1948a; }
+        body.dark .exchange-result.info { color: #76d7c4; }
+        body.dark .exchange-result.pending { color: #f9e79f; }
+        body.dark .exchange-result.approved { color: #82e0aa; }
+        body.dark .exchange-result.rejected { color: #f1948a; }
+
+        .exchange-code-box {
+            direction: ltr;
+            font-family: monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #16a085;
+            background: rgba(22,160,133,0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            display: inline-block;
+            margin: 0.4rem 0;
+            border: 1px dashed rgba(22,160,133,0.4);
+        }
+        body.dark .exchange-code-box { color: #76d7c4; background: rgba(22,160,133,0.08); }
+
+        .exchange-request-item {
+            padding: 0.7rem;
+            margin-bottom: 0.5rem;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.6);
+            border-right: 3px solid #16a085;
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+        body.dark .exchange-request-item { background: rgba(0,0,0,0.2); }
+        .exchange-request-item .req-title { font-weight: 800; color: #16a085; margin-bottom: 0.3rem; }
+        .exchange-request-item .req-msg { color: #2a4a3a; }
+        body.dark .exchange-request-item .req-msg { color: #c8e0d0; }
+        .exchange-request-item .req-actions { margin-top: 0.5rem; display: flex; gap: 0.4rem; }
+        .exchange-request-item .req-actions button {
+            flex: 1;
+            padding: 0.4rem;
+            border-radius: 8px;
+            border: none;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .exchange-request-item .req-actions .btn-approve { background: rgba(50,200,50,0.15); color: #0a5a0a; border: 1px solid rgba(50,200,50,0.3); }
+        .exchange-request-item .req-actions .btn-approve:hover { background: rgba(50,200,50,0.3); }
+        .exchange-request-item .req-actions .btn-reject { background: rgba(200,50,50,0.1); color: #8a1a1a; border: 1px solid rgba(200,50,50,0.3); }
+        .exchange-request-item .req-actions .btn-reject:hover { background: rgba(200,50,50,0.2); }
+        body.dark .exchange-request-item .req-actions .btn-approve { color: #82e0aa; }
+        body.dark .exchange-request-item .req-actions .btn-reject { color: #f1948a; }
+
         @media (max-width: 768px) {
             body { padding: 0.5rem; }
             .logo-box img { width: 70px; height: 70px; }
@@ -577,6 +751,7 @@
             .atlas-thumb { width: 110px; height: 110px; }
             .atlas-thumb-icon { width: 110px; height: 110px; font-size: 2.5rem; }
             .atlas-modal-image { max-height: 320px; }
+            .exchange-tab-btn { font-size: 0.65rem; padding: 0.5rem 0.3rem; }
         }
         @media (max-width: 480px) {
             .logo-box img { width: 60px; height: 60px; }
@@ -604,6 +779,7 @@
             .atlas-thumb { width: 90px; height: 90px; }
             .atlas-thumb-icon { width: 90px; height: 90px; font-size: 2rem; }
             .atlas-modal-image { max-height: 250px; }
+            .exchange-tab-btn { font-size: 0.55rem; padding: 0.4rem 0.2rem; }
         }
     </style>
     <link rel="manifest" href="/manifest.json">
@@ -741,21 +917,80 @@
     </div>
     <div class="cta-note">بدون اطلاعات شخصی • کاملاً ناشناس • ۲ دقیقه</div>
 
+    <!-- ====== گالری دستاوردها و صنایع فرهنگی ====== -->
     <div class="gallery-box">
         <div class="gallery-header">
-            <div class="gallery-title">🏆 گالری دستاوردهای فرهنگی ۲۰۰ عضو اول</div>
+            <div class="gallery-title">🏆 گالری دستاوردها و صنایع فرهنگی</div>
             <select id="categoryFilter" class="filter-select" onchange="filterAchievements()">
                 <option value="all">همه</option>
                 <option value="science">مقالات</option>
                 <option value="art">هنری</option>
                 <option value="media">رسانه</option>
+                <option value="cultural">فرهنگی</option>
             </select>
+        </div>
+        <div style="text-align:center; margin-bottom:0.6rem;">
+            <span class="gallery-subtitle">برای ۲۰۰ عضو اول</span>
         </div>
         <div id="achievementsListContainer" class="achievements-list">
             <div class="empty-state">در حال بارگذاری...</div>
         </div>
     </div>
 
+    <!-- ====== باکس مبادله فرهنگی ====== -->
+    <div class="exchange-box">
+        <div class="gallery-header">
+            <div class="gallery-title">🌟 مبادله فرهنگی</div>
+            <span class="gallery-subtitle">درخواست، پیگیری، پاسخ — میان اعضای تأییدشده</span>
+        </div>
+
+        <div class="exchange-tabs">
+            <button class="exchange-tab-btn active" id="excTab1" onclick="switchExchangeTab('send')">📨 ثبت درخواست</button>
+            <button class="exchange-tab-btn" id="excTab2" onclick="switchExchangeTab('track')">🔍 پیگیری</button>
+            <button class="exchange-tab-btn" id="excTab3" onclick="switchExchangeTab('respond')">📬 پاسخ به درخواست‌ها</button>
+        </div>
+
+        <!-- تب ۱: ثبت درخواست -->
+        <div class="exchange-panel active" id="excPanel-send">
+            <div class="exchange-form-group">
+                <label>کد کارت شما (درخواست‌کننده)</label>
+                <input type="text" id="excMyCode" placeholder="CIM-XXXX-XXXX-XXXX" />
+            </div>
+            <div class="exchange-form-group">
+                <label>کد رهگیری اثر مورد علاقه</label>
+                <input type="text" id="excTargetAch" placeholder="ACH-XXXXXXXX-XXXX" />
+            </div>
+            <div class="exchange-form-group">
+                <label>پیام شما به صاحب اثر</label>
+                <textarea id="excMessage" rows="3" placeholder="سلام. من به اثر شما علاقه‌مندم. آیا مایل به مبادله فرهنگی یا همکاری هستید؟"></textarea>
+            </div>
+            <button class="exchange-btn" id="excSendBtn" onclick="submitExchangeRequest()">📨 ارسال درخواست</button>
+            <div id="excSendResult" class="exchange-result"></div>
+        </div>
+
+        <!-- تب ۲: پیگیری -->
+        <div class="exchange-panel" id="excPanel-track">
+            <div class="exchange-form-group">
+                <label>کد رهگیری درخواست</label>
+                <input type="text" id="excTrackCode" placeholder="EXC-XXXXXXXX-XXXX" />
+            </div>
+            <button class="exchange-btn" id="excTrackBtn" onclick="trackExchangeRequest()">🔍 پیگیری درخواست</button>
+            <div id="excTrackResult" class="exchange-result"></div>
+        </div>
+
+        <!-- تب ۳: پاسخ به درخواست‌ها -->
+        <div class="exchange-panel" id="excPanel-respond">
+            <div class="exchange-form-group">
+                <label>کد کارت شما (صاحب اثر)</label>
+                <input type="text" id="excOwnerCode" placeholder="CIM-XXXX-XXXX-XXXX" />
+            </div>
+            <button class="exchange-btn" id="excLoadBtn" onclick="loadIncomingRequests()">📬 مشاهده درخواست‌های دریافتی</button>
+            <div id="excRespondResult" class="exchange-result"></div>
+            <div id="excIncomingList" style="margin-top:0.8rem;"></div>
+        </div>
+    </div>
+
+    <!-- ====== گالری اطلس ظهور ====== -->
     <div class="gallery-box atlas-box">
         <div class="gallery-header">
             <div class="gallery-title">🏛️ گالری نام‌آوران ظهور</div>
@@ -766,6 +1001,7 @@
         </div>
     </div>
 
+    <!-- ====== مودال ====== -->
     <div id="detailModal" class="modal-overlay" onclick="closeModal(event)">
         <div class="modal-content">
             <button class="modal-close" onclick="document.getElementById('detailModal').classList.remove('active')">✕</button>
@@ -799,10 +1035,16 @@
 </div>
 
 <script>
+/* ================================================================ */
+/* ====== متغیرهای اصلی ====== */
+/* ================================================================ */
 let allApproved = [];
 let allAtlasItems = [];
 let currentModalItem = null;
 
+/* ================================================================ */
+/* ====== توابع کمکی ====== */
+/* ================================================================ */
 function normalizeGuide(item) {
     if (item.guide && (item.guide.individual || item.guide.network || item.guide.policy)) {
         return {
@@ -835,6 +1077,9 @@ function normalizeAi3(item) {
     return item.ai3Final || '';
 }
 
+/* ================================================================ */
+/* ====== بارگذاری گالری دستاوردها ====== */
+/* ================================================================ */
 async function loadAchievements() {
     const container = document.getElementById('achievementsListContainer');
     try {
@@ -871,7 +1116,7 @@ function renderAchievements(items) {
             ${thumbHtml}
             <div class="item-info" style="flex:1; min-width:0;">
                 <h4>${item.title || 'بدون عنوان'}</h4>
-                <span class="item-meta">${item.category === 'science' ? '📄 مقاله' : item.category === 'art' ? '🎨 هنری' : '🎬 رسانه'}</span>
+                <span class="item-meta">${item.category === 'science' ? '📄 مقاله' : item.category === 'art' ? '🎨 هنری' : item.category === 'media' ? '🎬 رسانه' : '🌍 فرهنگی'}</span>
             </div>
             <span style="font-size:1.2rem; color:#d4af37;">👁️</span>
         </div>
@@ -881,6 +1126,9 @@ function renderAchievements(items) {
 
 function filterAchievements() { renderAchievements(allApproved); }
 
+/* ================================================================ */
+/* ====== بارگذاری اطلس ====== */
+/* ================================================================ */
 async function loadAtlas() {
     const container = document.getElementById('atlasListContainer');
     try {
@@ -947,7 +1195,6 @@ function renderAtlas(items) {
             title = item.observation.substring(0, 50) + (item.observation.length > 50 ? '...' : '');
         }
         
-        // ====== عکس بزرگ (140x140) ======
         let thumbHtml = '';
         const imageUrl = item.fileUrl || item.fileData || item.imageUrl;
         if (isAchievement && imageUrl) {
@@ -974,6 +1221,9 @@ function renderAtlas(items) {
     }).join('');
 }
 
+/* ================================================================ */
+/* ====== مودال‌ها ====== */
+/* ================================================================ */
 function openModal(index) {
     const item = allApproved[index];
     if (!item) return;
@@ -1002,11 +1252,9 @@ function openAtlasModal(index) {
     if (!item) return;
     currentModalItem = item;
     
-    // ====== تشخیص نوع آیتم ======
     const isAchievement = (item.labels && item.labels.includes('achievement')) || !!item.title;
     const imageUrl = item.fileUrl || item.fileData || item.imageUrl;
     
-    // ====== نمایش عکس بزرگ در مودال ======
     const mediaDiv = document.getElementById('modalMediaContainer');
     mediaDiv.innerHTML = '';
     
@@ -1023,7 +1271,6 @@ function openAtlasModal(index) {
         }
     }
     
-    // ====== عنوان و توضیحات ======
     if (isAchievement && item.title) {
         document.getElementById('modalTitle').textContent = '🏆 ' + item.title;
         let descText = item.description || item.observation || 'بدون توضیحات';
@@ -1038,7 +1285,6 @@ function openAtlasModal(index) {
     const displayScore = item.adminScore || item.score || '---';
     document.getElementById('modalMeta').textContent = `⭐ امتیاز: ${displayScore} | وضعیت: ${item.status === 'approved' ? '✅ تأیید شده' : '⏳ در انتظار'}`;
     
-    // ====== ماژول ======
     const moduleDiv = document.getElementById('modalModule');
     const moduleType = item.moduleType || '';
     const moduleStatus = item.moduleStatus || 'pending';
@@ -1070,7 +1316,6 @@ function openAtlasModal(index) {
         moduleDiv.style.display = 'none';
     }
     
-    // ====== راهنمای اقدام ======
     const guideBox = document.getElementById('modalGuide');
     const guideContent = document.getElementById('guideContent');
     
@@ -1146,6 +1391,399 @@ function closeModal(e) {
     }
 }
 
+/* ================================================================ */
+/* ====== باکس مبادله فرهنگی ====== */
+/* ================================================================ */
+
+// تغییر تب
+function switchExchangeTab(tab) {
+    document.querySelectorAll('.exchange-tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.exchange-panel').forEach(p => p.classList.remove('active'));
+    
+    if (tab === 'send') {
+        document.getElementById('excTab1').classList.add('active');
+        document.getElementById('excPanel-send').classList.add('active');
+    } else if (tab === 'track') {
+        document.getElementById('excTab2').classList.add('active');
+        document.getElementById('excPanel-track').classList.add('active');
+    } else if (tab === 'respond') {
+        document.getElementById('excTab3').classList.add('active');
+        document.getElementById('excPanel-respond').classList.add('active');
+    }
+}
+
+// نمایش پیام
+function showExcResult(targetId, type, html) {
+    const el = document.getElementById(targetId);
+    el.className = 'exchange-result ' + type;
+    el.innerHTML = html;
+    el.style.display = 'block';
+}
+
+// نرمال‌سازی کد
+function normalizeCode(s) {
+    return (s || '')
+        .replace(/[\s\-]/g, '')
+        .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+        .toUpperCase();
+}
+
+// ====== ثبت درخواست ======
+async function submitExchangeRequest() {
+    const btn = document.getElementById('excSendBtn');
+    const myCode = document.getElementById('excMyCode').value.trim();
+    const targetAch = document.getElementById('excTargetAch').value.trim();
+    const message = document.getElementById('excMessage').value.trim();
+    
+    if (!myCode || !targetAch || !message) {
+        showExcResult('excSendResult', 'error', '❌ لطفاً همه فیلدها را پر کنید.');
+        return;
+    }
+    if (message.length < 10) {
+        showExcResult('excSendResult', 'error', '❌ پیام باید حداقل ۱۰ کاراکتر باشد.');
+        return;
+    }
+    
+    btn.disabled = true;
+    btn.textContent = '⏳ در حال ارسال...';
+    
+    try {
+        // بررسی صحت کد کارت + وجود ایمیل
+        const usersRes = await fetch('/api/get-users?t=' + Date.now());
+        const usersData = await usersRes.json();
+        const nCode = normalizeCode(myCode);
+        const me = (usersData.users || []).find(u => normalizeCode(u.cardCode) === nCode);
+        
+        if (!me) {
+            showExcResult('excSendResult', 'error', '❌ کد کارت شما یافت نشد.');
+            btn.disabled = false; btn.textContent = '📨 ارسال درخواست';
+            return;
+        }
+        if (me.status !== 'approved') {
+            showExcResult('excSendResult', 'error', '❌ حساب شما هنوز تأیید نشده است.');
+            btn.disabled = false; btn.textContent = '📨 ارسال درخواست';
+            return;
+        }
+        if (!me.communicationEmail || me.communicationEmail.length < 5) {
+            showExcResult('excSendResult', 'error', '❌ برای ثبت درخواست، ابتدا باید در پروفایل خود ایمیل ثبت کنید. <a href="edit-fa.html" style="color:#8a1a1a;text-decoration:underline;">ثبت ایمیل</a>');
+            btn.disabled = false; btn.textContent = '📨 ارسال درخواست';
+            return;
+        }
+        
+        // ارسال به API
+        const exchangeTracking = `EXC-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2,6).toUpperCase()}`;
+        const reason = `🌍 مبادله فرهنگی | کد رهگیری: ${exchangeTracking} | اثر هدف: ${targetAch} | پیام: ${message}`;
+        
+        const res = await fetch('/api/submit-request', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                cardCode: myCode,
+                type: 'connection',
+                description: reason
+            })
+        });
+        
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.error || 'خطا در ثبت درخواست');
+        
+        const finalTracking = result.trackingCode || exchangeTracking;
+        
+        showExcResult('excSendResult', 'success', `
+            ✅ <strong>درخواست شما ثبت شد!</strong>
+            <br><br>
+            🔑 <strong>کد رهگیری مبادله:</strong>
+            <span class="exchange-code-box">${finalTracking}</span>
+            <br>
+            <button onclick="copyExcCode('${finalTracking}')" style="background:rgba(22,160,133,0.15);border:none;padding:0.3rem 0.8rem;border-radius:8px;cursor:pointer;font-size:0.8rem;margin:0.3rem;font-weight:700;">📋 کپی کد</button>
+            <button onclick="saveExcCode('${finalTracking}')" style="background:rgba(22,160,133,0.15);border:none;padding:0.3rem 0.8rem;border-radius:8px;cursor:pointer;font-size:0.8rem;margin:0.3rem;font-weight:700;">💾 ذخیره کد</button>
+            <br>
+            <small style="display:block;margin-top:0.5rem;">صاحب اثر به‌زودی پاسخ می‌دهد. با تب «🔍 پیگیری» می‌توانید نتیجه را ببینید.</small>
+        `);
+        
+        document.getElementById('excMyCode').value = '';
+        document.getElementById('excTargetAch').value = '';
+        document.getElementById('excMessage').value = '';
+        
+    } catch (err) {
+        showExcResult('excSendResult', 'error', '❌ ' + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '📨 ارسال درخواست';
+    }
+}
+
+// ====== پیگیری درخواست ======
+async function trackExchangeRequest() {
+    const btn = document.getElementById('excTrackBtn');
+    const code = document.getElementById('excTrackCode').value.trim();
+    
+    if (!code) {
+        showExcResult('excTrackResult', 'error', '❌ لطفاً کد رهگیری را وارد کنید.');
+        return;
+    }
+    
+    btn.disabled = true;
+    btn.textContent = '⏳ در حال جستجو...';
+    
+    try {
+        const res = await fetch('/api/get-connection-requests?t=' + Date.now());
+        const data = await res.json();
+        const requests = data.requests || [];
+        
+        const nCode = normalizeCode(code);
+        const found = requests.find(r => {
+            if (r.reason && r.reason.includes(code)) return true;
+            if (r.trackingCode && normalizeCode(r.trackingCode) === nCode) return true;
+            return false;
+        });
+        
+        if (!found) {
+            showExcResult('excTrackResult', 'error', '❓ کد رهگیری یافت نشد. لطفاً از درستی کد اطمینان حاصل کنید.');
+            btn.disabled = false; btn.textContent = '🔍 پیگیری درخواست';
+            return;
+        }
+        
+        // بررسی پاسخ صاحب اثر
+        const reasonText = found.reason || '';
+        const statusText = found.status || 'pending';
+        
+        // استخراج اطلاعات از reason
+        const isApproved = statusText === 'completed' || reasonText.includes('APPROVED');
+        const isRejected = reasonText.includes('REJECTED');
+        const hasResponse = reasonText.includes('💬 پاسخ صاحب اثر:');
+        
+        if (isRejected) {
+            showExcResult('excTrackResult', 'rejected', `
+                ❌ <strong>صاحب اثر درخواست شما را رد کرد.</strong>
+                <br><br>
+                نگران نباشید — می‌توانید برای آثار دیگری درخواست بفرستید.
+            `);
+        } else if (isApproved || hasResponse) {
+            // استخراج پاسخ صاحب اثر
+            let ownerEmail = '';
+            let ownerMessage = '';
+            
+            const emailMatch = reasonText.match(/ایمیل صاحب اثر:\s*([^\s|]+)/);
+            if (emailMatch) ownerEmail = emailMatch[1];
+            
+            const msgMatch = reasonText.match(/💬 پاسخ صاحب اثر:\s*(.+?)(\||$)/);
+            if (msgMatch) ownerMessage = msgMatch[1].trim();
+            
+            let html = `
+                ✅ <strong>صاحب اثر با درخواست شما موافقت کرد!</strong>
+                <br><br>
+            `;
+            if (ownerMessage) {
+                html += `<strong>💬 پیام او:</strong> ${ownerMessage}<br><br>`;
+            }
+            if (ownerEmail) {
+                html += `
+                    <strong>📧 ایمیل صاحب اثر:</strong>
+                    <br>
+                    <span class="exchange-code-box">${ownerEmail}</span>
+                    <br>
+                    <button onclick="copyExcCode('${ownerEmail}')" style="background:rgba(22,160,133,0.15);border:none;padding:0.3rem 0.8rem;border-radius:8px;cursor:pointer;font-size:0.8rem;margin:0.3rem;font-weight:700;">📋 کپی ایمیل</button>
+                    <br>
+                    <small style="display:block;margin-top:0.5rem;">اکنون می‌توانید از ایمیل خودتان برای مبادله فرهنگی پیام بفرستید.</small>
+                `;
+            } else {
+                html += `<small>صاحب اثر پاسخ داد ولی ایمیل خود را به‌اشتراک نگذاشت. لطفاً از طریق ادمین پیگیری کنید.</small>`;
+            }
+            showExcResult('excTrackResult', 'approved', html);
+        } else {
+            showExcResult('excTrackResult', 'pending', `
+                ⏳ <strong>در انتظار پاسخ صاحب اثر</strong>
+                <br><br>
+                درخواست شما به صاحب اثر رسیده است. لطفاً بعداً دوباره سر بزنید.
+            `);
+        }
+        
+    } catch (err) {
+        showExcResult('excTrackResult', 'error', '❌ ' + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '🔍 پیگیری درخواست';
+    }
+}
+
+// ====== بارگذاری درخواست‌های دریافتی ======
+async function loadIncomingRequests() {
+    const btn = document.getElementById('excLoadBtn');
+    const listEl = document.getElementById('excIncomingList');
+    const myCode = document.getElementById('excOwnerCode').value.trim();
+    
+    if (!myCode) {
+        showExcResult('excRespondResult', 'error', '❌ لطفاً کد کارت خود را وارد کنید.');
+        return;
+    }
+    
+    btn.disabled = true;
+    btn.textContent = '⏳ در حال بارگذاری...';
+    listEl.innerHTML = '';
+    
+    try {
+        // ۱. بررسی صحت کد کارت
+        const usersRes = await fetch('/api/get-users?t=' + Date.now());
+        const usersData = await usersRes.json();
+        const nCode = normalizeCode(myCode);
+        const me = (usersData.users || []).find(u => normalizeCode(u.cardCode) === nCode);
+        
+        if (!me) {
+            showExcResult('excRespondResult', 'error', '❌ کد کارت یافت نشد.');
+            btn.disabled = false; btn.textContent = '📬 مشاهده درخواست‌های دریافتی';
+            return;
+        }
+        
+        // ۲. یافتن دستاوردهای من
+        const myAchievements = (usersData.achievements || []).filter(a => 
+            normalizeCode(a.owner) === nCode
+        );
+        const myTrackingCodes = myAchievements.map(a => a.id || a.trackingCode).filter(Boolean);
+        
+        if (myTrackingCodes.length === 0) {
+            showExcResult('excRespondResult', 'info', '📭 هنوز اثری در گالری ندارید.');
+            btn.disabled = false; btn.textContent = '📬 مشاهده درخواست‌های دریافتی';
+            return;
+        }
+        
+        // ۳. یافتن درخواست‌های مربوط به آثار من
+        const reqRes = await fetch('/api/get-connection-requests?t=' + Date.now());
+        const reqData = await reqRes.json();
+        const requests = reqData.requests || [];
+        
+        const incoming = requests.filter(r => {
+            const reason = r.reason || '';
+            return myTrackingCodes.some(code => reason.includes(code));
+        });
+        
+        if (incoming.length === 0) {
+            showExcResult('excRespondResult', 'info', '📭 هنوز درخواستی برای آثار شما ثبت نشده است. مرتب به این صفحه سر بزنید.');
+            btn.disabled = false; btn.textContent = '📬 مشاهده درخواست‌های دریافتی';
+            return;
+        }
+        
+        // ۴. نمایش درخواست‌ها
+        showExcResult('excRespondResult', 'info', `📬 ${incoming.length} درخواست دریافت‌شده:`);
+        
+        listEl.innerHTML = incoming.map((r, idx) => {
+            const reason = r.reason || '';
+            const senderMatch = reason.match(/کد من:\s*([^\s|]+)/) || reason.match(/sender:\s*([^\s|]+)/);
+            const sender = r.senderCode || (senderMatch ? senderMatch[1] : 'ناشناس');
+            const msgMatch = reason.match(/پیام:\s*(.+?)(\||$)/);
+            const msg = msgMatch ? msgMatch[1].trim() : reason.substring(0, 100);
+            const targetMatch = reason.match(/اثر هدف:\s*([^\s|]+)/);
+            const target = targetMatch ? targetMatch[1] : '---';
+            const trackingMatch = reason.match(/EXC-[A-Z0-9]+-[A-Z0-9]+/i);
+            const tracking = trackingMatch ? trackingMatch[0] : `REQ-${idx}`;
+            
+            const isHandled = reason.includes('APPROVED') || reason.includes('REJECTED');
+            
+            return `
+                <div class="exchange-request-item">
+                    <div class="req-title">📨 درخواست از: ${sender}</div>
+                    <div class="req-msg">
+                        <strong>اثر:</strong> ${target}<br>
+                        <strong>پیام:</strong> ${msg}
+                    </div>
+                    <div style="font-size:0.7rem;color:#888;margin-top:0.3rem;direction:ltr;font-family:monospace;">${tracking}</div>
+                    ${isHandled ? 
+                        `<div style="margin-top:0.4rem;color:#16a085;font-weight:700;">✅ قبلاً پاسخ داده‌اید</div>` :
+                        `<div class="req-actions">
+                            <button class="btn-approve" onclick="respondToRequest('${sender}', '${tracking}', 'approve', '${myCode}')">✅ موافقم — ایمیل من داده شود</button>
+                            <button class="btn-reject" onclick="respondToRequest('${sender}', '${tracking}', 'reject', '${myCode}')">❌ رد می‌کنم</button>
+                        </div>`
+                    }
+                </div>
+            `;
+        }).join('');
+        
+    } catch (err) {
+        showExcResult('excRespondResult', 'error', '❌ ' + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '📬 مشاهده درخواست‌های دریافتی';
+    }
+}
+
+// ====== پاسخ به درخواست ======
+async function respondToRequest(senderCode, trackingCode, action, myCode) {
+    const actionLabel = action === 'approve' ? 'موافقت' : 'رد';
+    if (!confirm(`آیا از ${actionLabel} با درخواست ${senderCode} مطمئن هستید؟`)) return;
+    
+    try {
+        // بررسی ایمیل من
+        const usersRes = await fetch('/api/get-users?t=' + Date.now());
+        const usersData = await usersRes.json();
+        const nCode = normalizeCode(myCode);
+        const me = (usersData.users || []).find(u => normalizeCode(u.cardCode) === nCode);
+        
+        if (action === 'approve' && (!me || !me.communicationEmail || me.communicationEmail.length < 5)) {
+            alert('❌ برای موافقت، ابتدا باید در پروفایل خود ایمیل ثبت کنید. به صفحه ویرایش پروفایل بروید.');
+            return;
+        }
+        
+        const responseText = action === 'approve' 
+            ? `APPROVED | 💬 پاسخ صاحب اثر: موافقم | ایمیل صاحب اثر: ${me.communicationEmail} | کد رهگیری: ${trackingCode}`
+            : `REJECTED | کد رهگیری: ${trackingCode}`;
+        
+        const res = await fetch('/api/submit-request', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                cardCode: myCode,
+                type: 'connection',
+                description: responseText
+            })
+        });
+        
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.error || 'خطا در ثبت پاسخ');
+        
+        alert(`✅ پاسخ شما ثبت شد.\n\nکد رهگیری درخواست: ${trackingCode}\n\nدرخواست‌کننده می‌تواند با این کد، پاسخ شما را ببیند.`);
+        
+        // بارگذاری مجدد
+        loadIncomingRequests();
+        
+    } catch (err) {
+        alert('❌ ' + err.message);
+    }
+}
+
+// ====== کپی و ذخیره کد ======
+function copyExcCode(code) {
+    if (!code) return;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(() => {
+            alert('✅ کپی شد: ' + code);
+        }).catch(() => fallbackExcCopy(code));
+    } else {
+        fallbackExcCopy(code);
+    }
+}
+function fallbackExcCopy(code) {
+    const input = document.createElement('input');
+    input.value = code;
+    document.body.appendChild(input);
+    input.select();
+    document.execCommand('copy');
+    document.body.removeChild(input);
+    alert('✅ کپی شد: ' + code);
+}
+function saveExcCode(code) {
+    if (!code) return;
+    const blob = new Blob([code], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `exchange-code-${code}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+/* ================================================================ */
+/* ====== راه‌اندازی ====== */
+/* ================================================================ */
 document.addEventListener('DOMContentLoaded', () => {
     loadAchievements();
     loadAtlas();
