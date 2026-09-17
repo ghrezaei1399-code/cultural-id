@@ -641,62 +641,67 @@
             resultBox.style.display = 'none';
 
             try {
-                const normalize = (s) => (s || '').replace(/[\s\-]/g, '').toUpperCase();
+                // ===== Normalize input =====
+                const normalize = (s) => (s || '')
+                    .replace(/[\s\-]/g, '')
+                    .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+                    .toLowerCase();
                 const normalizedInput = normalize(codeInput);
 
                 let found = null;
 
-                // 1) Search in users and their achievements
+                // ===== 1) Search in achievements =====
                 try {
-                    const resUsers = await fetch('/api/get-users?t=' + new Date().getTime());
-                    if (resUsers.ok) {
-                        const dataUsers = await resUsers.json();
-                        const users = dataUsers.users || [];
-                        for (const u of users) {
-                            if (u.achievements && Array.isArray(u.achievements)) {
-                                for (const ach of u.achievements) {
-                                    const codes = [ach.trackingCode, ach.code, ach.id].filter(Boolean);
-                                    if (codes.some(c => normalize(c) === normalizedInput)) {
-                                        found = { ...ach, owner: u.cardCode };
-                                        break;
-                                    }
-                                }
-                            }
-                            if (found) break;
-                        }
+                    const resAch = await fetch('/api/get-connection-requests?type=achievements&t=' + Date.now());
+                    if (resAch.ok) {
+                        const dataAch = await resAch.json();
+                        const list = dataAch.achievements || [];
+                        found = list.find(item => {
+                            const codes = [item.trackingCode, item.code, item.id].filter(Boolean);
+                            return codes.some(c => normalize(c) === normalizedInput);
+                        });
                     }
-                } catch (e) { console.error('users fetch error:', e); }
+                } catch (e) { console.error('achievements fetch error:', e); }
 
-                // 2) If not found, search in observations
+                // ===== 2) If not found, search in observations =====
                 if (!found) {
                     try {
-                        const resObs = await fetch('/api/get-connection-requests?type=observations&t=' + new Date().getTime());
+                        const resObs = await fetch('/api/get-connection-requests?type=observations&t=' + Date.now());
                         if (resObs.ok) {
                             const dataObs = await resObs.json();
-                            const allItems = (dataObs.observations || []).concat(dataObs.achievements || []).concat(dataObs.requests || []);
-                            found = allItems.find(item => {
+                            const list = (dataObs.observations || []).concat(dataObs.achievements || []);
+                            found = list.find(item => {
                                 const codes = [item.trackingCode, item.code, item.id].filter(Boolean);
                                 return codes.some(c => normalize(c) === normalizedInput);
                             });
                         }
-                    } catch (e) { console.error('obs fetch error:', e); }
+                    } catch (e) { console.error('observations fetch error:', e); }
                 }
 
-                // 3) If not found, search in all requests
+                // ===== 3) If not found, search in users =====
                 if (!found) {
                     try {
-                        const resAll = await fetch('/api/get-connection-requests?t=' + new Date().getTime());
-                        if (resAll.ok) {
-                            const dataAll = await resAll.json();
-                            const allItems = (dataAll.observations || []).concat(dataAll.achievements || []).concat(dataAll.requests || []);
-                            found = allItems.find(item => {
-                                const codes = [item.trackingCode, item.code, item.id].filter(Boolean);
-                                return codes.some(c => normalize(c) === normalizedInput);
-                            });
+                        const resUsers = await fetch('/api/get-users?t=' + Date.now());
+                        if (resUsers.ok) {
+                            const dataUsers = await resUsers.json();
+                            const users = dataUsers.users || [];
+                            for (const u of users) {
+                                if (u.achievements && Array.isArray(u.achievements)) {
+                                    for (const ach of u.achievements) {
+                                        const codes = [ach.trackingCode, ach.code, ach.id].filter(Boolean);
+                                        if (codes.some(c => normalize(c) === normalizedInput)) {
+                                            found = { ...ach, owner: u.cardCode };
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (found) break;
+                            }
                         }
-                    } catch (e) { console.error('all fetch error:', e); }
+                    } catch (e) { console.error('users fetch error:', e); }
                 }
 
+                // ===== Result =====
                 if (!found) {
                     resultBox.className = 'track-result notfound';
                     resultBox.innerHTML = `
