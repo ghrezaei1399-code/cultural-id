@@ -24,7 +24,44 @@ module.exports = async function handler(req, res) {
 
     const owner = 'ghrezaei1399-code';
     const repo = 'cultural-id';
-    const userPath = `data/active/${cardCode}.json`;
+
+    // ===== نرمال‌سازی کد کارت (تبدیل اعداد فارسی به لاتین) =====
+    const normalizeCardCode = (s) => {
+      return (s || '')
+        .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+        .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+        .replace(/\s+/g, '')
+        .toUpperCase();
+    };
+
+    const normalizedCode = normalizeCardCode(cardCode);
+
+    // ===== خواندن لیست کاربران و پیدا کردن کاربر =====
+    const listRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/active`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!listRes.ok) {
+      return res.status(500).json({ error: 'خطا در دریافت لیست کاربران' });
+    }
+
+    const files = await listRes.json();
+    let matchedFile = null;
+
+    for (const file of files) {
+      if (!file.name.endsWith('.json')) continue;
+      const fileNameWithoutExt = file.name.replace('.json', '');
+      if (normalizeCardCode(fileNameWithoutExt) === normalizedCode) {
+        matchedFile = file;
+        break;
+      }
+    }
+
+    if (!matchedFile) {
+      return res.status(404).json({ error: 'کاربر با این کد کارت یافت نشد' });
+    }
+
+    const userPath = matchedFile.path;
 
     // ===== دریافت اطلاعات کاربر =====
     const userRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
@@ -32,7 +69,7 @@ module.exports = async function handler(req, res) {
     });
 
     if (!userRes.ok) {
-      return res.status(404).json({ error: 'کاربر با این کد کارت یافت نشد' });
+      return res.status(404).json({ error: 'اطلاعات کاربر یافت نشد' });
     }
 
     const userDataRaw = await userRes.json();
@@ -49,16 +86,16 @@ module.exports = async function handler(req, res) {
       status: 'pending',
       createdAt: new Date().toISOString(),
       fileName: fileName || null,
-      fileData: fileData || null,
+      fileData: null,
       fileUrl: null,
-      section: achievement.section || 'identity-card'
+      section: achievement.section || 'emergence'
     };
 
     // ===== اگر فایل آپلود شده، آن را در گیت‌هاب ذخیره کن =====
     if (fileData && fileName) {
       const filePath = `uploads/${achievementId}-${fileName}`;
       const fileContent = fileData.split(',')[1] || fileData;
-      
+
       const uploadRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`, {
         method: 'PUT',
         headers: {
@@ -66,7 +103,7 @@ module.exports = async function handler(req, res) {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          message: `Upload: ${fileName} for ${cardCode}`,
+          message: `Upload: ${fileName} for ${userData.cardCode || cardCode}`,
           content: fileContent,
           branch: 'main'
         })
@@ -86,28 +123,33 @@ module.exports = async function handler(req, res) {
     // ===== ذخیره مجدد فایل کاربر =====
     const updatedContent = Buffer.from(JSON.stringify(userData, null, 2), 'utf8').toString('base64');
 
-    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
+    const saveRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${userPath}`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        message: `Add achievement for ${cardCode}`,
+        message: `Add achievement for ${userData.cardCode || cardCode}`,
         content: updatedContent,
         sha: userDataRaw.sha,
         branch: 'main'
       })
     });
 
+    if (!saveRes.ok) {
+      const errData = await saveRes.json().catch(() => ({}));
+      throw new Error(errData.message || 'خطا در ذخیره دستاورد');
+    }
+
     // ===== ثبت درخواست برای ادمین =====
     const requestFileName = `achievement-${Date.now()}-${Math.random().toString(36).substring(7)}.json`;
     const requestPath = `data/requests/${requestFileName}`;
-    
+
     const requestData = {
       fileName: requestFileName,
       trackingCode: achievementId,
-      senderCode: cardCode.trim().replace(/\s+/g, ''),
+      senderCode: userData.cardCode || cardCode,
       type: 'achievement',
       title: title,
       description: description,
@@ -115,6 +157,7 @@ module.exports = async function handler(req, res) {
       status: 'pending',
       achievementId: achievementId,
       fileUrl: newAchievement.fileUrl,
+      section: achievement.section || 'emergence',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
@@ -128,7 +171,7 @@ module.exports = async function handler(req, res) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        message: `Achievement request from ${cardCode} - ${achievementId}`,
+        message: `Achievement request from ${userData.cardCode || cardCode} - ${achievementId}`,
         content: requestContent,
         branch: 'main'
       })
