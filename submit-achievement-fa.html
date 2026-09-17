@@ -378,7 +378,9 @@
                 if (!response.ok) throw new Error('خطا در ارتباط با سرور');
                 
                 const data = await response.json();
-                const user = data.users.find(u => u.cardCode === codeInput);
+                const normalize = (s) => (s || '').replace(/[\s\-]/g, '').replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).toUpperCase();
+const normalizedInput = normalize(codeInput);
+const user = data.users.find(u => normalize(u.cardCode) === normalizedInput);
 
                 if (!user) throw new Error('❌ کد کارت یافت نشد.');
                 if (user.status !== 'approved') throw new Error('❌ حساب کاربری شما هنوز تأیید نشده است.');
