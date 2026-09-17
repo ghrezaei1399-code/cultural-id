@@ -66,25 +66,25 @@
       "title": "فرهنگ",
       "description": "حل مشکل خشونت فرهنگی",
       "category": "cultural",
-      "status": "pending",
+      "status": "approved",
       "createdAt": "2026-09-17T11:07:29.723Z",
       "fileName": "نماد صلح.jpg",
       "fileUrl": "https://raw.githubusercontent.com/ghrezaei1399-code/cultural-id/main/uploads/ACH-MU5FDS7V-CA0M-نماد صلح.jpg",
       "section": "emergence",
-      "issueNumber": 100
+      "issueNumber": 100,
+      "approvedAt": "2026-09-17T12:12:48.259Z"
     },
     {
       "id": "ACH-MU5G9QFQ-QLF5",
       "title": "برج ایفل",
       "description": "همفرهنگی با فرانسه",
       "category": "cultural",
-      "status": "approved",
+      "status": "pending",
       "createdAt": "2026-09-17T11:32:20.133Z",
       "fileName": "eiffe-tower.jpg",
       "fileUrl": "https://raw.githubusercontent.com/ghrezaei1399-code/cultural-id/main/uploads/ACH-MU5G9QFQ-QLF5-eiffe-tower.jpg",
       "section": "emergence",
-      "issueNumber": 101,
-      "approvedAt": "2026-09-17T12:12:29.307Z"
+      "issueNumber": 101
     }
   ]
 }
