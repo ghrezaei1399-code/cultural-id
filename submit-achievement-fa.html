@@ -2,1110 +2,470 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"/>
-    <title>کارت جهانی هویت هوشمند فرهنگی</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>ثبت دستاورد | سپهر خردمندی</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Vazir', 'IRANSans', 'Segoe UI', sans-serif;
             min-height: 100vh;
-            padding: 0.8rem;
-            background: linear-gradient(135deg, #fdf6e3 0%, #e8f4f8 50%, #f5e6d3 100%);
-            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+            background: linear-gradient(-45deg, #e8f4f8, #fdf6e3, #f5e6d3, #e0f7fa);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
             color: #2a1a0a;
         }
-        body.dark {
-            background: linear-gradient(135deg, #3a2f20 0%, #2a2418 50%, #4a3a28 100%);
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        body.dark { 
+            background: linear-gradient(-45deg, #0f3460, #1a1a2e, #16213e, #232526);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #f0e8d0; 
+        }
+        .container {
+            max-width: 750px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 48px;
+            padding: 3rem 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s ease;
+        }
+        body.dark .container { background: rgba(0, 0, 0, 0.45); border-color: rgba(255, 255, 255, 0.1); }
+        
+        h1 {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #8a6d1f;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+        }
+        body.dark h1 { color: #ffd700; }
+        
+        .subtitle {
+            text-align: center;
+            font-size: 1rem;
+            color: #6a5a3a;
+            opacity: 0.9;
+            margin-bottom: 2.5rem;
+            border-bottom: 2px dashed rgba(138, 109, 31, 0.2);
+            padding-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        body.dark .subtitle { color: #c8b890; }
+
+        .form-group { margin-bottom: 1.8rem; position: relative; }
+        .form-group label {
+            display: block;
+            font-weight: 800;
+            font-size: 0.95rem;
+            color: #4a3a2a;
+            margin-bottom: 0.6rem;
+        }
+        body.dark .form-group label { color: #e8d8c8; }
+        
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 1.2rem;
+            border-radius: 20px;
+            border: 2px solid transparent;
+            background: rgba(255, 255, 255, 0.7);
+            font-family: inherit;
+            font-size: 1rem;
+            color: #2a1a0a;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            outline: none;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.03);
+        }
+        body.dark .form-group input, body.dark .form-group textarea, body.dark .form-group select {
+            background: rgba(0, 0, 0, 0.35);
             color: #f0e8d0;
         }
-        .container { max-width: 900px; width: 100%; margin: 0 auto; }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            background: #fff;
+            border-color: #d4af37;
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.2);
+            transform: translateY(-3px);
+        }
+        body.dark .form-group input:focus { background: #1a1a2e; border-color: #ffd700; }
 
-        .global-call-banner {
-            background: linear-gradient(135deg, #d4af37, #f9e79f, #d4af37);
-            border-radius: 16px;
-            padding: 0.6rem 0.5rem;
-            margin-bottom: 0.6rem;
+        .upload-zone {
+            border: 3px dashed #d4af37;
+            border-radius: 30px;
+            padding: 3rem 1rem;
             text-align: center;
-            border: 2px solid rgba(138, 109, 31, 0.3);
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
-        }
-        .banner-slogan {
-            font-size: 0.9rem;
-            font-weight: 800;
-            color: #2a1a0a;
-            margin: 0.1rem 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.3rem;
-            flex-wrap: wrap;
-        }
-        .banner-icon { font-size: 1rem; }
-
-        .hero-header {
-            text-align: center;
-            padding: 0.6rem 0.4rem;
-            background: rgba(255, 255, 255, 0.7);
-            border-radius: 18px;
-            border: 2px solid rgba(212, 175, 55, 0.3);
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.08);
-            margin-bottom: 0.6rem;
-        }
-        body.dark .hero-header { background: rgba(74, 58, 40, 0.7); }
-
-        .logo-row {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.3rem;
-        }
-        .logo-box img {
-            width: 180px;
-            height: 180px;
-            object-fit: contain;
-            filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.2));
+            margin-bottom: 2rem;
+            cursor: pointer;
             transition: all 0.4s ease;
-            animation: logoFloat 4s ease-in-out infinite;
+            background: rgba(255, 255, 255, 0.4);
+            position: relative;
+            overflow: hidden;
         }
-        @keyframes logoFloat {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-4px); }
+        .upload-zone:hover { 
+            background: rgba(255, 255, 255, 0.8); 
+            border-color: #8a6d1f; 
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
         }
-        .logo-box img:hover { transform: scale(1.05); }
+        body.dark .upload-zone { background: rgba(0,0,0,0.2); border-color: #ffd700; }
+        body.dark .upload-zone:hover { background: rgba(0,0,0,0.3); }
         
-        .site-title-wrap { text-align: center; flex: 1; min-width: 120px; }
-        .site-title {
-            font-size: 1.2rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, #8a6d1f, #d4af37, #8a6d1f);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            line-height: 1.2;
+        .upload-zone .icon { font-size: 3rem; display: block; margin-bottom: 1rem; animation: floatIcon 3s ease-in-out infinite; }
+        @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        
+        .file-name { 
+            font-size: 1rem; 
+            color: #2874a6; 
+            margin-top: 1rem; 
+            display: block; 
+            font-weight: 800; 
+            background: rgba(40, 116, 166, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            display: inline-block;
         }
-        body.dark .site-title {
-            background: linear-gradient(135deg, #f9e79f, #d4af37, #f9e79f);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .site-subtitle { font-size: 0.8rem; color: #6a5a3a; letter-spacing: 0.5px; margin-top: 0.1rem; }
-        body.dark .site-subtitle { color: #c8b890; }
+        body.dark .file-name { color: #85c1e9; background: rgba(133, 193, 233, 0.1); }
 
-        .lang-bar {
-            display: flex;
-            justify-content: center;
-            gap: 0.3rem;
-            margin-top: 0.4rem;
-            padding: 0.2rem;
-            background: rgba(255, 255, 255, 0.6);
-            border-radius: 30px;
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            max-width: 200px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        body.dark .lang-bar { background: rgba(0, 0, 0, 0.2); }
-        .lang-bar a {
-            padding: 0.15rem 0.8rem;
-            border-radius: 30px;
+        .btn-group { display: flex; gap: 1.2rem; margin-top: 2.5rem; flex-wrap: wrap; }
+        .btn {
+            flex: 1;
+            padding: 1.2rem 2rem;
+            border-radius: 60px;
+            font-weight: 900;
+            font-size: 1.1rem;
             text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #6a5a3a;
-            transition: 0.3s;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            min-width: 150px;
+            position: relative;
+            overflow: hidden;
         }
-        body.dark .lang-bar a { color: #c8b890; }
-        .lang-bar a.active {
+        .btn-primary {
             background: linear-gradient(135deg, #d4af37, #f9e79f);
             color: #2a1a0a;
-            box-shadow: 0 2px 8px rgba(212, 175, 55, 0.2);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
         }
-
-        .slogan-scroller {
-            overflow: hidden;
-            background: rgba(212, 175, 55, 0.08);
-            border-radius: 20px;
-            padding: 0.2rem 0;
-            margin-bottom: 0.6rem;
-            border: 1px solid rgba(212, 175, 55, 0.15);
-        }
-        .slogan-track {
-            display: flex;
-            gap: 1.5rem;
-            animation: scrollSlogan 20s linear infinite;
-            white-space: nowrap;
-            width: max-content;
-        }
-        .slogan-track span { font-size: 0.65rem; font-weight: 600; color: #8a6d1f; }
-        body.dark .slogan-track span { color: #f9e79f; }
-        @keyframes scrollSlogan { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.4rem;
-            margin-bottom: 0.6rem;
-        }
-        .feature-card {
-            border-radius: 12px;
-            padding: 0.5rem 0.3rem;
-            text-align: center;
-            border: 2px solid rgba(212, 175, 55, 0.12);
-            transition: 0.3s;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-        .feature-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
-        .feature-card .icon { font-size: 1.2rem; display: block; }
-        .feature-card h3 { font-size: 0.7rem; font-weight: 800; margin: 0.1rem 0; }
-        .feature-card p { font-size: 1.2rem; color: #4a3a2a; opacity: 0.8; line-height: 1.3; }
-        body.dark .feature-card p { color: #b0a8a0; }
-        .feature-card .btn-feature {
-            display: inline-block;
-            padding: 0.1rem 0.4rem;
-            border-radius: 12px;
-            font-size: 0.5rem;
-            font-weight: 700;
-            background: rgba(212, 175, 55, 0.12);
-            color: #8a6d1f;
-            border: 1px solid rgba(212, 175, 55, 0.1);
-        }
-        body.dark .feature-card .btn-feature { color: #f9e79f; }
-
-        .feature-about { background: #dbeafe; }
-        body.dark .feature-about { background: rgba(30, 60, 100, 0.3); }
-        .feature-wisdom { background: #d1fae5; }
-        body.dark .feature-wisdom { background: rgba(30, 80, 50, 0.3); }
-        .feature-radio { background: #fce7f3; }
-        body.dark .feature-radio { background: rgba(80, 40, 60, 0.3); }
-
-        .info-boxes {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.4rem;
-            margin-bottom: 0.6rem;
-        }
-        .box {
-            border-radius: 14px;
-            padding: 0.6rem 0.5rem;
-            border: 2px solid rgba(212, 175, 55, 0.1);
-            backdrop-filter: blur(10px);
-        }
-        .box-gold { background: rgba(255, 248, 220, 0.7); }
-        body.dark .box-gold { background: rgba(74, 58, 40, 0.5); }
-        .box-blue { background: rgba(220, 240, 255, 0.7); }
-        body.dark .box-blue { background: rgba(40, 60, 80, 0.5); }
-        .box-green { background: rgba(220, 245, 220, 0.7); }
-        body.dark .box-green { background: rgba(40, 70, 40, 0.5); }
-
-        .box-title {
-            font-size: 1rem;
-            font-weight: 800;
-            margin-bottom: 0.2rem;
-            padding-bottom: 0.2rem;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-            display: flex;
-            align-items: center;
-            gap: 0.2rem;
-        }
-        .box-gold .box-title { color: #8a6d1f; }
-        body.dark .box-gold .box-title { color: #f9e79f; }
-        .box-blue .box-title { color: #2874a6; }
-        body.dark .box-blue .box-title { color: #85c1e9; }
-        .box-green .box-title { color: #1e7a1e; }
-        body.dark .box-green .box-title { color: #82e0aa; }
-
-        .box ul { list-style: none; line-height: 1.4; }
-        .box ul li {
-            font-size: 0.85rem;
-            color: #3a2a1a;
-            padding-right: 0.8rem;
-            position: relative;
-        }
-        body.dark .box ul li { color: #d0c8c0; }
-        .box-gold ul li::before { content: "✦"; color: #d4af37; position: absolute; right: 0; font-size: 0.5rem; }
-        .box-blue ul li::before { content: "◆"; color: #5dade2; position: absolute; right: 0; font-size: 0.5rem; }
-        .box-green ul li::before { content: "✓"; color: #27ae60; position: absolute; right: 0; font-size: 0.5rem; }
-
-        .principles {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 0.2rem;
-            margin-top: 0.2rem;
-        }
-        .principles span {
-            padding: 0.1rem 0.3rem;
-            border-radius: 12px;
-            font-size: 0.45rem;
-            font-weight: 700;
-            background: rgba(93, 173, 226, 0.1);
-            border: 1px solid rgba(93, 173, 226, 0.2);
-            color: #2874a6;
-        }
-        body.dark .principles span { color: #85c1e9; }
-
-        .card-sample-wrapper {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 16px;
-            padding: 0.8rem;
-            margin-bottom: 0.8rem;
-            border: 2px solid rgba(212, 175, 55, 0.15);
-            text-align: center;
-        }
-        body.dark .card-sample-wrapper { background: rgba(0, 0, 0, 0.1); }
-        .card-sample-wrapper .label { font-size: 0.65rem; color: #8a6d1f; font-weight: 700; }
-        body.dark .card-sample-wrapper .label { color: #f9e79f; }
-
-        .real-card-sample {
-            max-width: 260px;
-            margin: 0.4rem auto;
-            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
-            border: 2px solid #d4af37;
-            border-radius: 16px;
-            padding: 0.8rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2), inset 0 0 15px rgba(212,175,55,0.05);
-        }
-        .rc-logo-container {
-            width: 50px; height: 50px;
-            border-radius: 50%;
-            border: 2px solid #d4af37;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .rc-logo { width: 32px; height: 32px; object-fit: contain; }
-        .rc-title { font-size: 0.65rem; font-weight: 800; color: #d4af37; }
-        .rc-code-box {
-            width: 100%;
-            background: rgba(212, 175, 55, 0.06);
-            border: 1px solid rgba(212,175,55,0.2);
-            border-radius: 8px;
-            padding: 0.4rem;
-        }
-        .rc-code { font-size: 0.8rem; color: #f0f0f0; font-family: monospace; direction: ltr; }
-        .rc-values { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
-        .rc-tag {
-            background: rgba(212, 175, 55, 0.08);
-            border: 1px solid rgba(212,175,55,0.3);
-            border-radius: 4px;
-            padding: 2px 6px;
-            font-size: 0.5rem;
-            color: #d4af37;
-            font-weight: 600;
-        }
-        .rc-hologram {
-            width: 40px; height: 40px;
-            border: 1px solid rgba(212,175,55,0.3);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, rgba(212,175,55,0.05), rgba(255,255,255,0.05));
-            animation: hologramShine 3s infinite alternate;
-        }
-        @keyframes hologramShine {
-            0% { opacity: 0.5; filter: hue-rotate(0deg); }
-            100% { opacity: 1; filter: hue-rotate(20deg); }
-        }
-
-        .golden-row {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 0.4rem;
-            margin: 0.6rem 0;
-            padding: 0.6rem 0.4rem;
-            background: rgba(255, 248, 220, 0.25);
-            border-radius: 20px;
-            border: 1px solid rgba(212, 175, 55, 0.12);
-        }
-        body.dark .golden-row { background: rgba(74, 58, 40, 0.2); }
-
-        .golden-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 0.4rem 0.2rem;
-            border-radius: 16px;
-            text-decoration: none;
-            text-align: center;
-            font-weight: 900;
-            font-size: 0.6rem;
-            transition: 0.3s;
-            min-height: 55px;
-            border: none;
-            gap: 0.1rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-        }
-        .golden-btn:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
-        .golden-btn .icon { font-size: 1.2rem; }
-        .golden-btn .label { font-size: 0.8rem; }
-        .golden-btn .desc { font-size: 0.8rem; opacity: 0.6; font-weight: 600; }
-
-        .btn-register { background: linear-gradient(135deg, #d4af37, #f9e79f); color: #2a1a0a; }
-        .btn-connect { background: linear-gradient(135deg, #27ae60, #82e0aa); color: #fff; }
-        .btn-achievement { background: linear-gradient(135deg, #8a6d1f, #d4af37); color: #fff; }
-        .btn-wisdom { background: linear-gradient(135deg, #2874a6, #5dade2); color: #fff; }
-        .btn-atlas { background: linear-gradient(135deg, #6a3d9a, #d2b4de); color: #fff; }
-
-        .cta-note { text-align: center; font-size: 0.5rem; color: #6a5a3a; margin: -0.3rem 0 0.5rem 0; font-weight: 600; }
-        body.dark .cta-note { color: #c8b890; }
-
-        .gallery-box {
-            border-radius: 20px;
-            padding: 0.8rem;
-            margin: 0.6rem 0;
-            border: 3px double #d4af37;
-            background: rgba(255, 253, 245, 0.6);
-        }
-        body.dark .gallery-box { background: rgba(58, 47, 32, 0.4); }
-
-        .atlas-box { border-color: #6a3d9a; background: rgba(245, 230, 240, 0.5); }
-        body.dark .atlas-box { background: rgba(58, 42, 58, 0.3); }
-
-        .gallery-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-            flex-wrap: wrap;
-            gap: 0.3rem;
-        }
-        .gallery-title {
-            font-size: 1.1rem;
-            font-weight: 900;
-            color: #8a6d1f;
-            display: flex;
-            align-items: center;
-            gap: 0.2rem;
-        }
-        body.dark .gallery-title { color: #f9e79f; }
-        .atlas-box .gallery-title { color: #6a3d9a; }
-        body.dark .atlas-box .gallery-title { color: #d2b4de; }
-
-        .gallery-subtitle { font-size: 0.55rem; color: #888; font-weight: 600; }
-        .filter-select {
-            padding: 0.2rem 0.5rem;
-            border-radius: 16px;
-            border: 1px solid #d4af37;
-            background: #fff;
-            color: #8a6d1f;
-            font-weight: 700;
-            font-size: 0.6rem;
-            cursor: pointer;
-            outline: none;
-        }
-        body.dark .filter-select { background: #2a2418; color: #f9e79f; border-color: #8a6d1f; }
-
-        .achievements-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
-            max-height: 320px;
-            overflow-y: auto;
-        }
-        .achievement-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.4rem 0.5rem;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 10px;
-            border-right: 3px solid #d4af37;
-            cursor: pointer;
-            transition: 0.2s;
-            gap: 0.5rem;
-        }
-        body.dark .achievement-item { background: rgba(0, 0, 0, 0.15); }
-        .achievement-item:hover { background: #fff; transform: translateX(-3px); }
-        body.dark .achievement-item:hover { background: rgba(255, 255, 255, 0.05); }
+        .btn-primary:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 15px 35px rgba(212, 175, 55, 0.4); }
         
-        .item-info h4 { font-size: 0.85rem; color: #2a1a0a; }
-        body.dark .item-info h4 { color: #f0e8d0; }
-        .item-meta { font-size: 0.5rem; color: #8a6d1f; font-weight: 600; }
-
-        /* ====== عکس‌های بزرگ‌تر برای گالری اطلس ====== */
-        .atlas-thumb {
-            width: 90px;
-            height: 90px;
-            border-radius: 10px;
-            object-fit: cover;
-            flex-shrink: 0;
-            border: 2px solid rgba(212, 175, 55, 0.35);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-            transition: 0.25s;
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.6);
+            color: #6a5a3a;
+            border: 2px solid rgba(212, 175, 55, 0.3);
         }
-        .atlas-thumb:hover { transform: scale(1.05); }
+        .btn-secondary:hover { background: #fff; color: #8a6d1f; transform: translateY(-3px); }
 
-        .atlas-thumb-icon {
-            width: 90px;
-            height: 90px;
-            border-radius: 10px;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.4rem;
-            background: linear-gradient(135deg, rgba(212,175,55,0.10), rgba(106,61,154,0.10));
-            border: 2px dashed rgba(212, 175, 55, 0.35);
-        }
-
-        .module-status-badge {
-            display: inline-block;
-            padding: 0.1rem 0.5rem;
-            border-radius: 12px;
-            font-size: 0.55rem;
-            font-weight: 700;
-            margin-top: 0.2rem;
-        }
-        .module-status-badge.success { background: rgba(39,174,96,0.15); color: #1a6a3a; }
-        .module-status-badge.revision { background: rgba(243,156,18,0.15); color: #8a5a0a; }
-        .module-status-badge.failed { background: rgba(231,76,60,0.15); color: #6a1a1a; }
-        .module-status-badge.pending { background: rgba(241,196,15,0.15); color: #b7950b; }
-        .module-status-badge.no_peers { background: rgba(149,165,166,0.15); color: #5a6a6a; }
-        body.dark .module-status-badge.success { color: #82e0aa; }
-        body.dark .module-status-badge.revision { color: #f5b041; }
-        body.dark .module-status-badge.failed { color: #f1948a; }
-        body.dark .module-status-badge.pending { color: #f9e79f; }
-        body.dark .module-status-badge.no_peers { color: #aab7b8; }
-
-        .module-type-label {
-            font-size: 0.55rem;
-            color: #6a3d9a;
-            font-weight: 600;
-        }
-        body.dark .module-type-label { color: #d2b4de; }
-
-        .empty-state { text-align: center; padding: 0.5rem; color: #888; font-size: 0.7rem; }
-
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-            padding: 1rem;
-            backdrop-filter: blur(3px);
-        }
-        .modal-overlay.active { display: flex; animation: fadeIn 0.25s; }
-        .modal-content {
-            background: #fff;
-            width: 90%;
-            max-width: 500px;
-            max-height: 80vh;
-            border-radius: 20px;
-            overflow-y: auto;
-            position: relative;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        }
-        body.dark .modal-content { background: #2a2418; color: #f0e8d0; }
-        .modal-media { width: 100%; max-height: 250px; object-fit: contain; background: #000; }
-        .modal-body { padding: 1rem; }
-        .modal-close {
-            position: absolute;
-            top: 0.5rem;
-            left: 0.5rem;
-            background: rgba(0,0,0,0.4);
-            color: #fff;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            z-index: 10;
-        }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .feedback-note {
-            font-size: 0.7rem;
-            color: #8a6d1f;
+        .note {
             text-align: center;
-            padding: 0.6rem;
-            background: rgba(212,175,55,0.08);
-            border-radius: 8px;
-            border: 1px dashed rgba(212,175,55,0.3);
-            margin-top: 1rem;
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin-top: 2.5rem;
+            color: #6a5a3a;
             font-weight: 600;
         }
-        body.dark .feedback-note { color: #f9e79f; background: rgba(212,175,55,0.04); }
+        
+        .theme-toggle {
+            position: fixed; top: 1.5rem; left: 1.5rem;
+            background: rgba(255, 255, 255, 0.7);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            font-size: 1.6rem; cursor: pointer;
+            padding: 0.6rem 1.2rem; border-radius: 60px;
+            transition: 0.4s; color: #8a6d1f;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+        .theme-toggle:hover { transform: rotate(30deg) scale(1.15); background: #fff; }
+        body.dark .theme-toggle { background: rgba(0,0,0,0.5); color: #ffd700; border-color: rgba(255,255,255,0.1); }
 
-        @media (max-width: 768px) {
-            body { padding: 0.5rem; }
-            .logo-box img { width: 70px; height: 70px; }
-            .site-title { font-size: 0.95rem; }
-            .features-grid { grid-template-columns: repeat(3, 1fr); gap: 0.3rem; }
-            .info-boxes { grid-template-columns: repeat(3, 1fr); gap: 0.3rem; }
-            .golden-row { grid-template-columns: repeat(3, 1fr); gap: 0.3rem; padding: 0.4rem; }
-            .golden-btn { min-height: 45px; font-size: 0.5rem; padding: 0.3rem 0.1rem; }
-            .golden-btn .icon { font-size: 1rem; }
-            .golden-btn .label { font-size: 0.8rem; }
-            .box-title { font-size: 0.6rem; }
-            .box ul li { font-size: 0.55rem; }
-            .gallery-title { font-size: 0.75rem; }
-            .real-card-sample { max-width: 200px; padding: 0.6rem; }
-            .rc-code { font-size: 0.65rem; }
-            .rc-title { font-size: 0.55rem; }
-            .rc-tag { font-size: 0.45rem; }
-            .global-call-banner { padding: 0.4rem 0.3rem; }
-            .banner-slogan { font-size: 2rem; }
-            .slogan-track span { font-size: 0.55rem; }
-            .atlas-thumb { width: 70px; height: 70px; }
-            .atlas-thumb-icon { width: 70px; height: 70px; font-size: 1.8rem; }
+        .status-msg {
+            padding: 1.5rem;
+            border-radius: 20px;
+            margin-top: 2rem;
+            text-align: center;
+            display: none;
+            font-weight: 800;
+            animation: fadeIn 0.5s ease;
         }
-        @media (max-width: 480px) {
-            .logo-box img { width: 60px; height: 60px; }
-            .site-title { font-size: 1.68rem; }
-            .features-grid { grid-template-columns: repeat(3, 1fr); gap: 0.2rem; }
-            .feature-card { padding: 0.3rem 0.2rem; }
-            .feature-card .icon { font-size: 1rem; }
-            .feature-card h3 { font-size: 0.6rem; }
-            .feature-card p { font-size: 1rem; }
-            .info-boxes { grid-template-columns: repeat(3, 1fr); gap: 0.2rem; }
-            .box { padding: 0.4rem 0.3rem; }
-            .box-title { font-size: 1.6rem; }
-            .box ul li { font-size: 0.85rem; }
-            .golden-row { grid-template-columns: repeat(2, 1fr); gap: 0.2rem; padding: 0.3rem; }
-            .golden-btn { min-height: 40px; font-size: 0.45rem; padding: 0.2rem 0.1rem; }
-            .golden-btn .icon { font-size: 0.9rem; }
-            .real-card-sample { max-width: 160px; padding: 0.4rem; }
-            .rc-code { font-size: 0.55rem; }
-            .rc-title { font-size: 0.5rem; }
-            .gallery-title { font-size: 0.65rem; }
-            .gallery-subtitle { font-size: 0.45rem; }
-            .achievement-item { padding: 0.2rem 0.3rem; }
-            .item-info h4 { font-size: 0.6rem; }
-            .filter-select { font-size: 0.5rem; padding: 0.1rem 0.3rem; }
-            .atlas-thumb { width: 60px; height: 60px; }
-            .atlas-thumb-icon { width: 60px; height: 60px; font-size: 1.5rem; }
+        .status-msg.success { background: rgba(50, 200, 50, 0.1); color: #0a5a0a; border: 2px solid rgba(50, 200, 50, 0.2); }
+        .status-msg.error { background: rgba(200, 50, 50, 0.1); color: #8a1a1a; border: 2px solid rgba(200, 50, 50, 0.2); }
+        body.dark .status-msg.success { color: #80b080; }
+        body.dark .status-msg.error { color: #f08080; }
+
+        .helper-text {
+            font-size: 0.9rem;
+            color: #6a5a3a;
+            margin-top: 1.5rem;
+            line-height: 1.8;
+            text-align: center;
+            background: rgba(255,255,255,0.5);
+            padding: 1.5rem;
+            border-radius: 20px;
+            border: 1px dashed rgba(212, 175, 55, 0.3);
         }
+        body.dark .helper-text { color: #c8b890; background: rgba(0,0,0,0.2); }
+        .helper-text a { color: #2874a6; text-decoration: none; font-weight: 800; border-bottom: 2px solid rgba(40, 116, 166, 0.2); }
+        .helper-text a:hover { color: #d4af37; border-color: #d4af37; }
+
+        .hidden { display: none !important; }
+        .error-msg { color: #a00; margin-top: 1rem; font-size: 0.9rem; display: none; text-align: center; font-weight: 700; }
+        
+        .code-check-box {
+            background: rgba(255, 255, 255, 0.5);
+            padding: 2.5rem;
+            border-radius: 30px;
+            border: 2px dashed rgba(212, 175, 55, 0.3);
+            text-align: center;
+            margin-top: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+        body.dark .code-check-box { background: rgba(0,0,0,0.2); }
+        
+        .code-input {
+            width: 100%;
+            padding: 1.2rem;
+            border-radius: 16px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.8);
+            font-size: 1.3rem;
+            text-align: center;
+            letter-spacing: 3px;
+            margin-bottom: 1.5rem;
+            color: #2a1a0a;
+            font-family: monospace;
+            transition: 0.3s;
+            direction: ltr;
+        }
+        .code-input:focus { border-color: #d4af37; outline: none; background: #fff; }
+        body.dark .code-input { background: rgba(0,0,0,0.3); color: #f0e8d0; border-color: rgba(255,255,255,0.1); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#d4af37">
 </head>
 <body>
-<div class="container">
+    <button class="theme-toggle" id="themeToggle">🌙</button>
 
-    <div class="global-call-banner">
-        <div class="banner-slogan"><span class="banner-icon">🌍</span>هم‌فرهنگان جهان، برای حفظ میراث مشترکمان متحد شوید</div>
-        <div class="banner-slogan"><span class="banner-icon">⚠️</span>هر فرهنگ که از دست برود، تکه‌ای از روح بشریت محو می‌شود</div>
-    </div>
-
-    <div class="hero-header">
-        <div class="logo-row">
-            <div class="logo-box"><img src="assets/logo-fa.png" alt="لوگو فارسی" /></div>
-            <div class="site-title-wrap">
-                <div class="site-title">کارت جهانی هویت هوشمند فرهنگی</div>
-                <div class="site-subtitle">GLOBAL SMART CULTURAL ID</div>
-            </div>
-            <div class="logo-box"><img src="assets/logo-en.png" alt="Logo English" /></div>
-        </div>
-        <div class="lang-bar">
-            <a href="#" class="active">🇮🇷 فارسی</a>
-            <a href="index-en.html">🇬🇧 English</a>
-        </div>
-    </div>
-
-    <div class="features-grid">
-        <a href="about-fa.html" class="feature-card feature-about">
-            <span class="icon">📖</span>
-            <h3>درباره کارت هویت</h3>
-            <p>اهداف و فلسفه</p>
-            <span class="btn-feature">بیشتر →</span>
-        </a>
-        <a href="about-fa.html#wisdom" class="feature-card feature-wisdom">
-            <span class="icon">🧠</span>
-            <h3>سپهر خردمندی</h3>
-            <p>مشاهده و تحلیل</p>
-            <span class="btn-feature">ورود →</span>
-        </a>
-        <a href="about-fa.html#radio-tv" class="feature-card feature-radio">
-            <span class="icon">📡</span>
-            <h3>رادیوتلویزیون</h3>
-            <p>شبکه‌های فرهنگی</p>
-            <span class="btn-feature">ورود →</span>
-        </a>
-    </div>
-
-    <div class="slogan-scroller">
-        <div class="slogan-track">
-            <span>✦ فرهنگ ما، ارتباط ما، آینده‌ی مشترک ما ✦</span>
-            <span>✦ هویت فرهنگی، فراتر از مرزها ✦</span>
-            <span>✦ صلح، تنوع، اتحاد ✦</span>
-            <span>✦ فرهنگ ما، ارتباط ما، آینده‌ی مشترک ما ✦</span>
-            <span>✦ هویت فرهنگی، فراتر از مرزها ✦</span>
-            <span>✦ صلح، تنوع، اتحاد ✦</span>
-        </div>
-    </div>
-
-    <div class="info-boxes">
-        <div class="box box-gold">
-            <div class="box-title">📋 مشخصات کارت</div>
-            <ul>
-                <li>هویت دیجیتال غیرمتمرکز</li>
-                <li>ثبت ۷ ارزش فرهنگی</li>
-                <li>کد منحصربه‌فرد</li>
-                <li>ارتباط با دیگران</li>
-            </ul>
-        </div>
-        <div class="box box-blue">
-            <div class="box-title">🎯 اهداف کارت</div>
-            <ul>
-                <li>شبکه مصلحان فرهنگی بدون مرز</li>
-                <li>حفاظت از تنوع فرهنگی</li>
-                <li>ترویج صلح، محو خشونت</li>
-            </ul>
-            <div class="principles">
-                <span>✧ غیرسیاسی</span><span>غیرحکومتی</span>
-                <span>غیرانتفاعی</span><span>✧ غیرمتمرکز</span>
-            </div>
-        </div>
-        <div class="box box-green">
-            <div class="box-title">✅ مزایای کارت</div>
-            <ul>
-                <li>عضویت در جنبش جهانی</li>
-                <li>دسترسی به هم‌فرهنگان</li>
-                <li>ارتباط از راه‌های دلخواه</li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="card-sample-wrapper">
-        <div class="label">🪪 نمونه کارت صادر شده</div>
-        <div class="real-card-sample">
-            <div class="rc-logo-container"><img src="assets/logo-fa.png" alt="لوگو" class="rc-logo" onerror="this.style.display='none'"></div>
-            <div class="rc-title">کارت جهانی هویت هوشمند فرهنگی</div>
-            <div class="rc-code-box"><div class="rc-code">CIM - ۲۳۴ - ۵۷۸ - نمونه</div></div>
-            <div class="rc-values">
-                <span class="rc-tag">ارزش‌های بومی</span>
-                <span class="rc-tag">دانش فردی</span>
-                <span class="rc-tag">همکاری جمعی</span>
-                <span class="rc-tag">تنوع فرهنگی</span>
-            </div>
-            <div class="rc-hologram"><img src="assets/hologram.png" alt="Hologram" style="width:25px;height:25px;" onerror="this.style.display='none'"></div>
-        </div>
-    </div>
-
-    <div class="golden-row">
-        <a href="register-fa.html" class="golden-btn btn-register">
-            <span class="icon">🪪</span>
-            <span class="label">دریافت کارت</span>
-            <span class="desc">ثبت‌نام</span>
-        </a>
-        <a href="request-fa.html?type=connection" class="golden-btn btn-connect">
-            <span class="icon">🤝</span>
-            <span class="label">ارتباط</span>
-            <span class="desc">هم‌فکران</span>
-        </a>
-        <a href="submit-achievement-fa.html" class="golden-btn btn-achievement">
-            <span class="icon">📤</span>
-            <span class="label">ثبت آثار نام‌آوران</span>
-            <span class="desc">ارسال دستاورد</span>
-        </a>
-        <a href="observer-fa.html" class="golden-btn btn-wisdom">
-            <span class="icon">🧠</span>
-            <span class="label">هم‌اندیشی</span>
-            <span class="desc">سپهر خردمندی</span>
-        </a>
-        <a href="atlas-gallery.fa.html" class="golden-btn btn-atlas">
-            <span class="icon">🏛️</span>
-            <span class="label">اطلس ظهور</span>
-            <span class="desc">راه‌حل‌های فرهنگی</span>
-        </a>
-    </div>
-    <div class="cta-note">بدون اطلاعات شخصی • کاملاً ناشناس • ۲ دقیقه</div>
-
-    <div class="gallery-box">
-        <div class="gallery-header">
-            <div class="gallery-title">🏆 گالری دستاوردهای فرهنگی ۲۰۰ عضو اول</div>
-            <select id="categoryFilter" class="filter-select" onchange="filterAchievements()">
-                <option value="all">همه</option>
-                <option value="science">مقالات</option>
-                <option value="art">هنری</option>
-                <option value="media">رسانه</option>
-            </select>
-        </div>
-        <div id="achievementsListContainer" class="achievements-list">
-            <div class="empty-state">در حال بارگذاری...</div>
-        </div>
-    </div>
-
-    <div class="gallery-box atlas-box">
-        <div class="gallery-header">
-            <div class="gallery-title">🏛️ گالری نام‌آوران ظهور</div>
-            <span class="gallery-subtitle">راه‌حل‌های فرهنگی برای مشکلات بومی</span>
-        </div>
-        <div id="atlasListContainer" class="achievements-list">
-            <div class="empty-state">هنوز راه‌حلی ثبت نشده است.</div>
-        </div>
-    </div>
-
-    <div id="detailModal" class="modal-overlay" onclick="closeModal(event)">
-        <div class="modal-content">
-            <button class="modal-close" onclick="document.getElementById('detailModal').classList.remove('active')">✕</button>
-            <div id="modalMediaContainer"></div>
-            <div class="modal-body">
-                <h2 id="modalTitle" style="color:#8a6d1f; margin-bottom:0.5rem; font-size:1.1rem;"></h2>
-                <div id="modalDesc" style="line-height:1.6; color:#3a2a1a; font-size:0.85rem;"></div>
+    <div class="container">
+        <div id="codeCheckSection">
+            <h1>🔐 تأیید هویت</h1>
+            <div class="subtitle">برای ثبت دستاورد، کد کارت خود را وارد کنید</div>
+            
+            <div class="code-check-box">
+                <input type="text" id="memberCode" class="code-input" placeholder="کد کارت (مثلاً CIM-XXXX-XXXX-XXXX)" />
+                <button onclick="verifyCode()" class="btn btn-primary" style="width:100%">تأیید و ورود</button>
+                <div id="errorMsg" class="error-msg"></div>
                 
-                <div id="modalModule" style="margin-top:0.8rem; padding:0.6rem; background:rgba(106,61,154,0.06); border-radius:10px; border-right:3px solid #6a3d9a; display:none;">
-                    <div style="font-size:0.75rem; font-weight:700; color:#6a3d9a; margin-bottom:0.3rem;">📌 ماژول انتخاب‌شده:</div>
-                    <div id="modalModuleType" style="font-size:0.85rem; color:#2a1a0a;"></div>
-                    <div id="modalModuleStatus" style="font-size:0.75rem; margin-top:0.3rem;"></div>
-                    <div id="modalModuleData" style="font-size:0.75rem; color:#4a3a2a; margin-top:0.3rem;"></div>
-                    <div id="modalModuleAnalysis" style="font-size:0.75rem; color:#4a3a2a; margin-top:0.3rem; font-style:italic;"></div>
+                <div class="btn-group" style="margin-top: 1.5rem;">
+                    <a href="index.html" class="btn btn-secondary">🏠 بازگشت به خانه</a>
+                    <a href="register-fa.html" class="btn btn-secondary">📝 ثبت‌نام</a>
                 </div>
-
-                <div id="modalGuide" style="margin-top:1rem; padding:0.8rem; background:rgba(212,175,55,0.1); border-radius:10px; display:none;">
-                    <h4 style="font-size:0.9rem; color:#8a6d1f; margin-bottom:0.5rem;">📋 راهنمای اقدام:</h4>
-                    <div id="guideContent" style="font-size:0.8rem;"></div>
-                </div>
-
-                <div id="modalFeedbackNote" class="feedback-note" style="display:none;">
-                    📊 گزارش اثربخشی: (در صورت ارائه بازخورد از طرف مشاهده‌کننده، این بخش نیز به رویت می‌رسد)
-                </div>
-
-                <div id="modalMeta" style="margin-top:0.8rem; font-size:0.7rem; color:#888;"></div>
             </div>
+            <div class="note">
+                این بخش برای همه اعضای تأییدشده باز است. ارسال شما توسط مدیر بررسی خواهد شد.
+            </div>
+        </div>
+
+        <div id="uploadSection" class="hidden">
+            <h1>📤 ثبت دستاورد شما</h1>
+            <div class="subtitle">دستاوردهای فرهنگی خود را مستند کنید</div>
+
+            <div id="statusBox" class="status-msg"></div>
+
+            <div class="upload-zone" id="dropZone">
+                <span class="icon">📂</span>
+                <p style="font-weight:800; font-size:1.1rem;">فایل خود را اینجا رها کنید یا برای انتخاب کلیک کنید</p>
+                <p class="small" style="font-size:0.8rem; opacity:0.6; margin-top:0.5rem;">مجاز: JPG، PNG، MP4 (بدون محدودیت حجم)</p>
+                <input type="file" id="fileInput" class="hidden" accept="image/*,video/*" />
+                <span id="fileName" class="file-name"></span>
+            </div>
+
+            <form id="uploadForm">
+                <div class="form-group">
+                    <label>عنوان</label>
+                    <input type="text" id="title" placeholder="مثلاً: تشکیل شبکه محلی برای حفظ میراث شفاهی" required />
+                </div>
+
+                <div class="form-group">
+                    <label>توضیحات کامل</label>
+                    <textarea id="description" rows="5" placeholder="چه کاری انجام دادید؟ چه تغییری ایجاد شد؟ چه چیزی به دست آمد؟" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>دسته‌بندی</label>
+                    <select id="category">
+                        <option value="cultural">فرهنگی و اجتماعی</option>
+                        <option value="science">علمی و پژوهشی</option>
+                        <option value="art">هنری</option>
+                        <option value="media">رسانه و ویدیو</option>
+                        <option value="other">سایر</option>
+                    </select>
+                </div>
+
+                <div class="helper-text">
+                    💡 <strong>راهنما:</strong> دستاورد شما باید مستند و قابل راستی‌آزمایی باشد. 
+                    پس از ارسال، توسط مدیر بررسی و در صورت تأیید در گالری دستاوردها نمایش داده می‌شود.
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">📤 ارسال برای بررسی</button>
+                    <a href="index.html" class="btn btn-secondary">🏠 بازگشت به خانه</a>
+                    <a href="register-fa.html" class="btn btn-secondary">📝 ثبت‌نام</a>
+                </div>
+            </form>
         </div>
     </div>
 
-</div>
-
-<script>
-let allApproved = [];
-let allAtlasItems = [];
-let currentModalItem = null;
-
-function normalizeGuide(item) {
-    if (item.guide && (item.guide.individual || item.guide.network || item.guide.policy)) {
-        return {
-            individual: item.guide.individual || '',
-            social: item.guide.network || '',
-            institutional: item.guide.policy || ''
-        };
-    }
-    return null;
-}
-
-function normalizeMatrix(item) {
-    if (item.matrix_emergence || item.matrix_layers || item.matrix_connections ||
-        item.matrix_scale || item.matrix_capacity) {
-        return {
-            emergence: item.matrix_emergence || '',
-            layer: item.matrix_layers || '',
-            connection: item.matrix_connections || '',
-            scale: item.matrix_scale || '',
-            capacity: item.matrix_capacity || '',
-            analysis: item.analysis || '',
-            cluster: item.cluster || '',
-            score: item.score || null
-        };
-    }
-    return null;
-}
-
-function normalizeAi3(item) {
-    return item.ai3Final || '';
-}
-
-async function loadAchievements() {
-    const container = document.getElementById('achievementsListContainer');
-    try {
-        const res = await fetch('/api/get-users?t=' + new Date().getTime());
-        if (!res.ok) throw new Error('خطا در ارتباط با سرور');
-        const data = await res.json();
-        allApproved = data.achievements || [];
-        renderAchievements(allApproved);
-    } catch (e) {
-        console.error(e);
-        container.innerHTML = '<div class="empty-state">خطا در دریافت اطلاعات.</div>';
-    }
-}
-
-function renderAchievements(items) {
-    const container = document.getElementById('achievementsListContainer');
-    const filter = document.getElementById('categoryFilter').value;
-    let filtered = filter === 'all' ? items : items.filter(item => item.category === filter);
-    if (filtered.length === 0) {
-        container.innerHTML = '<div class="empty-state">هنوز دستاوردی تایید نشده است.</div>';
-        return;
-    }
-    container.innerHTML = filtered.map((item, index) => {
-        const imageUrl = item.fileUrl || item.fileData || item.imageUrl;
-        let thumbHtml;
-        if (imageUrl) {
-            thumbHtml = `<img src="${imageUrl}" class="atlas-thumb" 
-                            onerror="this.outerHTML='<div class=\\'atlas-thumb-icon\\'>🏆</div>'" />`;
-        } else {
-            thumbHtml = `<div class="atlas-thumb-icon">🏆</div>`;
+    <script>
+        const toggle = document.getElementById('themeToggle');
+        const body = document.body;
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark'); 
+            if(toggle) toggle.textContent = '☀️';
         }
-        return `
-        <div class="achievement-item" onclick="openModal(${index})" style="flex-direction:row;">
-            ${thumbHtml}
-            <div class="item-info" style="flex:1; min-width:0;">
-                <h4>${item.title || 'بدون عنوان'}</h4>
-                <span class="item-meta">${item.category === 'science' ? '📄 مقاله' : item.category === 'art' ? '🎨 هنری' : '🎬 رسانه'}</span>
-            </div>
-            <span style="font-size:0.9rem; color:#d4af37;">👁️</span>
-        </div>
-    `;
-    }).join('');
-}
-
-function filterAchievements() { renderAchievements(allApproved); }
-
-async function loadAtlas() {
-    const container = document.getElementById('atlasListContainer');
-    try {
-        const res = await fetch('/api/get-connection-requests?type=observations&t=' + new Date().getTime());
-        if (!res.ok) throw new Error('خطا در دریافت اطلاعات');
-        const data = await res.json();
-        allAtlasItems = (data.observations || []).filter(obs => 
-            obs.status === 'approved' && 
-            obs.labels && 
-            (obs.labels.includes('gallery') || obs.labels.includes('achievement'))
-        );
-        renderAtlas(allAtlasItems);
-    } catch (e) {
-        console.error(e);
-        container.innerHTML = '<div class="empty-state">خطا در دریافت اطلاعات اطلس.</div>';
-    }
-}
-
-function renderAtlas(items) {
-    const container = document.getElementById('atlasListContainer');
-    if (items.length === 0) {
-        container.innerHTML = '<div class="empty-state">هنوز راه‌حلی با امتیاز ۵ ثبت نشده است.</div>';
-        return;
-    }
-    
-    container.innerHTML = items.map((item, index) => {
-        const isAchievement = (item.labels && item.labels.includes('achievement')) || !!item.title;
-        
-        let moduleStatus = item.moduleStatus || 'pending';
-        if (item.status === 'approved' && (!item.moduleStatus || item.moduleStatus === 'pending')) {
-            moduleStatus = 'approved';
+        if(toggle) {
+            toggle.addEventListener('click', () => {
+                body.classList.toggle('dark');
+                toggle.textContent = body.classList.contains('dark') ? '☀️' : '🌙';
+                localStorage.setItem('theme', body.classList.contains('dark') ? 'dark' : 'light');
+            });
         }
-        
-        const statusLabels = {
-            'success': '✅ موفق',
-            'revision': '⚠️ نیاز به اصلاح',
-            'failed': '❌ شکست',
-            'pending': '⏳ در انتظار',
-            'no_peers': '⚠️ هم‌فرهنگی یافت نشد',
-            'no_related': '⚠️ مشاهده مرتبط یافت نشد',
-            'approved': '✅ تأیید شده',
-            'rejected': '❌ رد شده'
-        };
-        const statusText = statusLabels[moduleStatus] || moduleStatus;
-        
-        const statusClass = (moduleStatus === 'success' || moduleStatus === 'approved') ? 'success' :
-                           moduleStatus === 'revision' ? 'revision' :
-                           (moduleStatus === 'failed' || moduleStatus === 'rejected') ? 'failed' :
-                           moduleStatus === 'pending' ? 'pending' : 'no_peers';
-        
-        const moduleNames = {
-            'collaboration': '🤝 همفکری',
-            'related': '👁️ مشاهدات مرتبط',
-            'referral': '📤 ارجاع به ۵ همفرهنگ'
-        };
-        const moduleDisplay = moduleNames[item.moduleType] || '';
-        
-        const displayScore = item.adminScore || item.score || '---';
-        
-        let title = 'مشاهده';
-        if (isAchievement && item.title) {
-            title = item.title;
-        } else if (item.observation) {
-            title = item.observation.substring(0, 50) + (item.observation.length > 50 ? '...' : '');
+
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        if(dropZone && fileInput) {
+            dropZone.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', (e) => {
+                if(e.target.files[0]) {
+                    const nameDisplay = document.getElementById('fileName');
+                    if(nameDisplay) nameDisplay.textContent = "✅ " + e.target.files[0].name;
+                }
+            });
         }
-        
-        // ====== عکس بزرگ‌تر (90x90) ======
-        let thumbHtml = '';
-        const imageUrl = item.fileUrl || item.fileData || item.imageUrl;
-        if (isAchievement && imageUrl) {
-            thumbHtml = `<img src="${imageUrl}" class="atlas-thumb"
-                            onerror="this.outerHTML='<div class=\\'atlas-thumb-icon\\'>🏆</div>'" />`;
-        } else if (isAchievement) {
-            thumbHtml = `<div class="atlas-thumb-icon">🏆</div>`;
-        } else {
-            thumbHtml = `<div class="atlas-thumb-icon" style="background:linear-gradient(135deg,rgba(106,61,154,0.10),rgba(212,175,55,0.10));">🏛️</div>`;
+
+        async function verifyCode() {
+            const codeInput = document.getElementById('memberCode').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+            const verifyBtn = document.querySelector('#codeCheckSection .btn-primary');
+            
+            if (!codeInput) {
+                errorMsg.textContent = '❌ لطفاً کد کارت خود را وارد کنید.';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            verifyBtn.disabled = true;
+            verifyBtn.textContent = '⏳ در حال بررسی...';
+            errorMsg.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/get-users?t=' + new Date().getTime());
+                if (!response.ok) throw new Error('خطا در ارتباط با سرور');
+                
+                const data = await response.json();
+                const normalize = (s) => (s || '')
+                    .replace(/[\s\-]/g, '')
+                    .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+                    .toUpperCase();
+                const normalizedInput = normalize(codeInput);
+                const user = data.users.find(u => normalize(u.cardCode) === normalizedInput);
+
+                if (!user) throw new Error('❌ کد کارت یافت نشد.');
+                if (user.status !== 'approved') throw new Error('❌ حساب شما هنوز تأیید نشده است.');
+
+                document.getElementById('codeCheckSection').classList.add('hidden');
+                document.getElementById('uploadSection').classList.remove('hidden');
+                localStorage.setItem('verifiedCode', codeInput);
+
+            } catch (error) {
+                errorMsg.textContent = error.message;
+                errorMsg.style.display = 'block';
+            } finally {
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = 'تأیید و ورود';
+            }
         }
-        
-        return `
-            <div class="achievement-item" onclick="openAtlasModal(${index})" 
-                 style="display:flex; align-items:center; gap:0.6rem; flex-direction:row;">
-                ${thumbHtml}
-                <div class="item-info" style="flex:1; min-width:0;">
-                    <h4 style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${title}</h4>
-                    <span class="item-meta">⭐ امتیاز ${displayScore}</span>
-                    ${moduleDisplay ? `<span class="module-type-label">${moduleDisplay}</span>` : ''}
-                    <span class="module-status-badge ${statusClass}">${statusText}</span>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
 
-function openModal(index) {
-    const item = allApproved[index];
-    if (!item) return;
-    currentModalItem = item;
-    document.getElementById('modalTitle').textContent = item.title || 'بدون عنوان';
-    let descText = item.description || 'بدون توضیحات';
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    descText = descText.replace(urlRegex, url => `<a href="${url}" target="_blank" style="color:#2874a6; text-decoration:underline;">${url}</a>`);
-    document.getElementById('modalDesc').innerHTML = descText;
-    document.getElementById('modalMeta').textContent = `ارسال کننده: ${item.owner}`;
-    document.getElementById('modalGuide').style.display = 'none';
-    document.getElementById('modalFeedbackNote').style.display = 'none';
-    document.getElementById('modalModule').style.display = 'none';
-    const mediaDiv = document.getElementById('modalMediaContainer');
-    const imageUrl = item.fileUrl || item.fileData;
-    if (imageUrl) {
-        mediaDiv.innerHTML = `<img src="${imageUrl}" class="modal-media" style="width:100%;max-height:250px;object-fit:contain;background:#1a1a1a;" onerror="this.outerHTML='<p style=\\'padding:1rem;text-align:center;color:#888;\\'>❌ تصویر قابل نمایش نیست</p>'"/>`;
-    } else {
-        mediaDiv.innerHTML = '<p style="padding:1rem;text-align:center;color:#888;">📄 فایل موجود نیست</p>';
-    }
-    document.getElementById('detailModal').classList.add('active');
-}
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('submitBtn');
+            const statusBox = document.getElementById('statusBox');
+            const file = fileInput.files[0];
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ در حال پردازش...';
+            if(statusBox) statusBox.style.display = 'none';
 
-function openAtlasModal(index) {
-    const item = allAtlasItems[index];
-    if (!item) return;
-    currentModalItem = item;
-    
-    document.getElementById('modalTitle').textContent = '🏛️ مشاهده از اطلس ظهور';
-    document.getElementById('modalDesc').innerHTML = item.observation || 'متن مشاهده موجود نیست';
-    
-    const displayScore = item.adminScore || item.score || '---';
-    document.getElementById('modalMeta').textContent = `⭐ امتیاز: ${displayScore} | وضعیت: ${item.status === 'approved' ? '✅ تأیید شده' : '⏳ در انتظار'}`;
-    
-    const mediaDiv = document.getElementById('modalMediaContainer');
-    mediaDiv.innerHTML = '';
-    
-    const moduleDiv = document.getElementById('modalModule');
-    const moduleType = item.moduleType || '';
-    const moduleStatus = item.moduleStatus || 'pending';
-    
-    const moduleNames = {
-        'collaboration': '🤝 همفکری با دیگران',
-        'related': '👁️ مشاهدات مرتبط دیگران',
-        'referral': '📤 ارجاع به ۵ همفرهنگ'
-    };
-    const moduleDisplay = moduleNames[moduleType] || moduleType || 'هیچ‌کدام';
-    
-    const statusLabels = {
-        'success': '✅ موفق', 'revision': '⚠️ نیاز به اصلاح', 'failed': '❌ شکست',
-        'pending': '⏳ در انتظار', 'no_peers': '⚠️ هم‌فرهنگی یافت نشد',
-        'no_related': '⚠️ مشاهده مرتبط یافت نشد'
-    };
-    const statusText = statusLabels[moduleStatus] || moduleStatus;
-    const statusClass = moduleStatus === 'success' ? 'success' :
-                       moduleStatus === 'revision' ? 'revision' :
-                       moduleStatus === 'failed' ? 'failed' :
-                       moduleStatus === 'pending' ? 'pending' : 'no_peers';
-    
-    if (moduleType) {
-        moduleDiv.style.display = 'block';
-        document.getElementById('modalModuleType').textContent = moduleDisplay;
-        document.getElementById('modalModuleStatus').innerHTML = `<span class="module-status-badge ${statusClass}">${statusText}</span>`;
-    } else {
-        moduleDiv.style.display = 'none';
-    }
-    
-    const guideBox = document.getElementById('modalGuide');
-    const guideContent = document.getElementById('guideContent');
-    
-    const guide = normalizeGuide(item);
-    const matrix = normalizeMatrix(item);
-    const ai3Final = normalizeAi3(item);
-    
-    const clusterNames = {
-        'human': 'انسان', 'knowledge': 'دانش و فناوری',
-        'governance': 'حکمرانی و تمدن', 'survival': 'بقا و آینده', 'other': 'نامشخص'
-    };
-    
-    let html = '';
-    
-    html += `
-        <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(212,175,55,0.08); border-radius:10px; border-right:4px solid #d4af37;">
-            <div style="font-weight:800; font-size:0.85rem; color:#8a6d1f; margin-bottom:0.4rem;">📝 مشاهده ثبت‌شده</div>
-            <div style="font-size:0.85rem; line-height:1.8;">${item.observation || '---'}</div>
-        </div>`;
-    
-    if (guide && (guide.individual || guide.social || guide.institutional)) {
-        html += `
-            <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(16,185,129,0.06); border-radius:10px; border-right:4px solid #10b981;">
-                <div style="font-weight:800; font-size:0.85rem; color:#047857; margin-bottom:0.4rem;">🤖 راهنمای سه‌سطحی (AI-1)</div>
-                ${guide.individual ? `<div style="margin-bottom:0.4rem; font-size:0.82rem; line-height:1.7;"><strong>📍 سطح فردی:</strong> ${guide.individual}</div>` : ''}
-                ${guide.social ? `<div style="margin-bottom:0.4rem; font-size:0.82rem; line-height:1.7;"><strong>🌐 سطح اجتماعی:</strong> ${guide.social}</div>` : ''}
-                ${guide.institutional ? `<div style="font-size:0.82rem; line-height:1.7;"><strong>🏛️ سطح نهادی:</strong> ${guide.institutional}</div>` : ''}
-            </div>`;
-    }
-    
-    if (matrix && (matrix.emergence || matrix.layer || matrix.connection || matrix.scale || matrix.capacity || matrix.analysis)) {
-        html += `
-            <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(99,102,241,0.06); border-radius:10px; border-right:4px solid #6366f1;">
-                <div style="font-weight:800; font-size:0.85rem; color:#4338ca; margin-bottom:0.4rem;">
-                    🧠 ماتریس ۵ سطحی (AI-2)
-                    ${matrix.cluster ? `<span style="background:rgba(212,175,55,0.15); padding:0.1rem 0.6rem; border-radius:10px; font-size:0.7rem; margin-right:0.3rem;">📂 ${clusterNames[matrix.cluster] || matrix.cluster}</span>` : ''}
-                </div>
-                ${matrix.emergence ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 ظهورها:</strong> ${matrix.emergence}</div>` : ''}
-                ${matrix.layer ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 لایه‌ها:</strong> ${matrix.layer}</div>` : ''}
-                ${matrix.connection ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 ارتباطات:</strong> ${matrix.connection}</div>` : ''}
-                ${matrix.scale ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 مقیاس:</strong> ${matrix.scale}</div>` : ''}
-                ${matrix.capacity ? `<div style="margin-bottom:0.35rem; font-size:0.8rem; line-height:1.7;"><strong>📊 ظرفیت:</strong> ${matrix.capacity}</div>` : ''}
-                ${matrix.analysis ? `<div style="margin-top:0.5rem; padding:0.5rem; background:rgba(255,255,255,0.5); border-radius:6px; font-size:0.82rem; line-height:1.75;"><strong>تحلیل:</strong> ${matrix.analysis}</div>` : ''}
-            </div>`;
-    }
-    
-    if (ai3Final) {
-        html += `
-            <div style="margin-bottom:0.8rem; padding:0.7rem; background:rgba(236,72,153,0.06); border-radius:10px; border-right:4px solid #ec4899;">
-                <div style="font-weight:800; font-size:0.85rem; color:#be185d; margin-bottom:0.4rem;">💎 تحلیل نهایی (AI-3)</div>
-                <div style="font-size:0.85rem; line-height:1.9;">${ai3Final}</div>
-            </div>`;
-    }
-    
-    if (!guide && !matrix && !ai3Final) {
-        html += `
-            <div style="padding:0.8rem; background:rgba(231,76,60,0.08); border-radius:10px; border-right:4px solid #e74c3c;">
-                <div style="font-weight:800; font-size:0.85rem; color:#7a1a1a;">⚠️ تحلیل هوش مصنوعی برای این مشاهده موجود نیست</div>
-            </div>`;
-    }
-    
-    guideContent.innerHTML = html;
-    guideBox.style.display = 'block';
-    
-    document.getElementById('modalFeedbackNote').style.display = 'block';
-    
-    document.getElementById('detailModal').classList.add('active');
-}
+            try {
+                let fileData = '';
+                let fileName = '';
 
-function closeModal(e) {
-    if (e.target && e.target.id === 'detailModal') {
-        e.target.classList.remove('active');
-    }
-}
+                if (file) {
+                    fileData = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.readAsDataURL(file);
+                    });
+                    fileName = file.name;
+                }
 
-document.addEventListener('DOMContentLoaded', () => {
-    loadAchievements();
-    loadAtlas();
-});
+                btn.textContent = '⏳ در حال ارسال...';
+                
+                const cardCode = localStorage.getItem('verifiedCode') || document.getElementById('memberCode').value;
 
-if (localStorage.getItem('theme') === 'dark') {
-    document.body.classList.add('dark');
-}
-</script>
+                const achievementData = {
+                    title: document.getElementById('title').value,
+                    description: document.getElementById('description').value,
+                    category: document.getElementById('category').value,
+                    fileData: fileData,
+                    fileName: fileName
+                };
+
+                const response = await fetch('/api/upload-achievement', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cardCode, achievement: achievementData })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'ارسال ناموفق بود');
+                }
+
+                if(statusBox) {
+                    statusBox.className = 'status-msg success';
+                    statusBox.textContent = '✅ دستاورد با موفقیت ثبت شد. کد رهگیری: ' + (result.trackingCode || '---');
+                    statusBox.style.display = 'block';
+                }
+                btn.textContent = '✅ ارسال شد';
+                
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 3000);
+
+            } catch (error) {
+                if(statusBox) {
+                    statusBox.className = 'status-msg error';
+                    statusBox.textContent = '❌ ' + error.message;
+                    statusBox.style.display = 'block';
+                }
+                btn.disabled = false;
+                btn.textContent = '📤 تلاش مجدد';
+            }
+        });
+    </script>
 </body>
 </html>
