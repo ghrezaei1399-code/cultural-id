@@ -408,54 +408,66 @@
         .achievements-list {
             display: flex;
             flex-direction: column;
-            gap: 0.4rem;
-            max-height: 320px;
+            gap: 0.5rem;
+            max-height: 480px;
             overflow-y: auto;
         }
         .achievement-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.4rem 0.5rem;
+            padding: 0.5rem;
             background: rgba(255, 255, 255, 0.5);
-            border-radius: 10px;
+            border-radius: 12px;
             border-left: 3px solid #d4af37;
             cursor: pointer;
             transition: 0.2s;
-            gap: 0.5rem;
+            gap: 0.6rem;
         }
         body.dark .achievement-item { background: rgba(0, 0, 0, 0.15); }
-        .achievement-item:hover { background: #fff; transform: translateX(3px); }
+        .achievement-item:hover { background: #fff; transform: translateX(3px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
         body.dark .achievement-item:hover { background: rgba(255, 255, 255, 0.05); }
         
-        .item-info h4 { font-size: 0.85rem; color: #2a1a0a; }
+        .item-info h4 { font-size: 0.9rem; color: #2a1a0a; margin-bottom: 0.2rem; }
         body.dark .item-info h4 { color: #f0e8d0; }
-        .item-meta { font-size: 0.5rem; color: #8a6d1f; font-weight: 600; }
+        .item-meta { font-size: 0.6rem; color: #8a6d1f; font-weight: 600; }
 
         /* ====== Larger thumbnails for Atlas gallery ====== */
         .atlas-thumb {
-            width: 90px;
-            height: 90px;
-            border-radius: 10px;
+            width: 140px;
+            height: 140px;
+            border-radius: 12px;
             object-fit: cover;
             flex-shrink: 0;
-            border: 2px solid rgba(212, 175, 55, 0.35);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            border: 3px solid rgba(212, 175, 55, 0.5);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             transition: 0.25s;
+            cursor: pointer;
         }
-        .atlas-thumb:hover { transform: scale(1.05); }
+        .atlas-thumb:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4); }
 
         .atlas-thumb-icon {
-            width: 90px;
-            height: 90px;
-            border-radius: 10px;
+            width: 140px;
+            height: 140px;
+            border-radius: 12px;
             flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.4rem;
+            font-size: 3.5rem;
             background: linear-gradient(135deg, rgba(212,175,55,0.10), rgba(106,61,154,0.10));
-            border: 2px dashed rgba(212, 175, 55, 0.35);
+            border: 3px dashed rgba(212, 175, 55, 0.5);
+        }
+
+        /* ===== Large image in modal ===== */
+        .atlas-modal-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            background: #1a1a1a;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border: 2px solid rgba(212, 175, 55, 0.3);
         }
 
         .module-status-badge {
@@ -466,26 +478,11 @@
             font-weight: 700;
             margin-top: 0.2rem;
         }
-        .module-status-badge.success {
-            background: rgba(39,174,96,0.15);
-            color: #1a6a3a;
-        }
-        .module-status-badge.revision {
-            background: rgba(243,156,18,0.15);
-            color: #8a5a0a;
-        }
-        .module-status-badge.failed {
-            background: rgba(231,76,60,0.15);
-            color: #6a1a1a;
-        }
-        .module-status-badge.pending {
-            background: rgba(241,196,15,0.15);
-            color: #b7950b;
-        }
-        .module-status-badge.no_peers {
-            background: rgba(149,165,166,0.15);
-            color: #5a6a6a;
-        }
+        .module-status-badge.success { background: rgba(39,174,96,0.15); color: #1a6a3a; }
+        .module-status-badge.revision { background: rgba(243,156,18,0.15); color: #8a5a0a; }
+        .module-status-badge.failed { background: rgba(231,76,60,0.15); color: #6a1a1a; }
+        .module-status-badge.pending { background: rgba(241,196,15,0.15); color: #b7950b; }
+        .module-status-badge.no_peers { background: rgba(149,165,166,0.15); color: #5a6a6a; }
         body.dark .module-status-badge.success { color: #82e0aa; }
         body.dark .module-status-badge.revision { color: #f5b041; }
         body.dark .module-status-badge.failed { color: #f1948a; }
@@ -493,9 +490,11 @@
         body.dark .module-status-badge.no_peers { color: #aab7b8; }
 
         .module-type-label {
-            font-size: 0.55rem;
+            font-size: 0.6rem;
             color: #6a3d9a;
             font-weight: 600;
+            display: inline-block;
+            margin-top: 0.2rem;
         }
         body.dark .module-type-label { color: #d2b4de; }
 
@@ -538,8 +537,8 @@
         .modal-content {
             background: #fff;
             width: 90%;
-            max-width: 500px;
-            max-height: 80vh;
+            max-width: 600px;
+            max-height: 90vh;
             border-radius: 20px;
             overflow-y: auto;
             position: relative;
@@ -552,16 +551,18 @@
             position: absolute;
             top: 0.5rem;
             right: 0.5rem;
-            background: rgba(0,0,0,0.4);
+            background: rgba(0,0,0,0.6);
             color: #fff;
-            width: 30px;
-            height: 30px;
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
             border: none;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             cursor: pointer;
             z-index: 10;
+            font-weight: 700;
         }
+        .modal-close:hover { background: rgba(0,0,0,0.85); }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         @media (max-width: 768px) {
@@ -584,8 +585,9 @@
             .global-call-banner { padding: 0.4rem 0.3rem; }
             .banner-slogan { font-size: 2rem; }
             .slogan-track span { font-size: 0.55rem; }
-            .atlas-thumb { width: 70px; height: 70px; }
-            .atlas-thumb-icon { width: 70px; height: 70px; font-size: 1.8rem; }
+            .atlas-thumb { width: 110px; height: 110px; }
+            .atlas-thumb-icon { width: 110px; height: 110px; font-size: 2.5rem; }
+            .atlas-modal-image { max-height: 320px; }
         }
         @media (max-width: 480px) {
             .logo-box img { width: 60px; height: 60px; }
@@ -607,11 +609,12 @@
             .rc-title { font-size: 0.5rem; }
             .gallery-title { font-size: 0.65rem; }
             .gallery-subtitle { font-size: 0.45rem; }
-            .achievement-item { padding: 0.2rem 0.3rem; }
-            .item-info h4 { font-size: 0.6rem; }
+            .achievement-item { padding: 0.3rem; }
+            .item-info h4 { font-size: 0.65rem; }
             .filter-select { font-size: 0.5rem; padding: 0.1rem 0.3rem; }
-            .atlas-thumb { width: 60px; height: 60px; }
-            .atlas-thumb-icon { width: 60px; height: 60px; font-size: 1.5rem; }
+            .atlas-thumb { width: 90px; height: 90px; }
+            .atlas-thumb-icon { width: 90px; height: 90px; font-size: 2rem; }
+            .atlas-modal-image { max-height: 250px; }
         }
     </style>
     <link rel="manifest" href="/manifest.json">
@@ -891,7 +894,7 @@ function renderAchievements(items) {
                 <h4>${item.title || 'Untitled'}</h4>
                 <span class="item-meta">${item.category === 'science' ? '📄 Article' : item.category === 'art' ? '🎨 Art' : '🎬 Media'}</span>
             </div>
-            <span style="font-size:0.9rem; color:#d4af37;">👁️ View</span>
+            <span style="font-size:1.2rem; color:#d4af37;">👁️</span>
         </div>
     `;
     }).join('');
@@ -926,7 +929,6 @@ function renderAtlas(items) {
     container.innerHTML = items.map((item, index) => {
         const isAchievement = (item.labels && item.labels.includes('achievement')) || !!item.title;
         
-        // ===== Determine status =====
         let moduleStatus = item.moduleStatus || 'pending';
         if (item.status === 'approved' && (!item.moduleStatus || item.moduleStatus === 'pending')) {
             moduleStatus = 'approved';
@@ -957,7 +959,6 @@ function renderAtlas(items) {
         
         const displayScore = item.adminScore || item.score || '---';
         
-        // ===== Title =====
         let title = 'Observation';
         if (isAchievement && item.title) {
             title = item.title;
@@ -965,7 +966,7 @@ function renderAtlas(items) {
             title = item.observation.substring(0, 50) + (item.observation.length > 50 ? '...' : '');
         }
         
-        // ===== Larger thumbnail (90x90) =====
+        // ===== Larger thumbnail (140x140) =====
         let thumbHtml = '';
         const imageUrl = item.fileUrl || item.fileData || item.imageUrl;
         if (isAchievement && imageUrl) {
@@ -987,7 +988,6 @@ function renderAtlas(items) {
                     ${moduleDisplay ? `<span class="module-type-label">${moduleDisplay}</span>` : ''}
                     <span class="module-status-badge ${statusClass}">${statusText}</span>
                 </div>
-                <span style="font-size:0.9rem; color:#6a3d9a;">🏛️</span>
             </div>
         `;
     }).join('');
@@ -1021,13 +1021,43 @@ function openAtlasModal(index) {
     if (!item) return;
     currentModalItem = item;
     
-    document.getElementById('modalTitle').textContent = '🏛️ Atlas of Emergence Profile';
-    document.getElementById('modalDesc').innerHTML = '';
-    document.getElementById('modalMeta').textContent = `⭐ Score: ${item.score || '---'} | Status: ${item.status === 'approved' ? '✅ Approved' : '⏳ Pending'}`;
+    // ===== Determine item type =====
+    const isAchievement = (item.labels && item.labels.includes('achievement')) || !!item.title;
+    const imageUrl = item.fileUrl || item.fileData || item.imageUrl;
     
+    // ===== Show large image in modal =====
     const mediaDiv = document.getElementById('modalMediaContainer');
     mediaDiv.innerHTML = '';
     
+    if (isAchievement && imageUrl) {
+        const fileName = (item.fileName || '').toLowerCase();
+        const isVideo = imageUrl.startsWith('data:video') || 
+                        fileName.match(/\.(mp4|webm|mov|avi|mkv)$/i);
+        
+        if (isVideo) {
+            mediaDiv.innerHTML = `<video src="${imageUrl}" class="atlas-modal-image" controls style="max-height:400px;"></video>`;
+        } else {
+            mediaDiv.innerHTML = `<img src="${imageUrl}" class="atlas-modal-image" 
+                                    onerror="this.outerHTML='<p style=\\'padding:1rem;text-align:center;color:#888;\\'>❌ Image not available</p>'" />`;
+        }
+    }
+    
+    // ===== Title and description =====
+    if (isAchievement && item.title) {
+        document.getElementById('modalTitle').textContent = '🏆 ' + item.title;
+        let descText = item.description || item.observation || 'No description available';
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        descText = descText.replace(urlRegex, url => `<a href="${url}" target="_blank" style="color:#2874a6; text-decoration:underline;">${url}</a>`);
+        document.getElementById('modalDesc').innerHTML = descText;
+    } else {
+        document.getElementById('modalTitle').textContent = '🏛️ Atlas of Emergence Profile';
+        document.getElementById('modalDesc').innerHTML = item.observation || 'No observation text available';
+    }
+    
+    const displayScore = item.adminScore || item.score || '---';
+    document.getElementById('modalMeta').textContent = `⭐ Score: ${displayScore} | Status: ${item.status === 'approved' ? '✅ Approved' : '⏳ Pending'}`;
+    
+    // ===== Module =====
     const moduleDiv = document.getElementById('modalModule');
     const moduleType = item.moduleType || '';
     const moduleStatus = item.moduleStatus || 'pending';
@@ -1042,10 +1072,11 @@ function openAtlasModal(index) {
     const statusLabels = {
         'success': '✅ Successful', 'revision': '⚠️ Needs Revision', 'failed': '❌ Failed',
         'pending': '⏳ Pending', 'no_peers': '⚠️ No Peers Found',
-        'no_related': '⚠️ No Related Observations'
+        'no_related': '⚠️ No Related Observations',
+        'approved': '✅ Approved'
     };
     const statusText = statusLabels[moduleStatus] || moduleStatus;
-    const statusClass = moduleStatus === 'success' ? 'success' :
+    const statusClass = (moduleStatus === 'success' || moduleStatus === 'approved') ? 'success' :
                        moduleStatus === 'revision' ? 'revision' :
                        moduleStatus === 'failed' ? 'failed' :
                        moduleStatus === 'pending' ? 'pending' : 'no_peers';
@@ -1058,6 +1089,7 @@ function openAtlasModal(index) {
         moduleDiv.style.display = 'none';
     }
     
+    // ===== Action Guide =====
     const guideBox = document.getElementById('modalGuide');
     const guideContent = document.getElementById('guideContent');
     
