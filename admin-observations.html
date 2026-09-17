@@ -487,7 +487,7 @@
         function buildUnifiedText(obs) {
             const ai1 = normalizeAi1(obs);
             const ai2 = normalizeAi2(obs);
-            const isAchievement = obs.labels && obs.labels.includes('achievement');
+                        const isAchievement = obs.labels && obs.labels.includes('achievement');
             const ai3 = normalizeAi3(obs);
             const clusterKey = ai2?.cluster || obs.cluster || detectCluster(obs.observation);
             const clusterLabel = getClusterLabel(clusterKey);
@@ -607,6 +607,7 @@
         }
 
         function renderObservationCard(obs) {
+                       const isAchievement = obs.labels && obs.labels.includes('achievement'); 
             const ai1 = normalizeAi1(obs);
             const ai2 = normalizeAi2(obs);
             const ai3 = normalizeAi3(obs);
