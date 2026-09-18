@@ -23,5 +23,19 @@
   "registrationDate": "2026-09-18T15:23:59.047Z",
   "status": "approved",
   "rank": 0,
-  "country": "Iran"
+  "country": "Iran",
+  "achievements": [
+    {
+      "id": "ACH-MU748JHW-TZWI",
+      "title": "شناسنامه ی فرهنگی",
+      "description": "ایجاد سیستم یکپارچه ی هویت فرهنگی هوشمند جهانی برای برقراری تعاملات فرهنگی",
+      "category": "science",
+      "status": "pending",
+      "createdAt": "2026-09-18T15:31:02.392Z",
+      "fileName": "پوستر خوب 1.png",
+      "fileUrl": "https://raw.githubusercontent.com/ghrezaei1399-code/cultural-id/main/uploads/ACH-MU748JHW-TZWI-پوستر خوب 1.png",
+      "section": "emergence",
+      "issueNumber": 109
+    }
+  ]
 }
