@@ -16,7 +16,7 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'کد کارت و اطلاعات دستاورد الزامی است' });
     }
 
-    const { title, description, category, fileData, fileName } = achievement;
+    const { title, description, category, fileData, fileName, section } = achievement;
 
     if (!title || !description) {
       return res.status(400).json({ error: 'عنوان و شرح دستاورد الزامی است' });
@@ -102,56 +102,49 @@ module.exports = async function handler(req, res) {
       }
     }
 
-    // ===== ساخت Issue (به جای data/requests) =====
-    const isPersian = /[\u0600-\u06FF]/.test(title + ' ' + description);
-    const categoryLabels = {
-      'art': 'هنری', 'science': 'علمی', 'cultural': 'فرهنگی',
-      'media': 'رسانه', 'other': 'سایر'
+    // ===== ذخیره دستاورد در data/requests/ =====
+    // این فایل توسط admin-achievements.html خوانده می‌شود
+    const achievementFileName = `achievement-${Date.now()}-${Math.random().toString(36).substring(7)}.json`;
+    const achievementPath = `data/requests/${achievementFileName}`;
+
+    const achievementData = {
+      fileName: achievementFileName,
+      trackingCode: achievementId,
+      senderCode: userData.cardCode || cardCode,
+      title: title,
+      description: description,
+      category: category || 'other',
+      status: 'pending',
+      fileUrl: fileUrl,
+      fileName: fileName || null,
+      createdAt: new Date().toISOString(),
+      approvedAt: null,
+      rejectedAt: null,
+      section: section || 'emergence'
     };
-    const categoryLabel = isPersian
-      ? (categoryLabels[category] || 'سایر')
-      : (category || 'other');
 
-    const issueTitle = isPersian
-      ? `دستاورد نام‌آوران: ${userData.cardCode || cardCode} - ${achievementId}`
-      : `Notable Achievement: ${userData.cardCode || cardCode} - ${achievementId}`;
+    const achievementContent = Buffer.from(JSON.stringify(achievementData, null, 2), 'utf8').toString('base64');
 
-    const issueBody = `
-**Card Code:** ${userData.cardCode || cardCode}
-**Tracking Code:** ${achievementId}
-**Type:** achievement
-**Category:** ${categoryLabel}
-**Title:** ${title}
-**Description:** ${description}
-**File URL:** ${fileUrl || '---'}
-
----
-*این دستاورد توسط عضو ثبت شده و در انتظار تأیید ادمین است.*
-*This achievement has been submitted by a member and is pending admin approval.*
-    `;
-
-    const issueRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues`, {
-      method: 'POST',
+    const saveRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${achievementPath}`, {
+      method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-        'Accept': 'application/vnd.github.v3+json'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        title: issueTitle,
-        body: issueBody,
-        labels: ['achievement', 'pending-review']
+        message: `Achievement: ${title} for ${userData.cardCode || cardCode} - ${achievementId}`,
+        content: achievementContent,
+        branch: 'main'
       })
     });
 
-    if (!issueRes.ok) {
-      const errData = await issueRes.json().catch(() => ({}));
-      throw new Error(errData.message || 'خطا در ثبت درخواست');
+    if (!saveRes.ok) {
+      const errData = await saveRes.json().catch(() => ({}));
+      throw new Error(errData.message || 'خطا در ذخیره دستاورد');
     }
 
-    const issueData = await issueRes.json();
-
     // ===== ذخیره دستاورد در فایل کاربر (برای گالری) =====
+    // فقط متادیتا — نه fileData (که قبلاً فایل کاربر را آلوده می‌کرد)
     if (!userData.achievements) {
       userData.achievements = [];
     }
@@ -165,8 +158,8 @@ module.exports = async function handler(req, res) {
       createdAt: new Date().toISOString(),
       fileName: fileName || null,
       fileUrl: fileUrl,
-      section: 'emergence',
-      issueNumber: issueData.number
+      section: section || 'emergence',
+      trackingCode: achievementId
     });
 
     const updatedContent = Buffer.from(JSON.stringify(userData, null, 2), 'utf8').toString('base64');
@@ -188,7 +181,6 @@ module.exports = async function handler(req, res) {
     return res.status(200).json({
       success: true,
       trackingCode: achievementId,
-      issueNumber: issueData.number,
       message: 'دستاورد با موفقیت ثبت شد و برای بررسی به ادمین ارسال گردید.'
     });
 
