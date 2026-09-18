@@ -5,10 +5,11 @@
   "title": "کارت هویت فرهنگی",
   "description": "شبکه سازی فرهنگی",
   "category": "cultural",
-  "status": "pending",
+  "status": "approved",
   "fileUrl": "https://raw.githubusercontent.com/ghrezaei1399-code/cultural-id/main/uploads/ACH-MU75S3BH-A92R-پوستر1.png",
   "createdAt": "2026-09-18T16:14:14.483Z",
-  "approvedAt": null,
+  "approvedAt": "2026-09-18T16:43:38.357Z",
   "rejectedAt": null,
-  "section": "identity-card"
+  "section": "identity-card",
+  "updatedAt": "2026-09-18T16:43:38.357Z"
 }
