@@ -122,8 +122,7 @@ module.exports = async function handler(req, res) {
   }
 
   // ============================================================
-  // بخش مدیریت وضعیت دستاوردها (Achievements) - با کد رهگیری
-  // فقط فایل‌های achievement-*.json خوانده می‌شوند
+  // بخش مدیریت وضعیت دستاوردها (Achievements)
   // ============================================================
   if (type === 'achievement') {
     if (!trackingCode) {
@@ -144,7 +143,6 @@ module.exports = async function handler(req, res) {
         return res.status(500).json({ error: 'خطا در ساختار فایل‌ها' });
       }
 
-      // ===== فقط فایل‌های achievement-*.json =====
       const achievementFiles = files.filter(f => 
         f.name && f.name.startsWith('achievement-') && f.name.endsWith('.json')
       );
@@ -161,7 +159,6 @@ module.exports = async function handler(req, res) {
           
           const fileData = await fileRes.json();
           
-          // ===== چک کردن محتوای خالی =====
           if (!fileData.content || fileData.content.trim() === '') {
             console.warn('Empty file skipped:', file.name);
             continue;
@@ -197,7 +194,6 @@ module.exports = async function handler(req, res) {
         return res.status(404).json({ error: 'دستاوردی با این کد رهگیری یافت نشد' });
       }
 
-      // ===== به‌روزرسانی وضعیت در فایل درخواست =====
       targetData.status = status;
       targetData.updatedAt = new Date().toISOString();
       if (status === 'approved') targetData.approvedAt = new Date().toISOString();
@@ -224,7 +220,6 @@ module.exports = async function handler(req, res) {
         throw new Error(errData.message || 'خطا در به‌روزرسانی فایل دستاورد');
       }
 
-      // ===== به‌روزرسانی وضعیت در فایل کاربر =====
       const senderCode = (targetData.senderCode || targetData.cardCode || '').trim().replace(/\s+/g, '');
       const userPath = `data/active/${senderCode}.json`;
       
