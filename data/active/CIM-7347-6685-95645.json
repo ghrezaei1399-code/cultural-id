@@ -23,5 +23,19 @@
   "registrationDate": "2026-09-19T09:06:19.669Z",
   "status": "approved",
   "rank": 0,
-  "country": "Germany"
+  "country": "Germany",
+  "achievements": [
+    {
+      "id": "ACH-MU87EUDU-BOR0",
+      "title": "مانتو بر اساس معماری مسجد نصیر الملک",
+      "description": "این اثر یک پروژه پژوهش‌محور و خودگردان در زمینه طراحی لباس است که با الهام از معماری مسجد نصیرالملک شیراز شکل گرفته است. در این پروژه، هندسه معماری، ترکیب‌بندی کاشی‌ها، ریتم نقوش تزئینی، طاق‌ها و جلوه‌های رنگی شیشه‌های رنگین مسجد، به‌عنوان عناصر اصلی برای شکل‌گیری زبان بصری لباس مورد مطالعه و بازآفرینی قرار گرفتند.\n\nفرآیند طراحی از مطالعه و تحلیل عناصر معماری و استخراج و ساده‌سازی نقوش آغاز شد و سپس با طراحی و توسعه موتیف‌ها، انتخاب رنگ و متریال، طراحی و الگوسازی مانتو و در نهایت دوخت و اجرای جزئیات تزئینی ادامه یافت. تمامی مراحل، از پژوهش و طراحی تا الگوسازی، ساخت و اجرای نهایی، به‌صورت مستقل انجام شده است.\n\nرنگ فیروزه‌ای و ترکیب آن با طیف‌های الهام‌گرفته از کاشی‌کاری و تزئینات معماری ایرانی، در کنار نقوش هندسی و تزئینی، تلاشی برای انتقال بخشی از زیبایی‌شناسی معماری ایرانی به پوشاک معاصر است. هدف پروژه، ایجاد پیوندی میان میراث بصری و فرهنگی ایران و طراحی لباس معاصر و نشان دادن امکان بازتفسیر عناصر سنتی در قالبی کاربردی و امروزی بوده است.\n\nاین اثر در کنار جنبه طراحی و اجرایی، نمونه‌ای از استفاده از پژوهش فرهنگی و هنرهای تزئینی در فرآیند طراحی لباس و تبدیل یک منبع معماری ایرانی به یک بیان معاصر و پوشیدنی است.\nPersian Architectural Heritage Reinterpreted in Contemporary Fashion\n\nEnglish Description\n\nThis project is an independent, research-driven fashion design inspired by the architectural heritage of the Nasir al-Mulk Mosque in Shiraz, Iran. The study focused on architectural geometry, tile compositions, ornamental rhythms, layered arches, and the vibrant visual effects of colored glass as the primary sources for developing the garment's visual language.\n\nThe design process began with architectural research and visual analysis, followed by the extraction, simplification, and reinterpretation of traditional motifs. These elements were then developed through motif design, color and material exploration, garment design and pattern development, and finally sewing, construction, and decorative execution. The entire process—from research and concept development to pattern making, construction, and final detailing—was carried out independently.\n\nThe turquoise color palette, combined with colors derived from Persian tilework and architectural ornamentation, works alongside geometric and decorative motifs to translate elements of Iranian architectural aesthetics into contemporary clothing. The project aims to create a dialogue between Persian cultural heritage and contemporary fashion, demonstrating how traditional visual elements can be reinterpreted through a modern, wearable form.\n\nBeyond its design and technical aspects, the project represents an exploration of how cultural research and decorative craftsmanship can contribute to fashion design, transforming an architectural source from Iran's visual heritage into a contemporary garment.",
+      "category": "cultural",
+      "status": "pending",
+      "createdAt": "2026-09-19T09:47:41.564Z",
+      "fileName": "persian architecture inspired fashion design.png",
+      "fileUrl": "https://raw.githubusercontent.com/ghrezaei1399-code/cultural-id/main/uploads/ACH-MU87EUDU-BOR0-persian architecture inspired fashion design.png",
+      "section": "identity-card",
+      "trackingCode": "ACH-MU87EUDU-BOR0"
+    }
+  ]
 }
