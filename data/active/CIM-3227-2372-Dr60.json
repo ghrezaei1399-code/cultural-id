@@ -1,0 +1,27 @@
+{
+  "cardCode": "CIM-3227-2372-Dr60",
+  "optionalCode": "Dr60",
+  "values": [
+    "حفظ میراث",
+    "خرد ضمنی",
+    "هم افزایی شبکه ای",
+    "احترام به تفکرها",
+    "دیپلماسی داده محور",
+    "ترویج مدارا",
+    "پل های ارتباطی بین فرهنگ ها"
+  ],
+  "priorities": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "communicationEmail": null,
+  "registrationDate": "2026-09-21T03:00:41.723Z",
+  "status": "approved",
+  "rank": 0,
+  "country": "Sweden"
+}
