@@ -1,13 +1,5 @@
 [
-  {
-    "cardCode": "CIM-8153-3511-۰۰۰۰۱",
-    "optionalCode": "۰۰۰۰۱",
-    "status": "approved",
-    "rank": 0,
-    "country": "Iran",
-    "registrationDate": "2026-09-15T15:49:24.020Z"
-  },
-  {
+   {
     "cardCode": "CIM-4759-1066-00002",
     "optionalCode": "00002",
     "status": "approved",
@@ -39,20 +31,6 @@
     "country": "Sweden",
     "registrationDate": "2026-09-21T03:00:41.723Z"
   },
-  {
-    "cardCode": "CIM-3490-4841-85285",
-    "optionalCode": "85285",
-    "status": "approved",
-    "rank": 0,
-    "country": "Iran",
-    "registrationDate": "2026-09-23T13:22:31.980Z"
-  },
-  {
-    "cardCode": "CIM-2445-2920-74174",
-    "optionalCode": "74174",
-    "status": "approved",
-    "rank": 0,
-    "country": "Iran",
-    "registrationDate": "2026-09-23T13:50:54.567Z"
-  }
+ 
+  
 ]
