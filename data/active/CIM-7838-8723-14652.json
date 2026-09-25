@@ -1,0 +1,27 @@
+{
+  "cardCode": "CIM-7838-8723-14652",
+  "optionalCode": "14652",
+  "values": [
+    "گفتگو و مهربانی",
+    "سیاست‌گذاری",
+    "شبکه نخبگانی",
+    "رفع تبعیض",
+    "تصمیم‌گیری مشارکتی",
+    "ترویج نقش مادرانه",
+    "آزادی تبادل داده"
+  ],
+  "priorities": [
+    1,
+    4,
+    6,
+    5,
+    7,
+    2,
+    3
+  ],
+  "communicationEmail": "Neshanavar@gmail.com",
+  "registrationDate": "2026-09-25T19:50:47.029Z",
+  "status": "approved",
+  "rank": 0,
+  "country": "Iran"
+}
